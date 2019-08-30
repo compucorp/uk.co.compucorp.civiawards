@@ -1,9 +1,24 @@
 <?php
 
+use CRM_CiviAwards_Setup_CreateAwardsCaseCategoryOption as CreateAwardsCaseCategoryOption;
+
 /**
  * Collection of upgrade steps.
  */
 class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
+
+  /**
+   * Custom extension installation logic.
+   */
+  public function install() {
+    $steps = [
+      new CreateAwardsCaseCategoryOption(),
+    ];
+
+    foreach ($steps as $step) {
+      $step->apply();
+    }
+  }
 
   /**
    * Checks for pending revisions for extension.
