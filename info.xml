@@ -11,6 +11,7 @@
     <urls>
         <url desc="Main Extension Page">https://github.com/compucorp/uk.co.compucorp.civiawards</url>
         <url desc="Documentation">https://github.com/compucorp/uk.co.compucorp.civiawards/blob/master/readme.md</url>
+        <url desc="Support">http://FIXME</url>
         <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
     </urls>
     <releaseDate>2019-08-28</releaseDate>
