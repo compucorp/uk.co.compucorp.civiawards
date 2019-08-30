@@ -1,6 +1,7 @@
 <?php
 
 use CRM_CiviAwards_Setup_CreateAwardsCaseCategoryOption as CreateAwardsCaseCategoryOption;
+use CRM_CiviAwards_Setup_DeleteAwardsCaseCategoryOption as DeleteAwardsCaseCategoryOption;
 
 /**
  * Collection of upgrade steps.
@@ -13,6 +14,19 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
   public function install() {
     $steps = [
       new CreateAwardsCaseCategoryOption(),
+    ];
+
+    foreach ($steps as $step) {
+      $step->apply();
+    }
+  }
+
+  /**
+   * Custom extension un-install logic.
+   */
+  public function uninstall() {
+    $steps = [
+      new DeleteAwardsCaseCategoryOption(),
     ];
 
     foreach ($steps as $step) {
