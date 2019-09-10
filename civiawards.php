@@ -152,8 +152,8 @@ function civiawards_civicrm_themes(&$themes) {
  * Implements hook_civicrm_permission().
  */
 function civiawards_civicrm_permission(&$permissions) {
-  $permissionService = new CaseCategoryPermission(CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME);
-  $caseCategoryPermissions = $permissionService->get();
+  $permissionService = new CaseCategoryPermission();
+  $caseCategoryPermissions = $permissionService->get(CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME);
 
   // Add basic permissions set from civicase extension.
   foreach ($caseCategoryPermissions as $caseCategoryPermission) {
