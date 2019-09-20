@@ -5,9 +5,6 @@
  * Extension file.
  */
 
-use CRM_Civicase_Service_CaseCategoryPermission as CaseCategoryPermission;
-use CRM_CiviAwards_Helper_CaseTypeCategory as CaseTypeCategoryhelper;
-
 require_once 'civiawards.civix.php';
 
 /**
@@ -152,17 +149,6 @@ function civiawards_civicrm_themes(&$themes) {
  * Implements hook_civicrm_permission().
  */
 function civiawards_civicrm_permission(&$permissions) {
-  $permissionService = new CaseCategoryPermission();
-  $caseCategoryPermissions = $permissionService->get(CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME);
-
-  // Add basic permissions set from civicase extension.
-  foreach ($caseCategoryPermissions as $caseCategoryPermission) {
-    $permissions[$caseCategoryPermission['name']] = [
-      $caseCategoryPermission['label'],
-      ts($caseCategoryPermission['description']),
-    ];
-  }
-
   // Add permission defined by this extension.
   $permissions['access awards panel portal'] = [
     'CiviAwards: Access awards panel portal',
