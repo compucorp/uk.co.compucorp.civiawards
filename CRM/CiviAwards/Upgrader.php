@@ -5,11 +5,19 @@ use CRM_CiviAwards_Setup_AddAwardsCgExtendsOptionValue as AddAwardsCgExtendsOpti
 use CRM_CiviAwards_Setup_DeleteAwardsCaseCategoryOption as DeleteAwardsCaseCategoryOption;
 use CRM_CiviAwards_Setup_DeleteAwardsCgExtendsOption as DeleteAwardsCgExtendsOption;
 use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
+use CRM_CiviAwards_Setup_DeleteApplicantReviewCustomField as DeleteApplicantReviewCustomField;
 
 /**
  * Collection of upgrade steps.
  */
 class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
+
+  /**
+   * A list of directories to be scanned for XML installation files.
+   *
+   * @var array
+   */
+  private $xmlDirectories = ['custom_fields'];
 
   /**
    * Custom extension installation logic.
@@ -24,6 +32,24 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
     foreach ($steps as $step) {
       $step->apply();
     }
+
+    $this->processXmlInstallationFiles();
+  }
+
+  /**
+   * Scans all the directories in $xmlDirectories for installation files.
+   *
+   * (xml files ending with _install.xml) and processes them.
+   */
+  private function processXmlInstallationFiles() {
+    foreach ($this->xmlDirectories as $directory) {
+      $files = glob($this->extensionDir . "/xml/{$directory}/*_install.xml");
+      if (is_array($files)) {
+        foreach ($files as $file) {
+          $this->executeCustomDataFileByAbsPath($file);
+        }
+      }
+    }
   }
 
   /**
@@ -33,6 +59,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
     $steps = [
       new DeleteAwardsCaseCategoryOption(),
       new DeleteAwardsCgExtendsOption(),
+      new DeleteApplicantReviewCustomField(),
     ];
 
     foreach ($steps as $step) {
