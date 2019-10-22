@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/CiviAwards</base>
+  <class>AwardDetail</class>
+  <name>civicrm_civiawards_award_detail</name>
+  <comment>Store Award Details</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique AwardDetails ID</comment>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>case_type_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Case Type</comment>
+    <required>true</required>
+  </field>
+  <foreignKey>
+    <name>case_type_id</name>
+    <table>civicrm_case_type</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>award_type</name>
+    <title>Award Type</title>
+    <type>varchar</type>
+    <length>30</length>
+    <comment>One of the values of the award_type option group</comment>
+    <required>true</required>
+    <pseudoconstant>
+      <optionGroupName>civiawards_award_type</optionGroupName>
+    </pseudoconstant>
+  </field>
+
+  <field>
+    <name>start_date</name>
+    <title>Start Date</title>
+    <type>date</type>
+    <comment>Award Start Date</comment>
+    <required>true</required>
+  </field>
+
+  <field>
+    <name>end_date</name>
+    <title>End Date</title>
+    <type>date</type>
+    <comment>Award End Date</comment>
+  </field>
+
+  <field>
+    <name>profile_id</name>
+    <type>int unsigned</type>
+    <comment>FK to UF Group</comment>
+  </field>
+  <foreignKey>
+    <name>profile_id</name>
+    <table>civicrm_uf_group</table>
+    <key>id</key>
+  </foreignKey>
+
+</table>
