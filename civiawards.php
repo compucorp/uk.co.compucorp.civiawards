@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * CiviAwards Extention.
+ */
+
 require_once 'civiawards.civix.php';
 
 /**
@@ -138,6 +143,13 @@ function civiawards_civicrm_entityTypes(&$entityTypes) {
  */
 function civiawards_civicrm_themes(&$themes) {
   _civiawards_civix_civicrm_themes($themes);
+}
+
+/**
+ * Implements addCiviCaseDependentAngularModules().
+ */
+function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
+  $dependentModules[] = "civiawards";
 }
 
 // --- Functions below this ship commented out. Uncomment as required. ---
