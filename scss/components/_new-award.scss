@@ -1,11 +1,11 @@
 .civiawards__new-award {
-  > .panel-body{
+  > .panel-body {
     padding-bottom: 0;
   }
 }
 
 .civiawards__new-award__basic-details {
-  input,
+  input:not([type='checkbox']),
   textarea {
     width: 250px;
   }

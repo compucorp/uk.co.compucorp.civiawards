@@ -5,17 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "precommit": "lint-staged",
     "postinstall": "cd bin && chmod +x ./install-php-linter && ./install-php-linter"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/compucorp/uk.co.compucorp.civiawards.git"
-  },
-  "lint-staged": {
-    "*.php": [
-      "./bin/phpcs.phar --standard=phpcs-ruleset.xml"
-    ]
   },
   "author": "Compucorp <info@compucorp.co.uk>",
   "license": "GNU Affero Public License 3.0",
