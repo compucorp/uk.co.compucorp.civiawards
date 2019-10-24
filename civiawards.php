@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Extension file.
+ */
+
 require_once 'civiawards.civix.php';
 
 /**
@@ -134,36 +139,11 @@ function civiawards_civicrm_entityTypes(&$entityTypes) {
 }
 
 /**
- * Implements hook_civicrm_thems().
+ * Implements hook_civicrm_apiWrappers().
  */
-function civiawards_civicrm_themes(&$themes) {
-  _civiawards_civix_civicrm_themes($themes);
+function civiawards_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  if ($apiRequest['entity'] == 'AwardDetail') {
+    $wrappers[] = new CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields();
+  }
+
 }
-
-// --- Functions below this ship commented out. Uncomment as required. ---
-
-/**
- * Implements hook_civicrm_preProcess().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_preProcess
- *
- * function civiawards_civicrm_preProcess($formName, &$form) {
- *
- * } // */
-
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
- *
- * function civiawards_civicrm_navigationMenu(&$menu) {
- * _civiawards_civix_insert_navigation_menu($menu, 'Mailings', array(
- * 'label' => E::ts('New subliminal message'),
- * 'name' => 'mailing_subliminal_message',
- * 'url' => 'civicrm/mailing/subliminal',
- * 'permission' => 'access CiviMail',
- * 'operator' => 'OR',
- * 'separator' => 0,
- * ));
- * _civiawards_civix_navigationMenu($menu);
- * } // */
