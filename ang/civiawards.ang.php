@@ -20,7 +20,7 @@ function get_awards_js_files() {
 return [
   'js' => get_awards_js_files(),
   'css' => [
-    0 => 'ang/civiawards.css',
+    0 => 'css/civiawards.min.css',
   ],
   'requires' => [
     'ngRoute',
