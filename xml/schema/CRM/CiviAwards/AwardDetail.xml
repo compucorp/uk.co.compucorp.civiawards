@@ -20,6 +20,7 @@
 
   <field>
     <name>case_type_id</name>
+    <title>Case Type ID</title>
     <type>int unsigned</type>
     <comment>FK to Case Type</comment>
     <required>true</required>
@@ -60,6 +61,7 @@
 
   <field>
     <name>profile_id</name>
+    <title>Profile ID</title>
     <type>int unsigned</type>
     <comment>FK to UF Group</comment>
   </field>
@@ -68,5 +70,11 @@
     <table>civicrm_uf_group</table>
     <key>id</key>
   </foreignKey>
+
+  <index>
+    <name>unique_case_type</name>
+    <fieldName>case_type_id</fieldName>
+    <unique>true</unique>
+  </index>
 
 </table>

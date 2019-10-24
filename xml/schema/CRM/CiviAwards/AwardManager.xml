@@ -42,4 +42,11 @@
     <key>id</key>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
+
+  <index>
+    <name>unique_case_type_manager</name>
+    <fieldName>contact_id</fieldName>
+    <fieldName>case_type_id</fieldName>
+    <unique>true</unique>
+  </index>
 </table>

@@ -34,6 +34,7 @@ CREATE TABLE `civicrm_civiawards_award_detail` (
      `end_date` date    COMMENT 'Award End Date',
      `profile_id` int unsigned    COMMENT 'FK to UF Group',
     PRIMARY KEY (`id`),
+    UNIQUE INDEX `unique_case_type`(case_type_id),
     CONSTRAINT FK_civicrm_civiawards_award_detail_case_type_id FOREIGN KEY (`case_type_id`) REFERENCES `civicrm_case_type`(`id`) ON DELETE CASCADE,
     CONSTRAINT FK_civicrm_civiawards_award_detail_profile_id FOREIGN KEY (`profile_id`) REFERENCES `civicrm_uf_group`(`id`)
 );
@@ -50,6 +51,7 @@ CREATE TABLE `civicrm_civiawards_award_manager` (
      `contact_id` int unsigned NOT NULL   COMMENT 'FK to Contact',
      `case_type_id` int unsigned NOT NULL   COMMENT 'FK to Case Type',
     PRIMARY KEY (`id`),
-    CONSTRAINT FK_civicrm_civiawards_award_manager_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`),
+    UNIQUE INDEX `unique_case_type_manager`(contact_id, case_type_id),
+    CONSTRAINT FK_civicrm_civiawards_award_manager_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ,
     CONSTRAINT FK_civicrm_civiawards_award_manager_case_type_id FOREIGN KEY (`case_type_id`) REFERENCES `civicrm_case_type`(`id`) ON DELETE CASCADE
 );
