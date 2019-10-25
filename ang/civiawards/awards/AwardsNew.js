@@ -7,16 +7,16 @@
     $scope.ts = ts;
     $scope.title = 'New Award';
     $scope.activityTypes = [
-      { id: '1', text: ts('Activity Type 1') },
-      { id: '2', text: ts('Activity Type 2') }
+      {id: '1', text: ts('Activity Type 1')},
+      {id: '2', text: ts('Activity Type 2')}
     ];
     $scope.awardManagers = [
-      { id: '1', text: ts('Award Manager 1') },
-      { id: '2', text: ts('Award Manager 2') }
+      {id: '1', text: ts('Award Manager 1')},
+      {id: '2', text: ts('Award Manager 2')}
     ];
     $scope.tabs = [
-      { name: 'stages', label: ts('Award Stages') },
-      { name: 'additionaltab', label: ts('Additional Tab') }
+      {name: 'stages', label: ts('Award Stages')},
+      {name: 'additionaltab', label: ts('Additional Tab')}
     ];
 
     $scope.activeTab = $scope.tabs[0].name;
@@ -27,7 +27,7 @@
      *
      * @param {string} tab tab name
      */
-    function selectTab (tab) {
+    function selectTab(tab) {
       $scope.activeTab = tab;
     }
   });

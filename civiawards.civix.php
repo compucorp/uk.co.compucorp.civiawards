@@ -83,7 +83,7 @@ use CRM_CiviAwards_ExtensionUtil as E;
 /**
  * (Delegated) Implements hook_civicrm_config().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
 function _civiawards_civix_civicrm_config(&$config = NULL) {
   static $configured = FALSE;
@@ -113,7 +113,7 @@ function _civiawards_civix_civicrm_config(&$config = NULL) {
  *
  * @param $files array(string)
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_xmlMenu
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
 function _civiawards_civix_civicrm_xmlMenu(&$files) {
   foreach (_civiawards_civix_glob(__DIR__ . '/xml/Menu/*.xml') as $file) {
@@ -124,7 +124,7 @@ function _civiawards_civix_civicrm_xmlMenu(&$files) {
 /**
  * Implements hook_civicrm_install().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_install
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
 function _civiawards_civix_civicrm_install() {
   _civiawards_civix_civicrm_config();
@@ -136,7 +136,7 @@ function _civiawards_civix_civicrm_install() {
 /**
  * Implements hook_civicrm_postInstall().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postInstall
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_postInstall
  */
 function _civiawards_civix_civicrm_postInstall() {
   _civiawards_civix_civicrm_config();
@@ -150,7 +150,7 @@ function _civiawards_civix_civicrm_postInstall() {
 /**
  * Implements hook_civicrm_uninstall().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_uninstall
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
  */
 function _civiawards_civix_civicrm_uninstall() {
   _civiawards_civix_civicrm_config();
@@ -162,7 +162,7 @@ function _civiawards_civix_civicrm_uninstall() {
 /**
  * (Delegated) Implements hook_civicrm_enable().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_enable
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
 function _civiawards_civix_civicrm_enable() {
   _civiawards_civix_civicrm_config();
@@ -176,7 +176,7 @@ function _civiawards_civix_civicrm_enable() {
 /**
  * (Delegated) Implements hook_civicrm_disable().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_disable
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
  * @return mixed
  */
 function _civiawards_civix_civicrm_disable() {
@@ -197,7 +197,7 @@ function _civiawards_civix_civicrm_disable() {
  * @return mixed  based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
  *                for 'enqueue', returns void
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_upgrade
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
 function _civiawards_civix_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
   if ($upgrader = _civiawards_civix_upgrader()) {
@@ -255,13 +255,12 @@ function _civiawards_civix_find_files($dir, $pattern) {
   }
   return $result;
 }
-
 /**
  * (Delegated) Implements hook_civicrm_managed().
  *
  * Find any *.mgd.php files, merge their content, and return.
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_managed
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
  */
 function _civiawards_civix_civicrm_managed(&$entities) {
   $mgdFiles = _civiawards_civix_find_files(__DIR__, '*.mgd.php');
@@ -287,7 +286,7 @@ function _civiawards_civix_civicrm_managed(&$entities) {
  *
  * Note: This hook only runs in CiviCRM 4.4+.
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_caseTypes
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
 function _civiawards_civix_civicrm_caseTypes(&$caseTypes) {
   if (!is_dir(__DIR__ . '/xml/case')) {
@@ -301,11 +300,11 @@ function _civiawards_civix_civicrm_caseTypes(&$caseTypes) {
       CRM_Core_Error::fatal($errorMessage);
       // throw new CRM_Core_Exception($errorMessage);
     }
-    $caseTypes[$name] = [
+    $caseTypes[$name] = array(
       'module' => E::LONG_NAME,
       'name' => $name,
       'file' => $file,
-    ];
+    );
   }
 }
 
@@ -316,7 +315,7 @@ function _civiawards_civix_civicrm_caseTypes(&$caseTypes) {
  *
  * Note: This hook only runs in CiviCRM 4.5+.
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_angularModules
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_angularModules
  */
 function _civiawards_civix_civicrm_angularModules(&$angularModules) {
   if (!is_dir(__DIR__ . '/ang')) {
@@ -331,25 +330,6 @@ function _civiawards_civix_civicrm_angularModules(&$angularModules) {
       $module['ext'] = E::LONG_NAME;
     }
     $angularModules[$name] = $module;
-  }
-}
-
-/**
- * (Delegated) Implements hook_civicrm_themes().
- *
- * Find any and return any files matching "*.theme.php"
- */
-function _civiawards_civix_civicrm_themes(&$themes) {
-  $files = _civiawards_civix_glob(__DIR__ . '/*.theme.php');
-  foreach ($files as $file) {
-    $themeMeta = include $file;
-    if (empty($themeMeta['name'])) {
-      $themeMeta['name'] = preg_replace(':\.theme\.php$:', '', basename($file));
-    }
-    if (empty($themeMeta['ext'])) {
-      $themeMeta['ext'] = E::LONG_NAME;
-    }
-    $themes[$themeMeta['name']] = $themeMeta;
   }
 }
 
@@ -382,12 +362,12 @@ function _civiawards_civix_glob($pattern) {
 function _civiawards_civix_insert_navigation_menu(&$menu, $path, $item) {
   // If we are done going down the path, insert menu
   if (empty($path)) {
-    $menu[] = [
-      'attributes' => array_merge([
+    $menu[] = array(
+      'attributes' => array_merge(array(
         'label' => CRM_Utils_Array::value('name', $item),
         'active' => 1,
-      ], $item),
-    ];
+      ), $item),
+    );
     return TRUE;
   }
   else {
@@ -411,7 +391,7 @@ function _civiawards_civix_insert_navigation_menu(&$menu, $path, $item) {
  * (Delegated) Implements hook_civicrm_navigationMenu().
  */
 function _civiawards_civix_navigationMenu(&$nodes) {
-  if (!is_callable(['CRM_Core_BAO_Navigation', 'fixNavigationMenu'])) {
+  if (!is_callable(array('CRM_Core_BAO_Navigation', 'fixNavigationMenu'))) {
     _civiawards_civix_fixNavigationMenu($nodes);
   }
 }
@@ -453,11 +433,17 @@ function _civiawards_civix_fixNavigationMenuItems(&$nodes, &$maxNavID, $parentID
 /**
  * (Delegated) Implements hook_civicrm_alterSettingsFolders().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterSettingsFolders
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
  */
 function _civiawards_civix_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
+  static $configured = FALSE;
+  if ($configured) {
+    return;
+  }
+  $configured = TRUE;
+
   $settingsDir = __DIR__ . DIRECTORY_SEPARATOR . 'settings';
-  if (!in_array($settingsDir, $metaDataFolders) && is_dir($settingsDir)) {
+  if (is_dir($settingsDir) && !in_array($settingsDir, $metaDataFolders)) {
     $metaDataFolders[] = $settingsDir;
   }
 }
@@ -467,10 +453,22 @@ function _civiawards_civix_civicrm_alterSettingsFolders(&$metaDataFolders = NULL
  *
  * Find any *.entityType.php files, merge their content, and return.
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_entityTypes
  */
 
 function _civiawards_civix_civicrm_entityTypes(&$entityTypes) {
   $entityTypes = array_merge($entityTypes, [
+    'CRM_CiviAwards_DAO_AwardDetail' =>
+      [
+        'name' => 'AwardDetail',
+        'class' => 'CRM_CiviAwards_DAO_AwardDetail',
+        'table' => 'civicrm_award_detail',
+      ],
+    'CRM_CiviAwards_DAO_AwardManager' =>
+      [
+        'name' => 'AwardManager',
+        'class' => 'CRM_CiviAwards_DAO_AwardManager',
+        'table' => 'civicrm_award_manager',
+      ],
   ]);
 }
