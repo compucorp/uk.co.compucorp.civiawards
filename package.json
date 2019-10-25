@@ -5,17 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "precommit": "lint-staged",
     "postinstall": "cd bin && chmod +x ./install-php-linter && ./install-php-linter"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/compucorp/uk.co.compucorp.civiawards.git"
-  },
-  "lint-staged": {
-    "*.php": [
-      "./bin/phpcs.phar --standard=phpcs-ruleset.xml"
-    ]
   },
   "author": "Compucorp <info@compucorp.co.uk>",
   "license": "GNU Affero Public License 3.0",
@@ -24,6 +18,7 @@
   },
   "homepage": "https://github.com/compucorp/uk.co.compucorp.civiawards#readme",
   "devDependencies": {
+    "civicrm-scssroot": "git://github.com/totten/civicrm-scssroot.git#v0.1.1",
     "eslint": "^6.5.1",
     "eslint-config-semistandard": "^15.0.0",
     "eslint-config-standard": "^14.1.0",
@@ -32,7 +27,23 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^7.0.1",
+    "gulp-clean-css": "^4.2.0",
+    "gulp-file": "^0.4.0",
+    "gulp-notify": "^3.2.0",
+    "gulp-postcss": "^8.0.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-sass-glob": "^1.1.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-strip-css-comments": "^2.0.0",
+    "gulp-transform-selectors": "0.0.2",
     "husky": "^3.0.9",
-    "lint-staged": "^9.4.2"
+    "lint-staged": "^9.4.2",
+    "postcss-discard-duplicates": "^4.0.2",
+    "postcss-prefix-selector": "^1.7.2",
+    "stylelint": "^11.1.1",
+    "stylelint-config-sass-guidelines": "^6.1.0"
   }
 }
