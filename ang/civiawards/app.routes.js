@@ -3,8 +3,7 @@
 
   module.config(function ($routeProvider) {
     $routeProvider.when('/awards/new', {
-      controller: 'CiviawardsAwardsNew',
-      templateUrl: '~/civiawards/awards/AwardsNew.html'
+      template: '<civiaward></civiaward>'
     });
   });
 })(angular, CRM.$, CRM._);
