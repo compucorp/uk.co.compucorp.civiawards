@@ -3,6 +3,9 @@
 
   module.directive('civiaward', function () {
     return {
+      scope: {
+        awardId: '='
+      },
       controller: 'CiviAwardCreateEditAward',
       templateUrl: '~/civiawards/directives/award.directive.html',
       restrict: 'E'
@@ -16,6 +19,7 @@
     $scope.submitInProgress = false;
     $scope.title = 'New Award';
     $scope.awardTypes = [];
+    $scope.awardDetailsID = null;
     $scope.awardStages = CaseStatus.getAll();
     $scope.tabs = [
       { name: 'stages', label: ts('Award Stages') },
@@ -38,9 +42,62 @@
 
     (function init () {
       $scope.activeTab = $scope.tabs[0].name;
-      enableAllAwardStage();
+
       mapAwardTypes();
+
+      if ($scope.awardId) {
+        fetchAwardInformation()
+          .then(function (result) {
+            setBasicDetails(result.caseType);
+            setAdditionalInformation(result.additionalDetails);
+          });
+      } else {
+        enableAllAwardStage();
+      }
     }());
+
+    /**
+     * Set basic details
+     *
+     * @param {object} caseType case type
+     */
+    function setBasicDetails (caseType) {
+      $scope.basicDetails.title = caseType.title;
+      $scope.basicDetails.description = caseType.description;
+      $scope.basicDetails.isEnabled = caseType.is_active === '1';
+
+      _.each(caseType.definition.statuses, function (stageName) {
+        var awargStage = _.find($scope.awardStages, function (stage) {
+          return stage.name === stageName;
+        });
+        $scope.basicDetails.selectedAwardStages[awargStage.value] = true;
+      });
+    }
+
+    /**
+     * Set Additional Details of award
+     *
+     * @param {object} additionalDetails additional details
+     */
+    function setAdditionalInformation (additionalDetails) {
+      $scope.awardDetailsID = additionalDetails.id;
+      $scope.basicDetails.startDate = additionalDetails.start_date;
+      $scope.basicDetails.endDate = additionalDetails.end_date;
+      $scope.basicDetails.awardType = additionalDetails.award_type;
+      $scope.basicDetails.awardManagers = additionalDetails.award_manager.toString();
+    }
+
+    /**
+     * Fetch Exisiting Awards Information
+     *
+     * @returns {Promise} promise
+     */
+    function fetchAwardInformation () {
+      return crmApi({
+        caseType: ['CaseType', 'getsingle', { sequential: true, id: $scope.awardId }],
+        additionalDetails: ['AwardDetail', 'getsingle', { sequential: true, case_type_id: $scope.awardId }]
+      });
+    }
 
     /**
      * Map Award Types to be used in the UI
@@ -106,6 +163,10 @@
         }
       });
 
+      if ($scope.awardId) {
+        params.id = $scope.awardId;
+      }
+
       params.sequential = true;
       params.title = $scope.basicDetails.title;
       params.description = $scope.basicDetails.description;
@@ -132,6 +193,10 @@
         end_date: $scope.basicDetails.endDate,
         award_type: $scope.basicDetails.awardType
       };
+
+      if ($scope.awardDetailsID) {
+        additionalAwardDetails.id = $scope.awardDetailsID;
+      }
 
       return crmApi('AwardDetail', 'create', additionalAwardDetails);
     }
