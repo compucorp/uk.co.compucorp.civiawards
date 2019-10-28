@@ -16,6 +16,7 @@
     var ts = CRM.ts('civicase');
 
     $scope.ts = ts;
+    $scope.isNameDisabled = true;
     $scope.submitInProgress = false;
     $scope.awardTypes = [];
     $scope.awardDetailsID = null;
@@ -44,6 +45,8 @@
 
       mapAwardTypes();
 
+      $scope.$watch('basicDetails.title', titleWatcher);
+
       if ($scope.awardId) {
         fetchAwardInformation()
           .then(function (result) {
@@ -56,12 +59,22 @@
     }());
 
     /**
+     * Watcher for Title form field
+     */
+    function titleWatcher () {
+      if (!$scope.awardId && $scope.basic_details_form.awardName.$pristine) {
+        $scope.basicDetails.name = $scope.basicDetails.title.replace(/ /g, '_').replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
+      }
+    }
+
+    /**
      * Set basic details
      *
      * @param {object} caseType case type
      */
     function setBasicDetails (caseType) {
       $scope.basicDetails.title = caseType.title;
+      $scope.basicDetails.name = caseType.name;
       $scope.basicDetails.description = caseType.description;
       $scope.basicDetails.isEnabled = caseType.is_active === '1';
 
@@ -171,7 +184,7 @@
       params.description = $scope.basicDetails.description;
       params.is_active = $scope.basicDetails.isEnabled;
       params.case_type_category = awardsCaseTypeCategoryValue;
-      params.name = params.title.replace(/ /g, '_').replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
+      params.name = $scope.basicDetails.name;
       params.definition = {};
       params.definition.statuses = selectedAwardStages.length === _.size($scope.awardStages) ? [] : selectedAwardStages;
 

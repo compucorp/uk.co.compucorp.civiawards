@@ -30,3 +30,13 @@
 .civiawards__new-award__new-status {
   padding: 0;
 }
+
+.civiawards__new-award__name-field-container {
+  input {
+    display: inline-block;
+  }
+
+  .fa {
+    color: $brand-primary;
+  }
+}
