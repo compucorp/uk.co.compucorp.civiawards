@@ -17,7 +17,6 @@
 
     $scope.ts = ts;
     $scope.submitInProgress = false;
-    $scope.title = 'New Award';
     $scope.awardTypes = [];
     $scope.awardDetailsID = null;
     $scope.awardStages = CaseStatus.getAll();
