@@ -24,6 +24,7 @@ return [
   ],
   'requires' => [
     'ngRoute',
+    'civicase-base',
   ],
   'partials' => [
     0 => 'ang/civiawards',

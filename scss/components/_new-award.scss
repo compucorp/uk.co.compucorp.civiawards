@@ -9,6 +9,11 @@
   textarea {
     width: 250px;
   }
+
+  .ng-invalid:not(.ng-untouched),
+  .ng-invalid:not(.ng-pristine) { //for crm-ui-select
+    border-color: $brand-danger;
+  }
 }
 
 .civiawards__new-award__tab-container {
