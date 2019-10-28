@@ -8,6 +8,12 @@
  * http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_angularModules.
  */
 
+$options = [
+  'awardTypes' => 'civiawards_award_type',
+];
+
+set_option_values_to_js_vars($options);
+
 /**
  * Get a list of JS files.
  */
@@ -22,6 +28,7 @@ return [
   'css' => [
     0 => 'css/civiawards.min.css',
   ],
+  'settings' => $options,
   'requires' => [
     'ngRoute',
     'civicase-base',

@@ -1,15 +1,13 @@
 (function (angular, $, _) {
   var module = angular.module('civiawards');
 
-  module.controller('CiviawardsAwardsNew', function ($scope, CaseStatus) {
+  module.controller('CiviawardsAwardsNew', function ($scope, CaseStatus, AwardTypes) {
     var ts = CRM.ts('civicase');
 
     $scope.ts = ts;
     $scope.title = 'New Award';
-    $scope.activityTypes = [
-      { id: '1', text: ts('Activity Type 1') },
-      { id: '2', text: ts('Activity Type 2') }
-    ];
+    $scope.awardTypes = [];
+    $scope.awardStages = CaseStatus.getAll();
     $scope.tabs = [
       { name: 'stages', label: ts('Award Stages') },
       { name: 'additionaltab', label: ts('Additional Tab') }
@@ -18,23 +16,31 @@
       title: '',
       description: '',
       awardType: null,
-      isEnabled: false,
+      isEnabled: true,
       startDate: null,
       endDate: null,
       awardManagers: [],
       selectedAwardStages: {}
     };
 
-    $scope.activeTab = $scope.tabs[0].name;
-    $scope.awardStages = CaseStatus.getAll();
-
     $scope.createNewAwardStage = createNewAwardStage;
     $scope.saveAward = saveAward;
     $scope.selectTab = selectTab;
 
     (function init () {
+      $scope.activeTab = $scope.tabs[0].name;
       enableAllAwardStage();
+      mapAwardTypes();
     }());
+
+    /**
+     * Map Award Types to be used in the UI
+     */
+    function mapAwardTypes () {
+      _.each(AwardTypes.getAll(), function (awardType) {
+        $scope.awardTypes.push({ id: awardType.value, text: awardType.label });
+      });
+    }
     /**
      * Selects a tab as active
      *
@@ -56,7 +62,7 @@
      * Save Award
      */
     function saveAward () {
-      console.log($scope.basicDetails.selectedAwardStages);
+      console.log($scope.basicDetails);
     }
 
     /**
