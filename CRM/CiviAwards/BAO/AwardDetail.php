@@ -20,7 +20,8 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
     $entityName = 'AwardDetail';
     $hook = empty($params['id']) ? 'create' : 'edit';
     self::validateParams($params);
-
+    // We don't want this to be updated via API.
+    unset($params['profile_id']);
     CRM_Utils_Hook::pre($hook, $entityName, CRM_Utils_Array::value('id', $params), $params);
     $instance = new self();
     $instance->copyValues($params);

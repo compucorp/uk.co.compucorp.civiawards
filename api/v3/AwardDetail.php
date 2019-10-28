@@ -17,6 +17,12 @@ function _civicrm_api3_award_detail_create_spec(array &$spec) {
     'description' => 'An array of Contact IDs',
     'type' => CRM_Utils_Type::T_STRING,
   ];
+
+  $spec['review_fields'] = [
+    'title' => 'Award review fields',
+    'description' => 'An array of Custom field IDs',
+    'type' => CRM_Utils_Type::T_STRING,
+  ];
 }
 
 /**
@@ -29,7 +35,12 @@ function _civicrm_api3_award_detail_create_spec(array &$spec) {
  *   API result descriptor
  */
 function civicrm_api3_award_detail_create(array $params) {
-  $params['award_manager'] = getParameterValue($params, 'award_manager');
+  $extraFields = ['award_manager', 'review_fields'];
+  foreach ($extraFields as $field) {
+    if (isset($params['field'])) {
+      $params[$field] = getParameterValue($params, $field);
+    }
+  }
   return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
@@ -43,10 +54,12 @@ function civicrm_api3_award_detail_create(array $params) {
  *   API result descriptor
  */
 function civicrm_api3_award_detail_delete(array $params) {
+  $awardDetail = CRM_CiviAwards_BAO_AwardDetail::findById($params['id']);
+  $result = _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
   $awardDetailService = new CRM_CiviAwards_Service_AwardDetail();
-  $awardDetailService->deleteDependencies($params['id']);
+  $awardDetailService->deleteDependencies($awardDetail);
 
-  return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+  return $result;
 }
 
 /**
