@@ -90,11 +90,14 @@ class CRM_CiviAwards_Service_AwardProfile {
    *   Profile fields.
    */
   public function getProfileFields($profileID) {
+    if (empty($profileID)) {
+      return [];
+    }
     $result = civicrm_api3('UFField', 'get', [
       'uf_group_id' => $profileID,
     ]);
 
-    if ($result['count'] == 0 || empty($profileID)) {
+    if ($result['count'] == 0) {
       return [];
     }
 
