@@ -12,7 +12,7 @@
     };
   });
 
-  module.controller('CiviAwardCreateEditAward', function ($scope, $window, crmApi, getSelect2Value, CaseStatus, AwardTypes, CaseTypeCategory) {
+  module.controller('CiviAwardCreateEditAward', function ($scope, $window, crmApi, getSelect2Value, CaseStatus, AwardType, CaseTypeCategory) {
     var ts = CRM.ts('civicase');
 
     $scope.ts = ts;
@@ -115,7 +115,7 @@
      * Map Award Types to be used in the UI
      */
     function mapAwardTypes () {
-      _.each(AwardTypes.getAll(), function (awardType) {
+      _.each(AwardType.getAll(), function (awardType) {
         $scope.awardTypes.push({ id: awardType.value, text: awardType.label, name: awardType.name });
       });
     }

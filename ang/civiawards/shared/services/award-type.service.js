@@ -1,12 +1,12 @@
 (function (angular, $, _, CRM) {
   var module = angular.module('civiawards');
 
-  module.service('AwardTypes', AwardTypes);
+  module.service('AwardType', AwardType);
 
   /**
    * Award Types Service
    */
-  function AwardTypes () {
+  function AwardType () {
     this.getAll = function () {
       return CRM.civiawards.awardTypes;
     };
