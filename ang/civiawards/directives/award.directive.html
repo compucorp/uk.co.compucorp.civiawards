@@ -1,5 +1,5 @@
 <div id="bootstrap-theme">
-  <h1 crm-page-title>{{basicDetails.title ? basicDetails.title : 'New Award'}}</h1>
+  <h1 crm-page-title>{{awardId ? basicDetails.title : 'New Award'}}</h1>
   <div class="panel panel-default civiawards__new-award">
     <div class="panel-body">
       <!-- Basic Details Form -->
@@ -51,11 +51,11 @@
           </label>
           <div class="col-sm-5">
             <input class="form-control"
-              ng-model="basicDetails.awardType"
+              ng-model="additionalDetails.awardType"
               crm-ui-select="{
                 allowClear: true,
                 placeholder: 'Award Type',
-                data: awardTypes
+                data: awardTypeSelect2Options
               }"
               required
               ng-minlength="1"
@@ -73,7 +73,7 @@
           <div class="col-sm-5">
             <input
               crm-ui-datepicker="{time: false}"
-              ng-model="basicDetails.startDate" ng-placeholder="ts('Start Date')"/>
+              ng-model="additionalDetails.startDate" ng-placeholder="ts('Start Date')"/>
           </div>
         </div>
         <div class="form-group">
@@ -81,7 +81,7 @@
           <div class="col-sm-5">
             <input
               crm-ui-datepicker="{time: false}"
-              ng-model="basicDetails.endDate" ng-placeholder="ts('End Date')"/>
+              ng-model="additionalDetails.endDate" ng-placeholder="ts('End Date')"/>
           </div>
         </div>
         <div class="form-group">
@@ -90,7 +90,7 @@
           </label>
           <div class="col-sm-5">
             <input class="form-control"
-              ng-model="basicDetails.awardManagers"
+              ng-model="additionalDetails.awardManagers"
               placeholder="Award Manager"
               crm-entityref="{
                 entity: 'Contact',

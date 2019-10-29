@@ -1,19 +1,19 @@
 /* eslint-env jasmine */
 (function ($) {
   describe('AwardType', function () {
-    var AwardType, AwardTypeData;
+    var AwardType, AwardTypeMockData;
 
     beforeEach(module('civiawards', 'civiawards.data'));
 
     describe('DateHelper', () => {
-      beforeEach(inject((_AwardType_, _AwardTypeData_) => {
+      beforeEach(inject((_AwardType_, _AwardTypeMockData_) => {
         AwardType = _AwardType_;
-        AwardTypeData = _AwardTypeData_;
+        AwardTypeMockData = _AwardTypeMockData_;
       }));
 
       describe('getAll()', () => {
         it('returns all the award types', () => {
-          expect(AwardType.getAll()).toBe(AwardTypeData);
+          expect(AwardType.getAll()).toBe(AwardTypeMockData);
         });
       });
     });

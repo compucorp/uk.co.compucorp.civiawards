@@ -1,7 +1,7 @@
 (function () {
   var module = angular.module('civiawards.data');
 
-  module.constant('AwardData', {
+  module.constant('AwardMockData', {
     id: '10',
     name: 'new_award',
     title: 'New Award',

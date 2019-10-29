@@ -40,5 +40,5 @@
     }
   };
 
-  module.constant('AwardTypeData', CRM.civiawards.awardTypes);
+  module.constant('AwardTypeMockData', CRM.civiawards.awardTypes);
 }());

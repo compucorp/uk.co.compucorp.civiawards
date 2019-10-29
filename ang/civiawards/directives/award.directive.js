@@ -18,7 +18,7 @@
     $scope.ts = ts;
     $scope.isNameDisabled = true;
     $scope.submitInProgress = false;
-    $scope.awardTypes = [];
+    $scope.awardTypeSelect2Options = [];
     $scope.awardDetailsID = null;
     $scope.awardStages = CaseStatus.getAll();
     $scope.tabs = [
@@ -29,12 +29,14 @@
       title: '',
       name: '',
       description: '',
-      awardType: null,
       isEnabled: true,
+      selectedAwardStages: {}
+    };
+    $scope.additionalDetails = {
+      awardType: null,
       startDate: null,
       endDate: null,
-      awardManagers: [],
-      selectedAwardStages: {}
+      awardManagers: []
     };
 
     $scope.createNewAwardStage = createNewAwardStage;
@@ -43,8 +45,7 @@
 
     (function init () {
       $scope.activeTab = $scope.tabs[0].name;
-
-      mapAwardTypes();
+      $scope.awardTypeSelect2Options = getAwardTypeSelect2Options();
 
       $scope.$watch('basicDetails.title', titleWatcher);
 
@@ -55,7 +56,7 @@
             setAdditionalInformation(result.additionalDetails);
           });
       } else {
-        enableAllAwardStage();
+        enableAllAwardStages();
       }
     }());
 
@@ -79,7 +80,16 @@
       $scope.basicDetails.description = caseType.description;
       $scope.basicDetails.isEnabled = caseType.is_active === '1';
 
-      _.each(caseType.definition.statuses, function (stageName) {
+      setAwardStages(caseType.definition.statuses);
+    }
+
+    /**
+     * get Selected Award stages
+     *
+     * @param {Array} awardStages award stages fetched from api
+     */
+    function setAwardStages (awardStages) {
+      _.each(awardStages, function (stageName) {
         var awardStage = _.find($scope.awardStages, function (stage) {
           return stage.name === stageName;
         });
@@ -94,10 +104,10 @@
      */
     function setAdditionalInformation (additionalDetails) {
       $scope.awardDetailsID = additionalDetails.id;
-      $scope.basicDetails.startDate = additionalDetails.start_date;
-      $scope.basicDetails.endDate = additionalDetails.end_date;
-      $scope.basicDetails.awardType = additionalDetails.award_type;
-      $scope.basicDetails.awardManagers = additionalDetails.award_manager.toString();
+      $scope.additionalDetails.startDate = additionalDetails.start_date;
+      $scope.additionalDetails.endDate = additionalDetails.end_date;
+      $scope.additionalDetails.awardType = additionalDetails.award_type;
+      $scope.additionalDetails.awardManagers = additionalDetails.award_manager.join();
     }
 
     /**
@@ -113,11 +123,13 @@
     }
 
     /**
-     * Map Award Types to be used in the UI
+     * Returns Award Types to be used in the UI
+     *
+     * @returns {Array} award types array in a format suitable for select 2
      */
-    function mapAwardTypes () {
-      _.each(AwardType.getAll(), function (awardType) {
-        $scope.awardTypes.push({ id: awardType.value, text: awardType.label, name: awardType.name });
+    function getAwardTypeSelect2Options () {
+      return _.map(AwardType.getAll(), function (awardType) {
+        return { id: awardType.value, text: awardType.label, name: awardType.name };
       });
     }
     /**
@@ -132,7 +144,7 @@
     /**
      * Enable All Award Stages
      */
-    function enableAllAwardStage () {
+    function enableAllAwardStages () {
       _.each($scope.awardStages, function (awardStage) {
         $scope.basicDetails.selectedAwardStages[awardStage.value] = true;
       });
@@ -144,9 +156,7 @@
     function saveAward () {
       $scope.submitInProgress = true;
       saveCaseTypeBasicDetails()
-        .then(function (data) {
-          return saveAdditionAwardDetails(data.values[0]);
-        })
+        .then(saveAdditionAwardDetails)
         .then(function () {
           $window.location.href = '/civicrm/case/a/?case_type_category=awards#/case?case_type_category=awards';
         })
@@ -164,33 +174,32 @@
      * @returns {Promise} promise
      */
     function saveCaseTypeBasicDetails () {
-      var params = {};
-      var selectedAwardStages = [];
-
-      var awardsCaseTypeCategoryValue = _.find(CaseTypeCategory.getAll(), function (category) {
-        return category.name === 'awards';
-      }).value;
-
-      _.each($scope.basicDetails.selectedAwardStages, function (value, key) {
-        if (value) {
-          selectedAwardStages.push($scope.awardStages[key].name);
+      var selectedAwardStageNames = _.chain($scope.awardStages)
+        .filter(function (stage) {
+          return $scope.basicDetails.selectedAwardStages[stage.value];
+        })
+        .map(function (stage) { return stage.name; })
+        .value();
+      var areAllAwardsSelected = selectedAwardStageNames.length === _.size($scope.awardStages);
+      var params = {
+        sequential: true,
+        title: $scope.basicDetails.title,
+        description: $scope.basicDetails.description,
+        is_active: $scope.basicDetails.isEnabled,
+        case_type_category: CaseTypeCategory.findByName('awards').value,
+        name: $scope.basicDetails.name,
+        definition: {
+          statuses: areAllAwardsSelected ? [] : selectedAwardStageNames
         }
-      });
+      };
 
       if ($scope.awardId) {
         params.id = $scope.awardId;
       }
 
-      params.sequential = true;
-      params.title = $scope.basicDetails.title;
-      params.description = $scope.basicDetails.description;
-      params.is_active = $scope.basicDetails.isEnabled;
-      params.case_type_category = awardsCaseTypeCategoryValue;
-      params.name = $scope.basicDetails.name;
-      params.definition = {};
-      params.definition.statuses = selectedAwardStages.length === _.size($scope.awardStages) ? [] : selectedAwardStages;
-
-      return crmApi('CaseType', 'create', params);
+      return crmApi('CaseType', 'create', params).then(function (caseTypeData) {
+        return caseTypeData.values[0];
+      });
     }
 
     /**
@@ -201,11 +210,11 @@
      */
     function saveAdditionAwardDetails (award) {
       var additionalAwardDetails = {
-        award_manager: getSelect2Value($scope.basicDetails.awardManagers),
+        award_manager: getSelect2Value($scope.additionalDetails.awardManagers),
         case_type_id: award.id,
-        start_date: $scope.basicDetails.startDate,
-        end_date: $scope.basicDetails.endDate,
-        award_type: $scope.basicDetails.awardType
+        start_date: $scope.additionalDetails.startDate,
+        end_date: $scope.additionalDetails.endDate,
+        award_type: $scope.additionalDetails.awardType
       };
 
       if ($scope.awardDetailsID) {
@@ -221,7 +230,7 @@
     function createNewAwardStage () {
       CRM.loadForm(CRM.url('civicrm/admin/options/case_status',
         { action: 'add', reset: 1 }))
-        .on('crmFormSuccess', function (e, data) {
+        .on('crmFormSuccess', function (event, data) {
           $scope.awardStages[data.optionValue.value] = data.optionValue;
           $scope.basicDetails.selectedAwardStages[data.optionValue.value] = true;
           $scope.$digest();
