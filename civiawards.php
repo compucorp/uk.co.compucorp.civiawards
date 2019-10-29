@@ -148,6 +148,21 @@ function civiawards_civicrm_apiWrappers(&$wrappers, $apiRequest) {
 }
 
 /**
+ * Implements hook_civicrm_permission().
+ */
+function civiawards_civicrm_permission(&$permissions) {
+  // Add permission defined by this extension.
+  $permissions['access awards panel portal'] = [
+    'CiviAwards: Access awards panel portal',
+    ts('Allows a user to access the awards panel portal'),
+  ];
+
+  $permissions['access applicant portal'] = [
+    'CiviAwards: Access applicant portal',
+    ts('Allows a user to access the awards applicant portal'),
+  ];
+}
+/**
  * Implements addCiviCaseDependentAngularModules().
  */
 function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
