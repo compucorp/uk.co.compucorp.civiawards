@@ -1,0 +1,27 @@
+.civiawards__new-award {
+  > .panel-body {
+    padding-bottom: 0;
+  }
+}
+
+.civiawards__new-award__basic-details {
+  input:not([type='checkbox']),
+  textarea {
+    width: 250px;
+  }
+}
+
+.civiawards__new-award__tab-container {
+  margin-left: -20px;
+  margin-right: -20px;
+}
+
+.civiawards__new-award__award-stages {
+  th:first-child {
+    width: 16px;
+  }
+}
+
+.civiawards__new-award__new-status {
+  padding: 0;
+}

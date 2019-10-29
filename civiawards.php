@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Extension file.
+ * CiviAwards Extension.
  */
 
 require_once 'civiawards.civix.php';
@@ -139,10 +139,12 @@ function civiawards_civicrm_entityTypes(&$entityTypes) {
 }
 
 /**
- * Implements hook_civicrm_thems().
+ * Implements hook_civicrm_apiWrappers().
  */
-function civiawards_civicrm_themes(&$themes) {
-  _civiawards_civix_civicrm_themes($themes);
+function civiawards_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  if ($apiRequest['entity'] == 'AwardDetail') {
+    $wrappers[] = new CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields();
+  }
 }
 
 /**
@@ -159,4 +161,10 @@ function civiawards_civicrm_permission(&$permissions) {
     'CiviAwards: Access applicant portal',
     ts('Allows a user to access the awards applicant portal'),
   ];
+}
+/**
+ * Implements addCiviCaseDependentAngularModules().
+ */
+function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
+  $dependentModules[] = "civiawards";
 }

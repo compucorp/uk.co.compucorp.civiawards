@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/CiviAwards</base>
+  <class>AwardManager</class>
+  <name>civicrm_civiawards_award_manager</name>
+  <comment>Store Award Manager Details</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique AwardManager ID</comment>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>contact_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Contact</comment>
+    <required>true</required>
+  </field>
+  <foreignKey>
+    <name>contact_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+  </foreignKey>
+
+  <field>
+    <name>case_type_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Case Type</comment>
+    <required>true</required>
+  </field>
+  <foreignKey>
+    <name>case_type_id</name>
+    <table>civicrm_case_type</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <index>
+    <name>unique_case_type_manager</name>
+    <fieldName>contact_id</fieldName>
+    <fieldName>case_type_id</fieldName>
+    <unique>true</unique>
+  </index>
+</table>

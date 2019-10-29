@@ -1,0 +1,12 @@
+{
+  "extends": [
+    "semistandard",
+    "plugin:jsdoc/recommended"
+  ],
+  "globals": {
+    "CRM": "writable",
+    "angular": "readonly",
+    "inject": "readonly",
+    "moment": "readonly"
+  }
+}
