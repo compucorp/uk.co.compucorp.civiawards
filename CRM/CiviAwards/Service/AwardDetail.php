@@ -2,6 +2,7 @@
 
 use CRM_CiviAwards_BAO_AwardDetail as AwardDetail;
 use CRM_CiviAwards_BAO_AwardManager as AwardManager;
+use CRM_CiviAwards_Service_AwardProfile as AwardProfileService;
 
 /**
  * Class CRM_CiviAwards_Service_AwardDetail.
@@ -21,6 +22,8 @@ class CRM_CiviAwards_Service_AwardDetail {
     if (!empty($params['award_manager'])) {
       $this->createAwardManagers($params['award_manager'], $caseTypeId);
     }
+
+    $this->addAwardProfile($awardDetail, $params, $caseTypeId);
   }
 
   /**
@@ -32,9 +35,14 @@ class CRM_CiviAwards_Service_AwardDetail {
    *   Parameters used to create the Award detail instance.
    */
   public function postUpdateActions(AwardDetail $awardDetail, array $params) {
-    $caseTypeId = $this->getCaseType($awardDetail);
     if (!empty($params['award_manager'])) {
+      $caseTypeId = $this->getCaseType($awardDetail);
       $this->updateAwardManagers($params['award_manager'], $caseTypeId);
+    }
+
+    if (isset($params['review_fields'])) {
+      $profileId = $this->getProfileId($awardDetail);
+      $this->updateAwardProfile($params['review_fields'], $profileId);
     }
   }
 
@@ -99,14 +107,76 @@ class CRM_CiviAwards_Service_AwardDetail {
    *   Returns the Case Type ID.
    */
   private function getCaseType(AwardDetail $awardDetail) {
-    if (!empty($awardDetail->case_type_id)) {
-      return $awardDetail->case_type_id;
+    return $this->getAwardDetailField($awardDetail, 'case_type_id');
+  }
+
+  /**
+   * Returns the profile Id.
+   *
+   * @param \CRM_CiviAwards_BAO_AwardDetail $awardDetail
+   *   Award detail object.
+   *
+   * @return mixed
+   *   Profile Id.
+   */
+  private function getProfileId(AwardDetail $awardDetail) {
+    return $this->getAwardDetailField($awardDetail, 'profile_id');
+  }
+
+  /**
+   * Returns the field value for an Award detail.
+   *
+   * @param \CRM_CiviAwards_BAO_AwardDetail $awardDetail
+   *   Award detail object.
+   * @param string $fieldName
+   *   Field name.
+   *
+   * @return mixed
+   *   Field value.
+   */
+  private function getAwardDetailField(AwardDetail $awardDetail, $fieldName) {
+    if (!empty($awardDetail->$fieldName)) {
+      return $awardDetail->$fieldName;
     }
 
     if (!empty($awardDetail->id)) {
       $storedAwardDetail = AwardDetail::findById($awardDetail->id);
-      return $storedAwardDetail->case_type_id;
+      return $storedAwardDetail->$fieldName;
     }
+  }
+
+  /**
+   * Adds an award profile for an Award detail.
+   *
+   * @param \CRM_CiviAwards_BAO_AwardDetail $awardDetail
+   *   Award detail object.
+   * @param array $params
+   *   Params.
+   * @param int $caseTypeId
+   *   Case Type ID.
+   */
+  private function addAwardProfile(AwardDetail $awardDetail, array $params, $caseTypeId) {
+    $awardProfileService = new AwardProfileService();
+    $profileId = $awardProfileService->createProfile($caseTypeId);
+    $awardDetail->profile_id = $profileId;
+    $awardDetail->save();
+
+    if (!empty($params['review_fields'])) {
+      $awardProfileService->createProfileFields($params['review_fields'], $profileId);
+    }
+  }
+
+  /**
+   * Updates the Award profile for an Award detail.
+   *
+   * @param array $customFields
+   *   Custom fields for the Award.
+   * @param int $profileId
+   *   Profile Id.
+   */
+  private function updateAwardProfile(array $customFields, $profileId) {
+    $awardProfileService = new AwardProfileService();
+    $awardProfileService->updateProfileFields($customFields, $profileId);
   }
 
   /**
@@ -114,13 +184,14 @@ class CRM_CiviAwards_Service_AwardDetail {
    *
    * Also deletes the Award managers alongside.
    *
-   * @param int $id
-   *   Award detail ID.
+   * @param \CRM_CiviAwards_BAO_AwardDetail $awardDetail
+   *   Award detail object.
    */
-  public function deleteDependencies($id) {
-    $awardDetail = AwardDetail::findById($id);
+  public function deleteDependencies(AwardDetail $awardDetail) {
     $caseType = $awardDetail->case_type_id;
     $this->deleteAwardManagersForCaseType($caseType);
+    $awardProfileService = new AwardProfileService();
+    $awardProfileService->deleteProfile($awardDetail->profile_id);
   }
 
 }

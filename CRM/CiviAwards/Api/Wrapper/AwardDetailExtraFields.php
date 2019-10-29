@@ -24,6 +24,7 @@ class CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields implements API_Wrapper {
   public function toApiOutput($apiRequest, $result) {
     if ($this->canHandleTheRequest($apiRequest)) {
       $this->addAwardManagerDetails($apiRequest, $result['values']);
+      $this->addProfileFields($apiRequest, $result['values']);
     }
 
     return $result;
@@ -65,6 +66,27 @@ class CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields implements API_Wrapper {
   }
 
   /**
+   * Adds profile fields to the results if criteria is met.
+   *
+   * @param array $apiRequest
+   *   API request.
+   * @param array $result
+   *   API result.
+   */
+  private function addProfileFields(array $apiRequest, array &$result) {
+    if (!in_array('review_fields', $apiRequest['params']['pseudo_fields'])) {
+      return;
+    }
+
+    $awardProfileService = new CRM_CiviAwards_Service_AwardProfile();
+    foreach ($result as $key => $value) {
+      $reviewFields = $awardProfileService->getProfileFields($value['profile_id']);
+      $result[$key]['review_fields'] = $reviewFields;
+      unset($result[$key]['profile_id']);
+    }
+  }
+
+  /**
    * Returns Award managers for a case type.
    *
    * @param int $caseTypeId
@@ -102,21 +124,25 @@ class CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields implements API_Wrapper {
   private function setRequiredReturnParameters(array &$apiRequest) {
     $options = _civicrm_api3_get_options_from_params($apiRequest['params']);
     $returnParams = array_keys($options['return']);
-    $reverseReturnParams = array_flip($returnParams);
-    $pseudoFields = ['award_manager'];
+    $pseudoFieldReturn = [];
+    $pseudoFields = [
+      'award_manager' => ['dependency' => 'case_type_id'],
+      'review_fields' => ['dependency' => 'profile_id'],
+    ];
 
-    if (!empty($returnParams) && empty(array_intersect($reverseReturnParams, $pseudoFields))) {
+    if (!empty($returnParams) && empty(array_intersect($returnParams, array_keys($pseudoFields)))) {
       return;
     }
 
-    foreach ($pseudoFields as $pseudoField) {
+    foreach ($pseudoFields as $pseudoField => $attributes) {
       $apiRequest['params']['pseudo_fields'][] = $pseudoField;
+
+      if (!empty($returnParams)) {
+        $pseudoFieldReturn[] = $attributes['dependency'];
+      }
     }
 
-    if (!empty($returnParams)) {
-      $returnParams[] = 'case_type_id';
-      $apiRequest['params']['return'] = $returnParams;
-    }
+    $apiRequest['params']['return'] = array_unique(array_merge($returnParams, $pseudoFieldReturn));
   }
 
 }
