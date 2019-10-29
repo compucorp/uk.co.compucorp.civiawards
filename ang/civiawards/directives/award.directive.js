@@ -6,13 +6,13 @@
       scope: {
         awardId: '='
       },
-      controller: 'CiviAwardCreateEditAward',
+      controller: 'CiviAwardCreateEditAwardController',
       templateUrl: '~/civiawards/directives/award.directive.html',
       restrict: 'E'
     };
   });
 
-  module.controller('CiviAwardCreateEditAward', function ($scope, $window, crmApi, getSelect2Value, CaseStatus, AwardType, CaseTypeCategory) {
+  module.controller('CiviAwardCreateEditAwardController', function ($scope, $window, crmApi, getSelect2Value, CaseStatus, AwardType, CaseTypeCategory) {
     var ts = CRM.ts('civicase');
 
     $scope.ts = ts;
@@ -27,6 +27,7 @@
     ];
     $scope.basicDetails = {
       title: '',
+      name: '',
       description: '',
       awardType: null,
       isEnabled: true,
@@ -79,10 +80,10 @@
       $scope.basicDetails.isEnabled = caseType.is_active === '1';
 
       _.each(caseType.definition.statuses, function (stageName) {
-        var awargStage = _.find($scope.awardStages, function (stage) {
+        var awardStage = _.find($scope.awardStages, function (stage) {
           return stage.name === stageName;
         });
-        $scope.basicDetails.selectedAwardStages[awargStage.value] = true;
+        $scope.basicDetails.selectedAwardStages[awardStage.value] = true;
       });
     }
 
@@ -136,6 +137,7 @@
         $scope.basicDetails.selectedAwardStages[awardStage.value] = true;
       });
     }
+
     /**
      * Save Award
      */

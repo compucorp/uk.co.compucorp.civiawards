@@ -2,11 +2,12 @@ var cv = require('civicrm-cv')({ mode: 'sync' });
 
 module.exports = function (config) {
   var civicrmPath = cv("path -d '[civicrm.root]'")[0].value;
+  var civicasePath = cv('path -x uk.co.compucorp.civicase')[0].value;
   var extPath = cv('path -x uk.co.compucorp.civiawards')[0].value;
 
   config.set({
     basePath: civicrmPath,
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'jasmine-diff'],
     files: [
       // the global dependencies
       'bower_components/jquery/dist/jquery.min.js',
@@ -21,17 +22,26 @@ module.exports = function (config) {
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/angular-route/angular-route.min.js',
 
+      civicasePath + '/packages/moment.min.js',
+
       // Global variables that need to be accessible in the test environment
+      civicasePath + '/ang/test/global.js',
       extPath + '/ang/test/global.js',
 
       // angular templates
       extPath + '/ang/civiawards/**/*.html',
 
       // Source Files
+      civicasePath + '/ang/civicase-base.js',
+      { pattern: civicasePath + '/ang/civicase-base/**/*.js' },
+      civicasePath + '/ang/civicase.js',
+
       extPath + '/ang/civiawards.js',
       { pattern: extPath + '/ang/civiawards/**/*.js' },
 
       // Spec files
+      { pattern: civicasePath + '/ang/test/mocks/modules.mock.js' },
+      { pattern: civicasePath + '/ang/test/mocks/**/*.js' },
       { pattern: extPath + '/ang/test/mocks/modules.mock.js' },
       { pattern: extPath + '/ang/test/mocks/**/*.js' },
       { pattern: extPath + '/ang/test/civiawards/**/*.js' }
