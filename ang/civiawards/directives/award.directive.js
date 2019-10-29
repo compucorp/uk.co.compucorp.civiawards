@@ -16,6 +16,7 @@
     var ts = CRM.ts('civicase');
 
     $scope.ts = ts;
+    $scope.pageTitle = 'New Award';
     $scope.isNameDisabled = true;
     $scope.submitInProgress = false;
     $scope.awardTypeSelect2Options = [];
@@ -75,26 +76,31 @@
      * @param {object} caseType case type
      */
     function setBasicDetails (caseType) {
+      $scope.pageTitle = caseType.title;
       $scope.basicDetails.title = caseType.title;
       $scope.basicDetails.name = caseType.name;
       $scope.basicDetails.description = caseType.description;
       $scope.basicDetails.isEnabled = caseType.is_active === '1';
-
-      setAwardStages(caseType.definition.statuses);
+      $scope.basicDetails.selectedAwardStages = getSelectedAwardStages(caseType.definition.statuses);
     }
 
     /**
-     * get Selected Award stages
+     * Get Selected Award stages
      *
      * @param {Array} awardStages award stages fetched from api
+     * @returns {object} selected award stages
      */
-    function setAwardStages (awardStages) {
+    function getSelectedAwardStages (awardStages) {
+      var selectedAwardStages = {};
+
       _.each(awardStages, function (stageName) {
         var awardStage = _.find($scope.awardStages, function (stage) {
           return stage.name === stageName;
         });
-        $scope.basicDetails.selectedAwardStages[awardStage.value] = true;
+        selectedAwardStages[awardStage.value] = true;
       });
+
+      return selectedAwardStages;
     }
 
     /**
