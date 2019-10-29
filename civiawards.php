@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Extension file.
+ */
+
 require_once 'civiawards.civix.php';
 
 /**
@@ -140,30 +145,18 @@ function civiawards_civicrm_themes(&$themes) {
   _civiawards_civix_civicrm_themes($themes);
 }
 
-// --- Functions below this ship commented out. Uncomment as required. ---
-
 /**
- * Implements hook_civicrm_preProcess().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_preProcess
- *
- * function civiawards_civicrm_preProcess($formName, &$form) {
- *
- * } // */
+ * Implements hook_civicrm_permission().
+ */
+function civiawards_civicrm_permission(&$permissions) {
+  // Add permission defined by this extension.
+  $permissions['access awards panel portal'] = [
+    'CiviAwards: Access awards panel portal',
+    ts('Allows a user to access the awards panel portal'),
+  ];
 
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
- *
- * function civiawards_civicrm_navigationMenu(&$menu) {
- * _civiawards_civix_insert_navigation_menu($menu, 'Mailings', array(
- * 'label' => E::ts('New subliminal message'),
- * 'name' => 'mailing_subliminal_message',
- * 'url' => 'civicrm/mailing/subliminal',
- * 'permission' => 'access CiviMail',
- * 'operator' => 'OR',
- * 'separator' => 0,
- * ));
- * _civiawards_civix_navigationMenu($menu);
- * } // */
+  $permissions['access applicant portal'] = [
+    'CiviAwards: Access applicant portal',
+    ts('Allows a user to access the awards applicant portal'),
+  ];
+}
