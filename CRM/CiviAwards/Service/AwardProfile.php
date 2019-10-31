@@ -42,6 +42,29 @@ class CRM_CiviAwards_Service_AwardProfile {
         'label' => 'Activity Field' . $customFieldId,
       ]);
     }
+
+    $this->addContactIdField($profileId);
+  }
+
+  /**
+   * Adds the contact ID field as part of a set of profile fields.
+   *
+   * This is necessary because for the Profile submit and get APIs
+   * to work, the Profile must contain both contact and activity fields,
+   * However, this field is created disabled, so it does not interfere
+   * with the profile listing and view.
+   *
+   * @param int $profileId
+   *   Profile ID.
+   */
+  private function addContactIdField($profileId) {
+    civicrm_api3('UFField', 'create', [
+      'uf_group_id' => $profileId,
+      'field_name' => 'id',
+      'field_type' => 'Contact',
+      'label' => 'Contact ID',
+      'is_active' => 0,
+    ]);
   }
 
   /**
