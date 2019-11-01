@@ -1,3 +1,3 @@
 (function () {
-  angular.module('civiawards.data', []);
+  angular.module('civiawards.data', ['civicase.data']);
 })();

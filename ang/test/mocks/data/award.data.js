@@ -15,7 +15,7 @@
         'Urgent'
       ]
     },
-    case_type_category: '4',
+    case_type_category: '3',
     is_forkable: '1',
     is_forked: ''
   }
