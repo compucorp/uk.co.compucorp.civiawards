@@ -3,7 +3,7 @@
   var AWARDS_CATEGORY_NAME = 'awards';
   var AWARD_CONFIG_URL = 'civicrm/a/#/awards/';
 
-  module.config(function (CaseTypeButtonsProvider) {
+  module.config(function (DashboardCaseTypeButtonsProvider) {
     var awardCategory = getAwardCategory();
     var awardCaseTypes = getCaseTypesForCategory(awardCategory.value);
 
@@ -19,7 +19,7 @@
       _.forEach(caseTypes, function (caseType) {
         var caseTypeConfigUrl = url(AWARD_CONFIG_URL + caseType.id);
 
-        CaseTypeButtonsProvider.addButtons(caseType.name, [{
+        DashboardCaseTypeButtonsProvider.addButtons(caseType.name, [{
           url: caseTypeConfigUrl
         }]);
       });
