@@ -20,6 +20,7 @@
         var caseTypeConfigUrl = url(AWARD_CONFIG_URL + caseType.id);
 
         DashboardCaseTypeButtonsProvider.addButtons(caseType.name, [{
+          icon: 'fa fa-cog',
           url: caseTypeConfigUrl
         }]);
       });

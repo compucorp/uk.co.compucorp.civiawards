@@ -25,6 +25,7 @@
       it('it adds the configuration url to the awards case type', () => {
         expect(DashboardCaseTypeButtons).toEqual({
           [AwardMockData.name]: [{
+            icon: 'fa fa-cog',
             url: AWARD_CONFIG_URL + AwardMockData.id
           }]
         });
