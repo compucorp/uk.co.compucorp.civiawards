@@ -3,9 +3,10 @@
   var AWARDS_CATEGORY_NAME = 'awards';
   var AWARD_CONFIG_URL = 'civicrm/a/#/awards/';
 
-  module.config(function (DashboardCaseTypeButtonsProvider) {
+  module.config(function (CaseTypeProvider, DashboardCaseTypeButtonsProvider) {
+    var allCaseTypes = CaseTypeProvider.getAll();
     var awardCategory = getAwardCategory();
-    var awardCaseTypes = getCaseTypesForCategory(awardCategory.value);
+    var awardCaseTypes = filterCaseTypesByCategory(allCaseTypes, awardCategory.value);
 
     addConfigurationButtonsToCaseTypes(awardCaseTypes);
 
@@ -27,6 +28,19 @@
     }
 
     /**
+     * Filters the given case types and returns the ones belonging to the given category.
+     *
+     * @param {object[]} caseTypes the list of case types.
+     * @param {number} categoryValue the case type category value.
+     * @returns {object[]} a list of case types.
+     */
+    function filterCaseTypesByCategory (caseTypes, categoryValue) {
+      return _.filter(caseTypes, function (caseType) {
+        return caseType.case_type_category === categoryValue;
+      });
+    }
+
+    /**
      * Returns the award case type category.
      *
      * @returns {object} the case type category.
@@ -34,18 +48,6 @@
     function getAwardCategory () {
       return _.find(CRM['civicase-base'].caseTypeCategories, function (category) {
         return category.name === AWARDS_CATEGORY_NAME;
-      });
-    }
-
-    /**
-     * Returns a list of case types that belong to the given category.
-     *
-     * @param {number} categoryValue the case type category value.
-     * @returns {object[]} a list of case types.
-     */
-    function getCaseTypesForCategory (categoryValue) {
-      return _.filter(CRM['civicase-base'].caseTypes, function (caseType) {
-        return caseType.case_type_category === categoryValue;
       });
     }
   });
