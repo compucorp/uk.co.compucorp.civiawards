@@ -142,4 +142,24 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
     return ltrim($file, '_');
   }
 
+  /**
+   * Action triggered when extension is enabled.
+   *
+   * @see https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
+   */
+  public function enable() {
+    $awardsCgExtendsOptionValue = new AddAwardsCgExtendsOptionValue();
+    $awardsCgExtendsOptionValue->toggleOptionValueStatus(TRUE);
+  }
+
+  /**
+   * Action triggered when extension is disabled.
+   *
+   * @see https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
+   */
+  public function disable() {
+    $awardsCgExtendsOptionValue = new AddAwardsCgExtendsOptionValue();
+    $awardsCgExtendsOptionValue->toggleOptionValueStatus(FALSE);
+  }
+
 }
