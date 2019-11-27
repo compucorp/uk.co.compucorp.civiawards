@@ -6,7 +6,7 @@
 }
 
 .civiawards__new-award__basic-details {
-  input:not([type='checkbox']),
+  input:not([type='checkbox']):not([crm-ui-datepicker]):not(.crm-form-date),
   textarea {
     width: 250px;
   }

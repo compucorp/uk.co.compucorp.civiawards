@@ -47,17 +47,6 @@
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-3 control-label">
-                  Description
-                </label>
-                <div class="col-sm-5">
-                  <textarea
-                    type="textarea" ng-model="basicDetails.description" class="form-control"
-                    placeholder="Description" rows="3">
-                  </textarea>
-                </div>
-              </div>
-              <div class="form-group">
                 <label class="col-sm-3 control-label required-mark">
                   Award Type
                 </label>
@@ -75,9 +64,31 @@
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-3 control-label">Enabled?</label>
+                <label class="col-sm-3 control-label">
+                  Description
+                </label>
                 <div class="col-sm-5">
-                  <input type="checkbox" ng-model="basicDetails.isEnabled">
+                  <textarea
+                    type="textarea" ng-model="basicDetails.description" class="form-control"
+                    placeholder="Description" rows="3">
+                  </textarea>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label required-mark">
+                  Award Manager
+                </label>
+                <div class="col-sm-5">
+                  <input class="form-control"
+                    ng-model="additionalDetails.awardManagers"
+                    placeholder="Award Manager"
+                    crm-entityref="{
+                      entity: 'Contact',
+                      select: { multiple: true, allowClear: true }
+                    }"
+                    required
+                    ng-minlength="1"
+                  />
                 </div>
               </div>
               <div class="form-group">
@@ -97,20 +108,9 @@
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-3 control-label required-mark">
-                  Award Manager
-                </label>
+                <label class="col-sm-3 control-label">Enabled?</label>
                 <div class="col-sm-5">
-                  <input class="form-control"
-                    ng-model="additionalDetails.awardManagers"
-                    placeholder="Award Manager"
-                    crm-entityref="{
-                      entity: 'Contact',
-                      select: { multiple: true, allowClear: true }
-                    }"
-                    required
-                    ng-minlength="1"
-                  />
+                  <input type="checkbox" ng-model="basicDetails.isEnabled">
                 </div>
               </div>
             </form>
