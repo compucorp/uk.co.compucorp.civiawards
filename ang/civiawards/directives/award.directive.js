@@ -23,8 +23,8 @@
     $scope.awardDetailsID = null;
     $scope.awardStages = CaseStatus.getAll();
     $scope.tabs = [
-      { name: 'stages', label: ts('Award Stages') },
-      { name: 'additionaltab', label: ts('Additional Tab') }
+      { name: 'basicDetails', label: ts('Basic Details') },
+      { name: 'stages', label: ts('Award Stages') }
     ];
     $scope.basicDetails = {
       title: '',
@@ -40,7 +40,6 @@
       awardManagers: []
     };
 
-    $scope.createNewAwardStage = createNewAwardStage;
     $scope.saveAward = saveAward;
     $scope.selectTab = selectTab;
 
@@ -228,19 +227,6 @@
       }
 
       return crmApi('AwardDetail', 'create', additionalAwardDetails);
-    }
-
-    /**
-     * Create a New Award Stage
-     */
-    function createNewAwardStage () {
-      CRM.loadForm(CRM.url('civicrm/admin/options/case_status',
-        { action: 'add', reset: 1 }))
-        .on('crmFormSuccess', function (event, data) {
-          $scope.awardStages[data.optionValue.value] = data.optionValue;
-          $scope.basicDetails.selectedAwardStages[data.optionValue.value] = true;
-          $scope.$digest();
-        });
     }
   });
 })(angular, CRM.$, CRM._);

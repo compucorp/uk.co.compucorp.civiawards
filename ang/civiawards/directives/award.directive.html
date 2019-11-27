@@ -2,107 +2,7 @@
   <h1 crm-page-title>{{pageTitle}}</h1>
   <div class="panel panel-default civiawards__new-award">
     <div class="panel-body">
-      <!-- Basic Details Form -->
-      <form name="basic_details_form" class="form-horizontal civiawards__new-award__basic-details">
-        <div class="form-group">
-          <label class="col-sm-3 control-label required-mark">
-            Title
-          </label>
-          <div class="col-sm-5">
-            <input
-              type="text" ng-model="basicDetails.title" required class="form-control"
-              ng-minlength="1" placeholder="Award Title">
-            </input>
-          </div>
-        </div>
-        <div class="form-group civiawards__new-award__name-field-container">
-          <label class="col-sm-3 control-label required-mark">
-            Name
-          </label>
-          <div class="col-sm-5">
-            <input
-              type="text" ng-model="basicDetails.name" required class="form-control"
-              ng-disabled="isNameDisabled" ng-minlength="1" name="awardName">
-            </input>
-            <i
-              class="fa" ng-click="isNameDisabled = !isNameDisabled"
-              ng-class="{'fa-lock': isNameDisabled, 'fa-unlock': !isNameDisabled}"
-              >
-            </i>
-            <span ng-if="isAward && !isNameDisabled">
-              WARNING: If any external files or programs reference the old "Name", then they must be updated manually.
-            </span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-3 control-label">
-            Description
-          </label>
-          <div class="col-sm-5">
-            <textarea
-              type="textarea" ng-model="basicDetails.description" class="form-control"
-              placeholder="Description" rows="3">
-            </textarea>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-3 control-label required-mark">
-            Award Type
-          </label>
-          <div class="col-sm-5">
-            <input class="form-control"
-              ng-model="additionalDetails.awardType"
-              crm-ui-select="{
-                allowClear: true,
-                placeholder: 'Award Type',
-                data: awardTypeSelect2Options
-              }"
-              required
-              ng-minlength="1"
-            />
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-3 control-label">Enabled?</label>
-          <div class="col-sm-5">
-            <input type="checkbox" ng-model="basicDetails.isEnabled">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-3 control-label">Start Date</label>
-          <div class="col-sm-5">
-            <input
-              crm-ui-datepicker="{time: false}"
-              ng-model="additionalDetails.startDate" ng-placeholder="ts('Start Date')"/>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-3 control-label">End Date</label>
-          <div class="col-sm-5">
-            <input
-              crm-ui-datepicker="{time: false}"
-              ng-model="additionalDetails.endDate" ng-placeholder="ts('End Date')"/>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-3 control-label required-mark">
-            Award Manager
-          </label>
-          <div class="col-sm-5">
-            <input class="form-control"
-              ng-model="additionalDetails.awardManagers"
-              placeholder="Award Manager"
-              crm-entityref="{
-                entity: 'Contact',
-                select: { multiple: true, allowClear: true }
-              }"
-              required
-              ng-minlength="1"
-            />
-          </div>
-        </div>
-      </form>
-      <!-- End- Basic Details Form -->
+
       <!-- Tabs -->
       <div class="panel panel-w-subheading panel-default civiawards__new-award__tab-container">
         <ul class="nav nav-tabs">
@@ -113,6 +13,109 @@
           </li>
         </ul>
         <div class="tab-content">
+          <div class="tab-pane active" ng-show="activeTab === 'basicDetails'">
+            <!-- Basic Details Form -->
+            <form name="basic_details_form" class="form-horizontal civiawards__new-award__basic-details">
+              <div class="form-group">
+                <label class="col-sm-3 control-label required-mark">
+                  Title
+                </label>
+                <div class="col-sm-5">
+                  <input
+                    type="text" ng-model="basicDetails.title" required class="form-control"
+                    ng-minlength="1" placeholder="Award Title">
+                  </input>
+                </div>
+              </div>
+              <div class="form-group civiawards__new-award__name-field-container">
+                <label class="col-sm-3 control-label required-mark">
+                  Name
+                </label>
+                <div class="col-sm-5">
+                  <input
+                    type="text" ng-model="basicDetails.name" required class="form-control"
+                    ng-disabled="isNameDisabled" ng-minlength="1" name="awardName">
+                  </input>
+                  <i
+                    class="fa" ng-click="isNameDisabled = !isNameDisabled"
+                    ng-class="{'fa-lock': isNameDisabled, 'fa-unlock': !isNameDisabled}"
+                    >
+                  </i>
+                  <span ng-if="isAward && !isNameDisabled">
+                    WARNING: If any external files or programs reference the old "Name", then they must be updated manually.
+                  </span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label">
+                  Description
+                </label>
+                <div class="col-sm-5">
+                  <textarea
+                    type="textarea" ng-model="basicDetails.description" class="form-control"
+                    placeholder="Description" rows="3">
+                  </textarea>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label required-mark">
+                  Award Type
+                </label>
+                <div class="col-sm-5">
+                  <input class="form-control"
+                    ng-model="additionalDetails.awardType"
+                    crm-ui-select="{
+                      allowClear: true,
+                      placeholder: 'Award Type',
+                      data: awardTypeSelect2Options
+                    }"
+                    required
+                    ng-minlength="1"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label">Enabled?</label>
+                <div class="col-sm-5">
+                  <input type="checkbox" ng-model="basicDetails.isEnabled">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label">Start Date</label>
+                <div class="col-sm-5">
+                  <input
+                    crm-ui-datepicker="{time: false}"
+                    ng-model="additionalDetails.startDate" ng-placeholder="ts('Start Date')"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label">End Date</label>
+                <div class="col-sm-5">
+                  <input
+                    crm-ui-datepicker="{time: false}"
+                    ng-model="additionalDetails.endDate" ng-placeholder="ts('End Date')"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label required-mark">
+                  Award Manager
+                </label>
+                <div class="col-sm-5">
+                  <input class="form-control"
+                    ng-model="additionalDetails.awardManagers"
+                    placeholder="Award Manager"
+                    crm-entityref="{
+                      entity: 'Contact',
+                      select: { multiple: true, allowClear: true }
+                    }"
+                    required
+                    ng-minlength="1"
+                  />
+                </div>
+              </div>
+            </form>
+            <!-- End- Basic Details Form -->
+          </div>
           <div class="tab-pane active" ng-show="activeTab === 'stages'">
             <div class="table-tab">
               <table class="table civiawards__new-award__award-stages">
@@ -133,22 +136,10 @@
                     <td>{{awardStage.label}}</td>
                     <td>{{awardStage.grouping}}</td>
                   </tr>
-                  <tr>
-                    <td align="center"></td>
-                    <td>
-                      <button
-                        type="button" ng-click="createNewAwardStage()"
-                        class="btn btn-link civiawards__new-award__new-status">
-                        <span class="btn-icon"><i class="fa fa-plus"></i></span> New Status
-                      </button>
-                    </td>
-                    <td></td>
-                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          <div class="tab-pane active" ng-show="activeTab === 'additionaltab'">Additional Tab content</div>
         </div>
         <div class="panel-footer">
           <button

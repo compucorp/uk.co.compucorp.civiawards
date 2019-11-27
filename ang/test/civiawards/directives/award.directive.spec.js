@@ -206,45 +206,6 @@
       });
     });
 
-    describe('creating a new award stage', () => {
-      var loadFormSpy, loadFormCallBackFn;
-
-      beforeEach(() => {
-        loadFormSpy = jasmine.createSpy();
-        loadFormSpy.and.callFake(function (eventName, callBackFn) {
-          loadFormCallBackFn = callBackFn;
-        });
-
-        CRM.url = jasmine.createSpy();
-        CRM.loadForm = jasmine.createSpy();
-        CRM.loadForm.and.returnValue({
-          on: loadFormSpy
-        });
-
-        createController({ ifNewAward: true });
-        $scope.createNewAwardStage();
-      });
-
-      it('opens the popup to create new award stage', () => {
-        expect(CRM.url).toHaveBeenCalledWith('civicrm/admin/options/case_status',
-          { action: 'add', reset: 1 });
-      });
-
-      describe('when popup is closed', () => {
-        beforeEach(() => {
-          loadFormCallBackFn({}, { optionValue: { value: 'someValue' } });
-        });
-
-        it('captures the form success event', () => {
-          expect(loadFormSpy).toHaveBeenCalledWith('crmFormSuccess', jasmine.any(Function));
-        });
-
-        it('shows the newly created award stage', () => {
-          expect($scope.awardStages.someValue).toEqual({ value: 'someValue' });
-        });
-      });
-    });
-
     /**
      * Create Controller
      *
