@@ -1,0 +1,21 @@
+<table class="table table-hover civiawards__award__stages">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Name</th>
+    <th>Class</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="awardStage in awardStages" ng-click="toggleAwardStage(awardStage)">
+      <td align="center">
+        <input
+          ng-click="$event.stopPropagation()"
+          ng-model="basicDetails.selectedAwardStages[awardStage.value]"
+          type="checkbox">
+      </td>
+      <td>{{awardStage.label}}</td>
+      <td>{{awardStage.grouping}}</td>
+    </tr>
+  </tbody>
+</table>

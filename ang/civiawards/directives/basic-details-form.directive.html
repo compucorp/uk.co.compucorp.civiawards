@@ -1,0 +1,81 @@
+<form name="basic_details_form" class="form-horizontal civiawards__award__basic-details">
+  <div class="form-group">
+    <label class="col-sm-3 control-label required-mark">
+      Award Type
+    </label>
+    <div class="col-sm-5">
+      <input class="form-control"
+        ng-model="additionalDetails.awardType"
+        crm-ui-select="{
+          allowClear: true,
+          placeholder: 'Award Type',
+          data: awardTypeSelect2Options
+        }"
+        required
+        ng-minlength="1"
+      />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label required-mark">
+      Title
+    </label>
+    <div class="col-sm-5">
+      <input
+        type="text" ng-model="basicDetails.title" required class="form-control"
+        ng-minlength="1" placeholder="Award Title">
+      </input>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label">
+      Description
+    </label>
+    <div class="col-sm-5">
+      <textarea
+        type="textarea" ng-model="basicDetails.description" class="form-control"
+        placeholder="Description" rows="3">
+      </textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label required-mark">
+      Award Manager
+    </label>
+    <div class="col-sm-5">
+      <input class="form-control"
+        ng-model="additionalDetails.awardManagers"
+        placeholder="Award Manager"
+        crm-entityref="{
+          entity: 'Contact',
+          select: { multiple: true, allowClear: true }
+        }"
+        required
+        ng-minlength="1"
+      />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label required-mark">Start Date</label>
+    <div class="col-sm-5">
+      <input
+        required
+        crm-ui-datepicker="{time: false}"
+        ng-model="additionalDetails.startDate" ng-placeholder="ts('Start Date')"/>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label">End Date</label>
+    <div class="col-sm-5">
+      <input
+        crm-ui-datepicker="{time: false}"
+        ng-model="additionalDetails.endDate" ng-placeholder="ts('End Date')"/>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label">Enabled?</label>
+    <div class="col-sm-5">
+      <input type="checkbox" ng-model="basicDetails.isEnabled">
+    </div>
+  </div>
+</form>
