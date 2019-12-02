@@ -8,6 +8,7 @@ use CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup as CreateAwardTypeOptionGrou
 use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
 use CRM_CiviAwards_Setup_DeleteApplicantReviewCustomField as DeleteApplicantReviewCustomField;
 use CRM_CiviAwards_Setup_AddAwardsCategoryWordReplacement as AddAwardsCategoryWordReplacement;
+use CRM_CiviAwards_Setup_CreateAwardsMenus as CreateAwardsMenus;
 
 /**
  * Collection of upgrade steps.
@@ -31,6 +32,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
       new CreateAwardTypeOptionGroup(),
       new CreateApplicantReviewActivityType(),
       new AddAwardsCategoryWordReplacement(),
+      new CreateAwardsMenus(),
     ];
 
     foreach ($steps as $step) {
