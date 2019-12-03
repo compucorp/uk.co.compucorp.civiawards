@@ -5,37 +5,37 @@
     1: {
       value: '1',
       label: 'Medal',
-      name: 'Array',
+      name: 'Medal',
       weight: '1'
     },
     2: {
       value: '2',
       label: 'Prize',
-      name: 'Array',
+      name: 'Prize',
       weight: '2'
     },
     3: {
       value: '3',
       label: 'Programme',
-      name: 'Array',
+      name: 'Programme',
       weight: '3'
     },
     4: {
       value: '4',
       label: 'Scholarship',
-      name: 'Array',
+      name: 'Scholarship',
       weight: '4'
     },
     5: {
       value: '5',
       label: 'Award',
-      name: 'Array',
+      name: 'Award',
       weight: '5'
     },
     6: {
       value: '6',
       label: 'Grant',
-      name: 'Array',
+      name: 'Grant',
       weight: '6'
     }
   };

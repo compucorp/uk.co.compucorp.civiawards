@@ -1,0 +1,33 @@
+.civiawards__award--edit {
+  > .panel-body {
+    padding: 0;
+  }
+}
+
+.civiawards__award__basic-details {
+  input:not([type='checkbox']):not([crm-ui-datepicker]):not(.crm-form-date),
+  textarea {
+    width: 250px;
+  }
+
+  .ng-invalid:not(.ng-untouched),
+  .ng-invalid:not(.ng-pristine) { //for crm-ui-select
+    border-color: $brand-danger;
+  }
+}
+
+.civiawards__award__stages {
+  th:first-child {
+    width: 16px;
+  }
+
+  tbody {
+    tr {
+      cursor: pointer;
+    }
+  }
+
+  [type='checkbox'] {
+    margin-top: -5px;
+  }
+}
