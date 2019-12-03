@@ -16,7 +16,7 @@
       $scope.$digest();
     }));
 
-    describe('basic tests', () => {
+    describe('when the controller initializes', () => {
       beforeEach(() => {
         createController();
       });

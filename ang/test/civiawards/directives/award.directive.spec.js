@@ -164,7 +164,7 @@
       });
     });
 
-    describe('select tab', () => {
+    describe('when selecting a tab', () => {
       beforeEach(() => {
         createController({ ifNewAward: true });
 

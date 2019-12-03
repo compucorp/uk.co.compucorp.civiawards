@@ -15,7 +15,7 @@
       $scope.$digest();
     }));
 
-    describe('basic tests', () => {
+    describe('when the controller initializes', () => {
       beforeEach(() => {
         createController();
       });
@@ -25,7 +25,7 @@
       });
     });
 
-    describe('when award checkbox is clicked', () => {
+    describe('when an award checkbox is clicked', () => {
       beforeEach(() => {
         createController();
         $scope.basicDetails = { selectedAwardStages: { 1: true } };
@@ -48,7 +48,7 @@
         });
       });
 
-      it('shows are saved stages', () => {
+      it('displays the already saved award stages', () => {
         expect($scope.basicDetails.selectedAwardStages).toEqual({ 1: true, 2: true, 3: true });
       });
     });

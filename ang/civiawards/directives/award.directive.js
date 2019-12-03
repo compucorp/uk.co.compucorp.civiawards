@@ -12,7 +12,7 @@
     };
   });
 
-  module.controller('CiviAwardCreateEditAwardController', function ($window, $scope, $location, crmApi, getSelect2Value, CaseTypeCategory) {
+  module.controller('CiviAwardCreateEditAwardController', function ($q, $window, $scope, $location, crmApi, getSelect2Value, CaseTypeCategory) {
     var ts = CRM.ts('civicase');
 
     $scope.ts = ts;
@@ -128,11 +128,13 @@
           return award.case_type_id;
         })
         .catch(function (error) {
-          if (error.error_code === 'already exists') {
-            CRM.alert('Duplicate Award Title. Please choose and different title and try again.', ts('Error'), 'error');
-          } else {
-            CRM.alert(error.error_message, ts('Error'), 'error');
-          }
+          var errorMesssage = error.error_code === 'already exists'
+            ? ts('This title is already in use. Please choose another')
+            : error.error_message;
+
+          CRM.alert(errorMesssage, ts('Error'), 'error');
+
+          return $q.reject();
         })
         .finally(function () {
           $scope.submitInProgress = false;

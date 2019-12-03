@@ -21,10 +21,10 @@
     /**
      * Set Details
      *
-     * @param {*} e event
+     * @param {object} event event
      * @param {object} details details of the award
      */
-    function setDetails (e, details) {
+    function setDetails (event, details) {
       setBasicDetails(details.caseType);
       setAdditionalInformation(details.additionalDetails);
     }
