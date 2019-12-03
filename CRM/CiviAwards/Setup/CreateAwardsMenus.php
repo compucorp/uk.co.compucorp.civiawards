@@ -7,14 +7,9 @@ class CRM_CiviAwards_Setup_CreateAwardsMenus {
 
   /**
    * Creates the Awards menu items.
-   *
-   * @return bool
-   *   returns true when the menu items have been created successfully.
    */
   public function apply() {
     $this->createMenuItems();
-
-    return TRUE;
   }
 
   /**
@@ -37,7 +32,6 @@ class CRM_CiviAwards_Setup_CreateAwardsMenus {
     $params = [
       'label' => ts('Awards'),
       'name' => 'awards',
-      'url' => NULL,
       'permission_operator' => 'OR',
       'is_active' => 1,
       'permission' => 'access my awards and activities,access all awards and activities',
