@@ -62,13 +62,6 @@ class CRM_CiviAwards_Setup_CreateAwardsMenus {
         'permission_operator' => 'OR',
       ],
       [
-        'label' => ts('New Award'),
-        'name' => 'new_award',
-        'url' => 'civicrm/a/#/awards/new',
-        'permission' => 'add awards,access all awards and activities',
-        'permission_operator' => 'OR',
-      ],
-      [
         'label' => ts('Manage Applications'),
         'name' => 'manage_awards_applications',
         'url' => 'civicrm/case/a/?case_type_category=awards#/case/list?cf=%7B%22case_type_category%22:%22awards%22%7D',
