@@ -3,9 +3,9 @@
   var AWARDS_CATEGORY_NAME = 'awards';
   var AWARD_CONFIG_URL = 'civicrm/a/#/awards/';
 
-  module.config(function (CaseTypeProvider, DashboardCaseTypeButtonsProvider) {
+  module.config(function (CaseTypeProvider, CaseTypeCategoryProvider, DashboardCaseTypeButtonsProvider) {
     var allCaseTypes = CaseTypeProvider.getAll();
-    var awardCategory = getAwardCategory();
+    var awardCategory = CaseTypeCategoryProvider.findByName(AWARDS_CATEGORY_NAME);
     var awardCaseTypes = filterCaseTypesByCategory(allCaseTypes, awardCategory.value);
 
     addConfigurationButtonsToCaseTypes(awardCaseTypes);
@@ -37,17 +37,6 @@
     function filterCaseTypesByCategory (caseTypes, categoryValue) {
       return _.filter(caseTypes, function (caseType) {
         return caseType.case_type_category === categoryValue;
-      });
-    }
-
-    /**
-     * Returns the award case type category.
-     *
-     * @returns {object} the case type category.
-     */
-    function getAwardCategory () {
-      return _.find(CRM['civicase-base'].caseTypeCategories, function (category) {
-        return category.name === AWARDS_CATEGORY_NAME;
       });
     }
   });

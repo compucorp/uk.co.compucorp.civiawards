@@ -7,9 +7,7 @@
   describe('CaseTypeButtons provider', () => {
     let AwardMockData, AwardsCategory, DashboardCaseTypeButtons, CaseTypesMockData;
 
-    beforeEach(() => {
-      module('civicase-base', 'civiawards.data', 'civiawards');
-    });
+    beforeEach(module('civiawards.data', 'civicase-base', 'civiawards'));
 
     beforeEach(inject((_AwardMockData_, _DashboardCaseTypeButtons_, caseTypeCategoriesMockData, _CaseTypesMockData_) => {
       AwardMockData = _AwardMockData_;
