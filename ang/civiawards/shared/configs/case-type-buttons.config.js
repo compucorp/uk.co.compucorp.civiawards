@@ -4,9 +4,8 @@
   var AWARD_CONFIG_URL = 'civicrm/a/#/awards/';
 
   module.config(function (CaseTypeProvider, CaseTypeCategoryProvider, DashboardCaseTypeButtonsProvider) {
-    var allCaseTypes = CaseTypeProvider.getAll();
     var awardCategory = CaseTypeCategoryProvider.findByName(AWARDS_CATEGORY_NAME);
-    var awardCaseTypes = filterCaseTypesByCategory(allCaseTypes, awardCategory.value);
+    var awardCaseTypes = CaseTypeProvider.getByCategory(awardCategory.value);
 
     addConfigurationButtonsToCaseTypes(awardCaseTypes);
 
@@ -24,19 +23,6 @@
           icon: 'fa fa-cog',
           url: caseTypeConfigUrl
         }]);
-      });
-    }
-
-    /**
-     * Filters the given case types and returns the ones belonging to the given category.
-     *
-     * @param {object[]} caseTypes the list of case types.
-     * @param {number} categoryValue the case type category value.
-     * @returns {object[]} a list of case types.
-     */
-    function filterCaseTypesByCategory (caseTypes, categoryValue) {
-      return _.filter(caseTypes, function (caseType) {
-        return caseType.case_type_category === categoryValue;
       });
     }
   });
