@@ -11,6 +11,7 @@ class CRM_CiviAwards_Setup_CreateApplicantReviewActivityType {
   public function apply() {
     $this->addApplicantReviewCategory();
     $this->addApplicantReviewActivityType();
+    $this->setApplicantReviewActivityTypeStatuses();
   }
 
   /**
@@ -43,6 +44,32 @@ class CRM_CiviAwards_Setup_CreateApplicantReviewActivityType {
       'is_active' => TRUE,
       'is_reserved' => TRUE,
     ]);
+  }
+
+  /**
+   * Sets activity status 'Scheduled' and 'Completed' for applicant
+   * review activity type if not already set.
+   */
+  private function setApplicantReviewActivityTypeStatuses() {
+    $applicantReviewActivityName = 'Applicant Review';
+    $statuses = civicrm_api3('OptionValue', 'get', [
+      'name' => ['IN' => ['Scheduled', 'Completed']],
+      'option_group_id' => 'activity_status',
+    ])['values'];
+
+    foreach ($statuses as $status) {
+      $groupings = explode(',', $status['grouping']);
+      $index = array_search($applicantReviewActivityName, $groupings);
+      if ($index !== FALSE) {
+        continue;
+      }
+
+      array_push($groupings, $applicantReviewActivityName);
+      civicrm_api3('OptionValue', 'create', [
+        'id' => $status['id'],
+        'grouping' => implode(',', $groupings),
+      ]);
+    }
   }
 
 }
