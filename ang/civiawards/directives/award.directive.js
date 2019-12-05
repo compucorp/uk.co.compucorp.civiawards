@@ -23,7 +23,8 @@
     $scope.awardDetailsID = null;
     $scope.tabs = [
       { name: 'basicDetails', label: ts('Basic Details') },
-      { name: 'stages', label: ts('Award Stages') }
+      { name: 'stages', label: ts('Award Stages') },
+      { name: 'reviewFields', label: ts('Review Fields') }
     ];
     $scope.basicDetails = {
       title: '',
@@ -35,7 +36,8 @@
       awardType: null,
       startDate: null,
       endDate: null,
-      awardManagers: []
+      awardManagers: [],
+      selectedReviewFields: []
     };
 
     $scope.ifSaveButtonDisabled = ifSaveButtonDisabled;
@@ -184,6 +186,22 @@
     }
 
     /**
+     * Prepares the Review Fields paramaters when editing an award
+     *
+     * @returns {Array} list of selected review field ids
+     */
+    function getReviewFieldIDs () {
+      var selectedReviewFieldIDs = _.chain($scope.reviewFields)
+        .filter(function (field) {
+          return $scope.basicDetails.selectedReviewFields[field.id];
+        })
+        .map(function (field) { return field.id; })
+        .value();
+
+      return selectedReviewFieldIDs;
+    }
+
+    /**
      * Prepare the Award Stages paramaters when editing an award
      *
      * @param {object} params parameters
@@ -219,7 +237,8 @@
         case_type_id: award.id,
         start_date: $scope.additionalDetails.startDate,
         end_date: $scope.additionalDetails.endDate,
-        award_type: $scope.additionalDetails.awardType
+        award_type: $scope.additionalDetails.awardType,
+        review_fields: getReviewFieldIDs()
       };
 
       if ($scope.awardDetailsID) {
