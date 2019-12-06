@@ -4,7 +4,7 @@
   <CustomGroups>
     <CustomGroup>
       <name>Applicant_Review</name>
-      <title>Applicant Review</title>
+      <title>Applicant Review Scoring Fields</title>
       <extends>Activity</extends>
       <extends_entity_column_value_option_group>activity_type</extends_entity_column_value_option_group>
       <extends_entity_column_value>Applicant Review</extends_entity_column_value>
