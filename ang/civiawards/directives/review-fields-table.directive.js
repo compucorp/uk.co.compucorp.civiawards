@@ -19,7 +19,6 @@
       fetchAllReviewFields()
         .then(function (reviewFields) {
           $scope.reviewFields = reviewFields;
-          console.log($scope.reviewFields);
         });
 
       $rootScope.$on('civiawards::edit-award::details-fetched', setDetails);
@@ -44,8 +43,8 @@
      * @param {object} reviewField review field object to be toggled
      */
     function toggleReviewField (reviewField) {
-      $scope.basicDetails.selectedReviewFields[reviewField.id] =
-        !$scope.basicDetails.selectedReviewFields[reviewField.id];
+      $scope.additionalDetails.selectedReviewFields[reviewField.id] =
+        !$scope.additionalDetails.selectedReviewFields[reviewField.id];
     }
 
     /**
@@ -55,7 +54,7 @@
      * @param {object} details details of the award
      */
     function setDetails (event, details) {
-      $scope.basicDetails.selectedReviewFields = getSelectedReviewFields(details.additionalDetails.review_fields);
+      $scope.additionalDetails.selectedReviewFields = getSelectedReviewFields(details.additionalDetails.review_fields);
     }
 
     /**

@@ -193,7 +193,7 @@
     function getReviewFieldIDs () {
       var selectedReviewFieldIDs = _.chain($scope.reviewFields)
         .filter(function (field) {
-          return $scope.basicDetails.selectedReviewFields[field.id];
+          return $scope.additionalDetails.selectedReviewFields[field.id];
         })
         .map(function (field) { return field.id; })
         .value();

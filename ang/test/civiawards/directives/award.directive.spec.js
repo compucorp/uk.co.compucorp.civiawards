@@ -2,7 +2,7 @@
 (function (_) {
   describe('civiaward', () => {
     var $q, $controller, $rootScope, $scope, $window, $location, crmApi,
-      CaseStatus, AwardMockData, AwardAdditionalDetailsMockData;
+      CaseStatus, AwardMockData, AwardAdditionalDetailsMockData, ReviewFieldsMockData;
 
     beforeEach(module('civicase-base', 'civiawards.templates', 'civiawards', 'civicase.data', 'civiawards.data', ($provide) => {
       $provide.value('crmApi', jasmine.createSpy('crmApi'));
@@ -11,7 +11,7 @@
     }));
 
     beforeEach(inject((_$q_, _$controller_, _$window_, _$location_, _$rootScope_, _crmApi_,
-      _CaseStatus_, _AwardMockData_, _AwardAdditionalDetailsMockData_) => {
+      _CaseStatus_, _AwardMockData_, _AwardAdditionalDetailsMockData_, _ReviewFieldsMockData_) => {
       $q = _$q_;
       $window = _$window_;
       $location = _$location_;
@@ -21,6 +21,7 @@
       CaseStatus = _CaseStatus_;
       AwardMockData = _AwardMockData_;
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_;
+      ReviewFieldsMockData = _ReviewFieldsMockData_;
       $scope = $rootScope.$new();
 
       crmApi.and.returnValue($q.resolve({}));
@@ -61,7 +62,8 @@
               awardType: null,
               startDate: null,
               endDate: null,
-              awardManagers: []
+              awardManagers: [],
+              selectedReviewFields: []
             });
           });
         });
@@ -101,7 +103,8 @@
               award_type: '1',
               start_date: '2019-10-29',
               end_date: '2019-11-29',
-              award_manager: ['2', '1']
+              award_manager: ['2', '1'],
+              review_fields: ['19', '20']
             }
           });
         });
@@ -180,7 +183,9 @@
       describe('when creating a new award', () => {
         beforeEach(() => {
           createController({ ifNewAward: true });
+          $scope.reviewFields = ReviewFieldsMockData;
           setAwardDetails();
+          $scope.additionalDetails.selectedReviewFields = { 19: true, 20: false };
 
           $scope.saveAward();
         });
@@ -212,7 +217,8 @@
               start_date: AwardAdditionalDetailsMockData.start_date,
               end_date: AwardAdditionalDetailsMockData.end_date,
               award_type: AwardAdditionalDetailsMockData.award_type,
-              award_manager: ['2', '1']
+              award_manager: ['2', '1'],
+              review_fields: ['19']
             });
           });
 
