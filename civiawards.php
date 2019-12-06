@@ -161,6 +161,11 @@ function civiawards_civicrm_permission(&$permissions) {
     'CiviAwards: Access applicant portal',
     ts('Allows a user to access the awards applicant portal'),
   ];
+
+  $permissions['create/edit awards'] = [
+    'CiviAwards: Create/Edit awards',
+    ts('Allows a user to create or edit awards'),
+  ];
 }
 /**
  * Implements addCiviCaseDependentAngularModules().
