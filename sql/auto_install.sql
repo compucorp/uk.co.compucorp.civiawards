@@ -9,6 +9,7 @@
 
 SET FOREIGN_KEY_CHECKS=0;
 
+DROP TABLE IF EXISTS `civicrm_civiawards_award_panel`;
 DROP TABLE IF EXISTS `civicrm_civiawards_award_manager`;
 DROP TABLE IF EXISTS `civicrm_civiawards_award_detail`;
 
@@ -54,4 +55,22 @@ CREATE TABLE `civicrm_civiawards_award_manager` (
     UNIQUE INDEX `unique_case_type_manager`(contact_id, case_type_id),
     CONSTRAINT FK_civicrm_civiawards_award_manager_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ,
     CONSTRAINT FK_civicrm_civiawards_award_manager_case_type_id FOREIGN KEY (`case_type_id`) REFERENCES `civicrm_case_type`(`id`) ON DELETE CASCADE
+);
+
+-- /*******************************************************
+-- *
+-- * civicrm_civiawards_award_panel
+-- *
+-- * Store Award Panel Details
+-- *
+-- *******************************************************/
+CREATE TABLE `civicrm_civiawards_award_panel` (
+     `id` int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Unique AwardReviewPanel ID',
+     `title` varchar(255) NOT NULL   COMMENT 'The review panel title',
+     `case_type_id` int unsigned NOT NULL   COMMENT 'FK to Case Type',
+     `contact_settings` text    COMMENT 'An array of panel settings to fetch contacts belonging to this panel',
+     `visibility_settings` text    COMMENT 'An array of settings related to the data access the panel contacts have to applications',
+     `is_active` tinyint NOT NULL  DEFAULT 1 COMMENT 'Whether the panel is active or not',
+    PRIMARY KEY (`id`),
+    CONSTRAINT FK_civicrm_civiawards_award_panel_case_type_id FOREIGN KEY (`case_type_id`) REFERENCES `civicrm_case_type`(`id`) ON DELETE CASCADE
 );
