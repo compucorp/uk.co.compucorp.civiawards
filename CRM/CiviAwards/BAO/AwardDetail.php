@@ -86,53 +86,10 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
    *
    * @throws \Exception
    */
-  private static function validateReviewFields(array &$params) {
-    $reviewFieldsLegalOptions = [
-      'id' => FILTER_VALIDATE_INT,
-      'weight' => FILTER_VALIDATE_INT,
-      'required' => FILTER_VALIDATE_BOOLEAN
-    ];
+  private static function validateReviewFields(array $params) {
     $reviewFields = CRM_Utils_Array::value('review_fields', $params);
-    if (empty($reviewFields)) {
-      return;
-    }
-
-    foreach ($reviewFields as $reviewFieldOptions) {
-      $invalidReviewFieldOptions = [];
-      $validReviewFieldOptions = array_filter(
-        $reviewFieldOptions,
-        function($value, $key) use ($reviewFieldsLegalOptions, &$invalidReviewFieldOptions) {
-          if (!isset($reviewFieldsLegalOptions[$key])) {
-            return FALSE;
-          }
-
-          if (filter_var($value, $reviewFieldsLegalOptions[$key], FILTER_NULL_ON_FAILURE) !== NULL) {
-            return TRUE;
-          }
-          $invalidReviewFieldOptions[] = $key;
-        },
-        ARRAY_FILTER_USE_BOTH
-      );
-      if (count($validReviewFieldOptions) === count($reviewFieldsLegalOptions)) {
-        continue;
-      }
-
-      $missingReviewFieldOptions = array_diff(
-        array_keys($reviewFieldsLegalOptions),
-        array_merge($invalidReviewFieldOptions, array_keys($validReviewFieldOptions))
-      );
-      $exceptionPhrases = [
-        !empty($invalidReviewFieldOptions) ? "invalid values passed for [%1]" : "",
-        !empty($missingReviewFieldOptions) ? "required field" . (
-          count($missingReviewFieldOptions) > 1 ? "s [%2] are" : " [%2] is"
-        ) . " missing" : ""
-      ];
-
-      throw new Exception(ts(implode(' and ', array_filter($exceptionPhrases)), [
-        1 => implode(', ', $invalidReviewFieldOptions),
-        2 => implode(', ', $missingReviewFieldOptions),
-      ]));
-    }
+    $reviewFieldsValidator = new CRM_CiviAwards_Helper_CreateReviewFieldsValidator();
+    $reviewFieldsValidator->validate($reviewFields);
   }
 
 }
