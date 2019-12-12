@@ -97,7 +97,6 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
       return;
     }
 
-    $filteredReviewFields = [];
     foreach ($reviewFields as $reviewFieldOptions) {
       $invalidReviewFieldOptions = [];
       $validReviewFieldOptions = array_filter(
@@ -133,11 +132,7 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
         1 => implode(', ', $invalidReviewFieldOptions),
         2 => implode(', ', $missingReviewFieldOptions),
       ]));
-
-      $filteredReviewFields[] = $validReviewFieldOptions;
     }
-
-    $params['review_fields'] = $filteredReviewFields;
   }
 
 }
