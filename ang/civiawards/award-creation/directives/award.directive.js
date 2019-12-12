@@ -7,7 +7,7 @@
         awardId: '='
       },
       controller: 'CiviAwardCreateEditAwardController',
-      templateUrl: '~/civiawards/directives/award.directive.html',
+      templateUrl: '~/civiawards/award-creation/directives/award.directive.html',
       restrict: 'E'
     };
   });
@@ -49,7 +49,7 @@
 
     (function init () {
       if ($scope.awardId) {
-        $scope.activeTab = $scope.tabs[1].name;
+        $scope.activeTab = $scope.tabs[2].name;
         fetchAwardInformation()
           .then(function (result) {
             $scope.$emit('civiawards::edit-award::details-fetched', result);
@@ -190,15 +190,14 @@
      *
      * @returns {Array} list of selected review field ids
      */
-    function getReviewFieldIDs () {
-      var selectedReviewFieldIDs = _.chain($scope.reviewFields)
-        .filter(function (field) {
-          return $scope.additionalDetails.selectedReviewFields[field.id];
-        })
-        .map(function (field) { return field.id; })
-        .value();
-
-      return selectedReviewFieldIDs;
+    function prepareReviewFields () {
+      return _.map($scope.additionalDetails.selectedReviewFields, function (reviewField) {
+        return {
+          id: reviewField.id,
+          required: reviewField.required,
+          weight: reviewField.weight
+        };
+      });
     }
 
     /**
@@ -238,7 +237,7 @@
         start_date: $scope.additionalDetails.startDate,
         end_date: $scope.additionalDetails.endDate,
         award_type: $scope.additionalDetails.awardType,
-        review_fields: getReviewFieldIDs()
+        review_fields: prepareReviewFields()
       };
 
       if ($scope.awardDetailsID) {

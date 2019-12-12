@@ -16,10 +16,16 @@
   }
 }
 
-.civiawards__award__stages,
-.civiawards__award__review-fields {
+.civiawards__award__stages {
   th:first-child {
     width: 16px;
+  }
+}
+
+.civiawards__award__stages,
+.civiawards__award__review-fields {
+  [type='checkbox'] {
+    margin-top: -5px;
   }
 
   tbody {
@@ -27,8 +33,23 @@
       cursor: pointer;
     }
   }
+}
 
-  [type='checkbox'] {
-    margin-top: -5px;
+.civiawards__award__review-fields--selected {
+  margin: 0 20px 20px !important;
+  width: calc(100% - 40px);
+
+  tbody {
+    tr {
+      cursor: auto;
+    }
   }
+}
+
+.civiawards__award__add-review-fields {
+  margin: 20px;
+}
+
+.civiawards__award__remove-review-field {
+  padding: 0;
 }

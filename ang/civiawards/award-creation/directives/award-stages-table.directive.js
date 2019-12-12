@@ -4,7 +4,7 @@
   module.directive('civiawardAwardStagesTable', function () {
     return {
       controller: 'CiviawardAwardStagesTableController',
-      templateUrl: '~/civiawards/directives/award-stages-table.directive.html',
+      templateUrl: '~/civiawards/award-creation/directives/award-stages-table.directive.html',
       restrict: 'E'
     };
   });
