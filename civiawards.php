@@ -145,6 +145,9 @@ function civiawards_civicrm_apiWrappers(&$wrappers, $apiRequest) {
   if ($apiRequest['entity'] == 'AwardDetail') {
     $wrappers[] = new CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields();
   }
+  if ($apiRequest['entity'] == 'AwardReviewPanel') {
+    $wrappers[] = new CRM_CiviAwards_Api_Wrapper_AwardReviewPanelFormatSettingFields();
+  }
 }
 
 /**
@@ -167,6 +170,7 @@ function civiawards_civicrm_permission(&$permissions) {
     ts('Allows a user to create or edit awards'),
   ];
 }
+
 /**
  * Implements addCiviCaseDependentAngularModules().
  */
