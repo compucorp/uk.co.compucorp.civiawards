@@ -470,5 +470,11 @@ function _civiawards_civix_civicrm_entityTypes(&$entityTypes) {
         'class' => 'CRM_CiviAwards_DAO_AwardManager',
         'table' => 'civicrm_award_manager',
       ],
+    'CRM_CiviAwards_DAO_AwardReviewPanel' =>
+      [
+        'name' => 'AwardReviewPanel',
+        'class' => 'CRM_CiviAwards_DAO_AwardReviewPanel',
+        'table' => 'civicrm_award_review_panel',
+      ],
   ]);
 }

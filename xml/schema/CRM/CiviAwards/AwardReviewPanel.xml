@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/CiviAwards</base>
+  <class>AwardReviewPanel</class>
+  <name>civicrm_civiawards_award_panel</name>
+  <comment>Store Award Panel Details</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique AwardReviewPanel ID</comment>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>title</name>
+    <type>varchar</type>
+    <length>255</length>
+    <required>true</required>
+    <unique>true</unique>
+    <comment>The review panel title</comment>
+  </field>
+
+  <field>
+    <name>case_type_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Case Type</comment>
+    <required>true</required>
+  </field>
+  <foreignKey>
+    <name>case_type_id</name>
+    <table>civicrm_case_type</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>contact_settings</name>
+    <type>text</type>
+    <comment>An array of panel settings to fetch contacts belonging to this panel</comment>
+  </field>
+
+  <field>
+    <name>visibility_settings</name>
+    <type>text</type>
+    <comment>An array of settings related to the data access the panel contacts have to applications</comment>
+  </field>
+
+  <field>
+    <name>is_active</name>
+    <type>boolean</type>
+    <required>true</required>
+    <default>1</default>
+    <comment>Whether the panel is active or not</comment>
+  </field>
+
+  <index>
+    <name>unique_case_type_panel_title</name>
+    <fieldName>title</fieldName>
+    <fieldName>case_type_id</fieldName>
+    <unique>true</unique>
+  </index>
+</table>
