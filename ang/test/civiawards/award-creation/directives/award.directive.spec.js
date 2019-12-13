@@ -104,7 +104,10 @@
               start_date: '2019-10-29',
               end_date: '2019-11-29',
               award_manager: ['2', '1'],
-              review_fields: ['19', '20']
+              review_fields: [
+                { id: '19', weight: 1, required: true },
+                { id: '20', weight: 2, required: false }
+              ]
             }
           });
         });
@@ -185,7 +188,6 @@
           createController({ ifNewAward: true });
           $scope.reviewFields = ReviewFieldsMockData;
           setAwardDetails();
-          $scope.additionalDetails.selectedReviewFields = { 19: true, 20: false };
 
           $scope.saveAward();
         });
@@ -218,7 +220,7 @@
               end_date: AwardAdditionalDetailsMockData.end_date,
               award_type: AwardAdditionalDetailsMockData.award_type,
               award_manager: ['2', '1'],
-              review_fields: ['19']
+              review_fields: [{ id: '19', required: false, weight: 1 }]
             });
           });
 
@@ -296,6 +298,11 @@
       $scope.additionalDetails.startDate = AwardAdditionalDetailsMockData.start_date;
       $scope.additionalDetails.endDate = AwardAdditionalDetailsMockData.end_date;
       $scope.additionalDetails.awardType = AwardAdditionalDetailsMockData.award_type;
+      $scope.additionalDetails.selectedReviewFields = [{
+        id: ReviewFieldsMockData[0].id,
+        required: false,
+        weight: 1
+      }];
 
       crmApi.and.returnValue($q.resolve({
         values: [AwardAdditionalDetailsMockData]

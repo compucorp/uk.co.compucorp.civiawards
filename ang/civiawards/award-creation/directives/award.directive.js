@@ -4,7 +4,8 @@
   module.directive('civiaward', function () {
     return {
       scope: {
-        awardId: '='
+        awardId: '=',
+        focusedTabIndex: '='
       },
       controller: 'CiviAwardCreateEditAwardController',
       templateUrl: '~/civiawards/award-creation/directives/award.directive.html',
@@ -49,13 +50,28 @@
 
     (function init () {
       if ($scope.awardId) {
-        $scope.activeTab = $scope.tabs[2].name;
+        $scope.activeTab = $scope.tabs[getDefaultTabIndex()].name;
         fetchAwardInformation()
           .then(function (result) {
             $scope.$emit('civiawards::edit-award::details-fetched', result);
           });
       }
     }());
+
+    /**
+     * Returns the Tab Index to be focused on load
+     *
+     * @returns {number} index of the tab to be focused on load
+     */
+    function getDefaultTabIndex () {
+      var focusedTabIndex = parseInt($scope.focusedTabIndex);
+
+      if ($scope.focusedTabIndex >= 1 && $scope.focusedTabIndex <= $scope.tabs.length) {
+        return focusedTabIndex - 1;
+      } else {
+        return 0;
+      }
+    }
 
     /**
      * Selects a tab as active
@@ -156,7 +172,7 @@
      * @param {string/number} awardID id of the award
      */
     function navigateToAwardEditPage (awardID) {
-      $location.path('/awards/' + awardID);
+      $location.path('/awards/' + awardID + '');
     }
 
     /**
