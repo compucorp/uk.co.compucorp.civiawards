@@ -72,5 +72,6 @@ CREATE TABLE `civicrm_civiawards_award_panel` (
      `visibility_settings` text    COMMENT 'An array of settings related to the data access the panel contacts have to applications',
      `is_active` tinyint NOT NULL  DEFAULT 1 COMMENT 'Whether the panel is active or not',
     PRIMARY KEY (`id`),
+    UNIQUE INDEX `unique_case_type_panel_title`(title,case_type_id),
     CONSTRAINT FK_civicrm_civiawards_award_panel_case_type_id FOREIGN KEY (`case_type_id`) REFERENCES `civicrm_case_type`(`id`) ON DELETE CASCADE
 );

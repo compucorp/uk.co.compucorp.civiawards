@@ -60,4 +60,10 @@
     <comment>Whether the panel is active or not</comment>
   </field>
 
+  <index>
+    <name>unique_case_type_panel_title</name>
+    <fieldName>title</fieldName>
+    <fieldName>case_type_id</fieldName>
+    <unique>true</unique>
+  </index>
 </table>
