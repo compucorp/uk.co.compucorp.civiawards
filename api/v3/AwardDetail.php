@@ -20,7 +20,7 @@ function _civicrm_api3_award_detail_create_spec(array &$spec) {
 
   $spec['review_fields'] = [
     'title' => 'Award review fields',
-    'description' => 'An array of Custom field IDs',
+    'description' => 'A two-dimensional array of Custom fields properties. Example [{\'id\': 2, \'required\': true, \'weight\': 14}]',
     'type' => CRM_Utils_Type::T_STRING,
   ];
 }

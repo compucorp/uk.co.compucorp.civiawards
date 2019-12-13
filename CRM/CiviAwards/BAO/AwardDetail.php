@@ -55,8 +55,9 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
    * @param array $params
    *   Parameters.
    */
-  private static function validateParams(array $params) {
+  private static function validateParams(array &$params) {
     self::validateDates($params);
+    self::validateReviewFields($params);
   }
 
   /**
@@ -74,6 +75,21 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
         throw new Exception("Award Start Date must not be greater than the End Date");
       }
     }
+  }
+
+
+  /**
+   * Validates review_field options to ensure legal options are passed.
+   *
+   * @param array $params
+   *  Request Parameters
+   *
+   * @throws \Exception
+   */
+  private static function validateReviewFields(array $params) {
+    $reviewFields = CRM_Utils_Array::value('review_fields', $params);
+    $reviewFieldsValidator = new CRM_CiviAwards_Helper_CreateReviewFieldsValidator();
+    $reviewFieldsValidator->validate($reviewFields);
   }
 
 }
