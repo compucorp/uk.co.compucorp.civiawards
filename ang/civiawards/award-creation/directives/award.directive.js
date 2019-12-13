@@ -121,7 +121,8 @@
      */
     function saveNewAward () {
       saveAward()
-        .then(navigateToAwardEditPage);
+        .then(navigateToAwardEditPage)
+        .then(showSucessNotification);
     }
 
     /**
@@ -129,7 +130,15 @@
      */
     function saveAndNavigateToDashboard () {
       saveAward()
-        .then(navigateToDashboard);
+        .then(navigateToDashboard)
+        .then(showSucessNotification);
+    }
+
+    /**
+     * Show notification after award is saved successfully
+     */
+    function showSucessNotification () {
+      CRM.alert('Award Successfully Saved.', ts('Saved'), 'success');
     }
 
     /**
