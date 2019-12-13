@@ -6,25 +6,25 @@
 class CRM_CiviAwards_Helper_CreateReviewFieldsValidator {
 
   /**
-   * Array of accepted review_fields with their validation filters
+   * Array of accepted review_fields with their validation filters.
    *
    * @var array
    */
   private $reviewFieldsLegalOptions = [
     'id' => FILTER_VALIDATE_INT,
     'weight' => FILTER_VALIDATE_INT,
-    'required' => FILTER_VALIDATE_BOOLEAN
+    'required' => FILTER_VALIDATE_BOOLEAN,
   ];
 
   /**
-   * Array to hold invalid field options
+   * Array to hold invalid field options.
    *
    * @var array
    */
   private $invalidReviewFieldOptions = [];
 
   /**
-   * Array to hold unknown review field options passeed
+   * Array to hold unknown review field options passed.
    *
    * @var array
    */
@@ -34,7 +34,7 @@ class CRM_CiviAwards_Helper_CreateReviewFieldsValidator {
    * Validates review_field options to ensure legal options are passed.
    *
    * @param array $reviewFields
-   *  Review fields
+   *   Review fields.
    *
    * @throws \Exception
    */
@@ -74,12 +74,12 @@ class CRM_CiviAwards_Helper_CreateReviewFieldsValidator {
    * Callback to filter review options.
    *
    * @param string $value
-   *  Value of review field option
+   *   Value of review field option.
    * @param string $key
-   *  Review field option
+   *   Review field option.
    *
-   * @return boolean
-   *  Returns TRUE if option passes validation
+   * @return bool
+   *   Returns TRUE if option passes validation.
    */
   private function reviewFieldOptionsFilter($value, $key) {
     if (!isset($this->reviewFieldsLegalOptions[$key])) {
@@ -102,20 +102,20 @@ class CRM_CiviAwards_Helper_CreateReviewFieldsValidator {
   }
 
   /**
-   * Constructs error message given the missing review field options
+   * Constructs error message given the missing review field options.
    *
    * @param array $missingReviewFieldOptions
-   *  Missing review field options
+   *   Missing review field options.
    *
    * @return string
-   *  Excption message
+   *   Exception message.
    */
   private function getReviewFieldValidationExceptionPhrase(array $missingReviewFieldOptions) {
     $exceptionPhrases = [
       !empty($this->invalidReviewFieldOptions) ? "invalid values passed for [%1]" : "",
       !empty($missingReviewFieldOptions) ? "required field" . (
         count($missingReviewFieldOptions) > 1 ? "s [%2] are" : " [%2] is"
-      ) . " missing" : ""
+      ) . " missing" : "",
     ];
 
     return ucfirst(implode(' and ', array_filter($exceptionPhrases)));
