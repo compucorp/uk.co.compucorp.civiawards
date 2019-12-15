@@ -7,7 +7,8 @@
         buttonClass: 'btn btn-primary civicase__dashboard__action-btn civicase__dashboard__action-btn--white',
         iconClass: 'add_circle',
         identifier: 'AddAward',
-        label: 'Create new award'
+        label: 'Create new award',
+        weight: 100
       }
     ];
 
