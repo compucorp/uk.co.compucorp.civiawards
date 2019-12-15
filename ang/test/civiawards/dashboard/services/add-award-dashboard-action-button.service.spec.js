@@ -1,6 +1,6 @@
 /* eslint-env jasmine */
 
-(function (_) {
+(function (_, getCrmUrl) {
   describe('Add Award Dashboard Action Button', () => {
     let $location, AddAwardDashboardActionButton;
 
@@ -40,14 +40,16 @@
     });
 
     describe('when clicking the action button', () => {
+      const expectedUrl = getCrmUrl('awards/new');
+
       beforeEach(() => {
         spyOn($location, 'url');
         AddAwardDashboardActionButton.clickHandler();
       });
 
       it('redirects the user to the create award screen', () => {
-        expect($location.url).toHaveBeenCalledWith('awards/new');
+        expect($location.url).toHaveBeenCalledWith(expectedUrl);
       });
     });
   });
-})(CRM._);
+})(CRM._, CRM.url);

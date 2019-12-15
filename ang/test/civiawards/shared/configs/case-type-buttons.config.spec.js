@@ -1,6 +1,6 @@
 /* eslint-env jasmine */
 
-(function (_, angular) {
+(function (_, angular, getCrmUrl) {
   var AWARDS_CATEGORY_NAME = 'awards';
   var AWARD_CONFIG_URL = 'civicrm/a/#/awards/';
 
@@ -24,7 +24,7 @@
         expect(DashboardCaseTypeButtons).toEqual({
           [AwardMockData.name]: [{
             icon: 'fa fa-cog',
-            url: AWARD_CONFIG_URL + AwardMockData.id
+            url: getCrmUrl(AWARD_CONFIG_URL + AwardMockData.id)
           }]
         });
       });
@@ -45,4 +45,4 @@
       });
     });
   });
-})(CRM._, angular);
+})(CRM._, angular, CRM.url);
