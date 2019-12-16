@@ -11,11 +11,11 @@
     review_fields: [{
       id: '19',
       weight: 1,
-      required: true
+      required: '1'
     }, {
       id: '20',
       weight: 2,
-      required: false
+      required: '0'
     }]
   });
 }());

@@ -35,6 +35,28 @@
     }());
 
     /**
+     * Get the maximum weight from all review fields
+     *
+     * @returns {number} maximum weight
+     */
+    function getMaxWeight () {
+      return _.max($scope.additionalDetails.selectedReviewFields, function (field) {
+        return field.weight;
+      }).weight;
+    }
+
+    /**
+     * Get the minimum weight from all review fields
+     *
+     * @returns {number} minimum weight
+     */
+    function getMinWeight () {
+      return _.min($scope.additionalDetails.selectedReviewFields, function (field) {
+        return field.weight;
+      }).weight;
+    }
+
+    /**
      * Returns the requested field data for the sent review field id
      *
      * @param {string} reviewFieldID review field id
@@ -42,9 +64,11 @@
      * @returns {any} values of the field requested
      */
     function getReviewFieldData (reviewFieldID, fieldName) {
-      return _.find($scope.reviewFields, function (field) {
+      var reviewField = _.find($scope.reviewFields, function (field) {
         return field.id === reviewFieldID;
-      })[fieldName];
+      });
+
+      return reviewField ? reviewField[fieldName] : null;
     }
 
     /**
@@ -53,13 +77,15 @@
      * @param {object} reviewField review field to be moved to the top
      */
     function moveToTop (reviewField) {
+      var minWeight = getMinWeight();
+
       _.each($scope.additionalDetails.selectedReviewFields, function (field) {
         if (field.weight < reviewField.weight) {
           field.weight += 1;
         }
       });
 
-      reviewField.weight = 1;
+      reviewField.weight = minWeight;
     }
 
     /**
@@ -68,13 +94,15 @@
      * @param {object} reviewField review field to be moved to the bottom
      */
     function moveToBottom (reviewField) {
+      var maxWeight = getMaxWeight();
+
       _.each($scope.additionalDetails.selectedReviewFields, function (field) {
         if (field.weight > reviewField.weight) {
-          field.weight -= 1;
+          field.weight = parseInt(field.weight) - 1;
         }
       });
 
-      reviewField.weight = $scope.additionalDetails.selectedReviewFields.length;
+      reviewField.weight = maxWeight;
     }
 
     /**
@@ -181,10 +209,14 @@
       if (field) {
         removeReviewFieldFromSelection(reviewField);
       } else {
+        var weightToBeAssigned = 1 + (_.isEmpty($scope.additionalDetails.selectedReviewFields)
+          ? 1
+          : getMaxWeight());
+
         $scope.additionalDetails.selectedReviewFields.push({
           id: reviewField.id,
           required: false,
-          weight: $scope.additionalDetails.selectedReviewFields.length + 1
+          weight: weightToBeAssigned
         });
       }
     }
@@ -196,6 +228,10 @@
      * @param {object} details details of the award
      */
     function setDetails (event, details) {
+      _.each(details.additionalDetails.review_fields, function (field) {
+        field.required = field.required === '1';
+        field.weight = parseInt(field.weight);
+      });
       $scope.additionalDetails.selectedReviewFields = details.additionalDetails.review_fields;
     }
   });

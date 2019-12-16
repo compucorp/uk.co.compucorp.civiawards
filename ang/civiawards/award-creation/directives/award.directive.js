@@ -181,7 +181,7 @@
      * @param {string/number} awardID id of the award
      */
     function navigateToAwardEditPage (awardID) {
-      $location.path('/awards/' + awardID + '');
+      $location.path('/awards/' + awardID + '/2');
     }
 
     /**
@@ -219,7 +219,7 @@
       return _.map($scope.additionalDetails.selectedReviewFields, function (reviewField) {
         return {
           id: reviewField.id,
-          required: reviewField.required,
+          required: reviewField.required ? '1' : '0',
           weight: reviewField.weight
         };
       });

@@ -61,7 +61,7 @@
           expect($scope.additionalDetails.selectedReviewFields[0]).toEqual({
             id: ReviewFieldsMockData[0].id,
             required: false,
-            weight: 1
+            weight: 2
           });
         });
 

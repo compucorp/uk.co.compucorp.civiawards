@@ -64,7 +64,7 @@
       <td align="center">
         <input
           ng-click="toggleRequiredState(reviewField)"
-          ng-checked="findReviewFieldByID(id).required"
+          ng-checked="findReviewFieldByID(reviewField.id).required"
           type="checkbox">
       </td>
       <td>{{getReviewFieldData(reviewField.id, 'data_type')}}</td>
