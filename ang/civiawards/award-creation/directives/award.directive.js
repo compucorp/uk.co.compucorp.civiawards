@@ -4,10 +4,11 @@
   module.directive('civiaward', function () {
     return {
       scope: {
-        awardId: '='
+        awardId: '=',
+        focusedTabName: '@'
       },
       controller: 'CiviAwardCreateEditAwardController',
-      templateUrl: '~/civiawards/directives/award.directive.html',
+      templateUrl: '~/civiawards/award-creation/directives/award.directive.html',
       restrict: 'E'
     };
   });
@@ -23,7 +24,8 @@
     $scope.awardDetailsID = null;
     $scope.tabs = [
       { name: 'basicDetails', label: ts('Basic Details') },
-      { name: 'stages', label: ts('Award Stages') }
+      { name: 'stages', label: ts('Award Stages') },
+      { name: 'reviewFields', label: ts('Review Fields') }
     ];
     $scope.basicDetails = {
       title: '',
@@ -35,7 +37,8 @@
       awardType: null,
       startDate: null,
       endDate: null,
-      awardManagers: []
+      awardManagers: [],
+      selectedReviewFields: []
     };
 
     $scope.ifSaveButtonDisabled = ifSaveButtonDisabled;
@@ -47,13 +50,26 @@
 
     (function init () {
       if ($scope.awardId) {
-        $scope.activeTab = $scope.tabs[1].name;
+        $scope.activeTab = getDefaultTabName();
         fetchAwardInformation()
           .then(function (result) {
             $scope.$emit('civiawards::edit-award::details-fetched', result);
           });
       }
     }());
+
+    /**
+     * Returns default Tab to be focused on load
+     *
+     * @returns {string} default tab name to be focused on load
+     */
+    function getDefaultTabName () {
+      if ($scope.focusedTabName === 'undefined') {
+        return 'basicDetails';
+      } else {
+        return $scope.focusedTabName;
+      }
+    }
 
     /**
      * Selects a tab as active
@@ -103,7 +119,8 @@
      */
     function saveNewAward () {
       saveAward()
-        .then(navigateToAwardEditPage);
+        .then(navigateToAwardEditPage)
+        .then(showSucessNotification);
     }
 
     /**
@@ -111,7 +128,15 @@
      */
     function saveAndNavigateToDashboard () {
       saveAward()
-        .then(navigateToDashboard);
+        .then(navigateToDashboard)
+        .then(showSucessNotification);
+    }
+
+    /**
+     * Show notification after award is saved successfully
+     */
+    function showSucessNotification () {
+      CRM.alert('Award Successfully Saved.', ts('Saved'), 'success');
     }
 
     /**
@@ -154,7 +179,7 @@
      * @param {string/number} awardID id of the award
      */
     function navigateToAwardEditPage (awardID) {
-      $location.path('/awards/' + awardID);
+      $location.path('/awards/' + awardID + '/stages');
     }
 
     /**
@@ -180,6 +205,21 @@
 
       return crmApi('CaseType', 'create', params).then(function (caseTypeData) {
         return caseTypeData.values[0];
+      });
+    }
+
+    /**
+     * Prepares the Review Fields paramaters when editing an award
+     *
+     * @returns {object[]} list of selected review field ids
+     */
+    function prepareReviewFields () {
+      return _.map($scope.additionalDetails.selectedReviewFields, function (reviewField) {
+        return {
+          id: reviewField.id,
+          required: reviewField.required ? '1' : '0',
+          weight: reviewField.weight
+        };
       });
     }
 
@@ -219,7 +259,8 @@
         case_type_id: award.id,
         start_date: $scope.additionalDetails.startDate,
         end_date: $scope.additionalDetails.endDate,
-        award_type: $scope.additionalDetails.awardType
+        award_type: $scope.additionalDetails.awardType,
+        review_fields: prepareReviewFields()
       };
 
       if ($scope.awardDetailsID) {

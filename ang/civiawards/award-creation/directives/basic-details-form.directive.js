@@ -4,7 +4,7 @@
   module.directive('civiawardBasicDetailsForm', function () {
     return {
       controller: 'CiviawardBasicDetailsFormController',
-      templateUrl: '~/civiawards/directives/basic-details-form.directive.html',
+      templateUrl: '~/civiawards/award-creation/directives/basic-details-form.directive.html',
       restrict: 'E'
     };
   });

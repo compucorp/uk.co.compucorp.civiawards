@@ -5,9 +5,9 @@
     $routeProvider.when('/awards/new', {
       template: '<civiaward></civiaward>'
     });
-    $routeProvider.when('/awards/:awardId', {
+    $routeProvider.when('/awards/:awardId/:focusedTabName?', {
       template: function (params) {
-        return '<civiaward award-id="' + params.awardId + '"></civiaward>';
+        return '<civiaward award-id="' + params.awardId + '" focused-tab-name="' + params.focusedTabName + '"></civiaward>';
       }
     });
   });

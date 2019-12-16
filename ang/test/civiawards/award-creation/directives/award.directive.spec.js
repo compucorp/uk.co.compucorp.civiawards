@@ -2,7 +2,7 @@
 (function (_) {
   describe('civiaward', () => {
     var $q, $controller, $rootScope, $scope, $window, $location, crmApi,
-      CaseStatus, AwardMockData, AwardAdditionalDetailsMockData;
+      CaseStatus, AwardMockData, AwardAdditionalDetailsMockData, ReviewFieldsMockData;
 
     beforeEach(module('civicase-base', 'civiawards.templates', 'civiawards', 'civicase.data', 'civiawards.data', ($provide) => {
       $provide.value('crmApi', jasmine.createSpy('crmApi'));
@@ -11,7 +11,7 @@
     }));
 
     beforeEach(inject((_$q_, _$controller_, _$window_, _$location_, _$rootScope_, _crmApi_,
-      _CaseStatus_, _AwardMockData_, _AwardAdditionalDetailsMockData_) => {
+      _CaseStatus_, _AwardMockData_, _AwardAdditionalDetailsMockData_, _ReviewFieldsMockData_) => {
       $q = _$q_;
       $window = _$window_;
       $location = _$location_;
@@ -21,7 +21,10 @@
       CaseStatus = _CaseStatus_;
       AwardMockData = _AwardMockData_;
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_;
+      ReviewFieldsMockData = _ReviewFieldsMockData_;
       $scope = $rootScope.$new();
+
+      spyOn($scope, '$emit');
 
       crmApi.and.returnValue($q.resolve({}));
       $scope.$digest();
@@ -61,7 +64,8 @@
               awardType: null,
               startDate: null,
               endDate: null,
-              awardManagers: []
+              awardManagers: [],
+              selectedReviewFields: []
             });
           });
         });
@@ -74,7 +78,6 @@
             additionalDetails: AwardAdditionalDetailsMockData
           }));
 
-          spyOn($scope, '$emit');
           createController({ ifNewAward: false });
           $scope.$digest();
         });
@@ -101,7 +104,11 @@
               award_type: '1',
               start_date: '2019-10-29',
               end_date: '2019-11-29',
-              award_manager: ['2', '1']
+              award_manager: ['2', '1'],
+              review_fields: [
+                { id: '19', weight: 1, required: '1' },
+                { id: '20', weight: 2, required: '0' }
+              ]
             }
           });
         });
@@ -180,6 +187,7 @@
       describe('when creating a new award', () => {
         beforeEach(() => {
           createController({ ifNewAward: true });
+          $scope.reviewFields = ReviewFieldsMockData;
           setAwardDetails();
 
           $scope.saveAward();
@@ -212,7 +220,8 @@
               start_date: AwardAdditionalDetailsMockData.start_date,
               end_date: AwardAdditionalDetailsMockData.end_date,
               award_type: AwardAdditionalDetailsMockData.award_type,
-              award_manager: ['2', '1']
+              award_manager: ['2', '1'],
+              review_fields: [{ id: '19', required: '0', weight: 1 }]
             });
           });
 
@@ -261,7 +270,7 @@
       });
 
       it('redirects to edit the award', () => {
-        expect($location.path).toHaveBeenCalledWith('/awards/10');
+        expect($location.path).toHaveBeenCalledWith('/awards/10/stages');
       });
     });
 
@@ -290,6 +299,11 @@
       $scope.additionalDetails.startDate = AwardAdditionalDetailsMockData.start_date;
       $scope.additionalDetails.endDate = AwardAdditionalDetailsMockData.end_date;
       $scope.additionalDetails.awardType = AwardAdditionalDetailsMockData.award_type;
+      $scope.additionalDetails.selectedReviewFields = [{
+        id: ReviewFieldsMockData[0].id,
+        required: false,
+        weight: 1
+      }];
 
       crmApi.and.returnValue($q.resolve({
         values: [AwardAdditionalDetailsMockData]

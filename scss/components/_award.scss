@@ -5,6 +5,10 @@
 }
 
 .civiawards__award__basic-details {
+  label {
+    width: 200px;
+  }
+
   input:not([type='checkbox']):not([crm-ui-datepicker]):not(.crm-form-date),
   textarea {
     width: 250px;
@@ -20,14 +24,36 @@
   th:first-child {
     width: 16px;
   }
+}
+
+.civiawards__award__stages,
+.civiawards__award__review-fields {
+  [type='checkbox'] {
+    margin-top: -5px;
+  }
 
   tbody {
     tr {
       cursor: pointer;
     }
   }
+}
 
-  [type='checkbox'] {
-    margin-top: -5px;
+.civiawards__award__review-fields--selected {
+  margin: 0 $gutter-width $gutter-width !important;
+  width: calc(100% - #{$gutter-width * 2});
+
+  tbody {
+    tr {
+      cursor: auto;
+    }
   }
+}
+
+.civiawards__award__add-review-fields {
+  margin: $gutter-width;
+}
+
+.civiawards__award__remove-review-field {
+  padding: 0;
 }
