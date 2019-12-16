@@ -3,7 +3,6 @@
 (function (CRM) {
   CRM['civicase-base'] = {};
   CRM.civiawards = {};
-  // CRM.angular = { requires: {} };
 
   /**
    * Dependency Injection for civiawards module, defined in ang/civiawards.ang.php

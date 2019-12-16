@@ -32,7 +32,7 @@
           class="crm-weight-arrow" ng-if="$index > 0"
           ng-click="moveToTop(reviewField)">
           <img
-            src="{{resourceURL + '/i/arrow/first.gif'}}"
+            src="{{resourcesBaseUrl + '/i/arrow/first.gif'}}"
             title="Move to top"
             alt="Move to top" class="order-icon">
         </a>
@@ -40,7 +40,7 @@
           class="crm-weight-arrow"
           ng-if="$index > 0" ng-click="moveUp(reviewField)">
           <img
-            src="{{resourceURL + '/i/arrow/up.gif'}}"
+            src="{{resourcesBaseUrl + '/i/arrow/up.gif'}}"
             title="Move up one row"
             alt="Move up one row" class="order-icon">
         </a>
@@ -48,7 +48,7 @@
           class="crm-weight-arrow" ng-click="moveDown(reviewField)"
           ng-if="$index < additionalDetails.selectedReviewFields.length - 1">
           <img
-            src="{{resourceURL + '/i/arrow/down.gif'}}"
+            src="{{resourcesBaseUrl + '/i/arrow/down.gif'}}"
             title="Move down one row"
             alt="Move down one row" class="order-icon">
         </a>
@@ -56,7 +56,7 @@
           class="crm-weight-arrow" ng-click="moveToBottom(reviewField)"
           ng-if="$index < additionalDetails.selectedReviewFields.length - 1">
           <img
-            src="{{resourceURL + '/i/arrow/last.gif'}}"
+            src="{{resourcesBaseUrl + '/i/arrow/last.gif'}}"
             title="Move to bottom"
             alt="Move to bottom" class="order-icon">
         </a>

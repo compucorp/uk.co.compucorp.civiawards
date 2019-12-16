@@ -13,7 +13,7 @@
     var APPLICANT_REVIEW_CUSTOM_GROUP_NAME = 'Applicant_Review';
 
     $scope.reviewFields = [];
-    $scope.resourceURL = CRM.config.resourceBase;
+    $scope.resourcesBaseUrl = CRM.config.resourceBase;
     $scope.toggleReviewField = toggleReviewField;
     $scope.openReviewFieldSelectionPopup = openReviewFieldSelectionPopup;
     $scope.removeReviewFieldFromSelection = removeReviewFieldFromSelection;
@@ -60,7 +60,7 @@
      * Returns the requested field data for the sent review field id
      *
      * @param {string} reviewFieldID review field id
-     * @param {*} fieldName field name to be fetched
+     * @param {string} fieldName field name to be fetched
      * @returns {any} values of the field requested
      */
     function getReviewFieldData (reviewFieldID, fieldName) {

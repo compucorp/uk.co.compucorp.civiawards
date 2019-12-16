@@ -40,8 +40,8 @@
 }
 
 .civiawards__award__review-fields--selected {
-  margin: 0 20px 20px !important;
-  width: calc(100% - 40px);
+  margin: 0 $gutter-width $gutter-width !important;
+  width: calc(100% - #{$gutter-width * 2});
 
   tbody {
     tr {
@@ -51,7 +51,7 @@
 }
 
 .civiawards__award__add-review-fields {
-  margin: 20px;
+  margin: $gutter-width;
 }
 
 .civiawards__award__remove-review-field {

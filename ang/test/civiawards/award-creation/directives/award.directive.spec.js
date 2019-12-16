@@ -270,7 +270,7 @@
       });
 
       it('redirects to edit the award', () => {
-        expect($location.path).toHaveBeenCalledWith('/awards/10/2');
+        expect($location.path).toHaveBeenCalledWith('/awards/10/stages');
       });
     });
 

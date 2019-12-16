@@ -5,7 +5,7 @@
     return {
       scope: {
         awardId: '=',
-        focusedTabIndex: '='
+        focusedTabName: '@'
       },
       controller: 'CiviAwardCreateEditAwardController',
       templateUrl: '~/civiawards/award-creation/directives/award.directive.html',
@@ -50,7 +50,7 @@
 
     (function init () {
       if ($scope.awardId) {
-        $scope.activeTab = $scope.tabs[getDefaultTabIndex()].name;
+        $scope.activeTab = getDefaultTabName();
         fetchAwardInformation()
           .then(function (result) {
             $scope.$emit('civiawards::edit-award::details-fetched', result);
@@ -59,17 +59,15 @@
     }());
 
     /**
-     * Returns the Tab Index to be focused on load
+     * Returns default Tab to be focused on load
      *
-     * @returns {number} index of the tab to be focused on load
+     * @returns {string} default tab name to be focused on load
      */
-    function getDefaultTabIndex () {
-      var focusedTabIndex = parseInt($scope.focusedTabIndex);
-
-      if ($scope.focusedTabIndex >= 1 && $scope.focusedTabIndex <= $scope.tabs.length) {
-        return focusedTabIndex - 1;
+    function getDefaultTabName () {
+      if ($scope.focusedTabName === 'undefined') {
+        return 'basicDetails';
       } else {
-        return 0;
+        return $scope.focusedTabName;
       }
     }
 
@@ -181,7 +179,7 @@
      * @param {string/number} awardID id of the award
      */
     function navigateToAwardEditPage (awardID) {
-      $location.path('/awards/' + awardID + '/2');
+      $location.path('/awards/' + awardID + '/stages');
     }
 
     /**
@@ -213,7 +211,7 @@
     /**
      * Prepares the Review Fields paramaters when editing an award
      *
-     * @returns {Array} list of selected review field ids
+     * @returns {object[]} list of selected review field ids
      */
     function prepareReviewFields () {
       return _.map($scope.additionalDetails.selectedReviewFields, function (reviewField) {
