@@ -47,6 +47,7 @@
         ng-model="additionalDetails.awardManagers"
         placeholder="Award Manager"
         crm-entityref="{
+          create: true,
           entity: 'Contact',
           select: { multiple: true, allowClear: true }
         }"
