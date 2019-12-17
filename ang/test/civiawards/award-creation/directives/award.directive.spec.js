@@ -25,6 +25,7 @@
       $scope = $rootScope.$new();
 
       spyOn($scope, '$emit');
+      spyOn(CRM, 'alert').and.callThrough();
 
       crmApi.and.returnValue($q.resolve({}));
       $scope.$digest();
@@ -190,7 +191,7 @@
           $scope.reviewFields = ReviewFieldsMockData;
           setAwardDetails();
 
-          $scope.saveAward();
+          $scope.saveAwardInBG();
         });
 
         it('momentarily disables the save button', () => {
@@ -225,6 +226,10 @@
             });
           });
 
+          it('shows a notification after save is successfull', () => {
+            expect(CRM.alert).toHaveBeenCalledWith('Award Successfully Saved.', 'Saved', 'success');
+          });
+
           it('enables the save button after api has responded', () => {
             expect($scope.submitInProgress).toBe(false);
           });
@@ -241,7 +246,7 @@
           crmApi.and.returnValue($q.resolve({
             values: [AwardAdditionalDetailsMockData]
           }));
-          $scope.saveAward();
+          $scope.saveAwardInBG();
           $scope.$digest();
         });
 
@@ -272,6 +277,10 @@
       it('redirects to edit the award', () => {
         expect($location.path).toHaveBeenCalledWith('/awards/10/stages');
       });
+
+      it('shows a notification after save is successfull', () => {
+        expect(CRM.alert).toHaveBeenCalledWith('Award Successfully Saved.', 'Saved', 'success');
+      });
     });
 
     describe('when SAVE AND DONE is clicked', () => {
@@ -285,6 +294,10 @@
 
       it('redirects to award dashboard page', () => {
         expect($window.location.href).toBe('/civicrm/case/a/?case_type_category=awards#/case?case_type_category=awards');
+      });
+
+      it('shows a notification after save is successfull', () => {
+        expect(CRM.alert).toHaveBeenCalledWith('Award Successfully Saved.', 'Saved', 'success');
       });
     });
 

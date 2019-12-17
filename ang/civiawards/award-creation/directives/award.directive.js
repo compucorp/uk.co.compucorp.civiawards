@@ -43,7 +43,7 @@
 
     $scope.ifSaveButtonDisabled = ifSaveButtonDisabled;
     $scope.selectTab = selectTab;
-    $scope.saveAward = saveAward;
+    $scope.saveAwardInBG = saveAwardInBG;
     $scope.saveNewAward = saveNewAward;
     $scope.saveAndNavigateToDashboard = saveAndNavigateToDashboard;
     $scope.navigateToDashboard = navigateToDashboard;
@@ -120,6 +120,14 @@
     function saveNewAward () {
       saveAward()
         .then(navigateToAwardEditPage)
+        .then(showSucessNotification);
+    }
+
+    /**
+     * Saves a New Award in the Background
+     */
+    function saveAwardInBG () {
+      saveAward()
         .then(showSucessNotification);
     }
 
