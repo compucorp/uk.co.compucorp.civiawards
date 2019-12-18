@@ -96,7 +96,10 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $this->assign('caseTypeName', $this->caseTypeName);
     $this->assign('caseTags', $this->caseTags);
 
-    $fields = CRM_Core_BAO_UFGroup::getFields($this->profileId, FALSE, CRM_Core_Action::ADD);
+    $fields = CRM_Core_BAO_UFGroup::getFields(
+      $this->profileId, FALSE, CRM_Core_Action::ADD, NULL,
+      NULL, FALSE, NULL, FALSE, NULL, CRM_Core_Permission::CREATE, 'weight'
+    );
     $customFieldLabels = $this->getCustomFieldLabels(array_keys($fields));
     $elementNames = [];
 
