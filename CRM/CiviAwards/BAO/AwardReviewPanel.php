@@ -108,7 +108,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
         'is_array' => TRUE,
         'fields' => [
           'contact_id' => ['validate_filter' => FILTER_VALIDATE_INT],
-          'relationship_id' => ['validate_filter' => FILTER_VALIDATE_INT],
+          'relationship_type_id' => ['validate_filter' => FILTER_VALIDATE_INT],
           'is_a_to_b' => [
             'validate_filter' => FILTER_VALIDATE_INT,
             'options' => ['min_range' => 0, 'max_range' => 1],
@@ -162,6 +162,9 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
     }
 
     foreach ($config as $fieldName => $setting) {
+      if (empty($setting['is_required']) && !isset($params[$fieldName])) {
+        continue;
+      }
       if (!empty($setting['is_required']) && !isset($params[$fieldName])) {
         throw new Exception(ts("{$settingName} :  {$fieldName} is required"));
       }
