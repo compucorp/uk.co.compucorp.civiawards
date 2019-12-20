@@ -15,11 +15,13 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
    *   Contact Id.
    * @param int $awardId
    *   Award Id.
+   * @param AwardReviewPanelContact $awardPanelContact
+   *   Award Panel contact service.
    *
    * @return array|void
    *   The contact access to the Award applications.
    */
-  public function get($contactId, $awardId) {
+  public function get($contactId, $awardId, AwardReviewPanelContact $awardPanelContact) {
     $awardPanels = $this->getAwardPanels($awardId);
 
     if (empty($awardPanels)) {
@@ -27,7 +29,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
     }
 
     $visibilitySettings = [];
-    $awardPanelContact = new AwardReviewPanelContact();
     foreach ($awardPanels as $awardPanelId) {
       if (!empty($awardPanelContact->get($awardPanelId, [$contactId]))) {
         $visibilitySettings[] = $this->getAwardVisibilitySettings($awardPanelId);

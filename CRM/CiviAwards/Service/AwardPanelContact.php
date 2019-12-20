@@ -196,16 +196,13 @@ class CRM_CiviAwards_Service_AwardPanelContact {
 
     $params = [
       'group' => ['IN' => $groupIds],
-      'return' => ['email'],
+      'return' => ['email', 'display_name'],
     ];
     if (!empty($filterContacts)) {
       $params['id'] = ['IN' => $filterContacts];
     }
 
-    $result = civicrm_api3('Contact', 'get', [
-      'group' => ['IN' => $groupIds],
-      'return' => ['email', 'display_name'],
-    ]);
+    $result = civicrm_api3('Contact', 'get', $params);
 
     return $result['values'];
   }
