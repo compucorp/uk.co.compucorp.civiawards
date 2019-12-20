@@ -42,7 +42,8 @@ function _civicrm_api3_award_review_panel_getcontactaccess_spec(array &$spec) {
  */
 function civicrm_api3_award_review_panel_getcontactaccess(array $params) {
   $contactAccessService = new CRM_CiviAwards_Service_AwardApplicationContactAccess();
-  $contactAccess = $contactAccessService->get($params['contact_id'], $params['award_id']);
+  $awardPanelContact = new CRM_CiviAwards_Service_AwardPanelContact();
+  $contactAccess = $contactAccessService->get($params['contact_id'], $params['award_id'], $awardPanelContact);
 
   return civicrm_api3_create_success($contactAccess);
 }

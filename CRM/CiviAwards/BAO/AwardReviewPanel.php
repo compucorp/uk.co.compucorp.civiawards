@@ -38,7 +38,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
   private static function serializeSettingsParams(array &$params) {
     $settingsParams = ['contact_settings', 'visibility_settings'];
     foreach ($settingsParams as $setting) {
-      if (!empty($params[$setting])) {
+      if (isset($params[$setting])) {
         $params[$setting] = serialize($params[$setting]);
       }
     }
