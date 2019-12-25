@@ -1,5 +1,5 @@
 <div id="bootstrap-theme">
-  <div class="civiawards__review-activity">
+  <div class="civiawards__review-activity crm-form-block">
     <div class="panel panel-default">
       <div class="panel-body">
         {foreach from=$elementNames item=elementName}
