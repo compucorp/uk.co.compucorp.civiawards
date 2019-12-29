@@ -1,0 +1,56 @@
+<div class="civicase__case-tab__container">
+  <div class="civicase__case-tab__actions">
+    <button
+      class="btn btn-primary crm-popup"
+      ng-click="handleAddReviewActivity()"
+      type="button"
+    >
+      <i class="material-icons civicase__icon">add_circle</i>
+      {{ts('Add Review')}}
+    </button>
+  </div>
+  <a class="crm-popup" ng-href="{{ 'civicrm/contact/view/rel' | civicaseCrmUrl:{ action: 'add', reset: 1, cid: client.contact_id } }}">
+    {{ client.display_name }}
+  </a>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Date Submitted</th>
+        <th ng-repeat="scoringField in scoringFields">
+          {{scoringField.label}}
+        </th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="reviewActivity in reviewActivities">
+        <td>{{reviewActivity.source_contact_name}}</td>
+        <td>{{reviewActivity.created_date | formatDate}}</td>
+        <td ng-repeat="scoringField in scoringFields">
+          {{reviewActivity['custom_' + scoringField.id]}}
+        </td>
+        <td>
+          <div class="btn-group btn-group-md">
+            <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{ ts('Actions') }} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li>
+                <a ng-click="handleViewReviewActivity(reviewActivity)">
+                  {{ ts('View') }}
+                </a>
+                <a ng-click="handleEditReviewActivity(reviewActivity)">
+                  {{ ts('Edit') }}
+                </a>
+                <a ng-click="handleDeleteReviewActivity(reviewActivity)">
+                  {{ ts('Delete') }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
