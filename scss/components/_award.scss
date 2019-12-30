@@ -57,3 +57,21 @@
 .civiawards__award__remove-review-field {
   padding: 0;
 }
+
+.civicase__dashboard__action-btn--more-filter {
+  position: relative;
+
+  .civicase__more-filter__notification {
+    position: absolute;
+    right: -5px;
+    top: -5px;
+  }
+}
+
+.civicase__more-filter__notification {
+  background-color: $brand-danger;
+  border-radius: 50%;
+  display: inline-block;
+  min-height: 10px;
+  min-width: 10px;
+}

@@ -22,9 +22,9 @@
     describe('after the awards module has been configured', () => {
       it('it adds the configuration url to the awards case type', () => {
         expect(DashboardCaseTypeButtons).toEqual({
-          [AwardMockData.name]: [{
+          [AwardMockData[0].name]: [{
             icon: 'fa fa-cog',
-            url: getCrmUrl(AWARD_CONFIG_URL + AwardMockData.id)
+            url: getCrmUrl(AWARD_CONFIG_URL + AwardMockData[0].id)
           }]
         });
       });
