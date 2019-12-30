@@ -2,9 +2,13 @@
 
 (function (_, getCrmUrl) {
   describe('Add Award Dashboard Action Button', () => {
-    let $location, AddAwardDashboardActionButton;
+    let $location, $window, AddAwardDashboardActionButton;
 
-    beforeEach(module('civiawards'));
+    beforeEach(module('civiawards', ($provide) => {
+      $window = { location: { href: '' } };
+
+      $provide.value('$window', $window);
+    }));
 
     beforeEach(inject((_$location_, _AddAwardDashboardActionButton_) => {
       $location = _$location_;
@@ -40,15 +44,14 @@
     });
 
     describe('when clicking the action button', () => {
-      const expectedUrl = getCrmUrl('awards/new');
+      const expectedUrl = getCrmUrl('civicrm/a/#/awards/new');
 
       beforeEach(() => {
-        spyOn($location, 'url');
         AddAwardDashboardActionButton.clickHandler();
       });
 
       it('redirects the user to the create award screen', () => {
-        expect($location.url).toHaveBeenCalledWith(expectedUrl);
+        expect($window.location.href).toBe(expectedUrl);
       });
     });
   });
