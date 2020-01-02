@@ -4,7 +4,7 @@
   describe('Awards Dashboard Action Buttons', () => {
     let AddAwardDashboardActionButton, DashboardActionButtons;
     const expectedActionButton = {
-      buttonClass: 'btn btn-primary civicase__dashboard__action-btn civicase__dashboard__action-btn--white',
+      buttonClass: 'btn btn-primary civicase__dashboard__action-btn civicase__dashboard__action-btn--light',
       iconClass: 'add_circle',
       identifier: 'AddAward',
       label: 'Create new award',
