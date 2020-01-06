@@ -16,7 +16,8 @@
    * @param {object} CaseStatus Case Status service
    * @param {object} AwardType Award Type service
    */
-  function MoreFiltersDashboardActionButtonController ($rootScope, $scope, $location, getSelect2Value, crmApi, dialogService, ts, CaseStatus, AwardType) {
+  function MoreFiltersDashboardActionButtonController ($rootScope, $scope,
+    $location, getSelect2Value, crmApi, dialogService, ts, CaseStatus, AwardType) {
     var model = {
       statuses: _.map(CaseStatus.getAll(), mapSelectOptions),
       award_types: _.map(AwardType.getAll(), mapSelectOptions),

@@ -3,7 +3,7 @@
 (function (_) {
   describe('More Filters Dashboard Action Button', () => {
     let $q, $location, $scope, $controller, $rootScope, dialogService,
-      crmApiMock;
+      crmApiMock, crmApi;
 
     beforeEach(module('civiawards', function ($provide) {
       crmApiMock = jasmine.createSpy();
@@ -12,14 +12,21 @@
       $provide.value('ts', jasmine.createSpy());
     }));
 
-    beforeEach(inject((_$q_, _$controller_, _$rootScope_, _$location_, _dialogService_) => {
+    beforeEach(inject((_$q_, _crmApi_, _$controller_, _$rootScope_, _$location_, _dialogService_) => {
       $q = _$q_;
       $controller = _$controller_;
       $location = _$location_;
       $rootScope = _$rootScope_;
       dialogService = _dialogService_;
+      crmApi = _crmApi_;
 
-      crmApiMock.and.returnValue($q.resolve());
+      crmApiMock.and.returnValue($q.resolve({
+        values: [{
+          case_type_id: 1
+        }, {
+          case_type_id: 2
+        }]
+      }));
 
       initController();
     }));
@@ -64,6 +71,81 @@
           height: 'auto',
           width: '350px',
           title: 'More Filters'
+        });
+      });
+    });
+
+    describe('when filters are applied', () => {
+      var dialogModel;
+
+      beforeEach(() => {
+        dialogService.close = jasmine.createSpy('');
+        dialogService.open = function (__, templateName, model) {
+          dialogModel = model;
+        };
+        $scope.openMoreFiltersDialog();
+      });
+
+      describe('when my awards filter is selected', () => {
+        beforeEach(() => {
+          dialogModel.selectedFilters.awardFilter = 'my_awards';
+          dialogModel.selectedFilters.start_date = '10/12/2019';
+          dialogModel.selectedFilters.end_date = '15/12/2019';
+          dialogModel.selectedFilters.award_types = '1,2';
+          dialogModel.applyFilterAndCloseDialog();
+          $rootScope.$digest();
+        });
+
+        it('shows the awards where the logged in user is the manager and also applies the rest of filters', () => {
+          expect(crmApi).toHaveBeenCalledWith('AwardManager', 'get', { sequential: 1, contact_id: 203 });
+          expect(crmApi).toHaveBeenCalledWith('AwardDetail', 'get', {
+            sequential: 1,
+            start_date: '10/12/2019',
+            end_date: '15/12/2019',
+            case_type_id: { IN: [1, 2] },
+            award_type: { IN: ['1', '2'] }
+          });
+        });
+      });
+
+      describe('when all awards filter is selected', () => {
+        beforeEach(() => {
+          dialogModel.selectedFilters.awardFilter = 'all_awards';
+          dialogModel.applyFilterAndCloseDialog();
+        });
+
+        it('shows the all the awards', () => {
+          expect(crmApi).toHaveBeenCalledWith('AwardManager', 'get', { sequential: 1 });
+        });
+      });
+
+      describe('when filters are not changed', () => {
+        beforeEach(() => {
+          dialogModel.selectedFilters.awardFilter = 'my_awards';
+          dialogModel.selectedFilters.statuses = '';
+          dialogModel.selectedFilters.award_types = '';
+          dialogModel.selectedFilters.start_date = null;
+          dialogModel.selectedFilters.end_date = null;
+          dialogModel.applyFilterAndCloseDialog();
+        });
+
+        it('does not show a red dot inside the more filters button', () => {
+          expect($scope.isNotificationVisible()).toBe(false);
+        });
+      });
+
+      describe('when any of the filters are changed', () => {
+        beforeEach(() => {
+          dialogModel.selectedFilters.awardFilter = 'all_awards';
+          dialogModel.selectedFilters.statuses = '';
+          dialogModel.selectedFilters.award_types = '';
+          dialogModel.selectedFilters.start_date = null;
+          dialogModel.selectedFilters.end_date = null;
+          dialogModel.applyFilterAndCloseDialog();
+        });
+
+        it('shows a red dot inside the more filters button', () => {
+          expect($scope.isNotificationVisible()).toBe(true);
         });
       });
     });
