@@ -11,13 +11,13 @@
    * @param {object} $window the window object reference
    */
   function AddAwardDashboardActionButtonController ($scope, $location, $window) {
-    $scope.clickHandler = clickHandler;
+    $scope.redirectToAwardsCreationScreen = redirectToAwardsCreationScreen;
     $scope.isVisible = isVisible;
 
     /**
      * Redirects the user to the awards creation screen.
      */
-    function clickHandler () {
+    function redirectToAwardsCreationScreen () {
       var newAwardUrl = getCrmUrl('civicrm/a/#/awards/new');
 
       $window.location.href = newAwardUrl;

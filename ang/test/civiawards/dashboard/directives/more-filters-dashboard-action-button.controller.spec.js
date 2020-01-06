@@ -55,7 +55,7 @@
     describe('when clicking the action button', () => {
       beforeEach(() => {
         dialogService.open = jasmine.createSpy();
-        $scope.clickHandler();
+        $scope.openMoreFiltersDialog();
       });
 
       it('opens a popup to select filters', () => {

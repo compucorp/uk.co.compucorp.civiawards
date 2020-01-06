@@ -1,9 +1,14 @@
-<a
+<span
   ng-controller="MoreFiltersDashboardActionButtonController"
-  ng-show="isVisible()"
-  ng-click="clickHandler()"
-  class="btn btn-primary civicase__dashboard__action-btn civicase__dashboard__action-btn--more-filter">
-  <i class="material-icons">filter_list</i>
-  {{ts('More Filters')}}
-  <span ng-if="isNotificationVisible()" class="civicase__more-filter__notification"></span>
-</a>
+  ng-show="isVisible()">
+  <a
+    ng-click="openMoreFiltersDialog()"
+    class="btn btn-primary civicase__dashboard__action-btn civicase__dashboard__action-btn--more-filter">
+    <i class="material-icons">filter_list</i>
+    {{ts('More Filters')}}
+    <span ng-if="isNotificationVisible()" class="civicase__more-filter__notification"></span>
+  </a>
+  <span
+    class="civicase__dashboard__action-separator">
+  </span>
+</span>

@@ -8,10 +8,6 @@
         weight: 100
       },
       {
-        templateUrl: '~/civiawards/dashboard/directives/dashboard-action-separator.html',
-        weight: -5
-      },
-      {
         templateUrl: '~/civiawards/dashboard/directives/more-filters-dashboard-action-button.html',
         weight: -10
       }

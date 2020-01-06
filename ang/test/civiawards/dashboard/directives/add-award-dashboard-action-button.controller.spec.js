@@ -51,7 +51,7 @@
 
       beforeEach(() => {
         spyOn($location, 'url');
-        $scope.clickHandler();
+        $scope.redirectToAwardsCreationScreen();
       });
 
       it('redirects the user to the create award screen', () => {

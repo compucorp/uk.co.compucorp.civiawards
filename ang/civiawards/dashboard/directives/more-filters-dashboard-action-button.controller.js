@@ -34,7 +34,7 @@
       applyFilterAndCloseDialog: applyFilterAndCloseDialog
     };
 
-    $scope.clickHandler = clickHandler;
+    $scope.openMoreFiltersDialog = openMoreFiltersDialog;
     $scope.isVisible = isVisible;
     $scope.isNotificationVisible = isNotificationVisible;
 
@@ -58,9 +58,9 @@
     }
 
     /**
-     * Redirects the user to the awards creation screen.
+     * Open more filtes dialog
      */
-    function clickHandler () {
+    function openMoreFiltersDialog () {
       dialogService.open('MoreFilters', '~/civiawards/dashboard/directives/more-filters-popup.html', model, {
         autoOpen: false,
         height: 'auto',
@@ -70,14 +70,15 @@
     }
 
     /**
-     *
+     * Apply filter and close more filters dialog
      */
     function applyFilterAndCloseDialog () {
       applyFilter();
       dialogService.close('MoreFilters');
     }
+
     /**
-     *
+     * Apply filter
      */
     function applyFilter () {
       processMyAwardsFilter()
@@ -93,7 +94,7 @@
      * Process Award Type Filters
      *
      * @param {number[]} caseTypeIDs case type ids
-     * @returns {Promise} promise
+     * @returns {Promise<number[]>} promise
      */
     function processAwardTypeFilters (caseTypeIDs) {
       var filters = { sequential: 1 };
@@ -122,7 +123,7 @@
     /**
      * Process My Awards/All Awards filters
      *
-     * @returns {Promise} promise
+     * @returns {Promise<number[]>} promise
      */
     function processMyAwardsFilter () {
       var filters = {
