@@ -3,7 +3,7 @@
 
   module.config((AwardMockData, CaseTypesMockDataProvider) => {
     CaseTypesMockDataProvider.add({
-      [AwardMockData.id]: AwardMockData
+      [AwardMockData.id]: AwardMockData[0]
     });
   });
 }());

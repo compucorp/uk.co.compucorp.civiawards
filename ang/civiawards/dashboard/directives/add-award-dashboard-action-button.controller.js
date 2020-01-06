@@ -1,22 +1,23 @@
 (function (angular, getCrmUrl) {
   var module = angular.module('civiawards');
 
-  module.service('AddAwardDashboardActionButton', AddAwardDashboardActionButton);
+  module.controller('AddAwardDashboardActionButtonController', AddAwardDashboardActionButtonController);
 
   /**
-   * Handles the visibility and click event for the "Add Award" dashboard action button.
+   * "Add Award" dashboard action button controller.
    *
-   * @param {object} $location the location service.
-   * @param {object} $window the window object reference.
+   * @param {object} $scope the scope object
+   * @param {object} $location the location service
+   * @param {object} $window the window object reference
    */
-  function AddAwardDashboardActionButton ($location, $window) {
-    this.clickHandler = clickHandler;
-    this.isVisible = isVisible;
+  function AddAwardDashboardActionButtonController ($scope, $location, $window) {
+    $scope.redirectToAwardsCreationScreen = redirectToAwardsCreationScreen;
+    $scope.isVisible = isVisible;
 
     /**
      * Redirects the user to the awards creation screen.
      */
-    function clickHandler () {
+    function redirectToAwardsCreationScreen () {
       var newAwardUrl = getCrmUrl('civicrm/a/#/awards/new');
 
       $window.location.href = newAwardUrl;

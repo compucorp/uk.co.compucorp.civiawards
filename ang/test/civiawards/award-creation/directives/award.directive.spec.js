@@ -75,7 +75,7 @@
       describe('when editing existing award', function () {
         beforeEach(() => {
           crmApi.and.returnValue($q.resolve({
-            caseType: AwardMockData,
+            caseType: AwardMockData[0],
             additionalDetails: AwardAdditionalDetailsMockData
           }));
 
@@ -85,7 +85,7 @@
 
         it('fires an event with the award details', () => {
           expect($scope.$emit).toHaveBeenCalledWith('civiawards::edit-award::details-fetched', {
-            caseType: AwardMockData,
+            caseType: AwardMockData[0],
             additionalDetails: AwardAdditionalDetailsMockData
           });
         });

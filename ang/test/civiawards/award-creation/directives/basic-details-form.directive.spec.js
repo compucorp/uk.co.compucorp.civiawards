@@ -40,7 +40,7 @@
         $scope.additionalDetails = {};
 
         $scope.$emit('civiawards::edit-award::details-fetched', {
-          caseType: AwardMockData,
+          caseType: AwardMockData[0],
           additionalDetails: AwardAdditionalDetailsMockData
         });
       });

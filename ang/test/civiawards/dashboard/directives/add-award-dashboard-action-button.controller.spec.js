@@ -2,7 +2,7 @@
 
 (function (_, getCrmUrl) {
   describe('Add Award Dashboard Action Button', () => {
-    let $location, $window, AddAwardDashboardActionButton;
+    let $location, $window, $scope, $controller, $rootScope;
 
     beforeEach(module('civiawards', ($provide) => {
       $window = { location: { href: '' } };
@@ -10,9 +10,12 @@
       $provide.value('$window', $window);
     }));
 
-    beforeEach(inject((_$location_, _AddAwardDashboardActionButton_) => {
+    beforeEach(inject((_$location_, _$controller_, _$rootScope_) => {
       $location = _$location_;
-      AddAwardDashboardActionButton = _AddAwardDashboardActionButton_;
+      $controller = _$controller_;
+      $rootScope = _$rootScope_;
+
+      initController();
     }));
 
     describe('button visibility', () => {
@@ -22,7 +25,7 @@
         beforeEach(() => {
           $location.search('case_type_category', 'awards');
 
-          isButtonVisible = AddAwardDashboardActionButton.isVisible();
+          isButtonVisible = $scope.isVisible();
         });
 
         it('displays the add award button', () => {
@@ -34,7 +37,7 @@
         beforeEach(() => {
           $location.search('case_type_category', 'cases');
 
-          isButtonVisible = AddAwardDashboardActionButton.isVisible();
+          isButtonVisible = $scope.isVisible();
         });
 
         it('does not display the add award button', () => {
@@ -47,12 +50,22 @@
       const expectedUrl = getCrmUrl('civicrm/a/#/awards/new');
 
       beforeEach(() => {
-        AddAwardDashboardActionButton.clickHandler();
+        spyOn($location, 'url');
+        $scope.redirectToAwardsCreationScreen();
       });
 
       it('redirects the user to the create award screen', () => {
         expect($window.location.href).toBe(expectedUrl);
       });
     });
+
+    /**
+     * Initializes the add award controller.
+     */
+    function initController () {
+      $scope = $rootScope.$new();
+
+      $controller('AddAwardDashboardActionButtonController', { $scope: $scope });
+    }
   });
 })(CRM._, CRM.url);
