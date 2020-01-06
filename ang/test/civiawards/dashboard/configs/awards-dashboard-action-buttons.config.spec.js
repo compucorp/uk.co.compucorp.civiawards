@@ -13,23 +13,59 @@
 
     beforeEach(module('civicase-base', 'civiawards'));
 
-    beforeEach(inject((_AddAwardDashboardActionButton_, _DashboardActionButtons_) => {
-      AddAwardDashboardActionButton = _AddAwardDashboardActionButton_;
-      DashboardActionButtons = _DashboardActionButtons_;
-    }));
+    describe('when the user can create awards', () => {
+      beforeEach(() => {
+        CRM.checkPerm.and.returnValue(true);
 
-    describe('after the awards module has been configured', () => {
-      it('it adds the "Create new award" action button', () => {
-        expect(DashboardActionButtons)
-          .toContain(jasmine.objectContaining(expectedActionButton));
+        injectDependencies();
       });
 
-      it('sets the "AddAward" action button service as the handler', () => {
-        expect(DashboardActionButtons)
-          .toContain(_.extend({}, expectedActionButton, {
-            service: AddAwardDashboardActionButton
-          }));
+      describe('after the awards module has been configured', () => {
+        it('checks if the user can create awards', () => {
+          expect(CRM.checkPerm).toHaveBeenCalledWith('create/edit awards');
+        });
+
+        it('adds the "Create new award" action button', () => {
+          expect(DashboardActionButtons)
+            .toContain(jasmine.objectContaining(expectedActionButton));
+        });
+
+        it('sets the "AddAward" action button service as the handler', () => {
+          expect(DashboardActionButtons)
+            .toContain(_.extend({}, expectedActionButton, {
+              service: AddAwardDashboardActionButton
+            }));
+        });
       });
     });
+
+    describe('when the user cannot create awards', () => {
+      beforeEach(() => {
+        CRM.checkPerm.and.returnValue(false);
+
+        injectDependencies();
+      });
+
+      describe('after the awards module has been configured', () => {
+        it('checks if the user can create awards', () => {
+          expect(CRM.checkPerm).toHaveBeenCalledWith('create/edit awards');
+        });
+
+        it('does not add the "Create new award" action button', () => {
+          expect(DashboardActionButtons)
+            .not.toContain(jasmine.objectContaining(expectedActionButton));
+        });
+      });
+    });
+
+    /**
+     * Injects and hoists the dependencies needed for the test.
+     */
+    function injectDependencies () {
+      inject((_AddAwardDashboardActionButton_, _DashboardActionButtons_) => {
+        AddAwardDashboardActionButton = _AddAwardDashboardActionButton_;
+        DashboardActionButtons = _DashboardActionButtons_;
+      });
+    }
   });
 })(CRM._);
