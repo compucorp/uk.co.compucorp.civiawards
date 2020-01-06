@@ -1,21 +1,19 @@
 /* eslint-env jasmine */
-(function ($) {
+(function () {
   describe('AwardType', function () {
-    var AwardType, AwardTypeMockData;
+    let AwardType, AwardTypeMockData;
 
     beforeEach(module('civiawards', 'civiawards.data'));
 
-    describe('DateHelper', () => {
-      beforeEach(inject((_AwardType_, _AwardTypeMockData_) => {
-        AwardType = _AwardType_;
-        AwardTypeMockData = _AwardTypeMockData_;
-      }));
+    beforeEach(inject((_AwardType_, _AwardTypeMockData_) => {
+      AwardType = _AwardType_;
+      AwardTypeMockData = _AwardTypeMockData_;
+    }));
 
-      describe('getAll()', () => {
-        it('returns all the award types', () => {
-          expect(AwardType.getAll()).toBe(AwardTypeMockData);
-        });
+    describe('getAll()', () => {
+      it('returns all the award types', () => {
+        expect(AwardType.getAll()).toBe(AwardTypeMockData);
       });
     });
   });
-}(CRM.$));
+}());
