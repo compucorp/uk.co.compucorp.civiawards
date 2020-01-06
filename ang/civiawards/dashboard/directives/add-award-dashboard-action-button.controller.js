@@ -7,12 +7,12 @@
    * "Add Award" dashboard action button controller.
    *
    * @param {object} $scope the scope object
-   * @param {object} $location the location service
    * @param {object} $window the window object reference
+   * @param {Function} isAwardScreen is award screen function
    */
-  function AddAwardDashboardActionButtonController ($scope, $location, $window) {
+  function AddAwardDashboardActionButtonController ($scope, $window, isAwardScreen) {
     $scope.redirectToAwardsCreationScreen = redirectToAwardsCreationScreen;
-    $scope.isVisible = isVisible;
+    $scope.isVisible = isAwardScreen;
 
     /**
      * Redirects the user to the awards creation screen.
@@ -21,17 +21,6 @@
       var newAwardUrl = getCrmUrl('civicrm/a/#/awards/new');
 
       $window.location.href = newAwardUrl;
-    }
-
-    /**
-     * Is only visible on the Awards dashboard.
-     *
-     * @returns {boolean} true when case type category url param is awards
-     */
-    function isVisible () {
-      var urlParams = $location.search();
-
-      return urlParams.case_type_category === 'awards';
     }
   }
 })(angular, CRM.url);

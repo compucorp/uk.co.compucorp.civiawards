@@ -8,16 +8,16 @@
    *
    * @param {object} $rootScope rootscope object
    * @param {object} $scope scope object
-   * @param {object} $location the location service
    * @param {object} getSelect2Value service to fetch select 2 values
    * @param {object} crmApi the service to fetch civicrm backend
    * @param {object} dialogService the dialog service
    * @param {object} ts translation service
    * @param {object} CaseStatus Case Status service
    * @param {object} AwardType Award Type service
+   * @param {Function} isAwardScreen is award screen function
    */
   function MoreFiltersDashboardActionButtonController ($rootScope, $scope,
-    $location, getSelect2Value, crmApi, dialogService, ts, CaseStatus, AwardType) {
+    getSelect2Value, crmApi, dialogService, ts, CaseStatus, AwardType, isAwardScreen) {
     var model = {
       statuses: _.map(CaseStatus.getAll(), mapSelectOptions),
       award_types: _.map(AwardType.getAll(), mapSelectOptions),
@@ -36,8 +36,8 @@
     };
 
     $scope.openMoreFiltersDialog = openMoreFiltersDialog;
-    $scope.isVisible = isVisible;
     $scope.isNotificationVisible = isNotificationVisible;
+    $scope.isVisible = isAwardScreen;
 
     (function init () {
       applyFilter();
@@ -141,17 +141,6 @@
             return awards.case_type_id;
           });
         });
-    }
-
-    /**
-     * Is only visible on the Awards dashboard.
-     *
-     * @returns {boolean} true when case type category url param is awards
-     */
-    function isVisible () {
-      var urlParams = $location.search();
-
-      return urlParams.case_type_category === 'awards';
     }
 
     /**
