@@ -62,12 +62,14 @@
      * Open more filtes dialog
      */
     function openMoreFiltersDialog () {
-      dialogService.open('MoreFilters', '~/civiawards/dashboard/directives/more-filters-popup.html', model, {
-        autoOpen: false,
-        height: 'auto',
-        width: '350px',
-        title: 'More Filters'
-      });
+      if (!dialogService.dialogs.MoreFilters) {
+        dialogService.open('MoreFilters', '~/civiawards/dashboard/directives/more-filters-popup.html', model, {
+          autoOpen: false,
+          height: 'auto',
+          width: '350px',
+          title: 'More Filters'
+        });
+      }
     }
 
     /**

@@ -20,6 +20,7 @@
       dialogService = _dialogService_;
       crmApi = _crmApi_;
 
+      dialogService.dialogs = {};
       crmApiMock.and.returnValue($q.resolve({
         values: [{
           case_type_id: 1
@@ -71,6 +72,17 @@
           height: 'auto',
           width: '350px',
           title: 'More Filters'
+        });
+      });
+
+      describe('when the action button is clicked again before closing the button', () => {
+        beforeEach(() => {
+          dialogService.dialogs.MoreFilters = true;
+          $scope.openMoreFiltersDialog();
+        });
+
+        it('does not reopen the more filter popup', () => {
+          expect(dialogService.open.calls.count()).toBe(1);
         });
       });
     });
