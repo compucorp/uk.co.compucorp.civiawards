@@ -1,7 +1,7 @@
 /* eslint-env jasmine */
 (function () {
-  describe('isAwardScreen', function () {
-    let $location, isAwardScreen;
+  describe('isAwardsScreen', function () {
+    let $location, isAwardsScreen;
 
     beforeEach(module('civiawards', ($provide) => {
       $location = jasmine.createSpyObj('$location', ['search']);
@@ -9,8 +9,8 @@
       $provide.value('$location', $location);
     }));
 
-    beforeEach(inject((_isAwardScreen_) => {
-      isAwardScreen = _isAwardScreen_;
+    beforeEach(inject((_isAwardsScreen_) => {
+      isAwardsScreen = _isAwardsScreen_;
     }));
 
     describe('when the user is viewing an award screen', () => {
@@ -21,7 +21,7 @@
       });
 
       it('returns true', () => {
-        expect(isAwardScreen()).toBe(true);
+        expect(isAwardsScreen()).toBe(true);
       });
     });
 
@@ -33,7 +33,7 @@
       });
 
       it('returns false', () => {
-        expect(isAwardScreen()).toBe(false);
+        expect(isAwardsScreen()).toBe(false);
       });
     });
   });

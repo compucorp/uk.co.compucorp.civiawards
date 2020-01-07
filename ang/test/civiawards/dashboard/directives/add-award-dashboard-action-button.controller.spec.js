@@ -2,12 +2,16 @@
 
 (function (_, getCrmUrl) {
   describe('Add Award Dashboard Action Button', () => {
-    let $location, $window, $scope, $controller, $rootScope;
+    let $location, $window, $scope, $controller, $rootScope, canCreateOrEditAwards, isAwardsScreen;
 
     beforeEach(module('civiawards', ($provide) => {
       $window = { location: { href: '' } };
+      canCreateOrEditAwards = jasmine.createSpy('canCreateOrEditAwards');
+      isAwardsScreen = jasmine.createSpy('isAwardsScreen');
 
       $provide.value('$window', $window);
+      $provide.value('canCreateOrEditAwards', canCreateOrEditAwards);
+      $provide.value('isAwardsScreen', isAwardsScreen);
     }));
 
     beforeEach(inject((_$location_, _$controller_, _$rootScope_) => {
@@ -23,19 +27,37 @@
 
       describe('when viewing the awards dashboard', () => {
         beforeEach(() => {
-          $location.search('case_type_category', 'awards');
-
-          isButtonVisible = $scope.isVisible();
+          isAwardsScreen.and.returnValue(true);
         });
 
-        it('displays the add award button', () => {
-          expect(isButtonVisible).toBe(true);
+        describe('and the user can create awards', () => {
+          beforeEach(() => {
+            canCreateOrEditAwards.and.returnValue(true);
+
+            isButtonVisible = $scope.isVisible();
+          });
+
+          it('displays the add award button', () => {
+            expect(isButtonVisible).toBe(true);
+          });
+        });
+
+        describe('and the user cannot create awards', () => {
+          beforeEach(() => {
+            canCreateOrEditAwards.and.returnValue(false);
+
+            isButtonVisible = $scope.isVisible();
+          });
+
+          it('does not display the add award button', () => {
+            expect(isButtonVisible).toBe(false);
+          });
         });
       });
 
       describe('when viewing any other dashboard', () => {
         beforeEach(() => {
-          $location.search('case_type_category', 'cases');
+          isAwardsScreen.and.returnValue(false);
 
           isButtonVisible = $scope.isVisible();
         });
