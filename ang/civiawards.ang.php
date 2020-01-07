@@ -16,6 +16,17 @@ $options = [
 ];
 
 OptionValuesHelper::setToJsVariables($options);
+expose_permissions();
+
+/**
+ * Exposes the awards permissions values on the `CRM.permissions` object.
+ */
+function expose_permissions() {
+  Civi::resources()
+    ->addPermissions([
+      'create/edit awards',
+    ]);
+}
 
 /**
  * Get a list of JS files.
