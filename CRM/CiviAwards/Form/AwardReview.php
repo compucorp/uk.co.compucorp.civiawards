@@ -95,6 +95,11 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $this->assign('caseContactDisplayName', $this->getCaseContactDisplayName());
     $this->assign('caseTypeName', $this->caseTypeName);
     $this->assign('caseTags', $this->caseTags);
+    if ($this->_action & CRM_Core_Action::VIEW) {
+      $editUrlParams = "action=update&id={$this->activityId}&reset=1";
+      $this->assign('editUrlParams', $editUrlParams);
+    }
+
 
     $fields = CRM_Core_BAO_UFGroup::getFields(
       $this->profileId, FALSE, CRM_Core_Action::ADD, NULL,
@@ -123,10 +128,6 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     if ($this->_action & CRM_Core_Action::VIEW) {
       $pageTitle = 'View Review - ' . $this->getPageTitle();
       $this->addButtons([
-        [
-          'type' => 'next',
-          'name' => ts('Edit'),
-        ],
         [
           'type' => 'cancel',
           'name' => E::ts('Cancel'),
