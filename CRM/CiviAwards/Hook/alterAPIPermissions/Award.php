@@ -32,7 +32,7 @@ class CRM_CiviAwards_Hook_alterAPIPermissions_Award {
       ],
     ];
     $awardCreatePermission = [
-      ['administer CiviCase', 'create/edit awards']
+      ['administer CiviCase', 'create/edit awards'],
     ];
     $permissions['award_detail']['create'] = $permissions['award_detail']['update'] = $awardCreatePermission;
 
@@ -42,10 +42,20 @@ class CRM_CiviAwards_Hook_alterAPIPermissions_Award {
   }
 
   /**
-   * @param $entity
-   * @param $action
+   * Checks whether to modify case type API permissions.
+   *
+   * When the case type to be created is of type award, the permission
+   * is to be modified and function returns true.
+   *
+   * @param string $entity
+   *   The API entity.
+   * @param string $action
+   *   The API action.
    * @param array $params
+   *   Params.
+   *
    * @return bool
+   *   Whether to modify API permission or not.
    */
   private function modifyCaseTypeApiPermission($entity, $action, array &$params) {
     $isCaseTypeCreateOrEdit = $entity == 'case_type' && in_array($action, ['create', 'update']);
@@ -62,7 +72,7 @@ class CRM_CiviAwards_Hook_alterAPIPermissions_Award {
   }
 
   /**
-   * Returns the case category name when action is create/edit
+   * Returns the case category name when action is create/edit.
    *
    * @param array $params
    *   API parameters.
