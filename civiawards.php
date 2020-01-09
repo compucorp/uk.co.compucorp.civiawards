@@ -179,16 +179,13 @@ function civiawards_civicrm_permission(&$permissions) {
  * @link https://docs.civicrm.org/dev/en/master/hooks/hook_civicrm_alterAPIPermissions/
  */
 function civiawards_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
-  $permissionService = new CaseCategoryPermission();
-  $caseCategoryPermissions = $permissionService->get(CRM_CiviAwards_Helper_CaseTypeCategory::AWARDS_CASE_TYPE_CATEGORY_NAME);
-  $permissions['award_detail']['create'] = $permissions['award_detail']['update'] = [$caseCategoryPermissions['ADMINISTER_CASE_CATEGORY']['name']];
-  $permissions['award_detail']['get'] = [
-    [
-      $caseCategoryPermissions['ACCESS_MY_CASE_CATEGORY_AND_ACTIVITIES']['name'],
-      $caseCategoryPermissions['ACCESS_CASE_CATEGORY_AND_ACTIVITIES']['name'],
-      $caseCategoryPermissions['BASIC_CASE_CATEGORY_INFO']['name'],
-    ],
+  $hooks = [
+    new CRM_CiviAwards_Hook_alterAPIPermissions_Award(),
   ];
+
+  foreach ($hooks as $hook) {
+    $hook->run($entity, $action, $params, $permissions);
+  }
 }
 
 /**
