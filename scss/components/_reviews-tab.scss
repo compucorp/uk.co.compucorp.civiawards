@@ -3,6 +3,11 @@
     box-shadow: $box-shadow;
   }
 
+  &__record-action-button.btn {
+    font-size: $font-size-h2;
+    line-height: $font-size-h2;
+  }
+
   &__table-container {
     overflow-x: auto;
   }

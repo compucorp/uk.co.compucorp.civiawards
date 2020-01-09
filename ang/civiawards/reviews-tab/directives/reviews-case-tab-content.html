@@ -24,7 +24,7 @@
           <th ng-repeat="scoringField in scoringFields">
             {{scoringField.label}}
           </th>
-          <th>Actions</th>
+          <th>&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -41,14 +41,14 @@
               dropdown-append-to="'#bootstrap-theme'"
             >
               <button
-                class="btn btn-default btn-sm dropdown-toggle"
+                class="btn btn-default btn-sm dropdown-toggle civiawards__reviews-tab__record-action-button"
                 data-toggle="dropdown"
                 aria-haspopup="true"
                 aria-expanded="false"
                 uib-dropdown-toggle
+                aria-label="{{ ts('Actions') }}"
               >
-                {{ ts('Actions') }}
-                <span class="caret"></span>
+                <i class="material-icons">more_vert</i>
               </button>
               <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu>
                 <li>
