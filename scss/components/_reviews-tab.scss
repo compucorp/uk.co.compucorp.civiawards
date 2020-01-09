@@ -1,4 +1,8 @@
 .civiawards__reviews-tab {
+  &__action-button {
+    box-shadow: $box-shadow;
+  }
+
   &__table-container {
     overflow-x: auto;
   }
