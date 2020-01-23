@@ -95,6 +95,11 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $this->assign('caseContactDisplayName', $this->getCaseContactDisplayName());
     $this->assign('caseTypeName', $this->caseTypeName);
     $this->assign('caseTags', $this->caseTags);
+    if ($this->_action & CRM_Core_Action::VIEW) {
+      $editUrlParams = "action=update&id={$this->activityId}&reset=1";
+      $this->assign('editUrlParams', $editUrlParams);
+    }
+
 
     $fields = CRM_Core_BAO_UFGroup::getFields(
       $this->profileId, FALSE, CRM_Core_Action::ADD, NULL,
@@ -121,21 +126,25 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $this->assign('elementNames', $elementNames);
 
     if ($this->_action & CRM_Core_Action::VIEW) {
-      $pageTitle = 'View Review';
+      $pageTitle = 'View Review - ' . $this->getPageTitle();
       $this->addButtons([
         [
           'type' => 'cancel',
-          'name' => ts('Cancel'),
+          'name' => E::ts('Cancel'),
         ],
       ]);
     }
     else {
-      $pageTitle = $this->_action == CRM_Core_Action::ADD ? 'Add Review' : 'Update Review';
+      $pageTitle = $this->_action == CRM_Core_Action::ADD ? 'Add Review' : 'Update Review - ' . $this->getPageTitle();
       $this->addButtons([
         [
           'type' => 'submit',
-          'name' => E::ts('Submit'),
+          'name' => E::ts('Save'),
           'isDefault' => TRUE,
+        ],
+        [
+          'type' => 'cancel',
+          'name' => E::ts('Cancel'),
         ],
       ]);
     }
@@ -310,12 +319,11 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $result = civicrm_api3('EntityTag', 'get', [
       'sequential' => 1,
       'entity_table' => 'civicrm_case',
-      'entity_id' => 1,
       'api.Tag.getsingle' => ['id' => "\$value.tag_id"],
     ]);
 
     if ($result['count'] == 0) {
-      return [];
+      return '';
     }
 
     $caseTags = '';
@@ -324,6 +332,21 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
 
     return rtrim($caseTags, "', '");
+  }
+
+  /**
+   * Gets the title for the page.
+   *
+   * @return string
+   *   Title.
+   */
+  private function getPageTitle() {
+    $title = $this->caseContactDisplayName . ' - ' . $this->caseTypeName;
+    if ($this->caseTags) {
+      $title = $title . ' - ' . $this->caseTags;
+    }
+
+    return $title;
   }
 
   /**
