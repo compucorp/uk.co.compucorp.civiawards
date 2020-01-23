@@ -1,0 +1,72 @@
+<div class="civicase__case-tab__container civiawards__reviews-tab">
+  <div class="civicase__case-tab__actions">
+    <button
+      class="btn btn-primary crm-popup civiawards__reviews-tab__action-button"
+      ng-click="handleAddReviewActivity()"
+      type="button"
+    >
+      <i class="material-icons civicase__icon">add_circle</i>
+      {{ts('Add Review')}}
+    </button>
+  </div>
+  <a
+    class="crm-popup"
+    ng-href="{{ 'civicrm/contact/view/rel' | civicaseCrmUrl:{ action: 'add', reset: 1, cid: client.contact_id } }}"
+  >
+    {{ client.display_name }}
+  </a>
+  <div class="civiawards__reviews-tab__table-container panel panel-default">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date Submitted</th>
+          <th ng-repeat="scoringField in scoringFields">
+            {{scoringField.label}}
+          </th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="reviewActivity in reviewActivities">
+          <td>{{reviewActivity.source_contact_name}}</td>
+          <td>{{reviewActivity.created_date | formatDate}}</td>
+          <td ng-repeat="scoringField in scoringFields">
+            {{reviewActivity['custom_' + scoringField.id]}}
+          </td>
+          <td>
+            <div
+              class="btn-group btn-group-md"
+              uib-dropdown
+              dropdown-append-to="'#bootstrap-theme'"
+            >
+              <button
+                class="btn btn-default btn-sm dropdown-toggle civiawards__reviews-tab__record-action-button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                uib-dropdown-toggle
+                aria-label="{{ ts('Actions') }}"
+              >
+                <i class="material-icons">more_vert</i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu>
+                <li>
+                  <a ng-click="handleViewReviewActivity(reviewActivity)">
+                    {{ ts('View') }}
+                  </a>
+                  <a ng-click="handleEditReviewActivity(reviewActivity)">
+                    {{ ts('Edit') }}
+                  </a>
+                  <a ng-click="handleDeleteReviewActivity(reviewActivity)">
+                    {{ ts('Delete') }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
