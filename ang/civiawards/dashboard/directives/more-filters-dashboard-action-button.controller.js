@@ -8,6 +8,7 @@
    *
    * @param {object} $rootScope rootscope object
    * @param {object} $scope scope object
+   * @param {object} $q angular promise object
    * @param {object} getSelect2Value service to fetch select 2 values
    * @param {object} crmApi the service to fetch civicrm backend
    * @param {object} dialogService the dialog service
@@ -16,7 +17,7 @@
    * @param {object} AwardType Award Type service
    * @param {Function} isAwardsScreen is award screen function
    */
-  function MoreFiltersDashboardActionButtonController ($rootScope, $scope,
+  function MoreFiltersDashboardActionButtonController ($rootScope, $scope, $q,
     getSelect2Value, crmApi, dialogService, ts, CaseStatus, AwardType, isAwardsScreen) {
     var model = {
       statuses: _.map(CaseStatus.getAll(), mapSelectOptions),
@@ -87,8 +88,12 @@
       processMyAwardsFilter()
         .then(processAwardTypeFilters)
         .then(function (awardTypeIds) {
+          var caseTypeFilter = awardTypeIds.length > 0
+            ? { IN: awardTypeIds }
+            : '';
+
           $rootScope.$broadcast('civicase::dashboard-filters::updated', {
-            case_type_id: { IN: awardTypeIds }
+            case_type_id: caseTypeFilter
           });
         });
     }
@@ -102,6 +107,12 @@
     function processAwardTypeFilters (caseTypeIDs) {
       var filters = { sequential: 1 };
 
+      if (caseTypeIDs.length === 0) {
+        return $q.resolve([]);
+      } else {
+        filters.case_type_id = { IN: caseTypeIDs };
+      }
+
       if (model.selectedFilters.award_types !== '') {
         filters.award_type = { IN: getSelect2Value(model.selectedFilters.award_types) };
       }
@@ -110,9 +121,6 @@
       }
       if (model.selectedFilters.end_date) {
         filters.end_date = model.selectedFilters.end_date;
-      }
-      if (caseTypeIDs.length > 0) {
-        filters.case_type_id = { IN: caseTypeIDs };
       }
 
       return crmApi('AwardDetail', 'get', filters)
