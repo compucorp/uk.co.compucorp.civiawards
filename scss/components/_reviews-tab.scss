@@ -11,4 +11,11 @@
   &__table-container {
     overflow-x: auto;
   }
+
+  &__empty {
+    color: $gray-darker;
+    font-weight: 600;
+    margin-top: 40px;
+    opacity: 0.65;
+  }
 }
