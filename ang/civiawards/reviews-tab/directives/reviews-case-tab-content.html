@@ -39,7 +39,7 @@
           <td>{{reviewActivity.source_contact_name}}</td>
           <td>{{reviewActivity.created_date | formatDate}}</td>
           <td ng-repeat="scoringField in scoringFields">
-            {{reviewActivity['custom_' + scoringField.id]}}
+            {{getScoringFieldValue(reviewActivity, scoringField)}}
           </td>
           <td>
             <div

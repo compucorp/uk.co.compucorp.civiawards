@@ -28,11 +28,13 @@
     reviewScoringFieldsGroupName, ts) {
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
     var REVIEW_FORM_URL = 'civicrm/awardreview';
+    var optionGroupValues = {};
 
     $scope.reviewActivities = [];
     $scope.scoringFields = [];
     $scope.ts = ts;
 
+    $scope.getScoringFieldValue = getScoringFieldValue;
     $scope.handleAddReviewActivity = handleAddReviewActivity;
     $scope.handleViewReviewActivity = handleViewReviewActivity;
     $scope.handleEditReviewActivity = handleEditReviewActivity;
@@ -54,6 +56,25 @@
       });
     }
 
+    /**
+     * Get the values for sent scoring field
+     *
+     * @param {object} reviewActivity activity object
+     * @param {object} scoringField scoring field
+     * @returns {any} value of the field
+     */
+    function getScoringFieldValue (reviewActivity, scoringField) {
+      var value = reviewActivity['custom_' + scoringField.id];
+
+      if (scoringField.option_group_id) {
+        if (optionGroupValues[scoringField.option_group_id] &&
+          optionGroupValues[scoringField.option_group_id][value]) {
+          return optionGroupValues[scoringField.option_group_id][value].label;
+        }
+      } else {
+        return value;
+      }
+    }
     /**
      * Returns the details for the current award type.
      *
@@ -201,9 +222,39 @@
             responses.awardDetails.review_fields,
             responses.scoringFields
           );
+
+          return fetchOptionValues();
         })
         .finally(function () {
           $scope.isLoading = false;
+        });
+    }
+
+    /**
+     * Fetches Option Values for every scoring fields
+     *
+     * @returns {Promise} promise
+     */
+    function fetchOptionValues () {
+      var optionGroupIDs = [];
+      var optionGroupApiCalls = [];
+
+      _.each($scope.scoringFields, function (field) {
+        if (field.option_group_id) {
+          optionGroupIDs.push(field.option_group_id);
+          optionGroupApiCalls.push(['OptionValue', 'get', {
+            sequential: 1,
+            return: ['label', 'value'],
+            option_group_id: field.option_group_id
+          }]);
+        }
+      });
+
+      return crmApi(optionGroupApiCalls)
+        .then(function (responses) {
+          _.each(optionGroupIDs, function (optionGroupID, index) {
+            optionGroupValues[optionGroupID] = _.indexBy(responses[index].values, 'value');
+          });
         });
     }
   }
