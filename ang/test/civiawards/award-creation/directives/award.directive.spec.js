@@ -186,7 +186,13 @@
               description: 'description',
               is_active: true,
               case_type_category: '3',
-              name: 'title'
+              name: 'title',
+              definition: {
+                caseRoles: [{
+                  name: 'Application Manager',
+                  manager: 1
+                }]
+              }
             });
           });
 
@@ -234,7 +240,13 @@
             is_active: true,
             case_type_category: '3',
             name: 'title',
-            definition: { statuses: ['Open'] },
+            definition: {
+              caseRoles: [{
+                name: 'Application Manager',
+                manager: 1
+              }],
+              statuses: ['Open']
+            },
             id: '10'
           });
         });
