@@ -202,7 +202,13 @@
         description: $scope.basicDetails.description,
         is_active: $scope.basicDetails.isEnabled,
         case_type_category: CaseTypeCategory.findByName('awards').value,
-        name: generateAwardName($scope.basicDetails.title)
+        name: generateAwardName($scope.basicDetails.title),
+        definition: {
+          caseRoles: [{
+            name: 'Application Manager',
+            manager: 1
+          }]
+        }
       };
 
       prepareAwardStagesWhenEditings(params);
@@ -249,9 +255,7 @@
         .value();
       var areAllAwardsSelected = selectedAwardStageNames.length === _.size($scope.awardStages);
 
-      params.definition = {
-        statuses: areAllAwardsSelected ? [] : selectedAwardStageNames
-      };
+      params.definition.statuses = areAllAwardsSelected ? [] : selectedAwardStageNames;
     }
 
     /**
