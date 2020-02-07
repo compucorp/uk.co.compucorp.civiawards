@@ -16,6 +16,10 @@
       id: '20',
       weight: 2,
       required: '0'
+    }, {
+      id: '45',
+      weight: 3,
+      required: '0'
     }]
   });
 }());

@@ -3,7 +3,7 @@
   describe('Review Case Tab Content', () => {
     let $controller, $q, $rootScope, $scope, AwardAdditionalDetailsMockData,
       caseItem, crmApi, ReviewActivitiesMockData, ReviewFieldsMockData,
-      reviewsActivityTypeName, reviewScoringFieldsGroupName;
+      reviewsActivityTypeName, reviewScoringFieldsGroupName, OptionValuesMockData;
     const entityActionHandlers = {
       'Activity.get': activityGetHandler,
       'AwardDetail.getsingle': awardDetailGetSingleHandler,
@@ -18,13 +18,15 @@
 
     beforeEach(inject((_$controller_, _$q_, _$rootScope_, _ApplicationsMockData_,
       _AwardAdditionalDetailsMockData_, _ReviewActivitiesMockData_, _ReviewFieldsMockData_,
-      _reviewsActivityTypeName_, _reviewScoringFieldsGroupName_) => {
+      _reviewsActivityTypeName_, _reviewScoringFieldsGroupName_,
+      _OptionValuesMockData_) => {
       $controller = _$controller_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_;
       ReviewActivitiesMockData = _ReviewActivitiesMockData_;
       ReviewFieldsMockData = _ReviewFieldsMockData_;
+      OptionValuesMockData = _OptionValuesMockData_;
       reviewsActivityTypeName = _reviewsActivityTypeName_;
       reviewScoringFieldsGroupName = _reviewScoringFieldsGroupName_;
       caseItem = _.first(_ApplicationsMockData_);
@@ -81,6 +83,16 @@
 
         it('stores the custom review fields in the order defined by the award type configuration', () => {
           expect($scope.scoringFields).toEqual(sortedScoringFields);
+        });
+
+        it('fetches the original value for the fields linked with option values', () => {
+          expect(crmApi).toHaveBeenCalledWith([
+            ['OptionValue', 'get', {
+              sequential: 1,
+              return: ['label', 'value'],
+              option_group_id: '118'
+            }]
+          ]);
         });
       });
     });
@@ -225,6 +237,18 @@
     }
 
     /**
+     * @returns {object} the mocked response for the OptionValue.Get api action.
+     */
+    function optionValueGetHandler () {
+      return [{
+        is_error: 0,
+        version: 3,
+        count: OptionValuesMockData.get().length,
+        values: _.cloneDeep(OptionValuesMockData.get())
+      }];
+    }
+
+    /**
      * @returns {object} the mocked response for the Award.Additionaldetails api action.
      */
     function awardDetailGetSingleHandler () {
@@ -254,11 +278,17 @@
     function getCrmApiMock () {
       return jasmine.createSpy('crmApi')
         .and.callFake((entityName, action, params) => {
-          const entityAction = `${entityName}.${action}`;
-          const entityActionHandler = entityActionHandlers[entityAction];
-          const response = entityActionHandler
-            ? entityActionHandler()
-            : { values: [] };
+          let response;
+
+          if (_.isArray(entityName)) {
+            response = optionValueGetHandler();
+          } else {
+            const entityAction = `${entityName}.${action}`;
+            const entityActionHandler = entityActionHandlers[entityAction];
+            response = entityActionHandler
+              ? entityActionHandler()
+              : { values: [] };
+          }
 
           return $q.resolve(response);
         });

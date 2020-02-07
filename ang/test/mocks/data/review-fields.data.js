@@ -40,12 +40,28 @@
       data_type: 'Float',
       html_type: 'Text',
       is_search_range: '0',
-      weight: '2',
+      weight: '3',
       is_active: '1',
       text_length: '255',
       note_columns: '60',
       note_rows: '4',
       column_name: 'age_21',
+      in_selector: '0'
+    }, {
+      id: '45',
+      custom_group_id: '8',
+      name: 'Food_preference',
+      label: 'Food preference',
+      data_type: 'String',
+      html_type: 'Radio',
+      is_search_range: '0',
+      weight: '36',
+      is_active: '1',
+      text_length: '255',
+      note_columns: '60',
+      note_rows: '4',
+      column_name: 'food_preference_45',
+      option_group_id: '118',
       in_selector: '0'
     }
   ]);
