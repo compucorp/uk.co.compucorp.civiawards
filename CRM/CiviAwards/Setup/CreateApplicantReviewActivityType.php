@@ -5,6 +5,8 @@
  */
 class CRM_CiviAwards_Setup_CreateApplicantReviewActivityType {
 
+  const APPLICANT_REVIEW = 'Applicant Review';
+
   /**
    * Adds the Applicant review activity type and category.
    */
@@ -20,8 +22,8 @@ class CRM_CiviAwards_Setup_CreateApplicantReviewActivityType {
   private function addApplicantReviewCategory() {
     CRM_Core_BAO_OptionValue::ensureOptionValueExists([
       'option_group_id' => 'activity_category',
-      'name' => 'Applicant Review',
-      'label' => 'Applicant Review',
+      'name' => self::APPLICANT_REVIEW,
+      'label' => ts(self::APPLICANT_REVIEW),
       'is_default' => 1,
       'is_active' => TRUE,
       'is_reserved' => TRUE,
@@ -35,9 +37,9 @@ class CRM_CiviAwards_Setup_CreateApplicantReviewActivityType {
     $civicaseComponent = CRM_Core_Component::get('CiviCase');
     CRM_Core_BAO_OptionValue::ensureOptionValueExists([
       'option_group_id' => 'activity_type',
-      'name' => 'Applicant Review',
-      'label' => 'Applicant Review',
-      'grouping' => 'Applicant Review',
+      'name' => self::APPLICANT_REVIEW,
+      'label' => ts(self::APPLICANT_REVIEW),
+      'grouping' => self::APPLICANT_REVIEW,
       'icon' => 'fa-user',
       'component_id' => !empty($civicaseComponent->componentID) ? $civicaseComponent->componentID : '',
       'is_default' => 1,
@@ -47,11 +49,12 @@ class CRM_CiviAwards_Setup_CreateApplicantReviewActivityType {
   }
 
   /**
-   * Sets activity status 'Scheduled' and 'Completed' for applicant
-   * review activity type if not already set.
+   * Sets activity status 'Scheduled' and 'Completed'.
+   *
+   * Sets for applicant review activity type if not already set.
    */
   private function setApplicantReviewActivityTypeStatuses() {
-    $applicantReviewActivityName = 'Applicant Review';
+    $applicantReviewActivityName = self::APPLICANT_REVIEW;
     $statuses = civicrm_api3('OptionValue', 'get', [
       'name' => ['IN' => ['Scheduled', 'Completed']],
       'option_group_id' => 'activity_status',
