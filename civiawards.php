@@ -5,8 +5,6 @@
  * CiviAwards Extension.
  */
 
-use CRM_Civicase_Service_CaseCategoryPermission as CaseCategoryPermission;
-
 require_once 'civiawards.civix.php';
 
 /**
@@ -170,6 +168,14 @@ function civiawards_civicrm_permission(&$permissions) {
   $permissions['create/edit awards'] = [
     'CiviAwards: Create/Edit awards',
     ts('Allows a user to create or edit awards'),
+  ];
+
+  $permissions['access review custom field set'] = [
+    'CiviAwards: Access review fields ',
+    ts(
+      "This allows the user to view any review field sets on the reserved review activity type.
+       Note that this can also be done through ACLs or allocating the user 'Access all custom data' permission"
+    ),
   ];
 }
 
