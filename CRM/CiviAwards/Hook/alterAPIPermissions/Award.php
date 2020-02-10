@@ -3,6 +3,7 @@
 use CRM_Civicase_Helper_CaseCategory as CaseCategoryHelper;
 use CRM_CiviAwards_Helper_CaseTypeCategory as CaseAwardHelper;
 use CRM_Civicase_Service_CaseCategoryPermission as CaseCategoryPermission;
+use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
 
 /**
  * Class CRM_Civicase_Hook_APIPermissions_alterPermissions.
@@ -38,6 +39,12 @@ class CRM_CiviAwards_Hook_alterAPIPermissions_Award {
 
     if ($this->modifyCaseTypeApiPermission($entity, $action, $params)) {
       $permissions['case_type']['create'] = $permissions['case_type']['update'] = $awardCreatePermission;
+    }
+
+    if ($this->modifyCustomFieldApiPermission($entity, $action, $params)) {
+      $permissions['custom_field']['get'] = [
+        ['access review custom field set', 'access all custom data'],
+      ];
     }
   }
 
@@ -103,6 +110,95 @@ class CRM_CiviAwards_Hook_alterAPIPermissions_Award {
     }
 
     return CaseCategoryHelper::getCaseCategoryNameFromOptionValue($caseTypeCategory);
+  }
+
+  /**
+   * Checks whether to modify custom field API permissions.
+   *
+   * When the custom fields to be modified/fetched is belongs to a Custom
+   * group attached to the reserved Applicant Review Activity type,
+   * it returns TRUE.
+   *
+   * @param string $entity
+   *   The API entity.
+   * @param string $action
+   *   The API action.
+   * @param array $params
+   *   Params.
+   *
+   * @return bool
+   *   Whether to modify API permission or not.
+   */
+  private function modifyCustomFieldApiPermission($entity, $action, array &$params) {
+    $isCustomFieldGet = $entity == 'custom_field' && in_array($action, ['get']);
+    $hasGroupIdParameter = !empty($params['custom_group_id']);
+    if (!$isCustomFieldGet || !$hasGroupIdParameter) {
+      return FALSE;
+    }
+
+    $groupDetails = $this->getCustomGroupDetails($params['custom_group_id']);
+
+    if (empty($groupDetails)) {
+      return FALSE;
+    }
+
+    $result = civicrm_api3('OptionValue', 'get', [
+      'return' => ['value'],
+      'sequential' => 1,
+      'option_group_id' => 'activity_type',
+      'name' => CreateApplicantReviewActivityType::APPLICANT_REVIEW,
+    ]);
+    $applicantReviewId = $result['values'][0]['value'];
+    $isOfApplicantReview = FALSE;
+    foreach ($groupDetails as $groupDetail) {
+      $groupExtendsActivity = $groupDetail['extends'] == 'Activity';
+      if (!$groupExtendsActivity) {
+        return FALSE;
+      }
+      if (!empty($groupDetail['extends_entity_column_value'])) {
+        // Custom Group should only extend the Applicant review activity type.
+        $isOfApplicantReview = in_array($applicantReviewId, $groupDetail['extends_entity_column_value'])
+          && count($groupDetail['extends_entity_column_value']) == 1;
+      }
+    }
+
+    if ($isOfApplicantReview) {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Returns the custom group details group id or name.
+   *
+   * @param mixed $customGroup
+   *   Custom group name or Id.
+   *
+   * @return array
+   *   Case category name.
+   */
+  private function getCustomGroupDetails($customGroup) {
+    $params = [];
+    if (is_array($customGroup)) {
+      if (array_key_exists('IN', $customGroup)) {
+        is_numeric($customGroup['IN'][0]) ? ($params['id'] = $customGroup) : ($params['name'] = $customGroup);
+      }
+    }
+    else {
+      is_numeric($customGroup) ? ($params['id'] = $customGroup) : ($params['name'] = $customGroup);
+    }
+    if (empty($params)) {
+      return [];
+    }
+
+    $result = civicrm_api3('CustomGroup', 'get', $params);
+
+    if (!empty($result['values'])) {
+      return $result['values'];
+    }
+
+    return [];
   }
 
 }
