@@ -23,7 +23,7 @@ class CRM_CiviAwards_Setup_CreateApplicantReviewActivityType {
     CRM_Core_BAO_OptionValue::ensureOptionValueExists([
       'option_group_id' => 'activity_category',
       'name' => self::APPLICANT_REVIEW,
-      'label' => self::APPLICANT_REVIEW,
+      'label' => ts(self::APPLICANT_REVIEW),
       'is_default' => 1,
       'is_active' => TRUE,
       'is_reserved' => TRUE,
@@ -38,7 +38,7 @@ class CRM_CiviAwards_Setup_CreateApplicantReviewActivityType {
     CRM_Core_BAO_OptionValue::ensureOptionValueExists([
       'option_group_id' => 'activity_type',
       'name' => self::APPLICANT_REVIEW,
-      'label' => self::APPLICANT_REVIEW,
+      'label' => ts(self::APPLICANT_REVIEW),
       'grouping' => self::APPLICANT_REVIEW,
       'icon' => 'fa-user',
       'component_id' => !empty($civicaseComponent->componentID) ? $civicaseComponent->componentID : '',
