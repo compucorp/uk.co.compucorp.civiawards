@@ -157,7 +157,9 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   public function postProcess() {
     $values = $this->exportValues();
     foreach ($this->profileFields as $profileField) {
-      $profileFields[$profileField] = $values[$profileField];
+      $value = $values[$profileField];
+      $value = is_array($value) ? array_filter($value) : $value;
+      $profileFields[$profileField] = $value;
     }
 
     if ($this->_action & CRM_Core_Action::ADD) {
