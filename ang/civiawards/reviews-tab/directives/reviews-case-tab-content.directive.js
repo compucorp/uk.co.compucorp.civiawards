@@ -65,15 +65,13 @@
      */
     function getScoringFieldValue (reviewActivity, scoringField) {
       var value = reviewActivity['custom_' + scoringField.id];
+      var isOptionValueDefined = scoringField.option_group_id &&
+        optionGroupValues[scoringField.option_group_id] &&
+        optionGroupValues[scoringField.option_group_id][value];
 
-      if (scoringField.option_group_id) {
-        if (optionGroupValues[scoringField.option_group_id] &&
-          optionGroupValues[scoringField.option_group_id][value]) {
-          return optionGroupValues[scoringField.option_group_id][value].label;
-        }
-      } else {
-        return value;
-      }
+      return isOptionValueDefined
+        ? optionGroupValues[scoringField.option_group_id][value].label
+        : value;
     }
     /**
      * Returns the details for the current award type.
@@ -236,26 +234,32 @@
      * @returns {Promise} promise
      */
     function fetchOptionValues () {
-      var optionGroupIDs = [];
-      var optionGroupApiCalls = [];
+      var optionGroupIds = getScoringFieldsGroupIds();
 
-      _.each($scope.scoringFields, function (field) {
-        if (field.option_group_id) {
-          optionGroupIDs.push(field.option_group_id);
-          optionGroupApiCalls.push(['OptionValue', 'get', {
-            sequential: 1,
-            return: ['label', 'value'],
-            option_group_id: field.option_group_id
-          }]);
-        }
+      return crmApi('OptionValue', 'get', {
+        sequential: 1,
+        return: ['label', 'option_group_id', 'value'],
+        option_group_id: { IN: optionGroupIds }
+      }).then(function (response) {
+        optionGroupValues = _.chain(response.values)
+          .groupBy('option_group_id')
+          .mapValues(function (groupValues) {
+            return _.indexBy(groupValues, 'value');
+          })
+          .value();
       });
+    }
 
-      return crmApi(optionGroupApiCalls)
-        .then(function (responses) {
-          _.each(optionGroupIDs, function (optionGroupID, index) {
-            optionGroupValues[optionGroupID] = _.indexBy(responses[index].values, 'value');
-          });
-        });
+    /**
+     * Get Scoring Field Group IDs
+     *
+     * @returns {Array} list of group ids
+     */
+    function getScoringFieldsGroupIds () {
+      return _.chain($scope.scoringFields)
+        .filter(function (field) { return !!field.option_group_id; })
+        .map('option_group_id')
+        .value();
     }
   }
 })(CRM._, angular, CRM.confirm, CRM.loadForm, CRM.status, CRM.url);
