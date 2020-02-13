@@ -36,6 +36,7 @@ class CRM_CiviAwards_Hook_alterAPIPermissions_Award {
       ['administer CiviCase', 'create/edit awards'],
     ];
     $permissions['award_detail']['create'] = $permissions['award_detail']['update'] = $awardCreatePermission;
+    $permissions['award_manager']['get'] = $awardCreatePermission;
 
     if ($this->modifyCaseTypeApiPermission($entity, $action, $params)) {
       $permissions['case_type']['create'] = $permissions['case_type']['update'] = $awardCreatePermission;
