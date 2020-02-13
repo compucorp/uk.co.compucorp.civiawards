@@ -5,7 +5,7 @@
     return {
       controller: 'civiawardsReviewsCaseTabContentController',
       restrict: 'E',
-      templateUrl: '~/civiawards/reviews-tab/directives/reviews-case-tab-content.html',
+      templateUrl: '~/civiawards/reviews-tab/directives/reviews-case-tab-content.directive.html',
       scope: {
         caseItem: '='
       }
@@ -28,13 +28,11 @@
     reviewScoringFieldsGroupName, ts) {
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
     var REVIEW_FORM_URL = 'civicrm/awardreview';
-    var optionGroupValues = {};
 
     $scope.reviewActivities = [];
     $scope.scoringFields = [];
     $scope.ts = ts;
 
-    $scope.getScoringFieldValue = getScoringFieldValue;
     $scope.handleAddReviewActivity = handleAddReviewActivity;
     $scope.handleViewReviewActivity = handleViewReviewActivity;
     $scope.handleEditReviewActivity = handleEditReviewActivity;
@@ -57,22 +55,27 @@
     }
 
     /**
-     * Get the values for sent scoring field
+     * Returns the reviews for the current application (case).
      *
-     * @param {object} reviewActivity activity object
-     * @param {object} scoringField scoring field
-     * @returns {any} value of the field
+     * @returns {Promise} resolves after fetching the reviews.
      */
-    function getScoringFieldValue (reviewActivity, scoringField) {
-      var value = reviewActivity['custom_' + scoringField.id];
-      var isOptionValueDefined = scoringField.option_group_id &&
-        optionGroupValues[scoringField.option_group_id] &&
-        optionGroupValues[scoringField.option_group_id][value];
-
-      return isOptionValueDefined
-        ? optionGroupValues[scoringField.option_group_id][value].label
-        : value;
+    function getReviewActivities () {
+      return crmApi('Activity', 'get', {
+        activity_type_id: reviewsActivityTypeName,
+        case_id: $scope.caseItem.id,
+        options: { limit: 0 },
+        sequential: 1,
+        'api.CustomValue.gettreevalues': {
+          entity_id: '$value.id',
+          entity_type: 'Activity',
+          'custom_group.id': '8'
+        }
+      })
+        .then(function (response) {
+          return response.values;
+        });
     }
+
     /**
      * Returns the details for the current award type.
      *
@@ -85,50 +88,26 @@
     }
 
     /**
-     * Returns the reviews for the current application (case).
+     * Format Activities to be used on the View
      *
-     * @returns {Promise} resolves after fetching the reviews.
+     * @param {Array} activitiesData list of activities
+     * @param {Array} scoringFieldsSortOrder a list of scoring fields' id and weight
+     * @returns {Array} formatted list of activities
      */
-    function getReviewActivities () {
-      return crmApi('Activity', 'get', {
-        activity_type_id: reviewsActivityTypeName,
-        case_id: $scope.caseItem.id,
-        options: { limit: 0 },
-        sequential: 1
-      })
-        .then(function (response) {
-          return response.values;
-        });
-    }
+    function formatActivitiesData (activitiesData, scoringFieldsSortOrder) {
+      var sortOrder = _.sortBy(scoringFieldsSortOrder, 'weight');
 
-    /**
-     * Returns the scoring fields that are used for reviewing applications. This returns
-     * the field's labels, names, types, etc. but not the actual field value. The value is
-     * stored in the review (activity) itself.
-     *
-     * @returns {Promise} resolves after fetching the scoring fields.
-     */
-    function getScoringFields () {
-      return crmApi('CustomField', 'get', {
-        custom_group_id: reviewScoringFieldsGroupName,
-        options: { limit: 0 },
-        sequential: 0
-      })
-        .then(function (response) {
-          return response.values;
+      _.each(activitiesData, function (activity) {
+        activity.reviewFields = sortOrder.map(function (scoringFieldSortOrder) {
+          return _.find(activity['api.CustomValue.gettreevalues'].values[0].fields, function (field) {
+            return field.id === scoringFieldSortOrder.id;
+          });
         });
-    }
 
-    /**
-     * @param {object[]} scoringFieldsSortOrder a list of scoring fields' id and weight.
-     * @param {object[]} scoringFields a list of scoring fields with all the necessary data.
-     * @returns {object[]} returns the scoring fields sorted by weight and containing all the necessary data.
-     */
-    function getSortedScoringFields (scoringFieldsSortOrder, scoringFields) {
-      return _.sortBy(scoringFieldsSortOrder, 'weight')
-        .map(function (scoringFieldSortOrder) {
-          return scoringFields[scoringFieldSortOrder.id];
-        });
+        delete activity['api.CustomValue.gettreevalues'];
+      });
+
+      return activitiesData;
     }
 
     /**
@@ -211,55 +190,15 @@
 
       $q.all({
         awardDetails: getAwardDetails(),
-        reviewActivities: getReviewActivities(),
-        scoringFields: getScoringFields()
-      })
-        .then(function (responses) {
-          $scope.reviewActivities = responses.reviewActivities;
-          $scope.scoringFields = getSortedScoringFields(
-            responses.awardDetails.review_fields,
-            responses.scoringFields
-          );
-
-          return fetchOptionValues();
-        })
-        .finally(function () {
-          $scope.isLoading = false;
-        });
-    }
-
-    /**
-     * Fetches Option Values for every scoring fields
-     *
-     * @returns {Promise} promise
-     */
-    function fetchOptionValues () {
-      var optionGroupIds = getScoringFieldsGroupIds();
-
-      return crmApi('OptionValue', 'get', {
-        sequential: 1,
-        return: ['label', 'option_group_id', 'value'],
-        option_group_id: { IN: optionGroupIds }
-      }).then(function (response) {
-        optionGroupValues = _.chain(response.values)
-          .groupBy('option_group_id')
-          .mapValues(function (groupValues) {
-            return _.indexBy(groupValues, 'value');
-          })
-          .value();
+        reviewActivities: getReviewActivities()
+      }).then(function (responses) {
+        $scope.reviewActivities = formatActivitiesData(
+          responses.reviewActivities,
+          responses.awardDetails.review_fields
+        );
+      }).finally(function () {
+        $scope.isLoading = false;
       });
-    }
-
-    /**
-     * Get Scoring Field Group IDs
-     *
-     * @returns {Array} list of group ids
-     */
-    function getScoringFieldsGroupIds () {
-      return _.chain($scope.scoringFields)
-        .filter(function (field) { return !!field.option_group_id; })
-        .map('option_group_id')
-        .value();
     }
   }
 })(CRM._, angular, CRM.confirm, CRM.loadForm, CRM.status, CRM.url);

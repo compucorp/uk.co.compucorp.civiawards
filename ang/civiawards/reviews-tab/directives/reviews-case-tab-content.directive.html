@@ -16,7 +16,7 @@
     {{ client.display_name }}
   </a>
   <div
-    ng-if="reviewActivities.length === 0"
+    ng-if="reviewActivities.length === 0 && !isLoading"
     class="text-center text-uppercase civiawards__reviews-tab__empty">
     No Reviews
   </div>
@@ -28,8 +28,8 @@
         <tr>
           <th>Name</th>
           <th>Date Submitted</th>
-          <th ng-repeat="scoringField in scoringFields">
-            {{scoringField.label}}
+          <th ng-repeat="reviewField in reviewActivities[0].reviewFields">
+            {{reviewField.label}}
           </th>
           <th>&nbsp;</th>
         </tr>
@@ -38,8 +38,8 @@
         <tr ng-repeat="reviewActivity in reviewActivities">
           <td>{{reviewActivity.source_contact_name}}</td>
           <td>{{reviewActivity.created_date | formatDate}}</td>
-          <td ng-repeat="scoringField in scoringFields">
-            {{getScoringFieldValue(reviewActivity, scoringField)}}
+          <td ng-repeat="reviewField in reviewActivity.reviewFields">
+            {{reviewField.value.display}}
           </td>
           <td>
             <div
