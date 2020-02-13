@@ -33,7 +33,7 @@
       column_name: 'number_of_dribbles_per_game_20',
       in_selector: '0'
     }, {
-      id: '21',
+      id: '45',
       custom_group_id: '9',
       name: 'Age',
       label: 'Age',
@@ -46,22 +46,6 @@
       note_columns: '60',
       note_rows: '4',
       column_name: 'age_21',
-      in_selector: '0'
-    }, {
-      id: '45',
-      custom_group_id: '8',
-      name: 'Food_preference',
-      label: 'Food preference',
-      data_type: 'String',
-      html_type: 'Radio',
-      is_search_range: '0',
-      weight: '36',
-      is_active: '1',
-      text_length: '255',
-      note_columns: '60',
-      note_rows: '4',
-      column_name: 'food_preference_45',
-      option_group_id: '118',
       in_selector: '0'
     }
   ]);

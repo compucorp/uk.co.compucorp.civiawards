@@ -20,7 +20,69 @@
       custom_21: '19',
       source_contact_id: '2',
       source_contact_name: 'Compu Admin',
-      source_contact_sort_name: 'Admin, Compu'
+      source_contact_sort_name: 'Admin, Compu',
+      'api.CustomValue.gettreevalues': {
+        is_error: 0,
+        version: 3,
+        count: 1,
+        id: 'Applicant_Review',
+        values: [{
+          id: '8',
+          name: 'Applicant_Review',
+          table_name: 'civicrm_value_applicant_rev_6',
+          title: 'Applicant Review',
+          help_pre: '',
+          help_post: '',
+          collapse_display: '1',
+          style: 'Inline',
+          is_multiple: '0',
+          extends: 'Activity',
+          subtype: '69',
+          extends_entity_column_value: ['69'],
+          is_public: '1',
+          fields: [{
+            value: {
+              id: '13',
+              data: '2',
+              display: '2'
+            },
+            id: '20',
+            name: 'Assists',
+            label: 'Assists',
+            column_name: 'assists_21',
+            data_type: 'String',
+            html_type: 'Text',
+            in_selector: '0'
+          }, {
+            value: {
+              id: '13',
+              data: '3',
+              display: '3'
+            },
+            id: '19',
+            name: 'Age',
+            label: 'Age',
+            column_name: 'age_22',
+            data_type: 'Float',
+            html_type: 'Text',
+            in_selector: '0'
+          }, {
+            value: {
+              id: '13',
+              data: null,
+              display: null
+            },
+            id: '45',
+            name: 'Birth_Date',
+            label: 'Birth Date',
+            column_name: 'birth_date_23',
+            data_type: 'Date',
+            html_type: 'Select Date',
+            date_format: 'mm/dd/yy',
+            in_selector: '0'
+          }]
+        }]
+      }
     },
     {
       id: '129',
@@ -40,7 +102,69 @@
       custom_21: '20',
       source_contact_id: '2',
       source_contact_name: 'Compu Admin',
-      source_contact_sort_name: 'Admin, Compu'
+      source_contact_sort_name: 'Admin, Compu',
+      'api.CustomValue.gettreevalues': {
+        is_error: 0,
+        version: 3,
+        count: 1,
+        id: 'Applicant_Review',
+        values: [{
+          id: '8',
+          name: 'Applicant_Review',
+          table_name: 'civicrm_value_applicant_rev_6',
+          title: 'Applicant Review',
+          help_pre: '',
+          help_post: '',
+          collapse_display: '1',
+          style: 'Inline',
+          is_multiple: '0',
+          extends: 'Activity',
+          subtype: '69',
+          extends_entity_column_value: ['69'],
+          is_public: '1',
+          fields: [{
+            value: {
+              id: '13',
+              data: '2',
+              display: '2'
+            },
+            id: '20',
+            name: 'Assists',
+            label: 'Assists',
+            column_name: 'assists_21',
+            data_type: 'String',
+            html_type: 'Text',
+            in_selector: '0'
+          }, {
+            value: {
+              id: '13',
+              data: '3',
+              display: '3'
+            },
+            id: '19',
+            name: 'Age',
+            label: 'Age',
+            column_name: 'age_22',
+            data_type: 'Float',
+            html_type: 'Text',
+            in_selector: '0'
+          }, {
+            value: {
+              id: '13',
+              data: null,
+              display: null
+            },
+            id: '45',
+            name: 'Birth_Date',
+            label: 'Birth Date',
+            column_name: 'birth_date_23',
+            data_type: 'Date',
+            html_type: 'Select Date',
+            date_format: 'mm/dd/yy',
+            in_selector: '0'
+          }]
+        }]
+      }
     },
     {
       id: '132',
@@ -60,7 +184,69 @@
       custom_21: '21',
       source_contact_id: '2',
       source_contact_name: 'Compu Admin',
-      source_contact_sort_name: 'Admin, Compu'
+      source_contact_sort_name: 'Admin, Compu',
+      'api.CustomValue.gettreevalues': {
+        is_error: 0,
+        version: 3,
+        count: 1,
+        id: 'Applicant_Review',
+        values: [{
+          id: '8',
+          name: 'Applicant_Review',
+          table_name: 'civicrm_value_applicant_rev_6',
+          title: 'Applicant Review',
+          help_pre: '',
+          help_post: '',
+          collapse_display: '1',
+          style: 'Inline',
+          is_multiple: '0',
+          extends: 'Activity',
+          subtype: '69',
+          extends_entity_column_value: ['69'],
+          is_public: '1',
+          fields: [{
+            value: {
+              id: '13',
+              data: '2',
+              display: '2'
+            },
+            id: '20',
+            name: 'Assists',
+            label: 'Assists',
+            column_name: 'assists_21',
+            data_type: 'String',
+            html_type: 'Text',
+            in_selector: '0'
+          }, {
+            value: {
+              id: '13',
+              data: '3',
+              display: '3'
+            },
+            id: '19',
+            name: 'Age',
+            label: 'Age',
+            column_name: 'age_22',
+            data_type: 'Float',
+            html_type: 'Text',
+            in_selector: '0'
+          }, {
+            value: {
+              id: '13',
+              data: null,
+              display: null
+            },
+            id: '45',
+            name: 'Birth_Date',
+            label: 'Birth Date',
+            column_name: 'birth_date_23',
+            data_type: 'Date',
+            html_type: 'Select Date',
+            date_format: 'mm/dd/yy',
+            in_selector: '0'
+          }]
+        }]
+      }
     }
   ]);
 })();

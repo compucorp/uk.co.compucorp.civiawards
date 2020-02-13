@@ -30,7 +30,6 @@
     var REVIEW_FORM_URL = 'civicrm/awardreview';
 
     $scope.reviewActivities = [];
-    $scope.scoringFields = [];
     $scope.ts = ts;
 
     $scope.handleAddReviewActivity = handleAddReviewActivity;
@@ -68,7 +67,7 @@
         'api.CustomValue.gettreevalues': {
           entity_id: '$value.id',
           entity_type: 'Activity',
-          'custom_group.id': '8'
+          'custom_group.name': reviewScoringFieldsGroupName
         }
       })
         .then(function (response) {
