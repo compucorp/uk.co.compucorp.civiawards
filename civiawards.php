@@ -186,7 +186,7 @@ function civiawards_civicrm_permission(&$permissions) {
  */
 function civiawards_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
   $hooks = [
-    new CRM_CiviAwards_Hook_alterAPIPermissions_Award(),
+    new CRM_CiviAwards_Hook_AlterAPIPermissions_Award(),
   ];
 
   foreach ($hooks as $hook) {

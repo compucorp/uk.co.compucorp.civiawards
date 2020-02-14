@@ -8,7 +8,7 @@ use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantRev
 /**
  * Class CRM_Civicase_Hook_APIPermissions_alterPermissions.
  */
-class CRM_CiviAwards_Hook_alterAPIPermissions_Award {
+class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
 
   /**
    * Alters the API permissions.
