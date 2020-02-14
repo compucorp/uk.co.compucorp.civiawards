@@ -13,7 +13,7 @@
     };
   });
 
-  module.controller('CiviAwardCreateEditAwardController', function ($q, $window, $scope, $location, crmApi, getSelect2Value, CaseTypeCategory) {
+  module.controller('CiviAwardCreateEditAwardController', function ($q, $window, $scope, $location, crmApi, getSelect2Value, CaseTypeCategory, crmStatus) {
     var ts = CRM.ts('civicase');
 
     $scope.ts = ts;
@@ -155,7 +155,7 @@
     function saveAward () {
       $scope.submitInProgress = true;
 
-      return saveCaseTypeBasicDetails()
+      var promise = saveCaseTypeBasicDetails()
         .then(saveAdditionAwardDetails)
         .then(function (award) {
           return award.case_type_id;
@@ -172,6 +172,11 @@
         .finally(function () {
           $scope.submitInProgress = false;
         });
+
+      return crmStatus({
+        start: $scope.ts('Saving Award...'),
+        success: $scope.ts('Saved')
+      }, promise);
     }
 
     /**

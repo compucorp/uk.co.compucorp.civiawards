@@ -1,22 +1,25 @@
 /* eslint-env jasmine */
 (function (_) {
   describe('civiaward', () => {
-    var $q, $controller, $rootScope, $scope, $window, $location, crmApi,
+    var $q, $controller, $rootScope, $scope, $window, $location, crmApi, crmStatus,
       CaseStatus, AwardMockData, AwardAdditionalDetailsMockData, ReviewFieldsMockData;
 
-    beforeEach(module('civicase-base', 'civiawards.templates', 'civiawards', 'civicase.data', 'civiawards.data', ($provide) => {
-      $provide.value('crmApi', jasmine.createSpy('crmApi'));
-      $provide.value('$window', { location: {} });
-      $provide.value('$location', jasmine.createSpyObj('$location', ['path']));
-    }));
+    beforeEach(module('civicase-base', 'civiawards.templates',
+      'crmUtil', 'civiawards', 'civicase.data', 'civiawards.data', ($provide) => {
+        $provide.value('crmApi', jasmine.createSpy('crmApi'));
+        $provide.value('$window', { location: {} });
+        $provide.value('$location', jasmine.createSpyObj('$location', ['path']));
+      }));
 
     beforeEach(inject((_$q_, _$controller_, _$window_, _$location_, _$rootScope_, _crmApi_,
-      _CaseStatus_, _AwardMockData_, _AwardAdditionalDetailsMockData_, _ReviewFieldsMockData_) => {
+      _CaseStatus_, _AwardMockData_, _AwardAdditionalDetailsMockData_, _ReviewFieldsMockData_,
+      _crmStatus_) => {
       $q = _$q_;
       $window = _$window_;
       $location = _$location_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
+      crmStatus = _crmStatus_;
       crmApi = _crmApi_;
       CaseStatus = _CaseStatus_;
       AwardMockData = _AwardMockData_;
@@ -179,6 +182,13 @@
             $scope.$digest();
           });
 
+          it('shows saving notification while save is in progress', () => {
+            expect(crmStatus).toHaveBeenCalledWith({
+              start: $scope.ts('Saving Award...'),
+              success: $scope.ts('Saved')
+            }, jasmine.any(Object));
+          });
+
           it('saves the basic award details', () => {
             expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', {
               sequential: true,
@@ -232,6 +242,13 @@
           $scope.$digest();
         });
 
+        it('shows saving notification while save is in progress', () => {
+          expect(crmStatus).toHaveBeenCalledWith({
+            start: $scope.ts('Saving Award...'),
+            success: $scope.ts('Saved')
+          }, jasmine.any(Object));
+        });
+
         it('saves the basic award details', () => {
           expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', {
             sequential: true,
@@ -278,6 +295,13 @@
 
         $scope.saveAndNavigateToDashboard();
         $scope.$digest();
+      });
+
+      it('shows saving notification while save is in progress', () => {
+        expect(crmStatus).toHaveBeenCalledWith({
+          start: $scope.ts('Saving Award...'),
+          success: $scope.ts('Saved')
+        }, jasmine.any(Object));
       });
 
       it('redirects to award dashboard page', () => {

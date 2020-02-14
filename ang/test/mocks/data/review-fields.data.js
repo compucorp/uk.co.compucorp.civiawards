@@ -33,14 +33,14 @@
       column_name: 'number_of_dribbles_per_game_20',
       in_selector: '0'
     }, {
-      id: '21',
+      id: '45',
       custom_group_id: '9',
       name: 'Age',
       label: 'Age',
       data_type: 'Float',
       html_type: 'Text',
       is_search_range: '0',
-      weight: '2',
+      weight: '3',
       is_active: '1',
       text_length: '255',
       note_columns: '60',

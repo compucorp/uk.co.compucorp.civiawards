@@ -50,37 +50,53 @@
           activity_type_id: reviewsActivityTypeName,
           case_id: $scope.caseItem.id,
           options: { limit: 0 },
-          sequential: 1
-        });
-      });
-
-      it('requests all the scoring fields used to review the applicant', () => {
-        expect(crmApi).toHaveBeenCalledWith('CustomField', 'get', {
-          custom_group_id: reviewScoringFieldsGroupName,
-          options: { limit: 0 },
-          sequential: 0
+          sequential: 1,
+          'api.CustomValue.gettreevalues': {
+            entity_id: '$value.id',
+            entity_type: 'Activity',
+            'custom_group.name': reviewScoringFieldsGroupName
+          }
         });
       });
 
       describe('after loading', () => {
-        let sortedScoringFields;
-
-        beforeEach(() => {
-          sortedScoringFields = getSortedScoringFields();
-
-          $rootScope.$digest();
+        beforeEach(function () {
+          $scope.$digest();
         });
 
         it('stops loading', () => {
           expect($scope.isLoading).toBe(false);
         });
 
-        it('stores all the review activities', () => {
-          expect($scope.reviewActivities).toEqual(ReviewActivitiesMockData);
+        describe('review activities', () => {
+          let finalReviewFields, reviewMockData;
+
+          beforeEach(() => {
+            finalReviewFields = _.each(angular.copy($scope.reviewActivities), function (activity) {
+              delete activity.reviewFields;
+            });
+            reviewMockData = _.each(angular.copy(ReviewActivitiesMockData), function (activity) {
+              delete activity['api.CustomValue.gettreevalues'];
+            });
+          });
+
+          it('stores all the review activities', () => {
+            expect(finalReviewFields).toEqual(reviewMockData);
+          });
         });
 
-        it('stores the custom review fields in the order defined by the award type configuration', () => {
-          expect($scope.scoringFields).toEqual(sortedScoringFields);
+        describe('scoring fields', () => {
+          let reviewFieldsIds;
+
+          beforeEach(() => {
+            reviewFieldsIds = _.map($scope.reviewActivities[0].reviewFields, function (activity) {
+              return activity.id;
+            });
+          });
+
+          it('sorts all scoring fields by weight', () => {
+            expect(reviewFieldsIds).toEqual(getSortedScoringFieldIDs());
+          });
         });
       });
     });
@@ -265,14 +281,14 @@
     }
 
     /**
-     * @returns {object[]} the expected scoring fields sorted by the weight defined in the award's configuration.
+     * @returns {object[]} the expected scoring fields IDs sorted by the weight defined in the award's configuration.
      */
-    function getSortedScoringFields () {
+    function getSortedScoringFieldIDs () {
       const reviewFieldsIndexedById = _.indexBy(ReviewFieldsMockData, 'id');
 
       return _.sortBy(AwardAdditionalDetailsMockData.review_fields, 'weight')
         .map(function (scoringFieldSortOrder) {
-          return reviewFieldsIndexedById[scoringFieldSortOrder.id];
+          return reviewFieldsIndexedById[scoringFieldSortOrder.id].id;
         });
     }
 

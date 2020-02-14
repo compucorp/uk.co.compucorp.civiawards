@@ -129,6 +129,10 @@
           id: '20',
           required: false,
           weight: 2
+        }, {
+          id: '45',
+          required: false,
+          weight: 3
         }]);
       });
     });

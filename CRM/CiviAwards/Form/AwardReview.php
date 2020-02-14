@@ -100,7 +100,6 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       $this->assign('editUrlParams', $editUrlParams);
     }
 
-
     $fields = CRM_Core_BAO_UFGroup::getFields(
       $this->profileId, FALSE, CRM_Core_Action::ADD, NULL,
       NULL, FALSE, NULL, FALSE, NULL, CRM_Core_Permission::CREATE, 'weight'
@@ -138,7 +137,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       $pageTitle = $this->_action == CRM_Core_Action::ADD ? 'Add Review' : 'Update Review - ' . $this->getPageTitle();
       $this->addButtons([
         [
-          'type' => 'submit',
+          'type' => 'done',
           'name' => E::ts('Save'),
           'isDefault' => TRUE,
         ],
@@ -158,7 +157,9 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   public function postProcess() {
     $values = $this->exportValues();
     foreach ($this->profileFields as $profileField) {
-      $profileFields[$profileField] = $values[$profileField];
+      $value = $values[$profileField];
+      $value = is_array($value) ? array_filter($value) : $value;
+      $profileFields[$profileField] = $value;
     }
 
     if ($this->_action & CRM_Core_Action::ADD) {
@@ -188,7 +189,8 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       'id' => $activityId,
       'reset' => 1,
     ]);
-    CRM_Utils_System::redirect($url);
+    $session = CRM_Core_Session::singleton();
+    $session->pushUserContext($url);
   }
 
   /**

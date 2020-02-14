@@ -5,7 +5,7 @@
     return {
       controller: 'civiawardsReviewsCaseTabContentController',
       restrict: 'E',
-      templateUrl: '~/civiawards/reviews-tab/directives/reviews-case-tab-content.html',
+      templateUrl: '~/civiawards/reviews-tab/directives/reviews-case-tab-content.directive.html',
       scope: {
         caseItem: '='
       }
@@ -30,7 +30,6 @@
     var REVIEW_FORM_URL = 'civicrm/awardreview';
 
     $scope.reviewActivities = [];
-    $scope.scoringFields = [];
     $scope.ts = ts;
 
     $scope.handleAddReviewActivity = handleAddReviewActivity;
@@ -55,6 +54,28 @@
     }
 
     /**
+     * Returns the reviews for the current application (case).
+     *
+     * @returns {Promise} resolves after fetching the reviews.
+     */
+    function getReviewActivities () {
+      return crmApi('Activity', 'get', {
+        activity_type_id: reviewsActivityTypeName,
+        case_id: $scope.caseItem.id,
+        options: { limit: 0 },
+        sequential: 1,
+        'api.CustomValue.gettreevalues': {
+          entity_id: '$value.id',
+          entity_type: 'Activity',
+          'custom_group.name': reviewScoringFieldsGroupName
+        }
+      })
+        .then(function (response) {
+          return response.values;
+        });
+    }
+
+    /**
      * Returns the details for the current award type.
      *
      * @returns {Promise} resolves after fetching the award's details.
@@ -66,50 +87,26 @@
     }
 
     /**
-     * Returns the reviews for the current application (case).
+     * Format Activities to be used on the View
      *
-     * @returns {Promise} resolves after fetching the reviews.
+     * @param {Array} activitiesData list of activities
+     * @param {Array} scoringFieldsSortOrder a list of scoring fields' id and weight
+     * @returns {Array} formatted list of activities
      */
-    function getReviewActivities () {
-      return crmApi('Activity', 'get', {
-        activity_type_id: reviewsActivityTypeName,
-        case_id: $scope.caseItem.id,
-        options: { limit: 0 },
-        sequential: 1
-      })
-        .then(function (response) {
-          return response.values;
-        });
-    }
+    function formatActivitiesData (activitiesData, scoringFieldsSortOrder) {
+      var sortOrder = _.sortBy(scoringFieldsSortOrder, 'weight');
 
-    /**
-     * Returns the scoring fields that are used for reviewing applications. This returns
-     * the field's labels, names, types, etc. but not the actual field value. The value is
-     * stored in the review (activity) itself.
-     *
-     * @returns {Promise} resolves after fetching the scoring fields.
-     */
-    function getScoringFields () {
-      return crmApi('CustomField', 'get', {
-        custom_group_id: reviewScoringFieldsGroupName,
-        options: { limit: 0 },
-        sequential: 0
-      })
-        .then(function (response) {
-          return response.values;
+      return _.map(angular.copy(activitiesData), function (activity) {
+        activity.reviewFields = sortOrder.map(function (scoringFieldSortOrder) {
+          return _.find(activity['api.CustomValue.gettreevalues'].values[0].fields, function (field) {
+            return field.id === scoringFieldSortOrder.id;
+          });
         });
-    }
 
-    /**
-     * @param {object[]} scoringFieldsSortOrder a list of scoring fields' id and weight.
-     * @param {object[]} scoringFields a list of scoring fields with all the necessary data.
-     * @returns {object[]} returns the scoring fields sorted by weight and containing all the necessary data.
-     */
-    function getSortedScoringFields (scoringFieldsSortOrder, scoringFields) {
-      return _.sortBy(scoringFieldsSortOrder, 'weight')
-        .map(function (scoringFieldSortOrder) {
-          return scoringFields[scoringFieldSortOrder.id];
-        });
+        delete activity['api.CustomValue.gettreevalues'];
+
+        return activity;
+      });
     }
 
     /**
@@ -192,19 +189,15 @@
 
       $q.all({
         awardDetails: getAwardDetails(),
-        reviewActivities: getReviewActivities(),
-        scoringFields: getScoringFields()
-      })
-        .then(function (responses) {
-          $scope.reviewActivities = responses.reviewActivities;
-          $scope.scoringFields = getSortedScoringFields(
-            responses.awardDetails.review_fields,
-            responses.scoringFields
-          );
-        })
-        .finally(function () {
-          $scope.isLoading = false;
-        });
+        reviewActivities: getReviewActivities()
+      }).then(function (responses) {
+        $scope.reviewActivities = formatActivitiesData(
+          responses.reviewActivities,
+          responses.awardDetails.review_fields
+        );
+      }).finally(function () {
+        $scope.isLoading = false;
+      });
     }
   }
 })(CRM._, angular, CRM.confirm, CRM.loadForm, CRM.status, CRM.url);
