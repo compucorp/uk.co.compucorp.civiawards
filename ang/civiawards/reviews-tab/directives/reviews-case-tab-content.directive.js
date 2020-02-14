@@ -96,7 +96,7 @@
     function formatActivitiesData (activitiesData, scoringFieldsSortOrder) {
       var sortOrder = _.sortBy(scoringFieldsSortOrder, 'weight');
 
-      _.each(activitiesData, function (activity) {
+      return _.map(angular.copy(activitiesData), function (activity) {
         activity.reviewFields = sortOrder.map(function (scoringFieldSortOrder) {
           return _.find(activity['api.CustomValue.gettreevalues'].values[0].fields, function (field) {
             return field.id === scoringFieldSortOrder.id;
@@ -104,9 +104,9 @@
         });
 
         delete activity['api.CustomValue.gettreevalues'];
-      });
 
-      return activitiesData;
+        return activity;
+      });
     }
 
     /**
