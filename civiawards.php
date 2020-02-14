@@ -195,6 +195,21 @@ function civiawards_civicrm_alterAPIPermissions($entity, $action, &$params, &$pe
 }
 
 /**
+ * Implements hook_civicrm_aclGroup().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_aclGroup/
+ */
+function civiawards_civicrm_aclGroup($type, $contactID, $tableName, &$allGroups, &$currentGroups) {
+  $hooks = [
+    new CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups(),
+  ];
+
+  foreach ($hooks as $hook) {
+    $hook->run($type, $contactID, $tableName, $allGroups, $currentGroups);
+  }
+}
+
+/**
  * Implements addCiviCaseDependentAngularModules().
  */
 function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
