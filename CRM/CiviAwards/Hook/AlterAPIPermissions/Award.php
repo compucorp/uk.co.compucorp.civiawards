@@ -1,9 +1,9 @@
 <?php
 
+use CRM_CiviAwards_Helper_ApplicantReview as ApplicantReviewHelper;
 use CRM_Civicase_Helper_CaseCategory as CaseCategoryHelper;
 use CRM_CiviAwards_Helper_CaseTypeCategory as CaseAwardHelper;
 use CRM_Civicase_Service_CaseCategoryPermission as CaseCategoryPermission;
-use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
 
 /**
  * Class CRM_Civicase_Hook_APIPermissions_alterPermissions.
@@ -143,13 +143,7 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
       return FALSE;
     }
 
-    $result = civicrm_api3('OptionValue', 'get', [
-      'return' => ['value'],
-      'sequential' => 1,
-      'option_group_id' => 'activity_type',
-      'name' => CreateApplicantReviewActivityType::APPLICANT_REVIEW,
-    ]);
-    $applicantReviewId = $result['values'][0]['value'];
+    $applicantReviewId = ApplicantReviewHelper::getActivityTypeId();
     $isOfApplicantReview = FALSE;
     foreach ($groupDetails as $groupDetail) {
       $groupExtendsActivity = $groupDetail['extends'] == 'Activity';
