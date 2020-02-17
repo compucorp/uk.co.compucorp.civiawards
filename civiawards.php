@@ -186,11 +186,26 @@ function civiawards_civicrm_permission(&$permissions) {
  */
 function civiawards_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
   $hooks = [
-    new CRM_CiviAwards_Hook_alterAPIPermissions_Award(),
+    new CRM_CiviAwards_Hook_AlterAPIPermissions_Award(),
   ];
 
   foreach ($hooks as $hook) {
     $hook->run($entity, $action, $params, $permissions);
+  }
+}
+
+/**
+ * Implements hook_civicrm_aclGroup().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_aclGroup/
+ */
+function civiawards_civicrm_aclGroup($type, $contactID, $tableName, &$allGroups, &$currentGroups) {
+  $hooks = [
+    new CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups(),
+  ];
+
+  foreach ($hooks as $hook) {
+    $hook->run($type, $contactID, $tableName, $allGroups, $currentGroups);
   }
 }
 
