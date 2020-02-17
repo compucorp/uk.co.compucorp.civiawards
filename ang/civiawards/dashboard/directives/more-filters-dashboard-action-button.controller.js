@@ -88,13 +88,15 @@
       processMyAwardsFilter()
         .then(processAwardTypeFilters)
         .then(function (awardTypeIds) {
-          var caseTypeFilter = awardTypeIds.length > 0
-            ? { IN: awardTypeIds }
-            : '';
+          var param = {
+            case_type_id: awardTypeIds.length > 0 ? { IN: awardTypeIds } : ''
+          };
 
-          $rootScope.$broadcast('civicase::dashboard-filters::updated', {
-            case_type_id: caseTypeFilter
-          });
+          if (model.selectedFilters.statuses.length > 0) {
+            param.status_id = { IN: getSelect2Value(model.selectedFilters.statuses) };
+          }
+
+          $rootScope.$broadcast('civicase::dashboard-filters::updated', param);
         });
     }
 

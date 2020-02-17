@@ -20,6 +20,8 @@
       dialogService = _dialogService_;
       crmApi = _crmApi_;
 
+      spyOn($rootScope, '$broadcast').and.callThrough();
+
       dialogService.dialogs = {};
       crmApiMock.and.returnValue($q.resolve({
         values: [{
@@ -104,6 +106,7 @@
           dialogModel.selectedFilters.start_date = '10/12/2019';
           dialogModel.selectedFilters.end_date = '15/12/2019';
           dialogModel.selectedFilters.award_types = '1,2';
+          dialogModel.selectedFilters.statuses = '3,4';
           dialogModel.applyFilterAndCloseDialog();
           $rootScope.$digest();
         });
@@ -116,6 +119,10 @@
             end_date: '15/12/2019',
             case_type_id: { IN: [1, 2] },
             award_type: { IN: ['1', '2'] }
+          });
+          expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', {
+            case_type_id: { IN: [1, 2] },
+            status_id: { IN: ['3', '4'] }
           });
         });
       });
