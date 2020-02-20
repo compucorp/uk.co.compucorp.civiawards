@@ -63,6 +63,12 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * {@inheritDoc}
    */
   public function setDefaultValues() {
+    $hasDefaultValues = !empty($this->defaultValues);
+
+    if ($hasDefaultValues) {
+      return;
+    }
+
     $this->defaultValues = [];
     $isAddAction = $this->_action & CRM_Core_Action::ADD;
 
