@@ -73,10 +73,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $isAddAction = $this->_action & CRM_Core_Action::ADD;
 
     if ($this->activityId) {
-      $this->defaultValues = array_merge(
-        $this->defaultValues,
-        $this->getProfileFieldValues()
-      );
+      $this->defaultValues = $this->getProfileFieldValues();
     }
 
     $this->defaultValues['source_contact_id'] = $isAddAction
