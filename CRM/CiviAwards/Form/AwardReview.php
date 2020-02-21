@@ -63,11 +63,24 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * {@inheritDoc}
    */
   public function setDefaultValues() {
-    if (empty($this->defaultValues) && $this->activityId) {
-      $this->defaultValues = $this->getProfileFieldValues();
+    $hasDefaultValues = !empty($this->defaultValues);
 
-      return $this->defaultValues;
+    if ($hasDefaultValues) {
+      return;
     }
+
+    $this->defaultValues = [];
+    $isAddAction = $this->_action & CRM_Core_Action::ADD;
+
+    if ($this->activityId) {
+      $this->defaultValues = $this->getProfileFieldValues();
+    }
+
+    $this->defaultValues['source_contact_id'] = $isAddAction
+      ? CRM_Core_Session::getLoggedInContactID()
+      : $this->activity['source_contact_id'];
+
+    return $this->defaultValues;
   }
 
   /**
@@ -79,7 +92,8 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
     else {
       $this->activityId = CRM_Utils_Request::retrieve('id', 'Positive', $this);
-      $this->caseId = $this->getActivityCaseId();
+      $this->activity = $this->getActivity();
+      $this->caseId = CRM_Utils_Array::first($this->activity['case_id']);
     }
 
     $this->profileId = $this->getProfileIdFromCaseType();
@@ -92,12 +106,21 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * {@inheritDoc}
    */
   public function buildQuickForm() {
+    $isViewAction = $this->_action & CRM_Core_Action::VIEW;
+
     $this->assign('caseContactDisplayName', $this->getCaseContactDisplayName());
     $this->assign('caseTypeName', $this->caseTypeName);
     $this->assign('caseTags', $this->caseTags);
-    if ($this->_action & CRM_Core_Action::VIEW) {
+    $this->assign('isViewAction', $isViewAction);
+
+    if ($isViewAction) {
+      $this->assign('sourceContactId', $this->activity['source_contact_id']);
+      $this->assign('sourceContactName', $this->activity['source_contact_name']);
       $editUrlParams = "action=update&id={$this->activityId}&reset=1";
       $this->assign('editUrlParams', $editUrlParams);
+    }
+    else {
+      $this->addEntityRef('source_contact_id', ts('Reported By'));
     }
 
     $fields = CRM_Core_BAO_UFGroup::getFields(
@@ -169,6 +192,8 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     else {
       $activityId = $this->activityId;
       $activityContact = $this->getActivityTargetContact();
+
+      $this->updateActivity();
     }
 
     $profileFields['activity_id'] = $activityId;
@@ -194,6 +219,23 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   }
 
   /**
+   * Returns case and source contact details for the current activity.
+   *
+   * @return array
+   *   Activity details.
+   */
+  private function getActivity() {
+    return civicrm_api3('Activity', 'getsingle', [
+      'id' => $this->activityId,
+      'return' => [
+        'case_id',
+        'source_contact_id',
+        'source_contact_name',
+      ],
+    ]);
+  }
+
+  /**
    * Returns the profile id linked to the Case Type.
    *
    * @return int
@@ -206,25 +248,6 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $awardDetail->find(TRUE);
 
     return $awardDetail->profile_id;
-  }
-
-  /**
-   * Returns the case id linked to the activity.
-   *
-   * @return int|null
-   *   Case ID.
-   */
-  private function getActivityCaseId() {
-    $result = civicrm_api3('Activity', 'getsingle', [
-      'id' => $this->activityId,
-      'return' => ['case_id'],
-    ]);
-
-    if (empty($result['case_id'])) {
-      return;
-    }
-
-    return $result['case_id'][0];
   }
 
   /**
@@ -382,8 +405,9 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    *   Returns the created Activity Id.
    */
   public function createActivity() {
+    $values = $this->exportValues();
     $result = civicrm_api3('Activity', 'create', [
-      'source_contact_id' => 'user_contact_id',
+      'source_contact_id' => $values['source_contact_id'],
       'target_id' => 'user_contact_id',
       'activity_type_id' => 'Applicant Review',
       'case_id' => $this->caseId,
@@ -423,6 +447,18 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
 
     return $customFieldLabels;
+  }
+
+  /**
+   * Updates the current activity with the submitted form values.
+   */
+  private function updateActivity() {
+    $values = $this->exportValues();
+
+    civicrm_api3('Activity', 'create', [
+      'id' => $this->activityId,
+      'source_contact_id' => $values['source_contact_id'],
+    ]);
   }
 
 }
