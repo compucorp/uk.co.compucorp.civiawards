@@ -1,5 +1,6 @@
 <div id="bootstrap-theme">
   <h1 crm-page-title>{{pageTitle}}</h1>
+  <!-- Basic Details Form -->
   <div ng-show="!awardId" class="panel panel-default civiawards__award--new">
     <div class="panel-body">
       <civiaward-basic-details-form>
@@ -18,7 +19,7 @@
       </button>
     </div>
   </div>
-
+  <!-- End - Basic Details Form -->
   <div ng-hide="!awardId" class="panel panel-default civiawards__award--edit">
     <div class="panel-body">
       <!-- Tabs -->
@@ -38,6 +39,11 @@
           <div class="tab-pane active" ng-show="activeTab === 'stages'">
             <div class="table-tab">
               <civiaward-award-stages-table></civiaward-award-stages-table>
+            </div>
+          </div>
+          <div class="tab-pane active" ng-show="activeTab === 'reviewPanels'">
+            <div class="table-tab">
+              <civiaward-review-panels></civiaward-review-panels>
             </div>
           </div>
           <div class="tab-pane active" ng-show="activeTab === 'reviewFields'">

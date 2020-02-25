@@ -25,6 +25,7 @@
     $scope.tabs = [
       { name: 'basicDetails', label: ts('Basic Details') },
       { name: 'stages', label: ts('Award Stages') },
+      { name: 'reviewPanels', label: ts('Panels') },
       { name: 'reviewFields', label: ts('Review Fields') }
     ];
     $scope.basicDetails = {
