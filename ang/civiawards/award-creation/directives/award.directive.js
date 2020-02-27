@@ -13,7 +13,8 @@
     };
   });
 
-  module.controller('CiviAwardCreateEditAwardController', function ($q, $window, $scope, $location, crmApi, getSelect2Value, CaseTypeCategory, crmStatus) {
+  module.controller('CiviAwardCreateEditAwardController', function (
+    $q, $window, $scope, $location, crmApi, getSelect2Value, CaseTypeCategory, crmStatus) {
     var ts = CRM.ts('civicase');
 
     $scope.ts = ts;
