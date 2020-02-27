@@ -9,9 +9,7 @@
     };
   });
 
-  module.controller('CiviawardReviewFieldsTableController', function ($rootScope, $scope, CaseStatus, crmApi, dialogService) {
-    var APPLICANT_REVIEW_CUSTOM_GROUP_NAME = 'Applicant_Review';
-
+  module.controller('CiviawardReviewFieldsTableController', function ($rootScope, $scope, CaseStatus, crmApi, dialogService, reviewScoringFieldsGroupName) {
     $scope.reviewFields = [];
     $scope.resourcesBaseUrl = CRM.config.resourceBase;
     $scope.toggleReviewField = toggleReviewField;
@@ -192,7 +190,7 @@
      */
     function fetchAllReviewFields () {
       return crmApi([['CustomField', 'get', {
-        sequential: true, custom_group_id: APPLICANT_REVIEW_CUSTOM_GROUP_NAME
+        sequential: true, custom_group_id: reviewScoringFieldsGroupName
       }]]).then(function (customFieldData) {
         return customFieldData[0].values;
       });
