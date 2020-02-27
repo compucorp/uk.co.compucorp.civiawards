@@ -14,8 +14,8 @@
 
   module.controller('CiviawardReviewPanelsController', function (
     $scope, ts, dialogService, crmApi, crmStatus) {
-    $scope.submitInProgress = false;
     $scope.reviewPanel = {};
+    $scope.submitInProgress = false;
 
     $scope.openCreateReviewPanelPopup = openCreateReviewPanelPopup;
 
