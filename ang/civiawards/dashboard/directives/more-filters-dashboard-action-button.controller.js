@@ -94,6 +94,8 @@
 
           if (model.selectedFilters.statuses.length > 0) {
             param.status_id = { IN: getSelect2Value(model.selectedFilters.statuses) };
+          } else {
+            param.status_id = { 'IS NOT NULL': 1 };
           }
 
           $rootScope.$broadcast('civicase::dashboard-filters::updated', param);

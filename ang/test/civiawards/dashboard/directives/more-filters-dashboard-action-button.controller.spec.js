@@ -101,28 +101,44 @@
       });
 
       describe('when my awards filter is selected', () => {
-        beforeEach(() => {
-          dialogModel.selectedFilters.awardFilter = 'my_awards';
-          dialogModel.selectedFilters.start_date = '10/12/2019';
-          dialogModel.selectedFilters.end_date = '15/12/2019';
-          dialogModel.selectedFilters.award_types = '1,2';
-          dialogModel.selectedFilters.statuses = '3,4';
-          dialogModel.applyFilterAndCloseDialog();
-          $rootScope.$digest();
+        describe('when status filter is selected', () => {
+          beforeEach(() => {
+            dialogModel.selectedFilters.awardFilter = 'my_awards';
+            dialogModel.selectedFilters.start_date = '10/12/2019';
+            dialogModel.selectedFilters.end_date = '15/12/2019';
+            dialogModel.selectedFilters.award_types = '1,2';
+            dialogModel.selectedFilters.statuses = '3,4';
+            dialogModel.applyFilterAndCloseDialog();
+            $rootScope.$digest();
+          });
+
+          it('shows the awards where the logged in user is the manager and also applies the rest of filters', () => {
+            expect(crmApi).toHaveBeenCalledWith('AwardManager', 'get', { sequential: 1, contact_id: 203 });
+            expect(crmApi).toHaveBeenCalledWith('AwardDetail', 'get', {
+              sequential: 1,
+              start_date: '10/12/2019',
+              end_date: '15/12/2019',
+              case_type_id: { IN: [1, 2] },
+              award_type: { IN: ['1', '2'] }
+            });
+            expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', {
+              case_type_id: { IN: [1, 2] },
+              status_id: { IN: ['3', '4'] }
+            });
+          });
         });
 
-        it('shows the awards where the logged in user is the manager and also applies the rest of filters', () => {
-          expect(crmApi).toHaveBeenCalledWith('AwardManager', 'get', { sequential: 1, contact_id: 203 });
-          expect(crmApi).toHaveBeenCalledWith('AwardDetail', 'get', {
-            sequential: 1,
-            start_date: '10/12/2019',
-            end_date: '15/12/2019',
-            case_type_id: { IN: [1, 2] },
-            award_type: { IN: ['1', '2'] }
+        describe('when status filter is not selected', () => {
+          beforeEach(() => {
+            dialogModel.selectedFilters.statuses = '';
+            dialogModel.applyFilterAndCloseDialog();
+            $rootScope.$digest();
           });
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', {
-            case_type_id: { IN: [1, 2] },
-            status_id: { IN: ['3', '4'] }
+
+          it('does not hide all cases and activities', () => {
+            expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', jasmine.objectContaining({
+              status_id: { 'IS NOT NULL': 1 }
+            }));
           });
         });
       });
