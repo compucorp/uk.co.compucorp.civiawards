@@ -79,3 +79,23 @@
   min-height: 10px;
   min-width: 10px;
 }
+
+.civiawards__award__review-panel__to-label {
+  float: left;
+  line-height: 28px;
+  margin: 0 10px;
+}
+
+.civiawards__award__review-panel__remove-button {
+  float: left;
+  line-height: 28px;
+  margin-left: 10px;
+
+  a {
+    padding: 0;
+  }
+}
+
+.civiawards__award__review-panel__rel-type {
+  width: 220px;
+}

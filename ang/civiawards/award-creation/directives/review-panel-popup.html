@@ -1,10 +1,10 @@
 <div id="bootstrap-theme">
   <form name="model.review_panel_form" class="form-horizontal civiawards__award__review-panel-form">
     <div class="form-group">
-      <label class="col-sm-3 control-label required-mark">
+      <label class="col-sm-5 control-label required-mark">
         Title
       </label>
-      <div class="col-sm-5">
+      <div class="col-sm-7">
         <input
           type="text" ng-model="model.reviewPanel.title" required
           class="form-control" ng-minlength="1" placeholder="Review Panel Title">
@@ -14,15 +14,66 @@
     <div class="form-group">
       <label
         for="civiaward-review-panel-popup-isenabled"
-        class="col-sm-3 control-label">
+        class="col-xs-5 control-label">
         Enabled?
       </label>
-      <div class="col-sm-5">
+      <div class="col-xs-7">
         <input
           type="checkbox" id="civiaward-review-panel-popup-isenabled"
           ng-model="model.reviewPanel.isEnabled"
         />
       </div>
     </div>
+
+    <div class="form-group">
+      <label class="col-sm-5 control-label">
+        Select Group or smart group
+      </label>
+      <div class="col-sm-7">
+        <input civiaward-contacts-group-dropdown ng-model="model.reviewPanel.groups"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-12 control-label">
+        Additional contacts to add to group
+      </label>
+    </div>
+
+
+    <div class="form-group" ng-repeat="relationship in model.reviewPanel.relationships">
+      <div class="col-xs-4 civiawards__award__review-panel__rel-type">
+        <input class="form-control"
+          ng-model="relationship.type"
+          placeholder="Relationship Type"
+          crm-ui-select="{allowClear: true, data: model.relationshipTypes}"
+          required
+          ng-minlength="1"
+        />
+      </div>
+      <div class="civiawards__award__review-panel__to-label">to</div>
+      <div class="col-xs-5">
+        <input class="form-control"
+          ng-model="relationship.contacts"
+          placeholder="Select contact(s)"
+          crm-entityref="{
+            entity: 'Contact',
+            select: { multiple: true }
+          }"
+          required
+          ng-minlength="1"
+        />
+      </div>
+      <div class="civiawards__award__review-panel__remove-button" ng-if="$index > 0">
+        <a
+          class="btn btn-link"
+          ng-click="model.removeRelation($index)">
+          Remove
+        </a>
+      </div>
+    </div>
+    <a class="btn btn-primary text-center" ng-click="model.addMoreRelations()">
+      <i class="fa fa-plus-circle"></i> Add More
+    </a>
   </form>
 </div>
