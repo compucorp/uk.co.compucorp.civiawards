@@ -47,28 +47,30 @@
      * @returns {Promise} promise
      */
     function saveReviewPanel () {
-      if (!ifSaveButtonDisabled()) {
-        var params = {
-          title: $scope.reviewPanel.title,
-          is_active: $scope.reviewPanel.isEnabled,
-          case_type_id: $scope.awardId
-        };
-
-        $scope.submitInProgress = true;
-
-        var promise = crmApi('AwardReviewPanel', 'create', params)
-          .then(function () {
-            dialogService.close('ReviewPanels');
-            $scope.reviewPanel = {};
-          }).finally(function () {
-            $scope.submitInProgress = false;
-          });
-
-        return crmStatus({
-          start: ts('Saving Review Panel...'),
-          success: ts('Review Panel Saved')
-        }, promise);
+      if (ifSaveButtonDisabled()) {
+        return;
       }
+
+      var params = {
+        title: $scope.reviewPanel.title,
+        is_active: $scope.reviewPanel.isEnabled,
+        case_type_id: $scope.awardId
+      };
+
+      $scope.submitInProgress = true;
+
+      var promise = crmApi('AwardReviewPanel', 'create', params)
+        .then(function () {
+          dialogService.close('ReviewPanels');
+          $scope.reviewPanel = {};
+        }).finally(function () {
+          $scope.submitInProgress = false;
+        });
+
+      return crmStatus({
+        start: ts('Saving Review Panel...'),
+        success: ts('Review Panel Saved')
+      }, promise);
     }
 
     /**
