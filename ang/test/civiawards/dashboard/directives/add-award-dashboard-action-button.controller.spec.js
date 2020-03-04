@@ -69,7 +69,7 @@
     });
 
     describe('when clicking the action button', () => {
-      const expectedUrl = getCrmUrl('civicrm/a/#/awards/new');
+      const expectedUrl = getCrmUrl('civicrm/award/a/#/awards/new');
 
       beforeEach(() => {
         spyOn($location, 'url');
