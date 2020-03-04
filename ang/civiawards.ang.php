@@ -44,7 +44,10 @@ return [
   ],
   'settings' => $options,
   'requires' => [
+    'crmUi',
+    'crmUtil',
     'ngRoute',
+    'dialogService',
     'civicase-base',
   ],
   'partials' => [

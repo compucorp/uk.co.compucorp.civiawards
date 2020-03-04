@@ -28,7 +28,7 @@
      * Redirects the user to the awards creation screen.
      */
     function redirectToAwardsCreationScreen () {
-      var newAwardUrl = getCrmUrl('civicrm/a/#/awards/new');
+      var newAwardUrl = getCrmUrl('civicrm/award/a/#/awards/new');
 
       $window.location.href = newAwardUrl;
     }
