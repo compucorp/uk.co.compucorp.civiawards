@@ -7,7 +7,7 @@ use Civi\Angular\AngularLoader as AngularLoader;
  *
  * Define an Angular base-page for CiviAwards.
  */
-class CRM_CiviAwards_Page_AwardAngular extends \CRM_Core_Page {
+class CRM_CiviAwards_Page_AwardAngular extends CRM_Core_Page {
 
   /**
    * Run Function.
@@ -29,6 +29,7 @@ class CRM_CiviAwards_Page_AwardAngular extends \CRM_Core_Page {
         'defaultRoute' => '/awards/new',
       ],
     ]);
+
     return parent::run();
   }
 
