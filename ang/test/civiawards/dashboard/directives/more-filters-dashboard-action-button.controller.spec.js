@@ -40,6 +40,8 @@
       describe('when viewing the awards dashboard', () => {
         beforeEach(() => {
           $location.search('case_type_category', 'awards');
+          initController();
+          $rootScope.$digest();
 
           isButtonVisible = $scope.isVisible();
         });
@@ -47,17 +49,27 @@
         it('displays the more filter button', () => {
           expect(isButtonVisible).toBe(true);
         });
+
+        it('filters by my awards', () => {
+          expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', jasmine.any(Object));
+        });
       });
 
       describe('when viewing any other dashboard', () => {
         beforeEach(() => {
           $location.search('case_type_category', 'cases');
+          initController();
+          $rootScope.$digest();
 
           isButtonVisible = $scope.isVisible();
         });
 
         it('does not display the more filter button', () => {
           expect(isButtonVisible).toBe(false);
+        });
+
+        it('does not filter by my awards', () => {
+          expect($rootScope.$broadcast).not.toHaveBeenCalledWith('civicase::dashboard-filters::updated', jasmine.any(Object));
         });
       });
     });
