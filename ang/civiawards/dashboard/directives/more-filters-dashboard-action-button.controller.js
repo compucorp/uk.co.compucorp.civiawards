@@ -41,7 +41,9 @@
     $scope.isVisible = isAwardsScreen;
 
     (function init () {
-      applyFilter();
+      if (isAwardsScreen()) {
+        applyFilter();
+      }
     }());
 
     /**
