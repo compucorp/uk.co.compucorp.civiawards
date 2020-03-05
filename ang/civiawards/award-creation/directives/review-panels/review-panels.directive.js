@@ -4,7 +4,7 @@
   module.directive('civiawardReviewPanels', function () {
     return {
       controller: 'CiviawardReviewPanelsController',
-      templateUrl: '~/civiawards/award-creation/directives/review-panels.directive.html',
+      templateUrl: '~/civiawards/award-creation/directives/review-panels/review-panels.directive.html',
       restrict: 'E',
       scope: {
         awardId: '='
@@ -100,7 +100,7 @@
     function openCreateReviewPanelPopup () {
       dialogService.open(
         'ReviewPanels',
-        '~/civiawards/award-creation/directives/review-panel-popup.html',
+        '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
         $scope,
         {
           autoOpen: false,

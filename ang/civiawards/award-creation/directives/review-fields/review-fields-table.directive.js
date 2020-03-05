@@ -4,7 +4,7 @@
   module.directive('civiawardReviewFieldsTable', function () {
     return {
       controller: 'CiviawardReviewFieldsTableController',
-      templateUrl: '~/civiawards/award-creation/directives/review-fields-table.directive.html',
+      templateUrl: '~/civiawards/award-creation/directives/review-fields/review-fields-table.directive.html',
       restrict: 'E'
     };
   });
@@ -175,7 +175,7 @@
      * Open the Popup to Select Review fields
      */
     function openReviewFieldSelectionPopup () {
-      dialogService.open('ReviewFields', '~/civiawards/award-creation/directives/review-field-selection.html', $scope, {
+      dialogService.open('ReviewFields', '~/civiawards/award-creation/directives/review-fields/review-field-selection.html', $scope, {
         autoOpen: false,
         height: 'auto',
         width: '600px',
