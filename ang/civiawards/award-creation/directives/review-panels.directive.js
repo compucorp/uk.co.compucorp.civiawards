@@ -53,7 +53,7 @@
 
       var params = {
         title: $scope.reviewPanel.title,
-        is_active: $scope.reviewPanel.isEnabled,
+        is_active: $scope.reviewPanel.isEnabled ? '1' : '0',
         case_type_id: $scope.awardId
       };
 
