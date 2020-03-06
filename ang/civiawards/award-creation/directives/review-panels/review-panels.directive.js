@@ -17,21 +17,13 @@
     $scope.submitInProgress = false;
     $scope.submitButtonClickedOnce = false;
     $scope.relationshipTypes = [];
-    $scope.reviewPanel = {
-      groups: { include: [], exclude: [] },
-      isEnabled: false,
-      title: '',
-      relationships: [{
-        contacts: '',
-        type: ''
-      }]
-    };
 
     $scope.openCreateReviewPanelPopup = openCreateReviewPanelPopup;
     $scope.addMoreRelations = addMoreRelations;
     $scope.removeRelation = removeRelation;
 
     (function init () {
+      resetReviewPanelPopup();
       getRelationshipsTypes()
         .then(function (relationshipTypeData) {
           $scope.relationshipTypes = prepareRelationshipsTypes(relationshipTypeData.values);
@@ -132,7 +124,7 @@
         var relationshipTypeId = relation.type.substr(0, relation.type.indexOf('_'));
 
         return {
-          is_a_to_b: isAToB,
+          is_a_to_b: isAToB ? '1' : '0',
           relationship_type_id: relationshipTypeId,
           contact_id: getSelect2Value(relation.contacts)
         };
@@ -145,7 +137,9 @@
      * @returns {Promise} promise
      */
     function saveReviewPanel () {
-      $scope.submitButtonClickedOnce = true;
+      $scope.$apply(function () {
+        $scope.submitButtonClickedOnce = true;
+      });
 
       if (ifSaveButtonDisabled()) {
         return;
@@ -155,9 +149,11 @@
         title: $scope.reviewPanel.title,
         is_active: $scope.reviewPanel.isEnabled ? '1' : '0',
         case_type_id: $scope.awardId,
-        exclude_groups: $scope.reviewPanel.groups.exclude,
-        include_groups: $scope.reviewPanel.groups.include,
-        relationship: prepareRelationshipsForSave()
+        contact_settings: {
+          exclude_groups: $scope.reviewPanel.groups.exclude,
+          include_groups: $scope.reviewPanel.groups.include,
+          relationship: prepareRelationshipsForSave()
+        }
       };
 
       $scope.submitInProgress = true;
@@ -165,7 +161,7 @@
       var promise = crmApi('AwardReviewPanel', 'create', params)
         .then(function () {
           dialogService.close('ReviewPanels');
-          $scope.reviewPanel = {};
+          resetReviewPanelPopup();
         }).finally(function () {
           $scope.submitInProgress = false;
         });
@@ -183,6 +179,22 @@
      */
     function ifSaveButtonDisabled () {
       return !$scope.review_panel_form.$valid || $scope.submitInProgress;
+    }
+
+    /**
+     * Resets Review panel add popup
+     */
+    function resetReviewPanelPopup () {
+      $scope.submitButtonClickedOnce = false;
+      $scope.reviewPanel = {
+        groups: { include: [], exclude: [] },
+        isEnabled: false,
+        title: '',
+        relationships: [{
+          contacts: '',
+          type: ''
+        }]
+      };
     }
   });
 })(angular, CRM.$, CRM._);

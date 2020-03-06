@@ -121,19 +121,21 @@
         it('saves the review panel', () => {
           expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
             title: 'New Review Panel',
-            is_active: true,
+            is_active: '1',
             case_type_id: 1,
-            exclude_groups: [3, 4],
-            include_groups: [1, 2],
-            relationship: [{
-              is_a_to_b: true,
-              relationship_type_id: '17',
-              contact_id: ['10', '11']
-            }, {
-              is_a_to_b: false,
-              relationship_type_id: '18',
-              contact_id: ['30', '31']
-            }]
+            contact_settings: {
+              exclude_groups: [3, 4],
+              include_groups: [1, 2],
+              relationship: [{
+                is_a_to_b: '1',
+                relationship_type_id: '17',
+                contact_id: ['10', '11']
+              }, {
+                is_a_to_b: '0',
+                relationship_type_id: '18',
+                contact_id: ['30', '31']
+              }]
+            }
           });
         });
 
