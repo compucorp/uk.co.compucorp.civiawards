@@ -59,7 +59,7 @@
       }
 
       /**
-       * @param groupsData
+       * @param {Array} groupsData groups data
        */
       function prepareGroupsDataForSelect2 (groupsData) {
         _.chain(groupsData)
@@ -182,7 +182,9 @@
           return item.text; // return `text` for optgroup
         }
 
-        var spanClass = (item.mode === 'exclude') ? 'civiaward__contacts-group__item--exclude' : 'civiaward__contacts-group__item--include';
+        var spanClass = (item.mode === 'exclude')
+          ? 'civiaward__contacts-group__item--exclude'
+          : 'civiaward__contacts-group__item--include';
 
         return '<i class="crm-i fa-users"></i> <span class="' + spanClass + '">' + item.text + '</span>';
       }
