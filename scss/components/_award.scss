@@ -23,6 +23,12 @@
   }
 }
 
+.civiawards__award__review-panel-form--submitted {
+  .ng-invalid { //for crm-ui-select
+    border-color: $brand-danger;
+  }
+}
+
 .civiawards__award__stages {
   th:first-child {
     width: 16px;

@@ -15,6 +15,7 @@
   module.controller('CiviawardReviewPanelsController', function (
     $scope, ts, dialogService, crmApi, crmStatus, getSelect2Value) {
     $scope.submitInProgress = false;
+    $scope.submitButtonClickedOnce = false;
     $scope.relationshipTypes = [];
     $scope.reviewPanel = {
       groups: { include: [], exclude: [] },
@@ -98,6 +99,10 @@
      * Open the Popup to Create Review Panels
      */
     function openCreateReviewPanelPopup () {
+      if (dialogService.dialogs.ReviewPanels) {
+        return;
+      }
+
       dialogService.open(
         'ReviewPanels',
         '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
@@ -140,6 +145,8 @@
      * @returns {Promise} promise
      */
     function saveReviewPanel () {
+      $scope.submitButtonClickedOnce = true;
+
       if (ifSaveButtonDisabled()) {
         return;
       }

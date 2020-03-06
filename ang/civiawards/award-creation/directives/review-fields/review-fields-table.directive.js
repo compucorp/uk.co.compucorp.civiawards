@@ -175,6 +175,10 @@
      * Open the Popup to Select Review fields
      */
     function openReviewFieldSelectionPopup () {
+      if (dialogService.dialogs.ReviewFields) {
+        return;
+      }
+
       dialogService.open('ReviewFields', '~/civiawards/award-creation/directives/review-fields/review-field-selection.html', $scope, {
         autoOpen: false,
         height: 'auto',
