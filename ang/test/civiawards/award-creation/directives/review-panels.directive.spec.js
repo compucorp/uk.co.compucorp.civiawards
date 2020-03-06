@@ -106,7 +106,7 @@
         it('saves the review panel', () => {
           expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
             title: 'New Review Panel',
-            is_active: true,
+            is_active: '1',
             case_type_id: 1
           });
         });
