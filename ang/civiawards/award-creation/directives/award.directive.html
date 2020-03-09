@@ -1,0 +1,78 @@
+<div id="bootstrap-theme">
+  <h1 crm-page-title>{{pageTitle}}</h1>
+  <!-- Basic Details Form -->
+  <div ng-show="!awardId" class="panel panel-default civiawards__award--new">
+    <div class="panel-body">
+      <civiaward-basic-details-form>
+      </civiaward-basic-details-form>
+    </div>
+    <div class="panel-footer">
+      <button
+        ng-disabled="ifSaveButtonDisabled()"
+        type="button"
+        ng-click="saveNewAward()" class="btn btn-primary">
+        Continue
+      </button>
+      <button
+        ng-click="navigateToDashboard()" class="btn btn-secondary-outline">
+        Cancel
+      </button>
+    </div>
+  </div>
+  <!-- End - Basic Details Form -->
+  <div ng-hide="!awardId" class="panel panel-default civiawards__award--edit">
+    <div class="panel-body">
+      <!-- Tabs -->
+      <div class="panel panel-w-subheading panel-default">
+        <ul class="nav nav-tabs">
+          <li ng-repeat="tab in tabs" ng-class="{active: activeTab === tab.name}">
+            <a href ng-click="selectTab(tab.name)">
+              {{ tab.label }}
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" ng-show="activeTab === 'basicDetails'">
+            <civiaward-basic-details-form>
+            </civiaward-basic-details-form>
+          </div>
+          <div class="tab-pane active" ng-show="activeTab === 'stages'">
+            <div class="table-tab">
+              <civiaward-award-stages-table></civiaward-award-stages-table>
+            </div>
+          </div>
+          <div class="tab-pane active" ng-show="activeTab === 'reviewPanels'">
+            <div class="table-tab">
+              <civiaward-review-panels award-id="awardId"></civiaward-review-panels>
+            </div>
+          </div>
+          <div class="tab-pane active" ng-show="activeTab === 'reviewFields'">
+            <div class="table-tab">
+              <civiaward-review-fields-table>
+              </civiaward-review-fields-table>
+            </div>
+          </div>
+        </div>
+        <div class="panel-footer">
+          <button
+            ng-disabled="ifSaveButtonDisabled()"
+            type="button"
+            ng-click="saveAwardInBG()" class="btn btn-primary">
+            Save
+          </button>
+          <button
+            ng-disabled="ifSaveButtonDisabled()"
+            type="button"
+            ng-click="saveAndNavigateToDashboard()" class="btn btn-primary">
+            Save and Done
+          </button>
+          <button
+            ng-click="navigateToDashboard()" class="btn btn-secondary-outline">
+            Cancel
+          </button>
+        </div>
+      </div>
+      <!-- End - Tabs -->
+    </div>
+  </div>
+</div>

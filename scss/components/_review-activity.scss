@@ -1,0 +1,54 @@
+.civiawards__review-activity {
+  background: $crm-white;
+  box-shadow: none;
+  margin-bottom: 0;
+  padding-top: 0 !important;
+
+  .panel {
+    box-shadow: none;
+  }
+
+  .panel-body {
+    border: 0 !important;
+  }
+}
+
+.civicase__activity-panel__core_container {
+  .civiawards__review-activity {
+    .panel {
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+
+    .panel-body {
+      margin-top: 0;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin: 0;
+      padding-left: 10px;
+      padding-top: 8px;
+    }
+
+    label {
+      color: $crm-gray-matte;
+      font-size: $font-size-small;
+      font-weight: $font-weight-content;
+    }
+
+    .crm-button-type-cancel {
+      display: none;
+    }
+  }
+}
+
+.civicase__activity-panel--Applicant_Review {
+  > .panel > .panel-body {
+    margin-bottom: 0;
+  }
+
+  .civicase__activity-panel__core_container {
+    min-height: auto;
+  }
+}

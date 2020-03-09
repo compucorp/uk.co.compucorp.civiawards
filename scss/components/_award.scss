@@ -1,0 +1,81 @@
+.civiawards__award--edit {
+  > .panel-body {
+    padding: 0;
+  }
+}
+
+.civiawards__award__basic-details {
+  label {
+    width: 200px;
+  }
+
+  input:not([type='checkbox']):not([crm-ui-datepicker]):not(.crm-form-date),
+  textarea {
+    width: 250px;
+  }
+}
+
+.civiawards__award__basic-details,
+.civiawards__award__review-panel-form {
+  .ng-invalid:not(.ng-untouched),
+  .ng-invalid:not(.ng-pristine) { //for crm-ui-select
+    border-color: $brand-danger;
+  }
+}
+
+.civiawards__award__stages {
+  th:first-child {
+    width: 16px;
+  }
+}
+
+.civiawards__award__stages,
+.civiawards__award__review-fields {
+  [type='checkbox'] {
+    margin-top: -5px;
+  }
+
+  tbody {
+    tr {
+      cursor: pointer;
+    }
+  }
+}
+
+.civiawards__award__review-fields--selected {
+  margin: 0 $gutter-width $gutter-width !important;
+  width: calc(100% - #{$gutter-width * 2});
+
+  tbody {
+    tr {
+      cursor: auto;
+    }
+  }
+}
+
+.civiawards__award__add-review-fields,
+.civiawards__award__add-review-panel {
+  margin: $gutter-width;
+}
+
+.civiawards__award__remove-review-field {
+  padding: 0;
+}
+
+.civicase__dashboard__action-btn--more-filter {
+  position: relative;
+
+  .civicase__more-filter__notification {
+    position: absolute;
+    right: -5px;
+    top: -5px;
+  }
+}
+
+.civicase__more-filter__notification {
+  background-color: $brand-danger;
+  border-radius: 50%;
+  display: inline-block;
+  min-height: 10px;
+  min-width: 10px;
+}

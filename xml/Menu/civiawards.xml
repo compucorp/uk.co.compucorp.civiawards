@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/awardreview</path>
+    <page_callback>CRM_CiviAwards_Form_AwardReview</page_callback>
+    <title>AwardReview</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/award/a</path>
+    <page_callback>CRM_CiviAwards_Page_AwardAngular</page_callback>
+    <access_arguments>create/edit awards</access_arguments>
+  </item>
+</menu>

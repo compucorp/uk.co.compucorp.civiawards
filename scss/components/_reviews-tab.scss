@@ -1,0 +1,21 @@
+.civiawards__reviews-tab {
+  &__action-button {
+    box-shadow: $box-shadow;
+  }
+
+  &__record-action-button.btn {
+    font-size: $font-size-h2;
+    line-height: $font-size-h2;
+  }
+
+  &__table-container {
+    overflow-x: auto;
+  }
+
+  &__empty {
+    color: $gray-darker;
+    font-weight: 600;
+    margin-top: 40px;
+    opacity: 0.65;
+  }
+}

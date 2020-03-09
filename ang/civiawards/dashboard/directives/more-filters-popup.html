@@ -1,0 +1,34 @@
+<div id="bootstrap-theme">
+  <form class="form-horizontal">
+    <div class="form-group">
+      <input
+        class="form-control"
+        crm-ui-select="{allowClear: false, multiple: false, data: model.awardOptions}"
+        ng-model="model.selectedFilters.awardFilter" />
+
+      <label>Application Statuses</label>
+      <input
+        class="form-control"
+        crm-ui-select="{allowClear: false, multiple: true, data: model.statuses}"
+        ng-model="model.selectedFilters.statuses" />
+
+      <label>Award Types</label>
+      <input
+        class="form-control"
+        crm-ui-select="{allowClear: false, multiple: true, data: model.award_types}"
+        ng-model="model.selectedFilters.award_types" />
+
+      <label>Award Start Date</label>
+      <civicase-ui-date-range date-range="model.selectedFilters.start_date"></civicase-ui-date-range>
+
+      <label>Award End Date</label>
+      <civicase-ui-date-range date-range="model.selectedFilters.end_date"></civicase-ui-date-range>
+    </div>
+
+    <button
+      ng-click="model.applyFilterAndCloseDialog()"
+      type="button" class="btn btn-primary pull-right">
+      Apply
+    </button>
+  </form>
+</div>

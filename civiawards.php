@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * CiviAwards Extension.
+ */
+
 require_once 'civiawards.civix.php';
 
 /**
@@ -134,36 +139,79 @@ function civiawards_civicrm_entityTypes(&$entityTypes) {
 }
 
 /**
- * Implements hook_civicrm_thems().
+ * Implements hook_civicrm_apiWrappers().
  */
-function civiawards_civicrm_themes(&$themes) {
-  _civiawards_civix_civicrm_themes($themes);
+function civiawards_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  if ($apiRequest['entity'] == 'AwardDetail') {
+    $wrappers[] = new CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields();
+  }
+  if ($apiRequest['entity'] == 'AwardReviewPanel') {
+    $wrappers[] = new CRM_CiviAwards_Api_Wrapper_AwardReviewPanelFormatSettingFields();
+  }
 }
 
-// --- Functions below this ship commented out. Uncomment as required. ---
+/**
+ * Implements hook_civicrm_permission().
+ */
+function civiawards_civicrm_permission(&$permissions) {
+  // Add permission defined by this extension.
+  $permissions['access awards panel portal'] = [
+    ts('CiviAwards: Access awards panel portal'),
+    ts('Allows a user to access the awards panel portal'),
+  ];
+
+  $permissions['access applicant portal'] = [
+    ts('CiviAwards: Access applicant portal'),
+    ts('Allows a user to access the awards applicant portal'),
+  ];
+
+  $permissions['create/edit awards'] = [
+    ts('CiviAwards: Create/Edit awards'),
+    ts('Allows a user to create or edit awards'),
+  ];
+
+  $permissions['access review custom field set'] = [
+    ts('CiviAwards: Access review fields '),
+    ts(
+      "This allows the user to view any review field sets on the reserved review activity type.
+       Note that this can also be done through ACLs or allocating the user 'Access all custom data' permission"
+    ),
+  ];
+}
 
 /**
- * Implements hook_civicrm_preProcess().
+ * Implements hook_civicrm_alterAPIPermissions().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_preProcess
- *
- * function civiawards_civicrm_preProcess($formName, &$form) {
- *
- * } // */
+ * @link https://docs.civicrm.org/dev/en/master/hooks/hook_civicrm_alterAPIPermissions/
+ */
+function civiawards_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+  $hooks = [
+    new CRM_CiviAwards_Hook_AlterAPIPermissions_Award(),
+  ];
+
+  foreach ($hooks as $hook) {
+    $hook->run($entity, $action, $params, $permissions);
+  }
+}
 
 /**
- * Implements hook_civicrm_navigationMenu().
+ * Implements hook_civicrm_aclGroup().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
- *
- * function civiawards_civicrm_navigationMenu(&$menu) {
- * _civiawards_civix_insert_navigation_menu($menu, 'Mailings', array(
- * 'label' => E::ts('New subliminal message'),
- * 'name' => 'mailing_subliminal_message',
- * 'url' => 'civicrm/mailing/subliminal',
- * 'permission' => 'access CiviMail',
- * 'operator' => 'OR',
- * 'separator' => 0,
- * ));
- * _civiawards_civix_navigationMenu($menu);
- * } // */
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_aclGroup/
+ */
+function civiawards_civicrm_aclGroup($type, $contactID, $tableName, &$allGroups, &$currentGroups) {
+  $hooks = [
+    new CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups(),
+  ];
+
+  foreach ($hooks as $hook) {
+    $hook->run($type, $contactID, $tableName, $allGroups, $currentGroups);
+  }
+}
+
+/**
+ * Implements addCiviCaseDependentAngularModules().
+ */
+function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
+  $dependentModules[] = "civiawards";
+}
