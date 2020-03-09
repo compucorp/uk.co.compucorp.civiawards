@@ -32,12 +32,14 @@
         ngModel.$render = refreshUI;
 
         fetchGroupsData()
-          .then(prepareGroupsDataForSelect2)
+          .then(function (data) {
+            var groupsData = getGroupsDataForSelect2(data);
+
+            scope.groups.results[0].children = groupsData.include;
+            scope.groups.results[1].children = groupsData.exclude;
+          })
           .then(initSelect2)
           .then(refreshUI);
-
-        scope.$watchCollection('recips.include', refreshUI);
-        scope.$watchCollection('recips.exclude', refreshUI);
       }());
 
       /**
@@ -59,27 +61,37 @@
       }
 
       /**
+       * Prepare Groups data to be shown on Select2 UI
+       *
        * @param {Array} groupsData groups data
+       * @returns {object} groups data
        */
-      function prepareGroupsDataForSelect2 (groupsData) {
+      function getGroupsDataForSelect2 (groupsData) {
+        var returnData = {
+          include: [], exclude: []
+        };
+
         _.chain(groupsData)
           .filter(function (group) {
             return group.extra.is_hidden === '0' && group.extra.is_active === '1';
           })
           .each(function (group) {
-            scope.groups.results[0].children.push({
-              id: 'i' + group.id,
+            returnData.include.push({
+              id: 'include_' + group.id,
               value: group.id,
               mode: 'include',
               text: group.label
             });
-            scope.groups.results[1].children.push({
-              id: 'e' + group.id,
+
+            returnData.exclude.push({
+              id: 'exclude_' + group.id,
               value: group.id,
               mode: 'exclude',
               text: group.label
             });
           }).value();
+
+        return returnData;
       }
 
       /**
@@ -99,33 +111,35 @@
       /**
        * Select event handler for dropdown
        *
-       * @param {object} e event object
+       * @param {object} event event object
        */
-      function selectEventHandler (e) {
-        if (e.object.mode === 'exclude') {
-          ngModel.$modelValue.exclude.push(e.object.value);
-          arrayRemove(ngModel.$modelValue.include, e.object.value);
+      function selectEventHandler (event) {
+        if (event.object.mode === 'exclude') {
+          ngModel.$modelValue.exclude.push(event.object.value);
+          arrayRemove(ngModel.$modelValue.include, event.object.value);
         } else {
-          ngModel.$modelValue.include.push(e.object.value);
-          arrayRemove(ngModel.$modelValue.exclude, e.object.value);
+          ngModel.$modelValue.include.push(event.object.value);
+          arrayRemove(ngModel.$modelValue.exclude, event.object.value);
         }
 
+        refreshUI();
         scope.$apply();
         $(elem).select2('close');
-        e.preventDefault();
+        event.preventDefault();
       }
 
       /**
        * Remove event handler for dropdown
        *
-       * @param {object} e event object
+       * @param {object} event event object
        */
-      function removeEventHandler (e) {
-        arrayRemove(ngModel.$modelValue[e.choice.mode], e.choice.value);
+      function removeEventHandler (event) {
+        arrayRemove(ngModel.$modelValue[event.choice.mode], event.choice.value);
 
+        refreshUI();
         scope.$parent.$apply();
 
-        e.preventDefault();
+        event.preventDefault();
       }
 
       /**
@@ -145,17 +159,10 @@
        * @returns {Array} selected values in format suitable for Select2
        */
       function convertGroupsToValues (values) {
-        var r = [];
-
-        _.each(values.include, function (v) {
-          r.push('i' + v);
-        });
-
-        _.each(values.exclude, function (v) {
-          r.push('e' + v);
-        });
-
-        return r;
+        return [].concat(
+          _.map(values.include, function (contactId) { return 'include_' + contactId; }),
+          _.map(values.exclude, function (contactId) { return 'exclude_' + contactId; })
+        );
       }
 
       /**
@@ -165,9 +172,10 @@
        * @param {number} value value to be removed
        */
       function arrayRemove (array, value) {
-        var idx = array.indexOf(value);
-        if (idx >= 0) {
-          array.splice(idx, 1);
+        var index = array.indexOf(value);
+
+        if (index >= 0) {
+          array.splice(index, 1);
         }
       }
 
