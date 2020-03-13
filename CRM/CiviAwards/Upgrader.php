@@ -1,13 +1,13 @@
 <?php
 
 use CRM_CiviAwards_Setup_CreateAwardsCaseCategoryOption as CreateAwardsCaseCategoryOption;
-use CRM_CiviAwards_Setup_AddAwardsCgExtendsOptionValue as AddAwardsCgExtendsOptionValue;
+use CRM_CiviAwards_Setup_ProcessAwardsCategoryForCustomGroupSupport as ProcessAwardsCategoryForCustomGroupSupport;
 use CRM_CiviAwards_Setup_DeleteAwardsCaseCategoryOption as DeleteAwardsCaseCategoryOption;
-use CRM_CiviAwards_Setup_DeleteAwardsCgExtendsOption as DeleteAwardsCgExtendsOption;
 use CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup as CreateAwardTypeOptionGroup;
 use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
 use CRM_CiviAwards_Setup_DeleteApplicantReviewCustomField as DeleteApplicantReviewCustomField;
 use CRM_CiviAwards_Setup_AddAwardsCategoryWordReplacement as AddAwardsCategoryWordReplacement;
+use CRM_CiviAwards_Uninstall_RemoveCustomGroupSupportForAwardsCategory as RemoveCustomGroupSupportForAwardsCategory;
 use CRM_CiviAwards_Setup_CreateAwardsMenus as CreateAwardsMenus;
 
 /**
@@ -28,7 +28,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
   public function install() {
     $steps = [
       new CreateAwardsCaseCategoryOption(),
-      new AddAwardsCgExtendsOptionValue(),
+      new ProcessAwardsCategoryForCustomGroupSupport(),
       new CreateAwardTypeOptionGroup(),
       new CreateApplicantReviewActivityType(),
       new AddAwardsCategoryWordReplacement(),
@@ -64,7 +64,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
   public function uninstall() {
     $steps = [
       new DeleteAwardsCaseCategoryOption(),
-      new DeleteAwardsCgExtendsOption(),
+      new RemoveCustomGroupSupportForAwardsCategory(),
       new DeleteApplicantReviewCustomField(),
     ];
 
