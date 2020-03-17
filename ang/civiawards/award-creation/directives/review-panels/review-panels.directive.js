@@ -42,22 +42,23 @@
       $scope.isLoading = true;
 
       $q.all({
-        groups: getGroups(),
-        relationships: getRelationshipsTypes(),
+        groups: fetchGroups(),
+        relationships: fetchRelationshipsTypes(),
         existingReviewPanels: fetchExistingReviewPanels($scope.awardId)
       }).then(function (fetchedData) {
         if (fetchedData.existingReviewPanels && fetchedData.existingReviewPanels.length === 0) {
           return fetchedData;
         }
 
-        return fetchContactsFromPanelsAndIndexById(fetchedData.existingReviewPanels)
+        return fetchContactsFromPanels(fetchedData.existingReviewPanels)
+          .then(storeContactsIndexedById)
           .then(function () {
             return fetchedData;
           });
       }).then(function (fetchedData) {
         $scope.relationshipTypes = prepareRelationshipsTypes(fetchedData.relationships);
-        relationshipTypesIndexed = _.indexBy(fetchedData.relationships, 'id');
 
+        relationshipTypesIndexed = _.indexBy(fetchedData.relationships, 'id');
         groupsIndexed = _.indexBy(fetchedData.groups, 'id');
 
         if (fetchedData.existingReviewPanels) {
@@ -69,16 +70,12 @@
     }
 
     /**
-     * Fetch Contacts from panels and indexes them by id
+     * Index list of contacts by id
      *
-     * @param {Array} existingReviewPanels list of exisiting review panels
-     * @returns {Promise} promise
+     * @param {Array} contactsData list of contacts
      */
-    function fetchContactsFromPanelsAndIndexById (existingReviewPanels) {
-      return fetchContactsFromPanels(existingReviewPanels)
-        .then(function (contactsData) {
-          contactsIndexed = _.indexBy(contactsData, 'id');
-        });
+    function storeContactsIndexedById (contactsData) {
+      contactsIndexed = _.indexBy(contactsData, 'id');
     }
 
     /**
@@ -185,11 +182,11 @@
     }
 
     /**
-     * Get all groups from API
+     * Fetch all groups from API
      *
      * @returns {Promise} promise
      */
-    function getGroups () {
+    function fetchGroups () {
       return crmApi('Group', 'get', {
         sequential: 1,
         return: ['id', 'title'],
@@ -235,11 +232,11 @@
     }
 
     /**
-     * Call API to get Relationships Types
+     * Call API to fetch Relationships Types
      *
      * @returns {Promise} promise
      */
-    function getRelationshipsTypes () {
+    function fetchRelationshipsTypes () {
       return crmApi('RelationshipType', 'get', {
         sequential: 1,
         is_active: 1,
@@ -360,7 +357,8 @@
 
           return fetchExistingReviewPanels($scope.awardId);
         }).then(function (existingReviewPanelsData) {
-          return fetchContactsFromPanelsAndIndexById(existingReviewPanelsData)
+          return fetchContactsFromPanels(existingReviewPanelsData)
+            .then(storeContactsIndexedById)
             .then(function () {
               return existingReviewPanelsData;
             });
