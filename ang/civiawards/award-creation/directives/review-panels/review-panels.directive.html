@@ -56,7 +56,11 @@
           </span>
         </div>
       </td>
-      <td></td>
+      <td>
+        <span ng-repeat="status in reviewPanel.formattedVisibilitySettings.applicationStatus">
+          {{status}} <span ng-show="!$last">,</span>
+        </span>
+      </td>
       <td></td>
       <td></td>
       <td width="10">

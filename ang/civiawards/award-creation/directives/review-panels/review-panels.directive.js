@@ -13,7 +13,7 @@
   });
 
   module.controller('CiviawardReviewPanelsController', function (
-    $q, $scope, ts, dialogService, crmApi, crmStatus, getSelect2Value) {
+    $q, $scope, ts, dialogService, crmApi, crmStatus, getSelect2Value, CaseStatus) {
     var relationshipTypesIndexed = {};
     var contactsIndexed = {};
     var groupsIndexed = {};
@@ -24,6 +24,11 @@
     $scope.submitButtonClickedOnce = false;
     $scope.relationshipTypes = [];
     $scope.existingReviewPanels = [];
+    $scope.activeTab = 'people';
+    $scope.tabs = [
+      { name: 'people', label: ts('People') },
+      { name: 'applications', label: ts('Applications') }
+    ];
 
     $scope.openCreateReviewPanelPopup = openCreateReviewPanelPopup;
     $scope.addMoreRelations = addMoreRelations;
@@ -32,11 +37,33 @@
     $scope.handleDeleteReviewPanel = handleDeleteReviewPanel;
     $scope.handleActiveStateReviewPanel = handleActiveStateReviewPanel;
     $scope.getActiveStateLabel = getActiveStateLabel;
+    $scope.selectTab = selectTab;
 
     (function init () {
+      $scope.applicantStatusSelect2Options = getApplicantStatusSelect2Options();
       resetReviewPanelPopup();
       handleInitialDataLoad();
     }());
+
+    /**
+     * Returns Applicant Status's to be used in the UI
+     *
+     * @returns {Array} applicant status's array in a format suitable for select 2
+     */
+    function getApplicantStatusSelect2Options () {
+      return _.map(CaseStatus.getAll(), function (caseStatus) {
+        return { id: caseStatus.value, text: caseStatus.label, name: caseStatus.name };
+      });
+    }
+
+    /**
+     * Selects a tab as active
+     *
+     * @param {string} tab tab name
+     */
+    function selectTab (tab) {
+      $scope.activeTab = tab;
+    }
 
     /**
      * Get label for the active state for the given review panel
@@ -125,22 +152,27 @@
     function handleEditReviewPanel (reviewPanel) {
       $scope.currentReviewPanel = {
         id: reviewPanel.id,
-        groups: {
-          include: reviewPanel.contact_settings.include_groups,
-          exclude: reviewPanel.contact_settings.exclude_groups
-        },
         isEnabled: reviewPanel.is_active === '1',
         title: reviewPanel.title,
-        relationships: reviewPanel.contact_settings.relationship.map(function (relation) {
-          var relationType = relation.is_a_to_b === '1'
-            ? relation.relationship_type_id + '_a_b'
-            : relation.relationship_type_id + '_b_a';
+        contactSettings: {
+          groups: {
+            include: reviewPanel.contact_settings.include_groups,
+            exclude: reviewPanel.contact_settings.exclude_groups
+          },
+          relationships: reviewPanel.contact_settings.relationship.map(function (relation) {
+            var relationType = relation.is_a_to_b === '1'
+              ? relation.relationship_type_id + '_a_b'
+              : relation.relationship_type_id + '_b_a';
 
-          return {
-            contacts: relation.contact_id,
-            type: relationType
-          };
-        })
+            return {
+              contacts: relation.contact_id,
+              type: relationType
+            };
+          })
+        },
+        visibilitySettings: {
+          selectedApplicantStatus: reviewPanel.visibility_settings.application_status
+        }
       };
 
       openCreateReviewPanelPopup();
@@ -256,6 +288,12 @@
             type: ''
           });
         }
+
+        reviewPanel.formattedVisibilitySettings = {
+          applicationStatus: reviewPanel.visibility_settings.application_status.map(function (status) {
+            return CaseStatus.getAll()[status].label;
+          })
+        };
       });
 
       return reviewPanelDataCopied;
@@ -313,7 +351,7 @@
      * Add More Relations
      */
     function addMoreRelations () {
-      $scope.currentReviewPanel.relationships.push({
+      $scope.currentReviewPanel.contactSettings.relationships.push({
         contacts: '',
         type: ''
       });
@@ -325,7 +363,7 @@
      * @param {number} index index of relation to be removed
      */
     function removeRelation (index) {
-      $scope.currentReviewPanel.relationships.splice(index, 1);
+      $scope.currentReviewPanel.contactSettings.relationships.splice(index, 1);
     }
 
     /**
@@ -411,8 +449,8 @@
      * @returns {Promise} promise
      */
     function prepareRelationshipsForSave () {
-      return _.chain($scope.currentReviewPanel.relationships)
-        // filter the extra realtionship added in the UI before saving
+      return _.chain($scope.currentReviewPanel.contactSettings.relationships)
+      // filter the extra realtionship added in the UI before saving
         .filter(function (relation) {
           return relation.type.length !== 0;
         })
@@ -441,9 +479,13 @@
         is_active: $scope.currentReviewPanel.isEnabled ? '1' : '0',
         case_type_id: $scope.awardId,
         contact_settings: {
-          exclude_groups: $scope.currentReviewPanel.groups.exclude,
-          include_groups: $scope.currentReviewPanel.groups.include,
+          exclude_groups: $scope.currentReviewPanel.contactSettings.groups.exclude,
+          include_groups: $scope.currentReviewPanel.contactSettings.groups.include,
           relationship: prepareRelationshipsForSave()
+        },
+        visibility_settings: {
+          application_status: getSelect2Value($scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus),
+          anonymize_application: 0
         }
       };
     }
@@ -493,13 +535,18 @@
     function resetReviewPanelPopup () {
       $scope.submitButtonClickedOnce = false;
       $scope.currentReviewPanel = {
-        groups: { include: [], exclude: [] },
-        isEnabled: false,
         title: '',
-        relationships: [{
-          contacts: '',
-          type: ''
-        }]
+        isEnabled: false,
+        visibilitySettings: {
+          selectedApplicantStatus: ''
+        },
+        contactSettings: {
+          groups: { include: [], exclude: [] },
+          relationships: [{
+            contacts: '',
+            type: ''
+          }]
+        }
       };
     }
   });
