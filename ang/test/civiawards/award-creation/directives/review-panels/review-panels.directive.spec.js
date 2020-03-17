@@ -131,6 +131,7 @@
             type: '18_b_a'
           }];
 
+          $scope.$digest();
           saveButtonClickHandler();
         });
 
@@ -319,6 +320,161 @@
           $scope,
           jasmine.any(Object)
         );
+      });
+    });
+
+    describe('when deleting an existing review panel', () => {
+      let crmConfirmOnFn, crmConfirmCallbackFn;
+
+      beforeEach(() => {
+        crmConfirmOnFn = jasmine.createSpy('crmConfirmOnFn').and.callFake(function (evtName, crmConfirmCallbackFntn) {
+          crmConfirmCallbackFn = crmConfirmCallbackFntn;
+        });
+
+        CRM.confirm.and.returnValue({ on: crmConfirmOnFn });
+      });
+
+      beforeEach(() => {
+        $scope.awardId = '10';
+        createController();
+        $scope.$digest();
+
+        $scope.handleDeleteReviewPanel($scope.existingReviewPanels[0]);
+      });
+
+      it('confirms before deleting the review panel', () => {
+        expect(CRM.confirm).toHaveBeenCalledWith({
+          title: 'Delete New Panel?',
+          message: 'Are you sure you want to delete this?'
+        });
+      });
+
+      describe('when yes is pressed on confirmation prompt', () => {
+        beforeEach(() => {
+          crmConfirmCallbackFn();
+          $scope.$digest();
+        });
+
+        it('deletes the review panel if yes is pressed', () => {
+          expect(crmConfirmOnFn).toHaveBeenCalledWith('crmConfirm:yes', jasmine.any(Function));
+          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'delete', {
+            id: '46'
+          });
+        });
+
+        it('refreshes the review panel list', () => {
+          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+            sequential: 1,
+            case_type_id: '10',
+            options: { limit: 0 }
+          });
+        });
+      });
+    });
+
+    describe('when enabling an existing review panel', () => {
+      let crmConfirmOnFn, crmConfirmCallbackFn;
+
+      beforeEach(() => {
+        crmConfirmOnFn = jasmine.createSpy('crmConfirmOnFn').and.callFake(function (evtName, crmConfirmCallbackFntn) {
+          crmConfirmCallbackFn = crmConfirmCallbackFntn;
+        });
+
+        CRM.confirm.and.returnValue({ on: crmConfirmOnFn });
+      });
+
+      beforeEach(() => {
+        $scope.awardId = '10';
+        createController();
+        $scope.$digest();
+
+        const reviewPanel = $scope.existingReviewPanels[0];
+        reviewPanel.is_active = '0';
+
+        $scope.handleActiveStateReviewPanel(reviewPanel);
+      });
+
+      it('confirms before enabling the review panel', () => {
+        expect(CRM.confirm).toHaveBeenCalledWith({
+          title: 'Enable New Panel?',
+          message: 'Are you sure you want to enable this?'
+        });
+      });
+
+      describe('when yes is pressed on confirmation prompt', () => {
+        beforeEach(() => {
+          crmConfirmCallbackFn();
+          $scope.$digest();
+        });
+
+        it('enables the review panel if yes is pressed', () => {
+          expect(crmConfirmOnFn).toHaveBeenCalledWith('crmConfirm:yes', jasmine.any(Function));
+          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
+            id: '46',
+            is_active: '1'
+          });
+        });
+
+        it('refreshes the review panel list', () => {
+          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+            sequential: 1,
+            case_type_id: '10',
+            options: { limit: 0 }
+          });
+        });
+      });
+    });
+
+    describe('when disabling an existing review panel', () => {
+      let crmConfirmOnFn, crmConfirmCallbackFn;
+
+      beforeEach(() => {
+        crmConfirmOnFn = jasmine.createSpy('crmConfirmOnFn').and.callFake(function (evtName, crmConfirmCallbackFntn) {
+          crmConfirmCallbackFn = crmConfirmCallbackFntn;
+        });
+
+        CRM.confirm.and.returnValue({ on: crmConfirmOnFn });
+      });
+
+      beforeEach(() => {
+        $scope.awardId = '10';
+        createController();
+        $scope.$digest();
+
+        const reviewPanel = $scope.existingReviewPanels[0];
+        reviewPanel.is_active = '1';
+
+        $scope.handleActiveStateReviewPanel(reviewPanel);
+      });
+
+      it('confirms before disabling the review panel', () => {
+        expect(CRM.confirm).toHaveBeenCalledWith({
+          title: 'Disable New Panel?',
+          message: 'Are you sure you want to disable this?'
+        });
+      });
+
+      describe('when yes is pressed on confirmation prompt', () => {
+        beforeEach(() => {
+          crmConfirmCallbackFn();
+          $scope.$digest();
+        });
+
+        it('disables the review panel if yes is pressed', () => {
+          expect(crmConfirmOnFn).toHaveBeenCalledWith('crmConfirm:yes', jasmine.any(Function));
+          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
+            id: '46',
+            is_active: '0'
+          });
+        });
+
+        it('refreshes the review panel list', () => {
+          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+            sequential: 1,
+            case_type_id: '10',
+            options: { limit: 0 }
+          });
+        });
       });
     });
 
