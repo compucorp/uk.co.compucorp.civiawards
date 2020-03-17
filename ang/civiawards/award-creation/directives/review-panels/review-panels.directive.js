@@ -30,11 +30,23 @@
     $scope.removeRelation = removeRelation;
     $scope.handleEditReviewPanel = handleEditReviewPanel;
     $scope.handleDeleteReviewPanel = handleDeleteReviewPanel;
+    $scope.handleActiveStateReviewPanel = handleActiveStateReviewPanel;
+    $scope.getActiveStateLabel = getActiveStateLabel;
 
     (function init () {
       resetReviewPanelPopup();
       handleInitialDataLoad();
     }());
+
+    /**
+     * Get label for the active state for the given review panel
+     *
+     * @param {object} reviewPanel review panel
+     * @returns {string} enable/disable
+     */
+    function getActiveStateLabel (reviewPanel) {
+      return reviewPanel.is_active === '0' ? ts('Enable') : ts('Disable');
+    }
 
     /**
      * Handles Initial loading of data from API
@@ -141,8 +153,8 @@
      */
     function handleDeleteReviewPanel (reviewPanel) {
       CRM.confirm({
-        title: ts('Delete Review Panel'),
-        message: ts('Permanently delete Review Panel?')
+        title: ts('Delete %1?', { 1: reviewPanel.title }),
+        message: ts('Are you sure you want to delete this?')
       }).on('crmConfirm:yes', function () {
         $scope.submitInProgress = true;
 
@@ -162,6 +174,33 @@
         return crmStatus({
           start: ts('Deleting Review Panel...'),
           success: ts('Review Panel Deleted')
+        }, promise);
+      });
+    }
+
+    /**
+     * Handle Enable/Disable review panel
+     *
+     * @param {object} reviewPanel review panel
+     */
+    function handleActiveStateReviewPanel (reviewPanel) {
+      CRM.confirm({
+        title: ts('%1 %2?', { 1: getActiveStateLabel(reviewPanel), 2: reviewPanel.title }),
+        message: ts('Are you sure you want to %1 this?', { 1: getActiveStateLabel(reviewPanel).toLowerCase() })
+      }).on('crmConfirm:yes', function () {
+        $scope.submitInProgress = true;
+
+        var promise = crmApi('AwardReviewPanel', 'create', {
+          id: reviewPanel.id,
+          is_active: reviewPanel.is_active === '0' ? '1' : '0'
+        }).then(refreshReviewPanelsList)
+          .finally(function () {
+            $scope.submitInProgress = false;
+          });
+
+        return crmStatus({
+          start: ts('Saving Review Panel...'),
+          success: ts('Review Panel saved')
         }, promise);
       });
     }

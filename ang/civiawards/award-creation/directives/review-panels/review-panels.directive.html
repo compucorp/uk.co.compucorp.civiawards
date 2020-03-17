@@ -78,6 +78,9 @@
               <a ng-click="handleEditReviewPanel(reviewPanel)">
                 {{ ts('Edit') }}
               </a>
+              <a ng-click="handleActiveStateReviewPanel(reviewPanel)">
+                {{ getActiveStateLabel(reviewPanel) }}
+              </a>
               <a ng-click="handleDeleteReviewPanel(reviewPanel)">
                 {{ ts('Delete') }}
               </a>
