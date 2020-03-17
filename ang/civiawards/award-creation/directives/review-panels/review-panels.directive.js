@@ -16,6 +16,7 @@
     $q, $scope, ts, dialogService, crmApi, crmStatus, getSelect2Value) {
     var relationshipTypesIndexed = {};
     var contactsIndexed = {};
+    var groupsIndexed = {};
 
     $scope.ts = ts;
     $scope.submitInProgress = false;
@@ -31,12 +32,19 @@
 
     (function init () {
       resetReviewPanelPopup();
+      handleInitialDataLoad();
+    }());
+
+    /**
+     * Handles Initial loading of data from API
+     */
+    function handleInitialDataLoad () {
       $scope.isLoading = true;
 
       $q.all({
         groups: getGroups(),
         relationships: getRelationshipsTypes(),
-        existingReviewPanels: $scope.awardId ? fetchExistingReviewPanels($scope.awardId) : null
+        existingReviewPanels: fetchExistingReviewPanels($scope.awardId)
       }).then(function (fetchedData) {
         if (fetchedData.existingReviewPanels && fetchedData.existingReviewPanels.length === 0) {
           return fetchedData;
@@ -50,7 +58,7 @@
         $scope.relationshipTypes = prepareRelationshipsTypes(fetchedData.relationships);
         relationshipTypesIndexed = _.indexBy(fetchedData.relationships, 'id');
 
-        $scope.groupsIndexed = _.indexBy(fetchedData.groups, 'id');
+        groupsIndexed = _.indexBy(fetchedData.groups, 'id');
 
         if (fetchedData.existingReviewPanels) {
           $scope.existingReviewPanels = formatReviewPanelDataForUI(fetchedData.existingReviewPanels);
@@ -58,7 +66,7 @@
       }).finally(function () {
         $scope.isLoading = false;
       });
-    }());
+    }
 
     /**
      * Fetch Contacts from panels and indexes them by id
@@ -148,13 +156,13 @@
 
         _.each(reviewPanel.contact_settings.include_groups, function (includeGroupID) {
           reviewPanel.formattedContactSettings.include.push(
-            $scope.groupsIndexed[includeGroupID].title
+            groupsIndexed[includeGroupID].title
           );
         });
 
         _.each(reviewPanel.contact_settings.exclude_groups, function (excludeGroupID) {
           reviewPanel.formattedContactSettings.exclude.push(
-            $scope.groupsIndexed[excludeGroupID].title
+            groupsIndexed[excludeGroupID].title
           );
         });
 
