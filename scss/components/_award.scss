@@ -108,6 +108,10 @@
 
 .civiawards__award__review-panel-list__dropdown {
   font-size: $font-size-base;
+
+  + .dropdown-menu a {
+    cursor: pointer;
+  }
 }
 
 .civiawards__award__review-panel-list__exlcuded {

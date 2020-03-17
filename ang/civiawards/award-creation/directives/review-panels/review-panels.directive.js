@@ -29,6 +29,7 @@
     $scope.addMoreRelations = addMoreRelations;
     $scope.removeRelation = removeRelation;
     $scope.handleEditReviewPanel = handleEditReviewPanel;
+    $scope.handleDeleteReviewPanel = handleDeleteReviewPanel;
 
     (function init () {
       resetReviewPanelPopup();
@@ -134,6 +135,32 @@
     }
 
     /**
+     * Handle Deletion of Review panel
+     *
+     * @param {object} reviewPanel review panel
+     */
+    function handleDeleteReviewPanel (reviewPanel) {
+      CRM.confirm({
+        title: ts('Delete Review Panel'),
+        message: ts('Permanently delete Review Panel?')
+      }).on('crmConfirm:yes', function () {
+        $scope.submitInProgress = true;
+
+        var promise = crmApi('AwardReviewPanel', 'delete', {
+          id: reviewPanel.id
+        }).then(refreshReviewPanelsList)
+          .finally(function () {
+            $scope.submitInProgress = false;
+          });
+
+        return crmStatus({
+          start: ts('Deleting Review Panel...'),
+          success: ts('Review Panel Deleted')
+        }, promise);
+      });
+    }
+
+    /**
      * Format Review panel data fetched from API to be shown on the UI
      *
      * @param {Array} reviewPanelData list of review panels fetched from API
@@ -196,6 +223,23 @@
       });
     }
 
+    /**
+     * Refreshes Review Panels list
+     *
+     * @returns {Promise} promise
+     */
+    function refreshReviewPanelsList () {
+      return fetchExistingReviewPanels($scope.awardId)
+        .then(function (existingReviewPanelsData) {
+          return fetchContactsFromPanels(existingReviewPanelsData)
+            .then(storeContactsIndexedById)
+            .then(function () {
+              return existingReviewPanelsData;
+            });
+        }).then(function (existingReviewPanelsData) {
+          $scope.existingReviewPanels = formatReviewPanelDataForUI(existingReviewPanelsData);
+        });
+    }
     /**
      * Get all groups from API for the given award id
      *
@@ -355,15 +399,7 @@
           dialogService.close('ReviewPanels');
           resetReviewPanelPopup();
 
-          return fetchExistingReviewPanels($scope.awardId);
-        }).then(function (existingReviewPanelsData) {
-          return fetchContactsFromPanels(existingReviewPanelsData)
-            .then(storeContactsIndexedById)
-            .then(function () {
-              return existingReviewPanelsData;
-            });
-        }).then(function (existingReviewPanelsData) {
-          $scope.existingReviewPanels = formatReviewPanelDataForUI(existingReviewPanelsData);
+          return refreshReviewPanelsList();
         }).finally(function () {
           $scope.submitInProgress = false;
         });
