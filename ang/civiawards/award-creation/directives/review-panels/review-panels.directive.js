@@ -149,6 +149,12 @@
         var promise = crmApi('AwardReviewPanel', 'delete', {
           id: reviewPanel.id
         }).then(refreshReviewPanelsList)
+          .then(function () {
+            if (dialogService.dialogs.ReviewPanels) {
+              dialogService.close('ReviewPanels');
+              resetReviewPanelPopup();
+            }
+          })
           .finally(function () {
             $scope.submitInProgress = false;
           });
@@ -190,19 +196,26 @@
           );
         });
 
-        _.each(reviewPanel.contact_settings.relationship, function (relationship) {
-          var specificRelationDetails = { relationshipLabel: '', contacts: [] };
+        if (reviewPanel.contact_settings.relationship.length > 0) {
+          _.each(reviewPanel.contact_settings.relationship, function (relationship) {
+            var specificRelationDetails = { relationshipLabel: '', contacts: [] };
 
-          specificRelationDetails.relationshipLabel = relationship.is_a_to_b === '1'
-            ? relationshipTypesIndexed[relationship.relationship_type_id].label_a_b
-            : relationshipTypesIndexed[relationship.relationship_type_id].label_b_a;
+            specificRelationDetails.relationshipLabel = relationship.is_a_to_b === '1'
+              ? relationshipTypesIndexed[relationship.relationship_type_id].label_a_b
+              : relationshipTypesIndexed[relationship.relationship_type_id].label_b_a;
 
-          _.each(relationship.contact_id, function (contactID) {
-            specificRelationDetails.contacts.push(contactsIndexed[contactID].display_name);
+            _.each(relationship.contact_id, function (contactID) {
+              specificRelationDetails.contacts.push(contactsIndexed[contactID].display_name);
+            });
+
+            reviewPanel.formattedContactSettings.relation.push(specificRelationDetails);
           });
-
-          reviewPanel.formattedContactSettings.relation.push(specificRelationDetails);
-        });
+        } else {
+          reviewPanel.contact_settings.relationship.push({
+            contacts: '',
+            type: ''
+          });
+        }
       });
 
       return reviewPanelDataCopied;
@@ -338,6 +351,15 @@
                 saveReviewPanel();
               });
             }
+          }, {
+            text: ts('Delete'),
+            icons: { primary: 'fa-times' },
+            class: 'civiawards__award__review-panel-form__delete',
+            click: function () {
+              $scope.$apply(function () {
+                handleDeleteReviewPanel($scope.currentReviewPanel);
+              });
+            }
           }]
         }
       );
@@ -349,16 +371,21 @@
      * @returns {Promise} promise
      */
     function prepareRelationshipsForSave () {
-      return _.map($scope.currentReviewPanel.relationships, function (relation) {
-        var isAToB = relation.type.indexOf('a_b') !== -1;
-        var relationshipTypeId = relation.type.substr(0, relation.type.indexOf('_'));
+      return _.chain($scope.currentReviewPanel.relationships)
+        .filter(function (relation) {
+          return relation.type.length !== 0;
+        })
+        .map(function (relation) {
+          var isAToB = relation.type.indexOf('a_b') !== -1;
+          var relationshipTypeId = relation.type.substr(0, relation.type.indexOf('_'));
 
-        return {
-          is_a_to_b: isAToB ? '1' : '0',
-          relationship_type_id: relationshipTypeId,
-          contact_id: getSelect2Value(relation.contacts)
-        };
-      });
+          return {
+            is_a_to_b: isAToB ? '1' : '0',
+            relationship_type_id: relationshipTypeId,
+            contact_id: getSelect2Value(relation.contacts)
+          };
+        })
+        .value();
     }
 
     /**
