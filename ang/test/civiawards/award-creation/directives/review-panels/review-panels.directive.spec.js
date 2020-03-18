@@ -58,7 +58,8 @@
       it('shows all the tabs inside the add/edit review panel popup', () => {
         expect($scope.tabs).toEqual($scope.tabs = [
           { name: 'people', label: ts('People') },
-          { name: 'applications', label: ts('Applications') }
+          { name: 'applications', label: ts('Applications') },
+          { name: 'permissions', label: ts('Permissions') }
         ]);
       });
 
@@ -71,7 +72,8 @@
           title: '',
           isEnabled: false,
           visibilitySettings: {
-            selectedApplicantStatus: ''
+            selectedApplicantStatus: '',
+            anonymizeApplication: true
           },
           contactSettings: {
             groups: { include: [], exclude: [] },
@@ -181,7 +183,7 @@
             },
             visibility_settings: {
               application_status: ['1', '2'],
-              anonymize_application: 0
+              anonymize_application: '1'
             }
           });
         });
@@ -302,7 +304,8 @@
             }]
           },
           visibility_settings: {
-            application_status: ['1']
+            application_status: ['1'],
+            anonymize_application: '1'
           },
           is_active: '1',
           formattedContactSettings: {
@@ -351,7 +354,8 @@
             }]
           },
           visibilitySettings: {
-            selectedApplicantStatus: ['1']
+            selectedApplicantStatus: ['1'],
+            anonymizeApplication: true
           }
         });
 

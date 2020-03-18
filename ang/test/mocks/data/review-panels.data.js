@@ -23,7 +23,8 @@
         ]
       },
       visibility_settings: {
-        application_status: ['1']
+        application_status: ['1'],
+        anonymize_application: '1'
       },
       is_active: '1'
     }

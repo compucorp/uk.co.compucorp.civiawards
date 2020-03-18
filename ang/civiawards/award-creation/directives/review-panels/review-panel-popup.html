@@ -108,5 +108,16 @@
         </div>
       </form>
     </div>
+    <div class="tab-pane active" ng-show="model.activeTab === 'permissions'">
+      <form
+        class="form-horizontal">
+        <div class="form-group">
+          <label class="col-sm-6 control-label">Anonymise contacts for this panel?</label>
+          <div class="col-sm-3">
+            <input type="checkbox" ng-model="model.currentReviewPanel.visibilitySettings.anonymizeApplication">
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

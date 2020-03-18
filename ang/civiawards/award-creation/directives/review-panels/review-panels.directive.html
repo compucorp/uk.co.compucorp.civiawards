@@ -12,7 +12,7 @@
     <th>Panel contacts</th>
     <th>Applicant status</th>
     <th>Applicant tags</th>
-    <th>Permissions</th>
+    <th>Anonymised</th>
     <th width="20">&nbsp;</th>
   </tr>
   </thead>
@@ -62,7 +62,7 @@
         </span>
       </td>
       <td></td>
-      <td></td>
+      <td>{{reviewPanel.visibility_settings.anonymize_application === '1' ? 'Yes': 'No'}}</td>
       <td width="10">
         <div
           class="btn-group btn-group-md"

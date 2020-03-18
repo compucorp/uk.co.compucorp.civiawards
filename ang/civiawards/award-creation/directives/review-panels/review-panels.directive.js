@@ -24,10 +24,10 @@
     $scope.submitButtonClickedOnce = false;
     $scope.relationshipTypes = [];
     $scope.existingReviewPanels = [];
-    $scope.activeTab = 'people';
     $scope.tabs = [
       { name: 'people', label: ts('People') },
-      { name: 'applications', label: ts('Applications') }
+      { name: 'applications', label: ts('Applications') },
+      { name: 'permissions', label: ts('Permissions') }
     ];
 
     $scope.openCreateReviewPanelPopup = openCreateReviewPanelPopup;
@@ -144,6 +144,28 @@
     }
 
     /**
+     * Prepare relations before editing a review panel
+     *
+     * @param {object} reviewPanel review panel object
+     * @returns {Array} list of relationships
+     */
+    function getRelationshipsForEditingReviewPanel (reviewPanel) {
+      if (reviewPanel.contact_settings.relationship.length > 0) {
+        return reviewPanel.contact_settings.relationship.map(function (relation) {
+          var relationType = relation.is_a_to_b === '1'
+            ? relation.relationship_type_id + '_a_b'
+            : relation.relationship_type_id + '_b_a';
+
+          return {
+            contacts: relation.contact_id,
+            type: relationType
+          };
+        });
+      } else {
+        return [{ contacts: '', type: '' }];
+      }
+    }
+    /**
      * Handle Editing of Review panel
      * It opens the modal to edit the review panel
      *
@@ -159,19 +181,11 @@
             include: reviewPanel.contact_settings.include_groups,
             exclude: reviewPanel.contact_settings.exclude_groups
           },
-          relationships: reviewPanel.contact_settings.relationship.map(function (relation) {
-            var relationType = relation.is_a_to_b === '1'
-              ? relation.relationship_type_id + '_a_b'
-              : relation.relationship_type_id + '_b_a';
-
-            return {
-              contacts: relation.contact_id,
-              type: relationType
-            };
-          })
+          relationships: getRelationshipsForEditingReviewPanel(reviewPanel)
         },
         visibilitySettings: {
-          selectedApplicantStatus: reviewPanel.visibility_settings.application_status
+          selectedApplicantStatus: reviewPanel.visibility_settings.application_status,
+          anonymizeApplication: reviewPanel.visibility_settings.anonymize_application === '1'
         }
       };
 
@@ -267,27 +281,19 @@
           );
         });
 
-        if (reviewPanel.contact_settings.relationship.length > 0) {
-          _.each(reviewPanel.contact_settings.relationship, function (relationship) {
-            var specificRelationDetails = { relationshipLabel: '', contacts: [] };
+        _.each(reviewPanel.contact_settings.relationship, function (relationship) {
+          var specificRelationDetails = { relationshipLabel: '', contacts: [] };
 
-            specificRelationDetails.relationshipLabel = relationship.is_a_to_b === '1'
-              ? relationshipTypesIndexed[relationship.relationship_type_id].label_a_b
-              : relationshipTypesIndexed[relationship.relationship_type_id].label_b_a;
+          specificRelationDetails.relationshipLabel = relationship.is_a_to_b === '1'
+            ? relationshipTypesIndexed[relationship.relationship_type_id].label_a_b
+            : relationshipTypesIndexed[relationship.relationship_type_id].label_b_a;
 
-            _.each(relationship.contact_id, function (contactID) {
-              specificRelationDetails.contacts.push(contactsIndexed[contactID].display_name);
-            });
-
-            reviewPanel.formattedContactSettings.relation.push(specificRelationDetails);
+          _.each(relationship.contact_id, function (contactID) {
+            specificRelationDetails.contacts.push(contactsIndexed[contactID].display_name);
           });
-        } else {
-          // add extra realtionship to be shown on the UI after fetching
-          reviewPanel.contact_settings.relationship.push({
-            contacts: '',
-            type: ''
-          });
-        }
+
+          reviewPanel.formattedContactSettings.relation.push(specificRelationDetails);
+        });
 
         reviewPanel.formattedVisibilitySettings = {
           applicationStatus: reviewPanel.visibility_settings.application_status.map(function (status) {
@@ -419,7 +425,7 @@
         {
           autoOpen: false,
           height: 'auto',
-          width: '600px',
+          width: '650px',
           title: ts('Create Review Panel'),
           buttons: [{
             text: ts('Save'),
@@ -485,7 +491,7 @@
         },
         visibility_settings: {
           application_status: getSelect2Value($scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus),
-          anonymize_application: 0
+          anonymize_application: $scope.currentReviewPanel.visibilitySettings.anonymizeApplication ? '1' : '0'
         }
       };
     }
@@ -534,11 +540,13 @@
      */
     function resetReviewPanelPopup () {
       $scope.submitButtonClickedOnce = false;
+      $scope.activeTab = 'people';
       $scope.currentReviewPanel = {
         title: '',
         isEnabled: false,
         visibilitySettings: {
-          selectedApplicantStatus: ''
+          selectedApplicantStatus: '',
+          anonymizeApplication: true
         },
         contactSettings: {
           groups: { include: [], exclude: [] },
