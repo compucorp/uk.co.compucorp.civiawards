@@ -1,6 +1,6 @@
 .___outside-namespace {
-  .civiawards__award__review-panel-form__delete {
-    float: left !important;
+  .crm-container.ui-dialog .ui-dialog-buttonset .civiawards__award__review-panel-form__delete { /* stylelint-disable-line selector-max-compound-selectors */
+    float: left;
   }
 }
 

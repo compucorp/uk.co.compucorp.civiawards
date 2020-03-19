@@ -355,7 +355,7 @@
           $scope.$digest();
         });
 
-        it('deletes the review panel if yes is pressed', () => {
+        it('deletes the review panel', () => {
           expect(crmConfirmOnFn).toHaveBeenCalledWith('crmConfirm:yes', jasmine.any(Function));
           expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'delete', {
             id: '46'
@@ -407,7 +407,7 @@
           $scope.$digest();
         });
 
-        it('enables the review panel if yes is pressed', () => {
+        it('enables the review panel', () => {
           expect(crmConfirmOnFn).toHaveBeenCalledWith('crmConfirm:yes', jasmine.any(Function));
           expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
             id: '46',
@@ -460,7 +460,7 @@
           $scope.$digest();
         });
 
-        it('disables the review panel if yes is pressed', () => {
+        it('disables the review panel', () => {
           expect(crmConfirmOnFn).toHaveBeenCalledWith('crmConfirm:yes', jasmine.any(Function));
           expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
             id: '46',

@@ -250,6 +250,7 @@
             reviewPanel.formattedContactSettings.relation.push(specificRelationDetails);
           });
         } else {
+          // add extra realtionship to be shown on the UI after fetching
           reviewPanel.contact_settings.relationship.push({
             contacts: '',
             type: ''
@@ -411,6 +412,7 @@
      */
     function prepareRelationshipsForSave () {
       return _.chain($scope.currentReviewPanel.relationships)
+        // filter the extra realtionship added in the UI before saving
         .filter(function (relation) {
           return relation.type.length !== 0;
         })
