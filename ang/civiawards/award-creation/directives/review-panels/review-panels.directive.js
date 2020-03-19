@@ -150,20 +150,20 @@
      * @returns {Array} list of relationships
      */
     function getRelationshipsForEditingReviewPanel (reviewPanel) {
-      if (reviewPanel.contact_settings.relationship.length > 0) {
-        return reviewPanel.contact_settings.relationship.map(function (relation) {
-          var relationType = relation.is_a_to_b === '1'
-            ? relation.relationship_type_id + '_a_b'
-            : relation.relationship_type_id + '_b_a';
-
-          return {
-            contacts: relation.contact_id,
-            type: relationType
-          };
-        });
-      } else {
+      if (reviewPanel.contact_settings.relationship.length === 0) {
         return [{ contacts: '', type: '' }];
       }
+
+      return reviewPanel.contact_settings.relationship.map(function (relation) {
+        var relationType = relation.is_a_to_b === '1'
+          ? relation.relationship_type_id + '_a_b'
+          : relation.relationship_type_id + '_b_a';
+
+        return {
+          contacts: relation.contact_id,
+          type: relationType
+        };
+      });
     }
     /**
      * Handle Editing of Review panel
