@@ -39,7 +39,7 @@
 
         <div class="form-group">
           <label class="col-sm-5 control-label">
-            Select Group or smart group
+            Group or Smart Group
           </label>
           <div class="col-sm-7">
             <input civiaward-contacts-group-dropdown ng-model="model.currentReviewPanel.contactSettings.groups"/>
@@ -48,7 +48,7 @@
 
         <div class="form-group">
           <label class="col-sm-12 control-label">
-            Additional contacts to add to group
+            Additional Contacts to add to Group
           </label>
         </div>
 
@@ -65,7 +65,7 @@
           <div class="col-xs-5">
             <input class="form-control"
               ng-model="relationship.contacts"
-              placeholder="Select contact(s)"
+              placeholder="Select Contact(s)"
               crm-entityref="{
                 entity: 'Contact',
                 select: { multiple: true }
@@ -92,12 +92,12 @@
         class="form-horizontal">
         <div class="form-group">
           <label class="col-sm-5 control-label">
-            Select Applicant Status's
+            Applicant Status's
           </label>
           <div class="col-sm-7">
             <input class="form-control"
               ng-model="model.currentReviewPanel.visibilitySettings.selectedApplicantStatus"
-              placeholder="Applicant status(s)"
+              placeholder="Applicant Status(s)"
               crm-ui-select="{
                 allowClear: true,
                 multiple: true,
@@ -112,7 +112,7 @@
       <form
         class="form-horizontal">
         <div class="form-group">
-          <label class="col-sm-6 control-label">Anonymise contacts for this panel?</label>
+          <label class="col-sm-6 control-label">Anonymise Contacts for this panel?</label>
           <div class="col-sm-3">
             <input type="checkbox" ng-model="model.currentReviewPanel.visibilitySettings.anonymizeApplication">
           </div>
