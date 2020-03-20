@@ -107,7 +107,10 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
       'relationship' => [
         'is_array' => TRUE,
         'fields' => [
-          'contact_id' => ['validate_filter' => FILTER_VALIDATE_INT],
+          'contact_id' => [
+            'is_array' => TRUE,
+            'validate_filter' => FILTER_VALIDATE_INT,
+          ],
           'relationship_type_id' => ['validate_filter' => FILTER_VALIDATE_INT],
           'is_a_to_b' => [
             'validate_filter' => FILTER_VALIDATE_INT,

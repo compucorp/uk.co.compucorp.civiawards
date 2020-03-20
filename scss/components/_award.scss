@@ -23,6 +23,12 @@
   }
 }
 
+.civiawards__award__review-panel-form--submitted {
+  .ng-invalid { //for crm-ui-select
+    border-color: $brand-danger;
+  }
+}
+
 .civiawards__award__stages {
   th:first-child {
     width: 16px;
@@ -78,4 +84,23 @@
   display: inline-block;
   min-height: 10px;
   min-width: 10px;
+}
+
+.civiawards__award__review-panel__to-label {
+  float: left;
+  margin: $crm-gap-small 10px 0 10px;
+}
+
+.civiawards__award__review-panel__remove-button {
+  float: left;
+  margin-left: 10px;
+  margin-top: 3px;
+
+  a {
+    padding: 0;
+  }
+}
+
+.civiawards__award__review-panel__rel-type {
+  width: 220px;
 }

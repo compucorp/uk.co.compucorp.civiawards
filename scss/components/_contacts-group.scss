@@ -1,0 +1,14 @@
+.___outside-namespace {
+  .civiaward__contacts-group__container {
+    width: 100% !important;
+  }
+
+  .civiaward__contacts-group__item--include {
+    color: $brand-success;
+  }
+
+  .civiaward__contacts-group__item--exclude {
+    color: $brand-danger;
+    text-decoration: line-through;
+  }
+}
