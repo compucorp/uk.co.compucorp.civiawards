@@ -55,16 +55,42 @@
         expect($scope.existingReviewPanels).toEqual([]);
       });
 
+      it('shows all the tabs inside the add/edit review panel popup', () => {
+        expect($scope.tabs).toEqual($scope.tabs = [
+          { name: 'people', label: ts('People') },
+          { name: 'applications', label: ts('Applications') },
+          { name: 'permissions', label: ts('Permissions') }
+        ]);
+      });
+
+      it('defaults to the poeple tab inside review panel popup', () => {
+        expect($scope.activeTab).toBe('people');
+      });
+
       it('resets all fields inside review panel popup', () => {
         expect($scope.currentReviewPanel).toEqual({
-          groups: { include: [], exclude: [] },
-          isEnabled: false,
           title: '',
-          relationships: [{
-            contacts: '',
-            type: ''
-          }]
+          isEnabled: false,
+          visibilitySettings: {
+            selectedApplicantStatus: '',
+            anonymizeApplication: true
+          },
+          contactSettings: {
+            groups: { include: [], exclude: [] },
+            relationships: [{
+              contacts: '',
+              type: ''
+            }]
+          }
         });
+      });
+
+      it('shows list of application statuses inside the applications tab of review panel popup', () => {
+        expect($scope.applicantStatusSelect2Options).toEqual([
+          { id: '1', text: 'Ongoing', name: 'Open' },
+          { id: '2', text: 'Resolved', name: 'Closed' },
+          { id: '3', text: 'Urgent', name: 'Urgent' }
+        ]);
       });
     });
 
@@ -122,14 +148,15 @@
           $scope.submitInProgress = false;
           $scope.currentReviewPanel.title = 'New Review Panel';
           $scope.currentReviewPanel.isEnabled = true;
-          $scope.currentReviewPanel.groups = { include: [1, 2], exclude: [3, 4] };
-          $scope.currentReviewPanel.relationships = [{
+          $scope.currentReviewPanel.contactSettings.groups = { include: [1, 2], exclude: [3, 4] };
+          $scope.currentReviewPanel.contactSettings.relationships = [{
             contacts: '10,11',
             type: '17_a_b'
           }, {
             contacts: '30,31',
             type: '18_b_a'
           }];
+          $scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus = '1,2';
 
           $scope.$digest();
           saveButtonClickHandler();
@@ -153,6 +180,10 @@
                 relationship_type_id: '18',
                 contact_id: ['30', '31']
               }]
+            },
+            visibility_settings: {
+              application_status: ['1', '2'],
+              anonymize_application: '1'
             }
           });
         });
@@ -202,7 +233,7 @@
         });
 
         it('adds one more specific relationship selection ui', () => {
-          expect($scope.currentReviewPanel.relationships).toEqual([
+          expect($scope.currentReviewPanel.contactSettings.relationships).toEqual([
             { contacts: '', type: '' }, { contacts: '', type: '' }
           ]);
         });
@@ -211,13 +242,13 @@
       describe('when Remove button is clicked for a specific relationship', () => {
         beforeEach(() => {
           $scope.addMoreRelations();
-          $scope.currentReviewPanel.relationships[0] = { contacts: '10', type: '20' };
+          $scope.currentReviewPanel.contactSettings.relationships[0] = { contacts: '10', type: '20' };
 
           $scope.removeRelation(1);
         });
 
         it('removes the clicked specific relationship selection ui', () => {
-          expect($scope.currentReviewPanel.relationships).toEqual([
+          expect($scope.currentReviewPanel.contactSettings.relationships).toEqual([
             { contacts: '10', type: '20' }
           ]);
         });
@@ -272,6 +303,10 @@
               contact_id: ['3', '1']
             }]
           },
+          visibility_settings: {
+            application_status: ['1'],
+            anonymize_application: '1'
+          },
           is_active: '1',
           formattedContactSettings: {
             include: ['Group 2'],
@@ -283,6 +318,9 @@
               relationshipLabel: 'Benefits Specialist',
               contacts: ['Kiara Jones', 'Default Organization']
             }]
+          },
+          formattedVisibilitySettings: {
+            applicationStatus: ['Ongoing']
           }
         }]);
       });
@@ -300,19 +338,25 @@
       it('open a popup to edit the selected review panel', () => {
         expect($scope.currentReviewPanel).toEqual({
           id: '46',
-          groups: {
-            include: ['2'],
-            exclude: ['1']
-          },
           isEnabled: true,
           title: 'New Panel',
-          relationships: [{
-            contacts: ['4', '2'],
-            type: '14_a_b'
-          }, {
-            contacts: ['3', '1'],
-            type: '14_b_a'
-          }]
+          contactSettings: {
+            groups: {
+              include: ['2'],
+              exclude: ['1']
+            },
+            relationships: [{
+              contacts: ['4', '2'],
+              type: '14_a_b'
+            }, {
+              contacts: ['3', '1'],
+              type: '14_b_a'
+            }]
+          },
+          visibilitySettings: {
+            selectedApplicantStatus: ['1'],
+            anonymizeApplication: true
+          }
         });
 
         expect(dialogService.open).toHaveBeenCalledWith('ReviewPanels',

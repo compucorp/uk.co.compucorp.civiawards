@@ -1,80 +1,123 @@
 <div id="bootstrap-theme">
-  <form
-    name="model.review_panel_form"
-    class="form-horizontal civiawards__award__review-panel-form"
-    ng-class="{'civiawards__award__review-panel-form--submitted': model.submitButtonClickedOnce}">
-    <div class="form-group">
-      <label class="col-sm-5 control-label required-mark">
-        Title
-      </label>
-      <div class="col-sm-7">
-        <input
-          type="text" ng-model="model.currentReviewPanel.title" required
-          class="form-control" ng-minlength="1" placeholder="Review Panel Title">
-        </input>
-      </div>
-    </div>
-    <div class="form-group">
-      <label
-        for="civiaward-review-panel-popup-isenabled"
-        class="col-xs-5 control-label">
-        Enabled?
-      </label>
-      <div class="col-xs-7">
-        <input
-          type="checkbox" id="civiaward-review-panel-popup-isenabled"
-          ng-model="model.currentReviewPanel.isEnabled"
-        />
-      </div>
-    </div>
+  <ul class="nav nav-tabs">
+    <li ng-repeat="tab in model.tabs" ng-class="{active: model.activeTab === tab.name}">
+      <a href ng-click="model.selectTab(tab.name)">
+        {{ tab.label }}
+      </a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" ng-show="model.activeTab === 'people'">
+      <form
+        name="model.review_panel_form"
+        class="form-horizontal civiawards__award__review-panel-form"
+        ng-class="{'civiawards__award__review-panel-form--submitted': model.submitButtonClickedOnce}">
+        <div class="form-group">
+          <label class="col-sm-5 control-label required-mark">
+            Title
+          </label>
+          <div class="col-sm-7">
+            <input
+              type="text" ng-model="model.currentReviewPanel.title" required
+              class="form-control" ng-minlength="1" placeholder="Review Panel Title">
+            </input>
+          </div>
+        </div>
+        <div class="form-group">
+          <label
+            for="civiaward-review-panel-popup-isenabled"
+            class="col-xs-5 control-label">
+            Enabled?
+          </label>
+          <div class="col-xs-7">
+            <input
+              type="checkbox" id="civiaward-review-panel-popup-isenabled"
+              ng-model="model.currentReviewPanel.isEnabled"
+            />
+          </div>
+        </div>
 
-    <div class="form-group">
-      <label class="col-sm-5 control-label">
-        Select Group or smart group
-      </label>
-      <div class="col-sm-7">
-        <input civiaward-contacts-group-dropdown ng-model="model.currentReviewPanel.groups"/>
-      </div>
-    </div>
+        <div class="form-group">
+          <label class="col-sm-5 control-label">
+            Group or Smart Group
+          </label>
+          <div class="col-sm-7">
+            <input civiaward-contacts-group-dropdown ng-model="model.currentReviewPanel.contactSettings.groups"/>
+          </div>
+        </div>
 
-    <div class="form-group">
-      <label class="col-sm-12 control-label">
-        Additional contacts to add to group
-      </label>
-    </div>
+        <div class="form-group">
+          <label class="col-sm-12 control-label">
+            Additional Contacts to add to Group
+          </label>
+        </div>
 
-    <div class="form-group" ng-repeat="relationship in model.currentReviewPanel.relationships">
-      <div class="col-xs-4 civiawards__award__review-panel__rel-type">
-        <input class="form-control"
-          ng-model="relationship.type"
-          placeholder="Relationship Type"
-          crm-ui-select="{allowClear: true, data: model.relationshipTypes}"
-          ng-required="relationship.contacts.length > 0"
-        />
-      </div>
-      <div class="civiawards__award__review-panel__to-label">to</div>
-      <div class="col-xs-5">
-        <input class="form-control"
-          ng-model="relationship.contacts"
-          placeholder="Select contact(s)"
-          crm-entityref="{
-            entity: 'Contact',
-            select: { multiple: true }
-          }"
-          ng-required="relationship.type.length > 0"
-        />
-      </div>
-      <div class="civiawards__award__review-panel__remove-button" ng-if="$index > 0">
-        <a
-          class="btn btn-link"
-          ng-click="model.removeRelation($index)">
-          Remove
+        <div class="form-group" ng-repeat="relationship in model.currentReviewPanel.contactSettings.relationships">
+          <div class="col-xs-4 civiawards__award__review-panel__rel-type">
+            <input class="form-control"
+              ng-model="relationship.type"
+              placeholder="Relationship Type"
+              crm-ui-select="{allowClear: true, data: model.relationshipTypes}"
+              ng-required="relationship.contacts.length > 0"
+            />
+          </div>
+          <div class="civiawards__award__review-panel__to-label">to</div>
+          <div class="col-xs-5">
+            <input class="form-control"
+              ng-model="relationship.contacts"
+              placeholder="Select Contact(s)"
+              crm-entityref="{
+                entity: 'Contact',
+                select: { multiple: true }
+              }"
+              ng-required="relationship.type.length > 0"
+            />
+          </div>
+          <div class="civiawards__award__review-panel__remove-button" ng-if="$index > 0">
+            <a
+              class="btn btn-link"
+              ng-click="model.removeRelation($index)">
+              Remove
+            </a>
+          </div>
+        </div>
+
+        <a class="btn btn-primary text-center" ng-click="model.addMoreRelations()">
+          <i class="fa fa-plus-circle"></i> Add More
         </a>
-      </div>
+      </form>
     </div>
-
-    <a class="btn btn-primary text-center" ng-click="model.addMoreRelations()">
-      <i class="fa fa-plus-circle"></i> Add More
-    </a>
-  </form>
+    <div class="tab-pane active" ng-show="model.activeTab === 'applications'">
+      <form
+        class="form-horizontal">
+        <div class="form-group">
+          <label class="col-sm-5 control-label">
+            Applicant Status's
+          </label>
+          <div class="col-sm-7">
+            <input class="form-control"
+              ng-model="model.currentReviewPanel.visibilitySettings.selectedApplicantStatus"
+              placeholder="Applicant Status(s)"
+              crm-ui-select="{
+                allowClear: true,
+                multiple: true,
+                data: model.applicantStatusSelect2Options
+              }"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="tab-pane active" ng-show="model.activeTab === 'permissions'">
+      <form
+        class="form-horizontal">
+        <div class="form-group">
+          <label class="col-sm-6 control-label">Anonymise Contacts for this panel?</label>
+          <div class="col-sm-3">
+            <input type="checkbox" ng-model="model.currentReviewPanel.visibilitySettings.anonymizeApplication">
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
