@@ -48,7 +48,8 @@
   }
 }
 
-.civiawards__award__review-fields--selected {
+.civiawards__award__review-fields--selected,
+.civiawards__award__review-panels__list {
   margin: 0 $gutter-width $gutter-width !important;
   width: calc(100% - #{$gutter-width * 2});
 
@@ -103,4 +104,12 @@
 
 .civiawards__award__review-panel__rel-type {
   width: 220px;
+}
+
+.civiawards__award__review-panel-list__dropdown {
+  font-size: $font-size-base;
+}
+
+.civiawards__award__review-panel-list__exlcuded {
+  text-decoration: line-through;
 }

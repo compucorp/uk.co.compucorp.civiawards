@@ -1,20 +1,25 @@
 /* eslint-env jasmine */
 (function (_) {
   describe('civiawardReviewPanels', () => {
-    let $rootScope, $controller, $scope, crmApi, $q, crmStatus, ts,
-      dialogService, RelationshipTypeData;
+    let $rootScope, $controller, $scope, crmApi, $q, crmStatus, ts, ContactsData,
+      dialogService, RelationshipTypeData, GroupData, ReviewPanelsMockData;
     const entityActionHandlers = {
       'AwardReviewPanel.create': _.noop,
-      'RelationshipType.get': relationshipTypeGetHandler
+      'RelationshipType.get': relationshipTypeGetHandler,
+      'AwardReviewPanel.get': awardReviewPanelGetHandler,
+      'Contact.get': contactGetHandler,
+      'Group.get': groupGetHandler
     };
 
     beforeEach(module('civiawards.templates', 'civiawards', 'crmUtil', 'civicase.data', 'civiawards.data', function ($provide) {
       $provide.value('crmApi', getCrmApiMock());
 
-      $provide.value('dialogService', jasmine.createSpyObj('dialogService', ['open']));
+      $provide.value('dialogService', jasmine.createSpyObj('dialogService', ['open', 'close']));
     }));
 
-    beforeEach(inject((_$q_, _$controller_, _$rootScope_, _crmApi_, _crmStatus_, _ts_, _dialogService_, _RelationshipTypeData_) => {
+    beforeEach(inject((_$q_, _$controller_, _$rootScope_, _crmApi_, _crmStatus_,
+      _ts_, _dialogService_, _RelationshipTypeData_, _GroupData_,
+      _ReviewPanelsMockData_, _ContactsData_) => {
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       dialogService = _dialogService_;
@@ -23,6 +28,9 @@
       $q = _$q_;
       ts = _ts_;
       RelationshipTypeData = _RelationshipTypeData_;
+      ReviewPanelsMockData = _ReviewPanelsMockData_;
+      ContactsData = _ContactsData_;
+      GroupData = _GroupData_;
       $scope = $rootScope.$new();
 
       dialogService.dialogs = {};
@@ -39,8 +47,16 @@
         expect($scope.submitInProgress).toBe(false);
       });
 
+      it('starts fetching required data', () => {
+        expect($scope.isLoading).toBe(true);
+      });
+
+      it('resets the review panel list', () => {
+        expect($scope.existingReviewPanels).toEqual([]);
+      });
+
       it('resets all fields inside review panel popup', () => {
-        expect($scope.reviewPanel).toEqual({
+        expect($scope.currentReviewPanel).toEqual({
           groups: { include: [], exclude: [] },
           isEnabled: false,
           title: '',
@@ -104,10 +120,10 @@
           $scope.awardId = 1;
           $scope.review_panel_form.$valid = true;
           $scope.submitInProgress = false;
-          $scope.reviewPanel.title = 'New Review Panel';
-          $scope.reviewPanel.isEnabled = true;
-          $scope.reviewPanel.groups = { include: [1, 2], exclude: [3, 4] };
-          $scope.reviewPanel.relationships = [{
+          $scope.currentReviewPanel.title = 'New Review Panel';
+          $scope.currentReviewPanel.isEnabled = true;
+          $scope.currentReviewPanel.groups = { include: [1, 2], exclude: [3, 4] };
+          $scope.currentReviewPanel.relationships = [{
             contacts: '10,11',
             type: '17_a_b'
           }, {
@@ -118,8 +134,9 @@
           saveButtonClickHandler();
         });
 
-        it('saves the review panel', () => {
+        it('saves a new review panel', () => {
           expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
+            id: null,
             title: 'New Review Panel',
             is_active: '1',
             case_type_id: 1,
@@ -184,7 +201,7 @@
         });
 
         it('adds one more specific relationship selection ui', () => {
-          expect($scope.reviewPanel.relationships).toEqual([
+          expect($scope.currentReviewPanel.relationships).toEqual([
             { contacts: '', type: '' }, { contacts: '', type: '' }
           ]);
         });
@@ -193,16 +210,115 @@
       describe('when Remove button is clicked for a specific relationship', () => {
         beforeEach(() => {
           $scope.addMoreRelations();
-          $scope.reviewPanel.relationships[0] = { contacts: '10', type: '20' };
+          $scope.currentReviewPanel.relationships[0] = { contacts: '10', type: '20' };
 
           $scope.removeRelation(1);
         });
 
         it('removes the clicked specific relationship selection ui', () => {
-          expect($scope.reviewPanel.relationships).toEqual([
+          expect($scope.currentReviewPanel.relationships).toEqual([
             { contacts: '10', type: '20' }
           ]);
         });
+      });
+    });
+
+    describe('groups', () => {
+      beforeEach(() => {
+        createController();
+        $scope.$digest();
+      });
+
+      it('fetches all groups', () => {
+        expect(crmApi).toHaveBeenCalledWith('Group', 'get', {
+          sequential: 1,
+          return: ['id', 'title'],
+          options: { limit: 0 }
+        });
+      });
+    });
+
+    describe('review panels list', () => {
+      beforeEach(() => {
+        $scope.awardId = '10';
+        createController();
+        $scope.$digest();
+      });
+
+      it('fetches all exisiting review panels for the award', () => {
+        expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+          sequential: 1,
+          case_type_id: '10',
+          options: { limit: 0 }
+        });
+      });
+
+      it('displays all existing review panels for the award', () => {
+        expect($scope.existingReviewPanels).toEqual([{
+          id: '46',
+          title: 'New Panel',
+          case_type_id: '62',
+          contact_settings: {
+            exclude_groups: ['1'],
+            include_groups: ['2'],
+            relationship: [{
+              is_a_to_b: '1',
+              relationship_type_id: '14',
+              contact_id: ['4', '2']
+            }, {
+              is_a_to_b: '0',
+              relationship_type_id: '14',
+              contact_id: ['3', '1']
+            }]
+          },
+          is_active: '1',
+          formattedContactSettings: {
+            include: ['Group 2'],
+            exclude: ['Group 1'],
+            relation: [{
+              relationshipLabel: 'Benefits Specialist is',
+              contacts: ['Shauna Barkley', 'Shauna Wattson']
+            }, {
+              relationshipLabel: 'Benefits Specialist',
+              contacts: ['Kiara Jones', 'Default Organization']
+            }]
+          }
+        }]);
+      });
+    });
+
+    describe('when editing an existing review panel', () => {
+      beforeEach(() => {
+        $scope.awardId = '10';
+        createController();
+        $scope.$digest();
+
+        $scope.handleEditReviewPanel($scope.existingReviewPanels[0]);
+      });
+
+      it('open a popup to edit the selected review panel', () => {
+        expect($scope.currentReviewPanel).toEqual({
+          id: '46',
+          groups: {
+            include: ['2'],
+            exclude: ['1']
+          },
+          isEnabled: true,
+          title: 'New Panel',
+          relationships: [{
+            contacts: ['4', '2'],
+            type: '14_a_b'
+          }, {
+            contacts: ['3', '1'],
+            type: '14_b_a'
+          }]
+        });
+
+        expect(dialogService.open).toHaveBeenCalledWith('ReviewPanels',
+          '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
+          $scope,
+          jasmine.any(Object)
+        );
       });
     });
 
@@ -226,6 +342,45 @@
         values: _.cloneDeep(RelationshipTypeData.values)
       };
     }
+
+    /**
+     * @returns {object} the mocked response for the Groups.Get api action.
+     */
+    function groupGetHandler () {
+      return {
+        is_error: 0,
+        version: 3,
+        count: GroupData.values.length,
+        values: _.cloneDeep(GroupData.values)
+      };
+    }
+
+    /**
+     * @returns {object} the mocked response for the AwardReviewPanel.Get
+     * api action.
+     */
+    function awardReviewPanelGetHandler () {
+      return {
+        is_error: 0,
+        version: 3,
+        count: ReviewPanelsMockData.length,
+        values: _.cloneDeep(ReviewPanelsMockData)
+      };
+    }
+
+    /**
+     * @returns {object} the mocked response for the Contact.Get
+     * api action.
+     */
+    function contactGetHandler () {
+      return {
+        is_error: 0,
+        version: 3,
+        count: ContactsData.values.length,
+        values: _.cloneDeep(ContactsData.values)
+      };
+    }
+
     /**
      * @returns {Function} Returns a spy function that can replace `CRM.api3`. It also returns a mocked response
      * if there's a handler defined in the `entityActionHandler` map. The name of the handler follows the structure
