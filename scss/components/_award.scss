@@ -1,3 +1,9 @@
+.___outside-namespace {
+  .crm-container.ui-dialog .ui-dialog-buttonset .civiawards__award__review-panel-form__delete { /* stylelint-disable-line selector-max-compound-selectors */
+    float: left;
+  }
+}
+
 .civiawards__award--edit {
   > .panel-body {
     padding: 0;
@@ -108,6 +114,10 @@
 
 .civiawards__award__review-panel-list__dropdown {
   font-size: $font-size-base;
+
+  + .dropdown-menu a {
+    cursor: pointer;
+  }
 }
 
 .civiawards__award__review-panel-list__exlcuded {

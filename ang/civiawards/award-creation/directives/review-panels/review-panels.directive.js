@@ -29,11 +29,24 @@
     $scope.addMoreRelations = addMoreRelations;
     $scope.removeRelation = removeRelation;
     $scope.handleEditReviewPanel = handleEditReviewPanel;
+    $scope.handleDeleteReviewPanel = handleDeleteReviewPanel;
+    $scope.handleActiveStateReviewPanel = handleActiveStateReviewPanel;
+    $scope.getActiveStateLabel = getActiveStateLabel;
 
     (function init () {
       resetReviewPanelPopup();
       handleInitialDataLoad();
     }());
+
+    /**
+     * Get label for the active state for the given review panel
+     *
+     * @param {object} reviewPanel review panel
+     * @returns {string} enable/disable
+     */
+    function getActiveStateLabel (reviewPanel) {
+      return reviewPanel.is_active === '0' ? ts('Enable') : ts('Disable');
+    }
 
     /**
      * Handles Initial loading of data from API
@@ -134,6 +147,65 @@
     }
 
     /**
+     * Handle Deletion of Review panel
+     *
+     * @param {object} reviewPanel review panel
+     */
+    function handleDeleteReviewPanel (reviewPanel) {
+      CRM.confirm({
+        title: ts('Delete %1?', { 1: reviewPanel.title }),
+        message: ts('Are you sure you want to delete this?')
+      }).on('crmConfirm:yes', function () {
+        $scope.submitInProgress = true;
+
+        var promise = crmApi('AwardReviewPanel', 'delete', {
+          id: reviewPanel.id
+        }).then(refreshReviewPanelsList)
+          .then(function () {
+            if (dialogService.dialogs.ReviewPanels) {
+              dialogService.close('ReviewPanels');
+              resetReviewPanelPopup();
+            }
+          })
+          .finally(function () {
+            $scope.submitInProgress = false;
+          });
+
+        return crmStatus({
+          start: ts('Deleting Review Panel...'),
+          success: ts('Review Panel Deleted')
+        }, promise);
+      });
+    }
+
+    /**
+     * Handle Enable/Disable review panel
+     *
+     * @param {object} reviewPanel review panel
+     */
+    function handleActiveStateReviewPanel (reviewPanel) {
+      CRM.confirm({
+        title: ts('%1 %2?', { 1: getActiveStateLabel(reviewPanel), 2: reviewPanel.title }),
+        message: ts('Are you sure you want to %1 this?', { 1: getActiveStateLabel(reviewPanel).toLowerCase() })
+      }).on('crmConfirm:yes', function () {
+        $scope.submitInProgress = true;
+
+        var promise = crmApi('AwardReviewPanel', 'create', {
+          id: reviewPanel.id,
+          is_active: reviewPanel.is_active === '0' ? '1' : '0'
+        }).then(refreshReviewPanelsList)
+          .finally(function () {
+            $scope.submitInProgress = false;
+          });
+
+        return crmStatus({
+          start: ts('Saving Review Panel...'),
+          success: ts('Review Panel saved')
+        }, promise);
+      });
+    }
+
+    /**
      * Format Review panel data fetched from API to be shown on the UI
      *
      * @param {Array} reviewPanelData list of review panels fetched from API
@@ -163,19 +235,27 @@
           );
         });
 
-        _.each(reviewPanel.contact_settings.relationship, function (relationship) {
-          var specificRelationDetails = { relationshipLabel: '', contacts: [] };
+        if (reviewPanel.contact_settings.relationship.length > 0) {
+          _.each(reviewPanel.contact_settings.relationship, function (relationship) {
+            var specificRelationDetails = { relationshipLabel: '', contacts: [] };
 
-          specificRelationDetails.relationshipLabel = relationship.is_a_to_b === '1'
-            ? relationshipTypesIndexed[relationship.relationship_type_id].label_a_b
-            : relationshipTypesIndexed[relationship.relationship_type_id].label_b_a;
+            specificRelationDetails.relationshipLabel = relationship.is_a_to_b === '1'
+              ? relationshipTypesIndexed[relationship.relationship_type_id].label_a_b
+              : relationshipTypesIndexed[relationship.relationship_type_id].label_b_a;
 
-          _.each(relationship.contact_id, function (contactID) {
-            specificRelationDetails.contacts.push(contactsIndexed[contactID].display_name);
+            _.each(relationship.contact_id, function (contactID) {
+              specificRelationDetails.contacts.push(contactsIndexed[contactID].display_name);
+            });
+
+            reviewPanel.formattedContactSettings.relation.push(specificRelationDetails);
           });
-
-          reviewPanel.formattedContactSettings.relation.push(specificRelationDetails);
-        });
+        } else {
+          // add extra realtionship to be shown on the UI after fetching
+          reviewPanel.contact_settings.relationship.push({
+            contacts: '',
+            type: ''
+          });
+        }
       });
 
       return reviewPanelDataCopied;
@@ -196,6 +276,23 @@
       });
     }
 
+    /**
+     * Refreshes Review Panels list
+     *
+     * @returns {Promise} promise
+     */
+    function refreshReviewPanelsList () {
+      return fetchExistingReviewPanels($scope.awardId)
+        .then(function (existingReviewPanelsData) {
+          return fetchContactsFromPanels(existingReviewPanelsData)
+            .then(storeContactsIndexedById)
+            .then(function () {
+              return existingReviewPanelsData;
+            });
+        }).then(function (existingReviewPanelsData) {
+          $scope.existingReviewPanels = formatReviewPanelDataForUI(existingReviewPanelsData);
+        });
+    }
     /**
      * Get all groups from API for the given award id
      *
@@ -294,6 +391,15 @@
                 saveReviewPanel();
               });
             }
+          }, {
+            text: ts('Delete'),
+            icons: { primary: 'fa-times' },
+            class: 'civiawards__award__review-panel-form__delete',
+            click: function () {
+              $scope.$apply(function () {
+                handleDeleteReviewPanel($scope.currentReviewPanel);
+              });
+            }
           }]
         }
       );
@@ -305,16 +411,22 @@
      * @returns {Promise} promise
      */
     function prepareRelationshipsForSave () {
-      return _.map($scope.currentReviewPanel.relationships, function (relation) {
-        var isAToB = relation.type.indexOf('a_b') !== -1;
-        var relationshipTypeId = relation.type.substr(0, relation.type.indexOf('_'));
+      return _.chain($scope.currentReviewPanel.relationships)
+        // filter the extra realtionship added in the UI before saving
+        .filter(function (relation) {
+          return relation.type.length !== 0;
+        })
+        .map(function (relation) {
+          var isAToB = relation.type.indexOf('a_b') !== -1;
+          var relationshipTypeId = relation.type.substr(0, relation.type.indexOf('_'));
 
-        return {
-          is_a_to_b: isAToB ? '1' : '0',
-          relationship_type_id: relationshipTypeId,
-          contact_id: getSelect2Value(relation.contacts)
-        };
-      });
+          return {
+            is_a_to_b: isAToB ? '1' : '0',
+            relationship_type_id: relationshipTypeId,
+            contact_id: getSelect2Value(relation.contacts)
+          };
+        })
+        .value();
     }
 
     /**
@@ -355,15 +467,7 @@
           dialogService.close('ReviewPanels');
           resetReviewPanelPopup();
 
-          return fetchExistingReviewPanels($scope.awardId);
-        }).then(function (existingReviewPanelsData) {
-          return fetchContactsFromPanels(existingReviewPanelsData)
-            .then(storeContactsIndexedById)
-            .then(function () {
-              return existingReviewPanelsData;
-            });
-        }).then(function (existingReviewPanelsData) {
-          $scope.existingReviewPanels = formatReviewPanelDataForUI(existingReviewPanelsData);
+          return refreshReviewPanelsList();
         }).finally(function () {
           $scope.submitInProgress = false;
         });
