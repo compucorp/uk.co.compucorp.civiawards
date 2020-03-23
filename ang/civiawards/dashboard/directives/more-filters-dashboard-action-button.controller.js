@@ -91,7 +91,7 @@
         .then(processAwardTypeFilters)
         .then(function (awardTypeIds) {
           var param = {
-            case_type_id: awardTypeIds.length > 0 ? { IN: awardTypeIds } : ''
+            case_type_id: awardTypeIds.length > 0 ? { IN: awardTypeIds } : { 'IS NULL': 1 }
           };
 
           if (model.selectedFilters.statuses.length > 0) {
