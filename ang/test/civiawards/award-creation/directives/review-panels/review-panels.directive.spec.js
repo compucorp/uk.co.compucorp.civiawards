@@ -3,7 +3,7 @@
   describe('civiawardReviewPanels', () => {
     let $rootScope, $controller, $scope, crmApi, $q, crmStatus, ts, ContactsData,
       dialogService, RelationshipTypeData, GroupData, ReviewPanelsMockData,
-      entityActionHandlers;
+      entityActionHandlers, TagsMockData;
 
     beforeEach(module('civiawards.templates', 'civiawards', 'crmUtil', 'civicase.data', 'civiawards.data', function ($provide) {
       $provide.value('crmApi', getCrmApiMock());
@@ -13,7 +13,8 @@
 
     beforeEach(inject((_$q_, _$controller_, _$rootScope_, _crmApi_, _crmStatus_,
       _ts_, _dialogService_, _RelationshipTypeData_, _GroupData_,
-      _ReviewPanelsMockData_, _ContactsData_) => {
+      _ReviewPanelsMockData_, _ContactsData_, _TagsMockData_) => {
+
       setApiActionHandlers();
       $controller = _$controller_;
       $rootScope = _$rootScope_;
@@ -25,6 +26,7 @@
       RelationshipTypeData = _RelationshipTypeData_;
       ReviewPanelsMockData = _ReviewPanelsMockData_;
       ContactsData = _ContactsData_;
+      TagsMockData = _TagsMockData_;
       GroupData = _GroupData_;
       $scope = $rootScope.$new();
 
@@ -68,7 +70,11 @@
           isEnabled: false,
           visibilitySettings: {
             selectedApplicantStatus: '',
-            anonymizeApplication: true
+            anonymizeApplication: true,
+            tags: {
+              genericTags: '',
+              tagSets: {}
+            }
           },
           contactSettings: {
             groups: { include: [], exclude: [] },
@@ -152,6 +158,12 @@
             type: '18_b_a'
           }];
           $scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus = '1,2';
+          $scope.currentReviewPanel.visibilitySettings.tags = {
+            genericTags: '1,2',
+            tagSets: {
+              8: '12,13'
+            }
+          };
 
           $scope.$digest();
           saveButtonClickHandler();
@@ -178,7 +190,8 @@
             },
             visibility_settings: {
               application_status: ['1', '2'],
-              anonymize_application: '1'
+              anonymize_application: '1',
+              application_tags: ['1', '2', '12', '13']
             }
           });
         });
@@ -265,6 +278,21 @@
       });
     });
 
+    describe('tags', () => {
+      beforeEach(() => {
+        createController();
+        $scope.$digest();
+      });
+
+      it('fetches all tags for cases', () => {
+        expect(crmApi).toHaveBeenCalledWith('Tag', 'get', {
+          sequential: 1,
+          used_for: 'Cases',
+          options: { limit: 0 }
+        });
+      });
+    });
+
     describe('review panels list', () => {
       describe('when there is atleast one relationship', () => {
         beforeEach(() => {
@@ -298,7 +326,8 @@
                 }]
               },
               formattedVisibilitySettings: {
-                applicationStatus: ['Ongoing']
+                applicationStatus: ['Ongoing'],
+                tags: ['Non-profit', 'Strenuous', 'awq']
               }
             });
 
@@ -309,7 +338,8 @@
                 relation: []
               },
               formattedVisibilitySettings: {
-                applicationStatus: []
+                applicationStatus: [],
+                tags: []
               }
             });
 
@@ -358,7 +388,8 @@
                 relation: []
               },
               formattedVisibilitySettings: {
-                applicationStatus: []
+                applicationStatus: [],
+                tags: []
               }
             });
 
@@ -405,7 +436,14 @@
           },
           visibilitySettings: {
             selectedApplicantStatus: ['1'],
-            anonymizeApplication: true
+            anonymizeApplication: true,
+            tags: {
+              genericTags: ['1', '12'],
+              tagSets: {
+                14: ['15'],
+                6: []
+              }
+            }
           }
         });
 
@@ -588,7 +626,8 @@
           return awardReviewPanelGetHandler(options);
         },
         'Contact.get': contactGetHandler,
-        'Group.get': groupGetHandler
+        'Group.get': groupGetHandler,
+        'Tag.get': tagGetHandler
       };
     }
     /**
@@ -621,6 +660,19 @@
         version: 3,
         count: GroupData.values.length,
         values: _.cloneDeep(GroupData.values)
+      };
+    }
+
+    /**
+
+     * @returns {object} the mocked response for the Tag.Get api action.
+     */
+    function tagGetHandler () {
+      return {
+        is_error: 0,
+        version: 3,
+        count: TagsMockData.get().length,
+        values: _.cloneDeep(TagsMockData.get())
       };
     }
 

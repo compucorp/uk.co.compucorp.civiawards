@@ -106,6 +106,37 @@
             />
           </div>
         </div>
+
+        <div class="form-group">
+          <label class="col-sm-5 control-label">
+            Tags
+          </label>
+          <div class="col-xs-7">
+            <input
+              placeholder="Select Tags"
+              class="form-control civiawards__award__review-panel__tags-input"
+              ng-model="model.currentReviewPanel.visibilitySettings.tags.genericTags"
+              crm-ui-select="{
+                allowClear: true,
+                multiple: true,
+                data: model.tags.genericTags,
+                formatResult: model.formatTags
+              }"/>
+          </div>
+        </div>
+
+        <div class="form-group" ng-repeat="tagSet in model.tags.tagSets">
+          <label class="col-sm-5 control-label">
+            {{ tagSet.name }}
+          </label>
+          <div class="col-xs-7">
+            <input
+              placeholder="Select from {{ tagSet.name }}"
+              class="form-control civiawards__award__review-panel__tags-input"
+              ng-model="model.currentReviewPanel.visibilitySettings.tags.tagSets[tagSet.id]"
+              crm-ui-select="{allowClear: true, multiple: true, data: tagSet.children}"/>
+          </div>
+        </div>
       </form>
     </div>
     <div class="tab-pane active" ng-show="model.activeTab === 'permissions'">
