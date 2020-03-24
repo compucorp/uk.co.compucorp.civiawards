@@ -3,7 +3,7 @@
 (function (_) {
   describe('More Filters Dashboard Action Button', () => {
     let $q, $location, $scope, $controller, $rootScope, dialogService,
-      crmApiMock, originalCrmAPIMock, crmApi;
+      crmApiMock, crmApi;
 
     beforeEach(module('civiawards', function ($provide) {
       crmApiMock = jasmine.createSpy();
@@ -198,8 +198,6 @@
 
       describe('when filters response yields no awards types ids', () => {
         beforeEach(() => {
-          originalCrmAPIMock = crmApiMock;
-
           // Overwrite CRM API to return no results.
           crmApiMock.and.returnValue($q.resolve({
             values: []
@@ -211,11 +209,7 @@
           $rootScope.$digest();
         });
 
-        afterEach(() => {
-          crmApiMock = originalCrmAPIMock;
-        });
-
-        it('should set correct param value for case_type_id param', () => {
+        it('hides all case types, cases and activities from dashboard', () => {
           expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', jasmine.objectContaining({
             case_type_id: { 'IS NULL': 1 }
           }));
