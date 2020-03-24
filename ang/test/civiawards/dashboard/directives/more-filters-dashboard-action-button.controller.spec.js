@@ -6,10 +6,10 @@
       crmApiMock, crmApi;
 
     beforeEach(module('civiawards', function ($provide) {
-      crmApiMock = jasmine.createSpy();
+      crmApiMock = jasmine.createSpy('crmApi');
 
       $provide.value('crmApi', crmApiMock);
-      $provide.value('ts', jasmine.createSpy());
+      $provide.value('ts', jasmine.createSpy('ts'));
     }));
 
     beforeEach(inject((_$q_, _crmApi_, _$controller_, _$rootScope_, _$location_, _dialogService_) => {
@@ -76,7 +76,7 @@
 
     describe('when clicking the action button', () => {
       beforeEach(() => {
-        dialogService.open = jasmine.createSpy();
+        dialogService.open = jasmine.createSpy('DialogService.open');
         $scope.openMoreFiltersDialog();
       });
 
@@ -105,7 +105,7 @@
       var dialogModel;
 
       beforeEach(() => {
-        dialogService.close = jasmine.createSpy('');
+        dialogService.close = jasmine.createSpy('DialogService.close');
         dialogService.open = function (__, templateName, model) {
           dialogModel = model;
         };
@@ -125,7 +125,11 @@
           });
 
           it('shows the awards where the logged in user is the manager and also applies the rest of filters', () => {
-            expect(crmApi).toHaveBeenCalledWith('AwardManager', 'get', { sequential: 1, contact_id: 203 });
+            expect(crmApi).toHaveBeenCalledWith('AwardManager', 'get', {
+              sequential: 1,
+              contact_id: 203,
+              'case_type_id.is_active': '1'
+            });
             expect(crmApi).toHaveBeenCalledWith('AwardDetail', 'get', {
               sequential: 1,
               start_date: '10/12/2019',
@@ -135,7 +139,8 @@
             });
             expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', {
               case_type_id: { IN: [1, 2] },
-              status_id: { IN: ['3', '4'] }
+              status_id: { IN: ['3', '4'] },
+              'case_type_id.is_active': '1'
             });
           });
         });
@@ -162,7 +167,10 @@
         });
 
         it('shows the all the awards', () => {
-          expect(crmApi).toHaveBeenCalledWith('AwardManager', 'get', { sequential: 1 });
+          expect(crmApi).toHaveBeenCalledWith('AwardManager', 'get', {
+            sequential: 1,
+            'case_type_id.is_active': '1'
+          });
         });
       });
 

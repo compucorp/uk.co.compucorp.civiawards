@@ -23,6 +23,21 @@
 
       <label>Award End Date</label>
       <civicase-ui-date-range date-range="model.selectedFilters.end_date"></civicase-ui-date-range>
+      <br />
+      <label
+        class="civicase__case-filter-form-elements"
+        ng-click="model.selectedFilters.showDisabledAwards = !model.selectedFilters.showDisabledAwards"
+      >
+        <span class="civicase__checkbox" role="checkbox" aria-checked="true" tabindex="0" aria-labelledby="Deleted Cases" ng-click="toggleIsDeleted($event)" ng-keydown="toggleIsDeleted($event)">
+          <i
+            ng-if="model.selectedFilters.showDisabledAwards"
+            class="civicase__checkbox--checked material-icons ng-scope"
+          >check_box</i>
+        </span>
+        <span class="control-label">
+          Show Disabled Awards
+        </span>
+      </label>
     </div>
 
     <button

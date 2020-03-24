@@ -91,7 +91,10 @@
         .then(processAwardTypeFilters)
         .then(function (awardTypeIds) {
           var param = {
-            case_type_id: awardTypeIds.length > 0 ? { IN: awardTypeIds } : ''
+            case_type_id: awardTypeIds.length > 0 ? { IN: awardTypeIds } : '',
+            'case_type_id.is_active': model.selectedFilters.showDisabledAwards
+              ? '0'
+              : '1'
           };
 
           if (model.selectedFilters.statuses.length > 0) {
@@ -150,6 +153,10 @@
       if (model.selectedFilters.awardFilter === 'my_awards') {
         filters.contact_id = CRM.config.user_contact_id;
       }
+
+      filters['case_type_id.is_active'] = model.selectedFilters.showDisabledAwards
+        ? '0'
+        : '1';
 
       return crmApi('AwardManager', 'get', filters)
         .then(function (awardsData) {
