@@ -92,6 +92,9 @@
         .then(function (awardTypeIds) {
           var param = {
             case_type_id: awardTypeIds.length > 0 ? { IN: awardTypeIds } : '',
+
+            // Force dashboard filters to display active or inactive case types
+            // even if we pass specific case type IDs:
             'case_type_id.is_active': model.selectedFilters.showDisabledAwards
               ? '0'
               : '1'
