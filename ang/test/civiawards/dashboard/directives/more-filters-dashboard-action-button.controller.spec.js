@@ -3,7 +3,7 @@
 (function (_) {
   describe('More Filters Dashboard Action Button', () => {
     let $q, $location, $scope, $controller, $rootScope, dialogService,
-      crmApiMock, crmApi;
+      crmApiMock, originalCrmAPIMock, crmApi;
 
     beforeEach(module('civiawards', function ($provide) {
       crmApiMock = jasmine.createSpy();
@@ -193,6 +193,32 @@
 
         it('shows a red dot inside the more filters button', () => {
           expect($scope.isNotificationVisible()).toBe(true);
+        });
+      });
+
+      describe('when filters response yields no awards types ids', () => {
+        beforeEach(() => {
+          originalCrmAPIMock = crmApiMock;
+
+          // Overwrite CRM API to return no results.
+          crmApiMock.and.returnValue($q.resolve({
+            values: []
+          }));
+        });
+
+        beforeEach(() => {
+          dialogModel.applyFilterAndCloseDialog();
+          $rootScope.$digest();
+        });
+
+        afterEach(() => {
+          crmApiMock = originalCrmAPIMock;
+        });
+
+        it('should set correct param value for case_type_id param', () => {
+          expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', jasmine.objectContaining({
+            case_type_id: { 'IS NULL': 1 }
+          }));
         });
       });
     });
