@@ -27,6 +27,20 @@
         anonymize_application: '1'
       },
       is_active: '1'
+    }, {
+      id: '47',
+      title: 'New Panel 2',
+      case_type_id: '62',
+      contact_settings: {
+        exclude_groups: [],
+        include_groups: [],
+        relationship: []
+      },
+      visibility_settings: {
+        application_status: [],
+        anonymize_application: '0'
+      },
+      is_active: '0'
     }
   ]);
 }());

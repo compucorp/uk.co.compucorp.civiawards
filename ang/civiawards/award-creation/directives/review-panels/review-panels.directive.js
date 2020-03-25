@@ -133,6 +133,10 @@
         });
       });
 
+      if (contactIdsToFetch.length === 0) {
+        return $q.resolve([]);
+      }
+
       return crmApi('Contact', 'get', {
         sequential: 1,
         return: ['display_name'],
