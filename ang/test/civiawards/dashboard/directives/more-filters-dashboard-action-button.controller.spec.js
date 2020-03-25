@@ -195,6 +195,26 @@
           expect($scope.isNotificationVisible()).toBe(true);
         });
       });
+
+      describe('when filters response yields no awards types ids', () => {
+        beforeEach(() => {
+          // Overwrite CRM API to return no results.
+          crmApiMock.and.returnValue($q.resolve({
+            values: []
+          }));
+        });
+
+        beforeEach(() => {
+          dialogModel.applyFilterAndCloseDialog();
+          $rootScope.$digest();
+        });
+
+        it('hides all case types, cases and activities from dashboard', () => {
+          expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', jasmine.objectContaining({
+            case_type_id: { 'IS NULL': 1 }
+          }));
+        });
+      });
     });
 
     /**
