@@ -281,66 +281,44 @@
           });
         });
 
-        it('displays all existing review panels for the award', () => {
-          expect($scope.existingReviewPanels).toEqual([{
-            id: '46',
-            title: 'New Panel',
-            case_type_id: '62',
-            contact_settings: {
-              exclude_groups: ['1'],
-              include_groups: ['2'],
-              relationship: [{
-                is_a_to_b: '1',
-                relationship_type_id: '14',
-                contact_id: ['4', '2']
-              }, {
-                is_a_to_b: '0',
-                relationship_type_id: '14',
-                contact_id: ['3', '1']
-              }]
-            },
-            visibility_settings: {
-              application_status: ['1'],
-              anonymize_application: '1'
-            },
-            is_active: '1',
-            formattedContactSettings: {
-              include: ['Group 2'],
-              exclude: ['Group 1'],
-              relation: [{
-                relationshipLabel: 'Benefits Specialist is',
-                contacts: ['Shauna Barkley', 'Shauna Wattson']
-              }, {
-                relationshipLabel: 'Benefits Specialist',
-                contacts: ['Kiara Jones', 'Default Organization']
-              }]
-            },
-            formattedVisibilitySettings: {
-              applicationStatus: ['Ongoing']
-            }
-          }, {
-            id: '47',
-            title: 'New Panel 2',
-            case_type_id: '62',
-            contact_settings: {
-              exclude_groups: [],
-              include_groups: [],
-              relationship: []
-            },
-            visibility_settings: {
-              application_status: [],
-              anonymize_application: '0'
-            },
-            is_active: '0',
-            formattedContactSettings: {
-              include: [],
-              exclude: [],
-              relation: []
-            },
-            formattedVisibilitySettings: {
-              applicationStatus: []
-            }
-          }]);
+        describe('existing review panels', () => {
+          let expectedReviewPanelsValue;
+
+          beforeEach(() => {
+            const reviewPanel1 = _.extend(ReviewPanelsMockData[0], {
+              formattedContactSettings: {
+                include: ['Group 2'],
+                exclude: ['Group 1'],
+                relation: [{
+                  relationshipLabel: 'Benefits Specialist is',
+                  contacts: ['Shauna Barkley', 'Shauna Wattson']
+                }, {
+                  relationshipLabel: 'Benefits Specialist',
+                  contacts: ['Kiara Jones', 'Default Organization']
+                }]
+              },
+              formattedVisibilitySettings: {
+                applicationStatus: ['Ongoing']
+              }
+            });
+
+            const reviewPanel2 = _.extend(ReviewPanelsMockData[1], {
+              formattedContactSettings: {
+                include: [],
+                exclude: [],
+                relation: []
+              },
+              formattedVisibilitySettings: {
+                applicationStatus: []
+              }
+            });
+
+            expectedReviewPanelsValue = [reviewPanel1, reviewPanel2];
+          });
+
+          it('displays all existing review panels for the award', () => {
+            expect($scope.existingReviewPanels).toEqual(expectedReviewPanelsValue);
+          });
         });
 
         it('shows the contacts name in the contact list', () => {
@@ -369,30 +347,27 @@
           });
         });
 
-        it('displays all existing review panels for the award', () => {
-          expect($scope.existingReviewPanels).toEqual([{
-            id: '47',
-            title: 'New Panel 2',
-            case_type_id: '62',
-            contact_settings: {
-              exclude_groups: [],
-              include_groups: [],
-              relationship: []
-            },
-            visibility_settings: {
-              application_status: [],
-              anonymize_application: '0'
-            },
-            is_active: '0',
-            formattedContactSettings: {
-              include: [],
-              exclude: [],
-              relation: []
-            },
-            formattedVisibilitySettings: {
-              applicationStatus: []
-            }
-          }]);
+        describe('existing review panels', () => {
+          let expectedReviewPanelsValue;
+
+          beforeEach(() => {
+            const reviewPanel = _.extend(ReviewPanelsMockData[1], {
+              formattedContactSettings: {
+                include: [],
+                exclude: [],
+                relation: []
+              },
+              formattedVisibilitySettings: {
+                applicationStatus: []
+              }
+            });
+
+            expectedReviewPanelsValue = [reviewPanel];
+          });
+
+          it('displays all existing review panels for the award', () => {
+            expect($scope.existingReviewPanels).toEqual(expectedReviewPanelsValue);
+          });
         });
 
         it('does not fetch any contact information', () => {
