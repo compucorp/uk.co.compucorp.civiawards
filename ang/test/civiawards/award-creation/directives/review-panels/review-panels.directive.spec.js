@@ -2,14 +2,8 @@
 (function (_) {
   describe('civiawardReviewPanels', () => {
     let $rootScope, $controller, $scope, crmApi, $q, crmStatus, ts, ContactsData,
-      dialogService, RelationshipTypeData, GroupData, ReviewPanelsMockData;
-    const entityActionHandlers = {
-      'AwardReviewPanel.create': _.noop,
-      'RelationshipType.get': relationshipTypeGetHandler,
-      'AwardReviewPanel.get': awardReviewPanelGetHandler,
-      'Contact.get': contactGetHandler,
-      'Group.get': groupGetHandler
-    };
+      dialogService, RelationshipTypeData, GroupData, ReviewPanelsMockData,
+      entityActionHandlers;
 
     beforeEach(module('civiawards.templates', 'civiawards', 'crmUtil', 'civicase.data', 'civiawards.data', function ($provide) {
       $provide.value('crmApi', getCrmApiMock());
@@ -20,6 +14,7 @@
     beforeEach(inject((_$q_, _$controller_, _$rootScope_, _crmApi_, _crmStatus_,
       _ts_, _dialogService_, _RelationshipTypeData_, _GroupData_,
       _ReviewPanelsMockData_, _ContactsData_) => {
+      setApiActionHandlers();
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       dialogService = _dialogService_;
@@ -271,58 +266,113 @@
     });
 
     describe('review panels list', () => {
-      beforeEach(() => {
-        $scope.awardId = '10';
-        createController();
-        $scope.$digest();
-      });
+      describe('when there is atleast one relationship', () => {
+        beforeEach(() => {
+          $scope.awardId = '10';
+          createController();
+          $scope.$digest();
+        });
 
-      it('fetches all exisiting review panels for the award', () => {
-        expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
-          sequential: 1,
-          case_type_id: '10',
-          options: { limit: 0 }
+        it('fetches all exisiting review panels for the award', () => {
+          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+            sequential: 1,
+            case_type_id: '10',
+            options: { limit: 0 }
+          });
+        });
+
+        describe('existing review panels', () => {
+          let expectedReviewPanelsValue;
+
+          beforeEach(() => {
+            const reviewPanel1 = _.extend(ReviewPanelsMockData[0], {
+              formattedContactSettings: {
+                include: ['Group 2'],
+                exclude: ['Group 1'],
+                relation: [{
+                  relationshipLabel: 'Benefits Specialist is',
+                  contacts: ['Shauna Barkley', 'Shauna Wattson']
+                }, {
+                  relationshipLabel: 'Benefits Specialist',
+                  contacts: ['Kiara Jones', 'Default Organization']
+                }]
+              },
+              formattedVisibilitySettings: {
+                applicationStatus: ['Ongoing']
+              }
+            });
+
+            const reviewPanel2 = _.extend(ReviewPanelsMockData[1], {
+              formattedContactSettings: {
+                include: [],
+                exclude: [],
+                relation: []
+              },
+              formattedVisibilitySettings: {
+                applicationStatus: []
+              }
+            });
+
+            expectedReviewPanelsValue = [reviewPanel1, reviewPanel2];
+          });
+
+          it('displays all existing review panels for the award', () => {
+            expect($scope.existingReviewPanels).toEqual(expectedReviewPanelsValue);
+          });
+        });
+
+        it('shows the contacts name in the contact list', () => {
+          expect(crmApi).toHaveBeenCalledWith('Contact', 'get', {
+            sequential: 1,
+            return: ['display_name'],
+            id: { IN: ['4', '2', '3', '1'] },
+            options: { limit: 0 }
+          });
         });
       });
 
-      it('displays all existing review panels for the award', () => {
-        expect($scope.existingReviewPanels).toEqual([{
-          id: '46',
-          title: 'New Panel',
-          case_type_id: '62',
-          contact_settings: {
-            exclude_groups: ['1'],
-            include_groups: ['2'],
-            relationship: [{
-              is_a_to_b: '1',
-              relationship_type_id: '14',
-              contact_id: ['4', '2']
-            }, {
-              is_a_to_b: '0',
-              relationship_type_id: '14',
-              contact_id: ['3', '1']
-            }]
-          },
-          visibility_settings: {
-            application_status: ['1'],
-            anonymize_application: '1'
-          },
-          is_active: '1',
-          formattedContactSettings: {
-            include: ['Group 2'],
-            exclude: ['Group 1'],
-            relation: [{
-              relationshipLabel: 'Benefits Specialist is',
-              contacts: ['Shauna Barkley', 'Shauna Wattson']
-            }, {
-              relationshipLabel: 'Benefits Specialist',
-              contacts: ['Kiara Jones', 'Default Organization']
-            }]
-          },
-          formattedVisibilitySettings: {
-            applicationStatus: ['Ongoing']
-          }
-        }]);
+      describe('when there no relationships in all review panels', () => {
+        beforeEach(() => {
+          setApiActionHandlers({ noRelationPresentInAllReviewPanels: true });
+          $scope.awardId = '10';
+          createController();
+          $scope.$digest();
+        });
+
+        it('fetches all exisiting review panels for the award', () => {
+          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+            sequential: 1,
+            case_type_id: '10',
+            options: { limit: 0 }
+          });
+        });
+
+        describe('existing review panels', () => {
+          let expectedReviewPanelsValue;
+
+          beforeEach(() => {
+            const reviewPanel = _.extend(ReviewPanelsMockData[1], {
+              formattedContactSettings: {
+                include: [],
+                exclude: [],
+                relation: []
+              },
+              formattedVisibilitySettings: {
+                applicationStatus: []
+              }
+            });
+
+            expectedReviewPanelsValue = [reviewPanel];
+          });
+
+          it('displays all existing review panels for the award', () => {
+            expect($scope.existingReviewPanels).toEqual(expectedReviewPanelsValue);
+          });
+        });
+
+        it('does not fetch any contact information', () => {
+          expect(crmApi).not.toHaveBeenCalledWith('Contact', 'get', jasmine.any(Object));
+        });
       });
     });
 
@@ -523,6 +573,25 @@
     });
 
     /**
+     * Set Api Action Handlers
+     *
+     * @param {object} options configurations
+     * @param {string} options.noRelationPresentInAllReviewPanels if no relationships are present in all fetched review panels
+     */
+    function setApiActionHandlers (options) {
+      options = options || {};
+
+      entityActionHandlers = {
+        'AwardReviewPanel.create': _.noop,
+        'RelationshipType.get': relationshipTypeGetHandler,
+        'AwardReviewPanel.get': function () {
+          return awardReviewPanelGetHandler(options);
+        },
+        'Contact.get': contactGetHandler,
+        'Group.get': groupGetHandler
+      };
+    }
+    /**
      * Create Controller
      */
     function createController () {
@@ -556,15 +625,21 @@
     }
 
     /**
+     * @param {object} options configurations
+     * @param {string} options.noRelationPresentInAllReviewPanels if no relationships are present in all fetched review panels
      * @returns {object} the mocked response for the AwardReviewPanel.Get
      * api action.
      */
-    function awardReviewPanelGetHandler () {
+    function awardReviewPanelGetHandler (options) {
+      var mockData = options.noRelationPresentInAllReviewPanels
+        ? [ReviewPanelsMockData[1]]
+        : ReviewPanelsMockData;
+
       return {
         is_error: 0,
         version: 3,
-        count: ReviewPanelsMockData.length,
-        values: _.cloneDeep(ReviewPanelsMockData)
+        count: mockData.length,
+        values: _.cloneDeep(mockData)
       };
     }
 
