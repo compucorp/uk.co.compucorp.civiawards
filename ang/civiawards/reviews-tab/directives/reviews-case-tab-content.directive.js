@@ -19,12 +19,13 @@
    *
    * @param {object} $q the $q service.
    * @param {object} $scope the scope object.
+   * @param {object} $sce angular Strict Contextual Escaping service.
    * @param {Function} crmApi the CiviCRM API service.
    * @param {string} reviewsActivityTypeName the reviews activity type name.
    * @param {string} reviewScoringFieldsGroupName the review scoring fields group name.
    * @param {Function} ts the translation function.
    */
-  function civiawardsReviewsCaseTabContentController ($q, $scope, crmApi, reviewsActivityTypeName,
+  function civiawardsReviewsCaseTabContentController ($q, $scope, $sce, crmApi, reviewsActivityTypeName,
     reviewScoringFieldsGroupName, ts) {
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
     var REVIEW_FORM_URL = 'civicrm/awardreview';
@@ -36,6 +37,7 @@
     $scope.handleViewReviewActivity = handleViewReviewActivity;
     $scope.handleEditReviewActivity = handleEditReviewActivity;
     $scope.handleDeleteReviewActivity = handleDeleteReviewActivity;
+    $scope.trustAsHtml = $sce.trustAsHtml;
 
     (function init () {
       loadReviewActivities();
