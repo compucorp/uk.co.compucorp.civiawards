@@ -441,10 +441,18 @@
 
     /**
      * Open the Popup to Create Review Panels
+     *
+     * @param {object} options options to open popup
+     * @param {object} options.resetData if all the fields should be reset
      */
-    function openCreateReviewPanelPopup () {
+    function openCreateReviewPanelPopup (options) {
       if (dialogService.dialogs.ReviewPanels) {
         return;
+      }
+
+      options = options || {};
+      if (options.resetData) {
+        resetReviewPanelPopup();
       }
 
       dialogService.open(

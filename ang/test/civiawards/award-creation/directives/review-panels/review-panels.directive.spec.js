@@ -14,7 +14,6 @@
     beforeEach(inject((_$q_, _$controller_, _$rootScope_, _crmApi_, _crmStatus_,
       _ts_, _dialogService_, _RelationshipTypeData_, _GroupData_,
       _ReviewPanelsMockData_, _ContactsData_, _TagsMockData_) => {
-
       setApiActionHandlers();
       $controller = _$controller_;
       $rootScope = _$rootScope_;
@@ -71,10 +70,7 @@
           visibilitySettings: {
             selectedApplicantStatus: '',
             anonymizeApplication: true,
-            tags: {
-              genericTags: '',
-              tagSets: {}
-            }
+            tags: []
           },
           contactSettings: {
             groups: { include: [], exclude: [] },
@@ -158,12 +154,7 @@
             type: '18_b_a'
           }];
           $scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus = '1,2';
-          $scope.currentReviewPanel.visibilitySettings.tags = {
-            genericTags: '1,2',
-            tagSets: {
-              8: '12,13'
-            }
-          };
+          $scope.currentReviewPanel.visibilitySettings.tags = ['1', '2', '12', '13'];
 
           $scope.$digest();
           saveButtonClickHandler();
@@ -437,13 +428,7 @@
           visibilitySettings: {
             selectedApplicantStatus: ['1'],
             anonymizeApplication: true,
-            tags: {
-              genericTags: ['1', '12'],
-              tagSets: {
-                14: ['15'],
-                6: []
-              }
-            }
+            tags: ['1', '12', '15']
           }
         });
 
@@ -664,7 +649,6 @@
     }
 
     /**
-
      * @returns {object} the mocked response for the Tag.Get api action.
      */
     function tagGetHandler () {
