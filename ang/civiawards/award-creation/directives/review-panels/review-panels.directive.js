@@ -14,14 +14,13 @@
 
   module.controller('CiviawardReviewPanelsController', function (
     $q, $scope, ts, dialogService, crmApi, crmStatus, getSelect2Value,
-    CaseStatus, TagsHelper) {
+    CaseStatus) {
     var relationshipTypesIndexed = {};
     var contactsIndexed = {};
     var groupsIndexed = {};
     var tagsIndexed = {};
 
     $scope.ts = ts;
-    $scope.tags = {};
     $scope.submitInProgress = false;
     $scope.isLoading = false;
     $scope.submitButtonClickedOnce = false;
@@ -41,23 +40,12 @@
     $scope.handleActiveStateReviewPanel = handleActiveStateReviewPanel;
     $scope.getActiveStateLabel = getActiveStateLabel;
     $scope.selectTab = selectTab;
-    $scope.formatTags = TagsHelper.formatTags;
 
     (function init () {
       $scope.applicantStatusSelect2Options = getApplicantStatusSelect2Options();
       resetReviewPanelPopup();
       handleInitialDataLoad();
     }());
-
-    /**
-     * Set the tab objects to be used in the modal
-     *
-     * @param {Array} tags list of tags
-     */
-    function setTagObjects (tags) {
-      $scope.tags.genericTags = TagsHelper.prepareGenericTags(tags);
-      $scope.tags.tagSets = TagsHelper.prepareTagSetsTree(tags);
-    }
 
     /**
      * Get the tags for Activities from API end point
@@ -126,7 +114,7 @@
             return fetchedData;
           });
       }).then(function (fetchedData) {
-        setTagObjects(fetchedData.tags);
+        $scope.allTags = fetchedData.tags;
         tagsIndexed = _.indexBy(fetchedData.tags, 'id');
 
         $scope.relationshipTypes = prepareRelationshipsTypes(fetchedData.relationships);
@@ -223,64 +211,11 @@
         visibilitySettings: {
           selectedApplicantStatus: reviewPanel.visibility_settings.application_status,
           anonymizeApplication: reviewPanel.visibility_settings.anonymize_application === '1',
-          tags: prepareTagsForEditingReviewPanel(reviewPanel)
+          tags: reviewPanel.visibility_settings.application_tags
         }
       };
 
       openCreateReviewPanelPopup();
-    }
-
-    /**
-     * Prepare Tags for Editing Review panel
-     *
-     * @param {object} reviewPanel review panel object
-     * @returns {object} tags object
-     */
-    function prepareTagsForEditingReviewPanel (reviewPanel) {
-      return {
-        genericTags: getTagIDFromGivenList(reviewPanel.visibility_settings.application_tags, $scope.tags.genericTags),
-        tagSets: prepareTagSetsForEdit(reviewPanel.visibility_settings.application_tags, $scope.tags.tagSets)
-      };
-    }
-
-    /**
-     * Searches the tag ids which belongs to the sent list of tags
-     *
-     * @param {Array} listOfTagIDs list of tag ids
-     * @param {Array} tagsArrayToSearchFrom tags array to search from
-     * @returns {Array} list of tag ids which are found in sent tags
-     */
-    function getTagIDFromGivenList (listOfTagIDs, tagsArrayToSearchFrom) {
-      var tagIds = [];
-
-      _.each(tagsArrayToSearchFrom, function (tag) {
-        var tagID = _.find(listOfTagIDs, function (id) {
-          return parseInt(id) === parseInt(tag.id);
-        });
-
-        if (tagID) {
-          tagIds.push(tagID);
-        }
-      });
-
-      return tagIds;
-    }
-
-    /**
-     * Prepare Tags for Editing Review panel
-     *
-     * @param {object} listOfTagIDs list of tag ids
-     * @param {Array} tagsSetsToSearchFrom tags sets array to search from
-     * @returns {object} tags object
-     */
-    function prepareTagSetsForEdit (listOfTagIDs, tagsSetsToSearchFrom) {
-      var returnObj = {};
-
-      _.each(tagsSetsToSearchFrom, function (tagSet) {
-        returnObj[tagSet.id] = getTagIDFromGivenList(listOfTagIDs, tagSet.children);
-      });
-
-      return returnObj;
     }
 
     /**
@@ -586,25 +521,11 @@
         visibility_settings: {
           application_status: getSelect2Value($scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus),
           anonymize_application: $scope.currentReviewPanel.visibilitySettings.anonymizeApplication ? '1' : '0',
-          application_tags: prepareTagsForSave()
+          application_tags: $scope.currentReviewPanel.visibilitySettings.tags
         }
       };
     }
 
-    /**
-     * Prepare Selected tags to be saved in the Backend
-     *
-     * @returns {Array} list of tag ids
-     */
-    function prepareTagsForSave () {
-      var tagIds = getSelect2Value($scope.currentReviewPanel.visibilitySettings.tags.genericTags);
-
-      _.each($scope.currentReviewPanel.visibilitySettings.tags.tagSets, function (tagSet) {
-        tagIds = tagIds.concat(getSelect2Value(tagSet));
-      });
-
-      return tagIds;
-    }
     /**
      * Save Review Panel
      *
@@ -656,10 +577,7 @@
         visibilitySettings: {
           selectedApplicantStatus: '',
           anonymizeApplication: true,
-          tags: {
-            genericTags: '',
-            tagSets: {}
-          }
+          tags: []
         },
         contactSettings: {
           groups: { include: [], exclude: [] },
