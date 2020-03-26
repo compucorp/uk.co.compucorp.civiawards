@@ -40,6 +40,7 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
     $permissions['award_review_panel']['get'] = $awardCreatePermission;
     $permissions['award_review_panel']['create'] = $awardCreatePermission;
     $permissions['award_review_panel']['update'] = $awardCreatePermission;
+    $permissions['award_review_panel']['delete'] = $awardCreatePermission;
 
     if ($this->modifyCaseTypeApiPermission($entity, $action, $params)) {
       $permissions['case_type']['create'] = $permissions['case_type']['update'] = $awardCreatePermission;
