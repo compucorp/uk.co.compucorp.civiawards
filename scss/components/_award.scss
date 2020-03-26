@@ -2,6 +2,12 @@
   .crm-container.ui-dialog .ui-dialog-buttonset .civiawards__award__review-panel-form__delete { /* stylelint-disable-line selector-max-compound-selectors */
     float: left;
   }
+
+  .civiawards__award__review-panel {
+    .civicase__tags-selector .select2-container { /* stylelint-disable-line selector-max-compound-selectors */
+      width: 100% !important;
+    }
+  }
 }
 
 .civiawards__award--edit {

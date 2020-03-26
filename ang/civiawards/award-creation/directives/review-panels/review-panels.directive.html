@@ -1,6 +1,6 @@
 <a
   class="btn btn-primary civiawards__award__add-review-panel"
-  ng-click="openCreateReviewPanelPopup()">
+  ng-click="openCreateReviewPanelPopup({resetData: true})">
   Add Review Panel
 </a>
 
@@ -61,7 +61,11 @@
           {{status}} <span ng-show="!$last">,</span>
         </span>
       </td>
-      <td></td>
+      <td>
+        <span ng-repeat="tag in reviewPanel.formattedVisibilitySettings.tags">
+          {{tag}} <span ng-show="!$last">,</span>
+        </span>
+      </td>
       <td>{{reviewPanel.visibility_settings.anonymize_application === '1' ? 'Yes': 'No'}}</td>
       <td width="10">
         <div

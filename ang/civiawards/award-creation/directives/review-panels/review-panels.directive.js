@@ -13,10 +13,12 @@
   });
 
   module.controller('CiviawardReviewPanelsController', function (
-    $q, $scope, ts, dialogService, crmApi, crmStatus, getSelect2Value, CaseStatus) {
+    $q, $scope, ts, dialogService, crmApi, crmStatus, getSelect2Value,
+    CaseStatus) {
     var relationshipTypesIndexed = {};
     var contactsIndexed = {};
     var groupsIndexed = {};
+    var tagsIndexed = {};
 
     $scope.ts = ts;
     $scope.submitInProgress = false;
@@ -44,6 +46,21 @@
       resetReviewPanelPopup();
       handleInitialDataLoad();
     }());
+
+    /**
+     * Get the tags for Activities from API end point
+     *
+     * @returns {Promise} api call promise
+     */
+    function getTags () {
+      return crmApi('Tag', 'get', {
+        sequential: 1,
+        used_for: 'Cases',
+        options: { limit: 0 }
+      }).then(function (data) {
+        return data.values;
+      });
+    }
 
     /**
      * Returns Applicant Status's to be used in the UI
@@ -82,6 +99,7 @@
       $scope.isLoading = true;
 
       $q.all({
+        tags: getTags(),
         groups: fetchGroups(),
         relationships: fetchRelationshipsTypes(),
         existingReviewPanels: fetchExistingReviewPanels($scope.awardId)
@@ -96,6 +114,9 @@
             return fetchedData;
           });
       }).then(function (fetchedData) {
+        $scope.allTags = fetchedData.tags;
+        tagsIndexed = _.indexBy(fetchedData.tags, 'id');
+
         $scope.relationshipTypes = prepareRelationshipsTypes(fetchedData.relationships);
 
         relationshipTypesIndexed = _.indexBy(fetchedData.relationships, 'id');
@@ -189,7 +210,8 @@
         },
         visibilitySettings: {
           selectedApplicantStatus: reviewPanel.visibility_settings.application_status,
-          anonymizeApplication: reviewPanel.visibility_settings.anonymize_application === '1'
+          anonymizeApplication: reviewPanel.visibility_settings.anonymize_application === '1',
+          tags: reviewPanel.visibility_settings.application_tags
         }
       };
 
@@ -302,6 +324,9 @@
         reviewPanel.formattedVisibilitySettings = {
           applicationStatus: reviewPanel.visibility_settings.application_status.map(function (status) {
             return CaseStatus.getAll()[status].label;
+          }),
+          tags: reviewPanel.visibility_settings.application_tags.map(function (tagId) {
+            return tagsIndexed[tagId].name;
           })
         };
       });
@@ -416,10 +441,18 @@
 
     /**
      * Open the Popup to Create Review Panels
+     *
+     * @param {object} options options to open popup
+     * @param {object} options.resetData if all the fields should be reset
      */
-    function openCreateReviewPanelPopup () {
+    function openCreateReviewPanelPopup (options) {
       if (dialogService.dialogs.ReviewPanels) {
         return;
+      }
+
+      options = options || {};
+      if (options.resetData) {
+        resetReviewPanelPopup();
       }
 
       dialogService.open(
@@ -495,7 +528,8 @@
         },
         visibility_settings: {
           application_status: getSelect2Value($scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus),
-          anonymize_application: $scope.currentReviewPanel.visibilitySettings.anonymizeApplication ? '1' : '0'
+          anonymize_application: $scope.currentReviewPanel.visibilitySettings.anonymizeApplication ? '1' : '0',
+          application_tags: $scope.currentReviewPanel.visibilitySettings.tags
         }
       };
     }
@@ -550,7 +584,8 @@
         isEnabled: false,
         visibilitySettings: {
           selectedApplicantStatus: '',
-          anonymizeApplication: true
+          anonymizeApplication: true,
+          tags: []
         },
         contactSettings: {
           groups: { include: [], exclude: [] },
