@@ -101,6 +101,17 @@
       });
     });
 
+    describe('on case updated', () => {
+      beforeEach(() => {
+        crmApi.calls.reset();
+        $scope.$emit('updateCaseData');
+      });
+
+      it('reloads the list of reviews', () => {
+        expect(crmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
+      });
+    });
+
     describe('review forms', () => {
       let expectedUrl, mockedConfirmElement, mockedFormElement, selectedReview;
       const CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
