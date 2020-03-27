@@ -282,7 +282,7 @@
           });
         });
 
-        it('keeps the default activity types', () => {
+        it('creates the award with default activity types', () => {
           expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', jasmine.objectContaining({
             definition: jasmine.objectContaining({
               activityTypes: [

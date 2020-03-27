@@ -16,14 +16,12 @@
   module.controller('CiviAwardCreateEditAwardController', function (
     $location, $q, $scope, $window, CaseTypeCategory, crmApi, crmStatus, getSelect2Value) {
     var ts = CRM.ts('civicase');
-    var DEFAULT_COMMUNICATION_ACTIVITY_TYPES = [
+    var DEFAULT_ACTIVITY_TYPES = [
+      { name: 'Applicant Review' },
       { name: 'Email' },
       { name: 'Follow up' },
       { name: 'Meeting' },
       { name: 'Phone Call' }
-    ];
-    var DEFAULT_REVIEW_ACTIVITY_TYPES = [
-      { name: 'Applicant Review' }
     ];
 
     $scope.ts = ts;
@@ -220,10 +218,7 @@
         case_type_category: CaseTypeCategory.findByName('awards').value,
         name: generateAwardName($scope.basicDetails.title),
         definition: {
-          activityTypes: [].concat(
-            DEFAULT_REVIEW_ACTIVITY_TYPES,
-            DEFAULT_COMMUNICATION_ACTIVITY_TYPES
-          ),
+          activityTypes: DEFAULT_ACTIVITY_TYPES,
           caseRoles: [{
             name: 'Application Manager',
             manager: 1
