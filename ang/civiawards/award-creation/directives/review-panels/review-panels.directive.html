@@ -1,0 +1,101 @@
+<a
+  class="btn btn-primary civiawards__award__add-review-panel"
+  ng-click="openCreateReviewPanelPopup({resetData: true})">
+  Add Review Panel
+</a>
+
+<table class="table civiawards__award__review-panels__list">
+  <thead>
+  <tr>
+    <th>Title</th>
+    <th>Enabled</th>
+    <th>Panel contacts</th>
+    <th>Applicant status</th>
+    <th>Applicant tags</th>
+    <th>Anonymised</th>
+    <th width="20">&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody ng-if="existingReviewPanels.length === 0 && !isLoading">
+    <tr>
+      <td colspan="7" class="text-center">
+        No Review Panels has been created. Please create from above.
+      </td>
+    </tr>
+  </tbody>
+  <tbody>
+    <tr
+      ng-repeat="reviewPanel in existingReviewPanels"
+      ng-if="existingReviewPanels.length > 0">
+      <td>{{reviewPanel.title}}</td>
+      <td width="10">{{reviewPanel.is_active === '0' ? 'No' : 'Yes'}}</td>
+      <td>
+        <span
+          title="Groups to be included"
+          ng-repeat="includeGroup in reviewPanel.formattedContactSettings.include">
+          ({{includeGroup}}) <span ng-show="!$last">,</span>
+        </span>
+        <span
+          ng-show="reviewPanel.formattedContactSettings.include.length > 0 && reviewPanel.formattedContactSettings.exclude.length > 0">
+          ,
+        </span>
+        <span
+          title="Groups to be excluded"
+          class="civiawards__award__review-panel-list__exlcuded"
+          ng-repeat="excludeGroup in reviewPanel.formattedContactSettings.exclude">
+          ({{excludeGroup}}) <span ng-show="!$last">,</span>
+        </span>
+
+        <div
+          title="Specific relationships"
+          ng-repeat="relation in reviewPanel.formattedContactSettings.relation">
+          <span>{{relation.relationshipLabel}} - </span>
+          <span ng-repeat="contact in relation.contacts">
+            {{contact}}
+            <span ng-show="!$last">,</span>
+          </span>
+        </div>
+      </td>
+      <td>
+        <span ng-repeat="status in reviewPanel.formattedVisibilitySettings.applicationStatus">
+          {{status}} <span ng-show="!$last">,</span>
+        </span>
+      </td>
+      <td>
+        <span ng-repeat="tag in reviewPanel.formattedVisibilitySettings.tags">
+          {{tag}} <span ng-show="!$last">,</span>
+        </span>
+      </td>
+      <td>{{reviewPanel.visibility_settings.anonymize_application === '1' ? 'Yes': 'No'}}</td>
+      <td width="10">
+        <div
+          class="btn-group btn-group-md"
+          uib-dropdown
+          dropdown-append-to="'#bootstrap-theme'">
+          <button
+            class="btn btn-default btn-sm dropdown-toggle civiawards__award__review-panel-list__dropdown"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+            uib-dropdown-toggle
+            aria-label="{{ ts('Actions') }}">
+            <i class="fa fa-ellipsis-v"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu>
+            <li>
+              <a ng-click="handleEditReviewPanel(reviewPanel)">
+                {{ ts('Edit') }}
+              </a>
+              <a ng-click="handleActiveStateReviewPanel(reviewPanel)">
+                {{ getActiveStateLabel(reviewPanel) }}
+              </a>
+              <a ng-click="handleDeleteReviewPanel(reviewPanel)">
+                {{ ts('Delete') }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

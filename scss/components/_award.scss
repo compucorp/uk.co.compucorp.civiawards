@@ -1,3 +1,15 @@
+.___outside-namespace {
+  .crm-container.ui-dialog .ui-dialog-buttonset .civiawards__award__review-panel-form__delete { /* stylelint-disable-line selector-max-compound-selectors */
+    float: left;
+  }
+
+  .civiawards__award__review-panel {
+    .civicase__tags-selector .select2-container { /* stylelint-disable-line selector-max-compound-selectors */
+      width: 100% !important;
+    }
+  }
+}
+
 .civiawards__award--edit {
   > .panel-body {
     padding: 0;
@@ -23,6 +35,12 @@
   }
 }
 
+.civiawards__award__review-panel-form--submitted {
+  .ng-invalid { //for crm-ui-select
+    border-color: $brand-danger;
+  }
+}
+
 .civiawards__award__stages {
   th:first-child {
     width: 16px;
@@ -42,7 +60,8 @@
   }
 }
 
-.civiawards__award__review-fields--selected {
+.civiawards__award__review-fields--selected,
+.civiawards__award__review-panels__list {
   margin: 0 $gutter-width $gutter-width !important;
   width: calc(100% - #{$gutter-width * 2});
 
@@ -78,4 +97,35 @@
   display: inline-block;
   min-height: 10px;
   min-width: 10px;
+}
+
+.civiawards__award__review-panel__to-label {
+  float: left;
+  margin: $crm-gap-small 10px 0 10px;
+}
+
+.civiawards__award__review-panel__remove-button {
+  float: left;
+  margin-left: 10px;
+  margin-top: 3px;
+
+  a {
+    padding: 0;
+  }
+}
+
+.civiawards__award__review-panel__rel-type {
+  width: 220px;
+}
+
+.civiawards__award__review-panel-list__dropdown {
+  font-size: $font-size-base;
+
+  + .dropdown-menu a {
+    cursor: pointer;
+  }
+}
+
+.civiawards__award__review-panel-list__exlcuded {
+  text-decoration: line-through;
 }
