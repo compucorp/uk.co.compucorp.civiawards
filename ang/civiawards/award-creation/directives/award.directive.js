@@ -22,6 +22,9 @@
       { name: 'Meeting' },
       { name: 'Phone Call' }
     ];
+    var DEFAULT_REVIEW_ACTIVITY_TYPES = [
+      { name: 'Applicant Review' }
+    ];
 
     $scope.ts = ts;
     $scope.pageTitle = 'New Award';
@@ -217,7 +220,10 @@
         case_type_category: CaseTypeCategory.findByName('awards').value,
         name: generateAwardName($scope.basicDetails.title),
         definition: {
-          activityTypes: DEFAULT_COMMUNICATION_ACTIVITY_TYPES,
+          activityTypes: [].concat(
+            DEFAULT_REVIEW_ACTIVITY_TYPES,
+            DEFAULT_COMMUNICATION_ACTIVITY_TYPES
+          ),
           caseRoles: [{
             name: 'Application Manager',
             manager: 1

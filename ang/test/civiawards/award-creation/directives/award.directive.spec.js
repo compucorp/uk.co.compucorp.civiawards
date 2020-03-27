@@ -210,6 +210,7 @@
             expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', jasmine.objectContaining({
               definition: jasmine.objectContaining({
                 activityTypes: [
+                  { name: 'Applicant Review' },
                   { name: 'Email' },
                   { name: 'Follow up' },
                   { name: 'Meeting' },
@@ -285,6 +286,7 @@
           expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', jasmine.objectContaining({
             definition: jasmine.objectContaining({
               activityTypes: [
+                { name: 'Applicant Review' },
                 { name: 'Email' },
                 { name: 'Follow up' },
                 { name: 'Meeting' },
