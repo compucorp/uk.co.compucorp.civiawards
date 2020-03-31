@@ -197,13 +197,27 @@
               is_active: true,
               case_type_category: '3',
               name: 'title',
-              definition: {
+              definition: jasmine.objectContaining({
                 caseRoles: [{
                   name: 'Application Manager',
                   manager: 1
                 }]
-              }
+              })
             });
+          });
+
+          it('saves default activity types for the award', () => {
+            expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', jasmine.objectContaining({
+              definition: jasmine.objectContaining({
+                activityTypes: [
+                  { name: 'Applicant Review' },
+                  { name: 'Email' },
+                  { name: 'Follow up' },
+                  { name: 'Meeting' },
+                  { name: 'Phone Call' }
+                ]
+              })
+            }));
           });
 
           it('saves the additional award details', () => {
@@ -257,15 +271,29 @@
             is_active: true,
             case_type_category: '3',
             name: 'title',
-            definition: {
+            definition: jasmine.objectContaining({
               caseRoles: [{
                 name: 'Application Manager',
                 manager: 1
               }],
               statuses: ['Open']
-            },
+            }),
             id: '10'
           });
+        });
+
+        it('creates the award with default activity types', () => {
+          expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', jasmine.objectContaining({
+            definition: jasmine.objectContaining({
+              activityTypes: [
+                { name: 'Applicant Review' },
+                { name: 'Email' },
+                { name: 'Follow up' },
+                { name: 'Meeting' },
+                { name: 'Phone Call' }
+              ]
+            })
+          }));
         });
       });
     });

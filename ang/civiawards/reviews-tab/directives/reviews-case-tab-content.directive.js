@@ -41,6 +41,8 @@
 
     (function init () {
       loadReviewActivities();
+
+      $scope.$on('updateCaseData', loadReviewActivities);
     })();
 
     /**

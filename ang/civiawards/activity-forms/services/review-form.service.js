@@ -1,4 +1,4 @@
-(function (angular, getCrmUrl) {
+(function (_, angular, getCrmUrl) {
   var module = angular.module('civiawards');
 
   module.service('ReviewActivityForm', ReviewActivityForm);
@@ -23,22 +23,24 @@
      * be shown in a popup it automatically opens the form in edit mode.
      *
      * @param {object} activity an activity object.
-     * @param {object} options form options.
+     * @param {object} overridingOptions form options.
      * @returns {string} the form URL.
      */
-    function getActivityFormUrl (activity, options) {
-      var action = 'view';
-      var isPopupForm = options && options.formType === 'popup';
-
-      if (isPopupForm) {
-        action = 'update';
-      }
-
-      return getCrmUrl('civicrm/awardreview', {
-        action: action,
-        id: activity.id,
+    function getActivityFormUrl (activity, overridingOptions) {
+      var options = _.defaults({}, overridingOptions, {
+        action: 'view',
         reset: 1
       });
+
+      if (activity.id) {
+        options.id = activity.id;
+      }
+
+      if (options.action === 'add') {
+        options.case_id = activity.case_id;
+      }
+
+      return getCrmUrl('civicrm/awardreview', options);
     }
   }
-})(angular, CRM.url);
+})(CRM._, angular, CRM.url);

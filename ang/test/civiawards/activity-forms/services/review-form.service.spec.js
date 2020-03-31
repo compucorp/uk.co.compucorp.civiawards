@@ -53,14 +53,33 @@
         });
       });
 
-      describe('when getting the activity popup form url', () => {
+      describe('when getting the update review form url', () => {
         beforeEach(() => {
           activityFormUrl = ReviewActivityForm.getActivityFormUrl(reviewActivity, {
-            formType: 'popup'
+            action: 'update'
           });
           expectedActivityFormUrl = getCrmUrl('civicrm/awardreview', {
             action: 'update',
             id: reviewActivity.id,
+            reset: 1
+          });
+        });
+
+        it('returns the url for the review activity popup form', () => {
+          expect(activityFormUrl).toEqual(expectedActivityFormUrl);
+        });
+      });
+
+      describe('when getting the add review form url', () => {
+        beforeEach(() => {
+          delete reviewActivity.id;
+          reviewActivity.case_id = _.uniqueId();
+          activityFormUrl = ReviewActivityForm.getActivityFormUrl(reviewActivity, {
+            action: 'add'
+          });
+          expectedActivityFormUrl = getCrmUrl('civicrm/awardreview', {
+            action: 'add',
+            case_id: reviewActivity.case_id,
             reset: 1
           });
         });

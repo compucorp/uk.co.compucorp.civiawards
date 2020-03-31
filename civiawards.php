@@ -215,3 +215,12 @@ function civiawards_civicrm_aclGroup($type, $contactID, $tableName, &$allGroups,
 function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
   $dependentModules[] = "civiawards";
 }
+
+/**
+ * Implements hook_civicrm_alterMenu().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterMenu
+ */
+function civiawards_civicrm_alterMenu(&$items) {
+  $items['civicrm/awardreview']['ids_arguments']['json'][] = 'civicase_reload';
+}
