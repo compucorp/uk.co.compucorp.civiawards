@@ -194,6 +194,54 @@
           }, jasmine.any(Object));
         });
       });
+
+      describe('delete button', () => {
+        describe('when creating new review panel', () => {
+          it('hides the delete button inside the popup', () => {
+            expect(dialogService.open).toHaveBeenCalledWith('ReviewPanels',
+              '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
+              $scope,
+              jasmine.objectContaining({
+                buttons: [jasmine.objectContaining({
+                  text: ts('Save'),
+                  icons: { primary: 'fa-check' }
+                })]
+              })
+            );
+          });
+        });
+
+        describe('when editing existing review panel', () => {
+          beforeEach(() => {
+            createController();
+            $scope.review_panel_form = {};
+
+            dialogService.open.and.callFake(function (__, ___, ____, options) {
+              saveButtonClickHandler = options.buttons[0].click;
+            });
+
+            $scope.currentReviewPanel.id = '1';
+
+            $scope.openCreateReviewPanelPopup();
+          });
+
+          it('shows the delete button inside the popup', () => {
+            expect(dialogService.open).toHaveBeenCalledWith('ReviewPanels',
+              '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
+              $scope,
+              jasmine.objectContaining({
+                buttons: [jasmine.objectContaining({
+                  text: ts('Save'),
+                  icons: { primary: 'fa-check' }
+                }), jasmine.objectContaining({
+                  text: ts('Delete'),
+                  icons: { primary: 'fa-times' }
+                })]
+              })
+            );
+          });
+        });
+      });
     });
 
     describe('relationship types', () => {

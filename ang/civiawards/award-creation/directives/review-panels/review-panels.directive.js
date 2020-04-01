@@ -464,26 +464,41 @@
           height: 'auto',
           width: '650px',
           title: ts('Create Review Panel'),
-          buttons: [{
-            text: ts('Save'),
-            icons: { primary: 'fa-check' },
-            click: function () {
-              $scope.$apply(function () {
-                saveReviewPanel();
-              });
-            }
-          }, {
-            text: ts('Delete'),
-            icons: { primary: 'fa-times' },
-            class: 'civiawards__award__review-panel-form__delete',
-            click: function () {
-              $scope.$apply(function () {
-                handleDeleteReviewPanel($scope.currentReviewPanel);
-              });
-            }
-          }]
+          buttons: prepareButtonsForReviewPanelPopup()
         }
       );
+    }
+
+    /**
+     * Prepare buttons for the review panel popup
+     *
+     * @returns {Array} list of buttons
+     */
+    function prepareButtonsForReviewPanelPopup () {
+      var buttons = [{
+        text: ts('Save'),
+        icons: { primary: 'fa-check' },
+        click: function () {
+          $scope.$apply(function () {
+            saveReviewPanel();
+          });
+        }
+      }];
+
+      if ($scope.currentReviewPanel.id) {
+        buttons.push({
+          text: ts('Delete'),
+          icons: { primary: 'fa-times' },
+          class: 'civiawards__award__review-panel-form__delete',
+          click: function () {
+            $scope.$apply(function () {
+              handleDeleteReviewPanel($scope.currentReviewPanel);
+            });
+          }
+        });
+      }
+
+      return buttons;
     }
 
     /**
