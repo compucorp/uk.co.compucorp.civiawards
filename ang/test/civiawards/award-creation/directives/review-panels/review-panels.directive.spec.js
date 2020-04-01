@@ -197,7 +197,7 @@
 
       describe('delete button', () => {
         describe('when creating new review panel', () => {
-          it('hides the delete button inside the popup', () => {
+          it('displays only the save button inside the popup', () => {
             expect(dialogService.open).toHaveBeenCalledWith('ReviewPanels',
               '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
               $scope,
@@ -225,7 +225,7 @@
             $scope.openCreateReviewPanelPopup();
           });
 
-          it('shows the delete button inside the popup', () => {
+          it('displays both the save button and delete button inside the popup', () => {
             expect(dialogService.open).toHaveBeenCalledWith('ReviewPanels',
               '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
               $scope,
