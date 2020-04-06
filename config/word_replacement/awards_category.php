@@ -10,4 +10,6 @@ return [
   'Cases' => 'Applications',
   'case' => 'application',
   'cases' => 'applications',
+  'Client' => 'Applicant',
+  'client' => 'applicant',
 ];
