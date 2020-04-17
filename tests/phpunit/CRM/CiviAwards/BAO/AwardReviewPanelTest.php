@@ -16,7 +16,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanelTest extends BaseHeadlessTest {
 
     $this->setExpectedException(
       'Exception',
-      'Contact Settings :  One of the values of exclude_groups is not in a valid format'
+      'Contact Settings: One of the values of exclude_groups is not in a valid format'
     );
 
     AwardReviewPanelFabricator::fabricate($params);
@@ -31,7 +31,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanelTest extends BaseHeadlessTest {
 
     $this->setExpectedException(
       'Exception',
-      'Contact Settings :  exclude_groups should be an array'
+      'Contact Settings: exclude_groups should be an array'
     );
 
     AwardReviewPanelFabricator::fabricate($params);
@@ -46,7 +46,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanelTest extends BaseHeadlessTest {
 
     $this->setExpectedException(
       'Exception',
-      'Contact Settings :  One of the values of include_groups is not in a valid format'
+      'Contact Settings: One of the values of include_groups is not in a valid format'
     );
 
     AwardReviewPanelFabricator::fabricate($params);
@@ -61,7 +61,92 @@ class CRM_CiviAwards_BAO_AwardReviewPanelTest extends BaseHeadlessTest {
 
     $this->setExpectedException(
       'Exception',
-      'Contact Settings :  include_groups should be an array'
+      'Contact Settings: include_groups should be an array'
+    );
+
+    AwardReviewPanelFabricator::fabricate($params);
+  }
+
+  public function testCreateThrowsExceptionWhenRelationshipContactArrayContainsNonInteger() {
+    $params = [
+      'contact_settings' => [
+        'exclude_groups' => [1,3],
+        'relationship' => [
+          [
+            'contact_id' => [1, 'Contact'],
+            'relationship_type_id' => 1
+          ]
+        ]
+      ]
+    ];
+
+    $this->setExpectedException(
+      'Exception',
+      'relationship: One of the values of contact_id is not in a valid format'
+    );
+
+    AwardReviewPanelFabricator::fabricate($params);
+  }
+
+  public function testCreateThrowsExceptionWhenRelationshipContactIsNotAnArray() {
+    $params = [
+      'contact_settings' => [
+        'exclude_groups' => [1, 3],
+        'relationship' => [
+          [
+            'contact_id' => 2,
+            'relationship_type_id' => 1
+          ]
+        ]
+      ]
+    ];
+
+    $this->setExpectedException(
+      'Exception',
+      'relationship: contact_id should be an array'
+    );
+
+    AwardReviewPanelFabricator::fabricate($params);
+  }
+
+  public function testCreateThrowsExceptionWhenRelationshipTypeIdIsNotAnInteger() {
+    $params = [
+      'contact_settings' => [
+        'exclude_groups' => [1,3],
+        'relationship' => [
+          [
+            'contact_id' => [1, 3],
+            'relationship_type_id' => 'Sample'
+          ]
+        ]
+      ]
+    ];
+
+    $this->setExpectedException(
+      'Exception',
+      'relationship: relationship_type_id is not in a valid format'
+    );
+
+    AwardReviewPanelFabricator::fabricate($params);
+  }
+
+  public function testCreateThrowsExceptionWhenRelationshipAToBIsNotInExpectedFormat() {
+    $params = [
+      'contact_settings' => [
+        'exclude_groups' => [1, 3],
+        'relationship' => [
+          [
+            'contact_id' => [1, 3],
+            'relationship_type_id' => 1,
+            'is_a_to_b' => 'Sample'
+          ]
+        ]
+      ]
+    ];
+
+    $this->setExpectedException(
+      'Exception',
+      'relationship: is_a_to_b is not in a valid format'
     );
 
     AwardReviewPanelFabricator::fabricate($params);
@@ -77,7 +162,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanelTest extends BaseHeadlessTest {
 
     $this->setExpectedException(
       'Exception',
-      'Visibility Settings :  One of the values of application_tags is not in a valid format'
+      'Visibility Settings: One of the values of application_tags is not in a valid format'
     );
 
     AwardReviewPanelFabricator::fabricate($params);
@@ -93,7 +178,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanelTest extends BaseHeadlessTest {
 
     $this->setExpectedException(
       'Exception',
-      'Visibility Settings :  One of the values of application_status is not in a valid format'
+      'Visibility Settings: One of the values of application_status is not in a valid format'
     );
 
     AwardReviewPanelFabricator::fabricate($params);
@@ -108,7 +193,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanelTest extends BaseHeadlessTest {
 
     $this->setExpectedException(
       'Exception',
-      'Visibility Settings :  anonymize_application is required'
+      'Visibility Settings: anonymize_application is required'
     );
 
     AwardReviewPanelFabricator::fabricate($params);
@@ -165,7 +250,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanelTest extends BaseHeadlessTest {
     AwardReviewPanelFabricator::fabricate($params);
   }
 
-  public function testCreateIsSuccessFulWhenAllPArametersAreInExpectedFormat() {
+  public function testCreateIsSuccessFulWhenAllParametersAreInExpectedFormat() {
     $params = [
       'visibility_settings' => [
         'application_status' => [1,3],
@@ -177,9 +262,16 @@ class CRM_CiviAwards_BAO_AwardReviewPanelTest extends BaseHeadlessTest {
         'exclude_groups' => [1, 3],
         'include_groups' => [5],
         'relationship' => [
-          'contact_id' => [1, 3],
-          'relationship_type_id' => 1,
-          'is_a_to_b' => 1
+          [
+            'contact_id' => [1, 3],
+            'relationship_type_id' => 1,
+            'is_a_to_b' => 1
+          ],
+          [
+            'contact_id' => [1, 3],
+            'relationship_type_id' => 4,
+            'is_a_to_b' => 0
+          ]
         ]
       ]
     ];
