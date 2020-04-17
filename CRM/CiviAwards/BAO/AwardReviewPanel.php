@@ -79,6 +79,16 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
         'is_array' => TRUE,
         'validate_filter' => FILTER_VALIDATE_INT,
       ],
+      'is_application_status_restricted' => [
+        'is_required' => TRUE,
+        'validate_filter' => FILTER_VALIDATE_INT,
+        'options' => ['min_range' => 0, 'max_range' => 1],
+      ],
+      'restricted_application_status' => [
+        'is_array' => TRUE,
+        'is_required' => !empty($params['visibility_settings']['is_application_status_restricted']) ? TRUE : FALSE,
+        'validate_filter' => FILTER_VALIDATE_INT,
+      ],
     ];
 
     self::validateSettingFields($fieldConfig, $params['visibility_settings'], 'Visibility Settings');
