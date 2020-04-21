@@ -120,7 +120,33 @@
         <div class="form-group">
           <label class="col-sm-6 control-label">Anonymise Contacts for this Panel?</label>
           <div class="col-sm-3">
-            <input type="checkbox" ng-model="model.currentReviewPanel.visibilitySettings.anonymizeApplication">
+            <input type="checkbox"
+              ng-model="model.currentReviewPanel.visibilitySettings.anonymizeApplication">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-6 control-label">Panel can change the status of an application?</label>
+          <div class="col-sm-3">
+            <input type="checkbox"
+              ng-model="model.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-6 control-label">
+            Statuses
+          </label>
+          <div class="col-sm-6">
+            <input class="form-control"
+              ng-disabled="!model.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted"
+              ng-model="model.currentReviewPanel.visibilitySettings.restrictedApplicationStatus"
+              placeholder="Applicant Status(s)"
+              crm-ui-select="{
+                allowClear: true,
+                multiple: true,
+                data: model.applicantStatusSelect2Options
+              }"
+            />
           </div>
         </div>
       </form>
