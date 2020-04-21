@@ -489,7 +489,7 @@
         };
       });
 
-      it('open a popup to edit the selected review panel', () => {
+      it('opens a popup to edit the selected review panel', () => {
         expect($scope.currentReviewPanel).toEqual(expectedReviewPanel);
 
         expect(dialogService.open).toHaveBeenCalledWith('ReviewPanels',

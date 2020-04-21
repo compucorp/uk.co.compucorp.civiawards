@@ -19,6 +19,7 @@
     var contactsIndexed = {};
     var groupsIndexed = {};
     var tagsIndexed = {};
+    var caseStatusesIndexed = CaseStatus.getAll();
 
     $scope.ts = ts;
     $scope.submitInProgress = false;
@@ -68,7 +69,7 @@
      * @returns {Array} applicant status's array in a format suitable for select 2
      */
     function getApplicantStatusSelect2Options () {
-      return _.map(CaseStatus.getAll(), function (caseStatus) {
+      return _.map(caseStatusesIndexed, function (caseStatus) {
         return { id: caseStatus.value, text: caseStatus.label, name: caseStatus.name };
       });
     }
@@ -289,23 +290,27 @@
       var reviewPanelDataCopied = _.clone(reviewPanelData);
 
       _.each(reviewPanelDataCopied, function (reviewPanel) {
-        reviewPanel.formattedContactSettings = formatContactSettings(reviewPanel);
-        reviewPanel.formattedVisibilitySettings = formattedVisibilitySettings(reviewPanel);
+        reviewPanel.formattedContactSettings = getFormattedContactSettings(reviewPanel);
+        reviewPanel.formattedVisibilitySettings = getFormattedVisibilitySettings(reviewPanel);
       });
 
       return reviewPanelDataCopied;
     }
 
     /**
-     * Format Review panel visibility settings
+     * Format Review panel visibility settings data from api
+     * and make it ready to be displayed in the Review Panel Table.
+     *
+     * Api sends ids for application status, tags and those are replaced
+     * with proper labels of each item
      *
      * @param {object} reviewPanel review panel object
      * @returns {object} formatted visibility settings
      */
-    function formattedVisibilitySettings (reviewPanel) {
+    function getFormattedVisibilitySettings (reviewPanel) {
       var formattedVisibilitySettings = {
-        applicationStatus: reviewPanel.visibility_settings.application_status.map(function (status) {
-          return CaseStatus.getAll()[status].label;
+        applicationStatus: reviewPanel.visibility_settings.application_status.map(function (statusId) {
+          return caseStatusesIndexed[statusId].label;
         }),
         tags: reviewPanel.visibility_settings.application_tags.map(function (tagId) {
           return tagsIndexed[tagId].name;
@@ -316,12 +321,16 @@
     }
 
     /**
-     * Format Review panel contact settings
+     * Format Review panel contact settings data from api
+     * and make it ready to be displayed in the Review Panel Table.
+     *
+     * Api sends ids for contacts, relationships, groups, those are replaced
+     * with proper labels of each item
      *
      * @param {object} reviewPanel review panel object
      * @returns {object} formatted contact settings
      */
-    function formatContactSettings (reviewPanel) {
+    function getFormattedContactSettings (reviewPanel) {
       if (!reviewPanel.contact_settings) {
         return {};
       }
