@@ -211,7 +211,9 @@
         visibilitySettings: {
           selectedApplicantStatus: reviewPanel.visibility_settings.application_status,
           anonymizeApplication: reviewPanel.visibility_settings.anonymize_application === '1',
-          tags: reviewPanel.visibility_settings.application_tags
+          tags: reviewPanel.visibility_settings.application_tags,
+          isApplicationStatusRestricted: reviewPanel.visibility_settings.is_application_status_restricted === '1',
+          restrictedApplicationStatus: reviewPanel.visibility_settings.restricted_application_status
         }
       };
 
@@ -287,51 +289,70 @@
       var reviewPanelDataCopied = _.clone(reviewPanelData);
 
       _.each(reviewPanelDataCopied, function (reviewPanel) {
-        if (!reviewPanel.contact_settings) {
-          return;
-        }
-
-        reviewPanel.formattedContactSettings = {
-          include: [], exclude: [], relation: []
-        };
-
-        _.each(reviewPanel.contact_settings.include_groups, function (includeGroupID) {
-          reviewPanel.formattedContactSettings.include.push(
-            groupsIndexed[includeGroupID].title
-          );
-        });
-
-        _.each(reviewPanel.contact_settings.exclude_groups, function (excludeGroupID) {
-          reviewPanel.formattedContactSettings.exclude.push(
-            groupsIndexed[excludeGroupID].title
-          );
-        });
-
-        _.each(reviewPanel.contact_settings.relationship, function (relationship) {
-          var specificRelationDetails = { relationshipLabel: '', contacts: [] };
-
-          specificRelationDetails.relationshipLabel = relationship.is_a_to_b === '1'
-            ? relationshipTypesIndexed[relationship.relationship_type_id].label_a_b
-            : relationshipTypesIndexed[relationship.relationship_type_id].label_b_a;
-
-          _.each(relationship.contact_id, function (contactID) {
-            specificRelationDetails.contacts.push(contactsIndexed[contactID].display_name);
-          });
-
-          reviewPanel.formattedContactSettings.relation.push(specificRelationDetails);
-        });
-
-        reviewPanel.formattedVisibilitySettings = {
-          applicationStatus: reviewPanel.visibility_settings.application_status.map(function (status) {
-            return CaseStatus.getAll()[status].label;
-          }),
-          tags: reviewPanel.visibility_settings.application_tags.map(function (tagId) {
-            return tagsIndexed[tagId].name;
-          })
-        };
+        reviewPanel.formattedContactSettings = formatContactSettings(reviewPanel);
+        reviewPanel.formattedVisibilitySettings = formattedVisibilitySettings(reviewPanel);
       });
 
       return reviewPanelDataCopied;
+    }
+
+    /**
+     * Format Review panel visibility settings
+     *
+     * @param {object} reviewPanel review panel object
+     * @returns {object} formatted visibility settings
+     */
+    function formattedVisibilitySettings (reviewPanel) {
+      var formattedVisibilitySettings = {
+        applicationStatus: reviewPanel.visibility_settings.application_status.map(function (status) {
+          return CaseStatus.getAll()[status].label;
+        }),
+        tags: reviewPanel.visibility_settings.application_tags.map(function (tagId) {
+          return tagsIndexed[tagId].name;
+        })
+      };
+
+      return formattedVisibilitySettings;
+    }
+
+    /**
+     * Format Review panel contact settings
+     *
+     * @param {object} reviewPanel review panel object
+     * @returns {object} formatted contact settings
+     */
+    function formatContactSettings (reviewPanel) {
+      if (!reviewPanel.contact_settings) {
+        return {};
+      }
+
+      var formattedContactSettings = {
+        include: [], exclude: [], relation: []
+      };
+
+      _.each(reviewPanel.contact_settings.include_groups, function (includeGroupID) {
+        formattedContactSettings.include.push(groupsIndexed[includeGroupID].title);
+      });
+
+      _.each(reviewPanel.contact_settings.exclude_groups, function (excludeGroupID) {
+        formattedContactSettings.exclude.push(groupsIndexed[excludeGroupID].title);
+      });
+
+      _.each(reviewPanel.contact_settings.relationship, function (relationship) {
+        var specificRelationDetails = { relationshipLabel: '', contacts: [] };
+
+        specificRelationDetails.relationshipLabel = relationship.is_a_to_b === '1'
+          ? relationshipTypesIndexed[relationship.relationship_type_id].label_a_b
+          : relationshipTypesIndexed[relationship.relationship_type_id].label_b_a;
+
+        _.each(relationship.contact_id, function (contactID) {
+          specificRelationDetails.contacts.push(contactsIndexed[contactID].display_name);
+        });
+
+        formattedContactSettings.relation.push(specificRelationDetails);
+      });
+
+      return formattedContactSettings;
     }
 
     /**
@@ -544,7 +565,11 @@
         visibility_settings: {
           application_status: getSelect2Value($scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus),
           anonymize_application: $scope.currentReviewPanel.visibilitySettings.anonymizeApplication ? '1' : '0',
-          application_tags: $scope.currentReviewPanel.visibilitySettings.tags
+          application_tags: $scope.currentReviewPanel.visibilitySettings.tags,
+          is_application_status_restricted: $scope.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted ? '1' : '0',
+          restricted_application_status: $scope.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted
+            ? getSelect2Value($scope.currentReviewPanel.visibilitySettings.restrictedApplicationStatus)
+            : []
         }
       };
     }
@@ -600,6 +625,8 @@
         visibilitySettings: {
           selectedApplicantStatus: '',
           anonymizeApplication: true,
+          isApplicationStatusRestricted: false,
+          restrictedApplicationStatus: [],
           tags: []
         },
         contactSettings: {
