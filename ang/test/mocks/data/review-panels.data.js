@@ -25,7 +25,9 @@
       visibility_settings: {
         application_status: ['1'],
         anonymize_application: '1',
-        application_tags: ['1', '12', '15']
+        application_tags: ['1', '12', '15'],
+        is_application_status_restricted: true,
+        restricted_application_status: ['1', '2']
       },
       is_active: '1'
     }, {

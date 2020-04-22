@@ -79,6 +79,16 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
         'is_array' => TRUE,
         'validate_filter' => FILTER_VALIDATE_INT,
       ],
+      'is_application_status_restricted' => [
+        'is_required' => TRUE,
+        'validate_filter' => FILTER_VALIDATE_INT,
+        'options' => ['min_range' => 0, 'max_range' => 1],
+      ],
+      'restricted_application_status' => [
+        'is_array' => TRUE,
+        'is_required' => !empty($params['visibility_settings']['is_application_status_restricted']) ? TRUE : FALSE,
+        'validate_filter' => FILTER_VALIDATE_INT,
+      ],
     ];
 
     self::validateSettingFields($fieldConfig, $params['visibility_settings'], 'Visibility Settings');
@@ -169,19 +179,19 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
         continue;
       }
       if (!empty($setting['is_required']) && !isset($params[$fieldName])) {
-        throw new Exception(ts("{$settingName} :  {$fieldName} is required"));
+        throw new Exception(ts("{$settingName}: {$fieldName} is required"));
       }
 
       if (!empty($setting['is_array'])) {
         if (!is_array($params[$fieldName])) {
-          throw new Exception(ts("{$settingName} :  {$fieldName} should be an array"));
+          throw new Exception(ts("{$settingName}: {$fieldName} should be an array"));
         }
 
         if (!empty($setting['validate_filter'])) {
           $options = isset($setting['options']) ? ['options' => $setting['options']] : NULL;
           foreach ($params[$fieldName] as $value) {
             if (filter_var($value, $setting['validate_filter'], $options) === FALSE) {
-              throw new Exception("{$settingName} :  One of the values of {$fieldName} is not in a valid format");
+              throw new Exception("{$settingName}: One of the values of {$fieldName} is not in a valid format");
             }
           }
         }
@@ -190,7 +200,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
       if (empty($setting['is_array']) && !empty($setting['validate_filter'])) {
         $options = isset($setting['options']) ? ['options' => $setting['options']] : NULL;
         if (filter_var($params[$fieldName], $setting['validate_filter'], $options) === FALSE) {
-          throw new Exception("{$settingName} :  {$fieldName} is not in a valid format");
+          throw new Exception("{$settingName}: {$fieldName} is not in a valid format");
         }
       }
     }

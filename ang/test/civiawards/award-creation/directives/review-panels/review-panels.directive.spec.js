@@ -70,7 +70,9 @@
           visibilitySettings: {
             selectedApplicantStatus: '',
             anonymizeApplication: true,
-            tags: []
+            tags: [],
+            isApplicationStatusRestricted: false,
+            restrictedApplicationStatus: []
           },
           contactSettings: {
             groups: { include: [], exclude: [] },
@@ -155,6 +157,8 @@
           }];
           $scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus = '1,2';
           $scope.currentReviewPanel.visibilitySettings.tags = ['1', '2', '12', '13'];
+          $scope.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted = true;
+          $scope.currentReviewPanel.visibilitySettings.restrictedApplicationStatus = '3,4';
 
           $scope.$digest();
           saveButtonClickHandler();
@@ -182,7 +186,9 @@
             visibility_settings: {
               application_status: ['1', '2'],
               anonymize_application: '1',
-              application_tags: ['1', '2', '12', '13']
+              application_tags: ['1', '2', '12', '13'],
+              is_application_status_restricted: '1',
+              restricted_application_status: ['3', '4']
             }
           });
         });
@@ -447,16 +453,16 @@
     });
 
     describe('when editing an existing review panel', () => {
+      let expectedReviewPanel;
+
       beforeEach(() => {
         $scope.awardId = '10';
         createController();
         $scope.$digest();
 
         $scope.handleEditReviewPanel($scope.existingReviewPanels[0]);
-      });
 
-      it('open a popup to edit the selected review panel', () => {
-        expect($scope.currentReviewPanel).toEqual({
+        expectedReviewPanel = {
           id: '46',
           isEnabled: true,
           title: 'New Panel',
@@ -476,9 +482,15 @@
           visibilitySettings: {
             selectedApplicantStatus: ['1'],
             anonymizeApplication: true,
-            tags: ['1', '12', '15']
+            tags: ['1', '12', '15'],
+            isApplicationStatusRestricted: false,
+            restrictedApplicationStatus: ['1', '2']
           }
-        });
+        };
+      });
+
+      it('opens a popup to edit the selected review panel', () => {
+        expect($scope.currentReviewPanel).toEqual(expectedReviewPanel);
 
         expect(dialogService.open).toHaveBeenCalledWith('ReviewPanels',
           '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
