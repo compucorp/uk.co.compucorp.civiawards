@@ -106,6 +106,87 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * {@inheritDoc}
    */
   public function buildQuickForm() {
+    $fields = CRM_Core_BAO_UFGroup::getFields(
+      $this->profileId, FALSE, CRM_Core_Action::ADD, NULL,
+      NULL, FALSE, NULL, FALSE, NULL, CRM_Core_Permission::CREATE, 'weight'
+    );
+    $shouldDisplayMissingFieldsError = empty($fields);
+
+    if ($shouldDisplayMissingFieldsError) {
+      $this->displayMissingFieldsError();
+    }
+    else {
+      $this->displayReviewForm($fields);
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function postProcess() {
+    $values = $this->exportValues();
+    foreach ($this->profileFields as $profileField) {
+      $value = $values[$profileField];
+      $value = is_array($value) ? array_filter($value) : $value;
+      $profileFields[$profileField] = $value;
+    }
+
+    if ($this->_action & CRM_Core_Action::ADD) {
+      $activityId = $this->createActivity();
+      $activityContact = CRM_Core_Session::getLoggedInContactID();
+    }
+    else {
+      $activityId = $this->activityId;
+      $activityContact = $this->getActivityTargetContact();
+
+      $this->updateActivity();
+    }
+
+    $profileFields['activity_id'] = $activityId;
+    $profileFields['contact_id'] = $activityContact;
+    $profileFields['profile_id'] = $this->profileId;
+
+    try {
+      civicrm_api3('Profile', 'submit', $profileFields);
+      $status = $this->_action == CRM_Core_Action::ADD ? 'Added' : 'Updated';
+      CRM_Core_Session::setStatus(ts("The review has been {$status} successfully"), 'Success', 'success');
+    }
+    catch (Exception $e) {
+      CRM_Core_Session::setStatus(ts('An error occurred'), 'Error', 'error');
+    }
+
+    $url = CRM_Utils_System::url('civicrm/awardreview', [
+      'action' => 'update',
+      'id' => $activityId,
+      'reset' => 1,
+    ]);
+    $session = CRM_Core_Session::singleton();
+    $session->pushUserContext($url);
+  }
+
+  /**
+   * Displays an error message when no review fields have been configured.
+   */
+  private function displayMissingFieldsError() {
+    CRM_Utils_System::setTitle(E::ts('Warning'));
+
+    $this->assign('displayMissingFieldsError', TRUE);
+
+    $this->addButtons([
+      [
+        'type' => 'cancel',
+        'name' => E::ts('Dismiss'),
+      ],
+    ]);
+  }
+
+  /**
+   * Displays the View, Create, or Update form using the given review fields.
+   *
+   * @param array $fields
+   *   A list of review fields to use when displaying the form.
+   */
+  private function displayReviewForm(array $fields) {
     $isViewAction = $this->_action & CRM_Core_Action::VIEW;
 
     $this->assign('caseContactDisplayName', $this->getCaseContactDisplayName());
@@ -123,10 +204,6 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       $this->addEntityRef('source_contact_id', ts('Reported By'));
     }
 
-    $fields = CRM_Core_BAO_UFGroup::getFields(
-      $this->profileId, FALSE, CRM_Core_Action::ADD, NULL,
-      NULL, FALSE, NULL, FALSE, NULL, CRM_Core_Permission::CREATE, 'weight'
-    );
     $customFieldLabels = $this->getCustomFieldLabels(array_keys($fields));
     $elementNames = [];
 
@@ -172,50 +249,6 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
 
     CRM_Utils_System::setTitle(E::ts($pageTitle));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function postProcess() {
-    $values = $this->exportValues();
-    foreach ($this->profileFields as $profileField) {
-      $value = $values[$profileField];
-      $value = is_array($value) ? array_filter($value) : $value;
-      $profileFields[$profileField] = $value;
-    }
-
-    if ($this->_action & CRM_Core_Action::ADD) {
-      $activityId = $this->createActivity();
-      $activityContact = CRM_Core_Session::getLoggedInContactID();
-    }
-    else {
-      $activityId = $this->activityId;
-      $activityContact = $this->getActivityTargetContact();
-
-      $this->updateActivity();
-    }
-
-    $profileFields['activity_id'] = $activityId;
-    $profileFields['contact_id'] = $activityContact;
-    $profileFields['profile_id'] = $this->profileId;
-
-    try {
-      civicrm_api3('Profile', 'submit', $profileFields);
-      $status = $this->_action == CRM_Core_Action::ADD ? 'Added' : 'Updated';
-      CRM_Core_Session::setStatus(ts("The review has been {$status} successfully"), 'Success', 'success');
-    }
-    catch (Exception $e) {
-      CRM_Core_Session::setStatus(ts('An error occurred'), 'Error', 'error');
-    }
-
-    $url = CRM_Utils_System::url('civicrm/awardreview', [
-      'action' => 'update',
-      'id' => $activityId,
-      'reset' => 1,
-    ]);
-    $session = CRM_Core_Session::singleton();
-    $session->pushUserContext($url);
   }
 
   /**

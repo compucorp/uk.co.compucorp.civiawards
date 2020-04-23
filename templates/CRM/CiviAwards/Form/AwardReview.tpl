@@ -3,6 +3,11 @@
     <div class="panel panel-default">
       <div class="panel-body">
         <div class="form-group row">
+          {if $displayMissingFieldsError}
+            <p class="alert alert-warning">There are no review fields assigned to this award type.
+            Please add Review Fields by editing the the Award
+            Type located under the Overview dropdown in Award Dashboard.</p>
+          {/if}
           {if $isViewAction}
             <div class="col-sm-5">
               <label for="source_contact_id">
