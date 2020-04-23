@@ -95,13 +95,35 @@
           };
 
           if (model.selectedFilters.statuses.length > 0) {
-            param.status_id = { IN: getSelect2Value(model.selectedFilters.statuses) };
+            var statusIds = getSelect2Value(model.selectedFilters.statuses);
+            var statusGroupings = getGroupingsForCaseStatuses(statusIds);
+
+            param.status_id = { IN: statusIds };
+            param['status_id.grouping'] = { IN: statusGroupings };
           } else {
             param.status_id = { 'IS NOT NULL': 1 };
           }
 
           $rootScope.$broadcast('civicase::dashboard-filters::updated', param);
         });
+    }
+
+    /**
+     * Given a list of status IDs, it will return the groupings that apply to
+     * all of them.
+     *
+     * @param {string[]} statusIds a list of status IDs.
+     * @returns {string[]} a list of status groupings.
+     */
+    function getGroupingsForCaseStatuses (statusIds) {
+      var allCaseStatuses = CaseStatus.getAll();
+
+      return _.chain(statusIds)
+        .map(function (statusId) {
+          return allCaseStatuses[statusId].grouping;
+        })
+        .unique()
+        .value();
     }
 
     /**

@@ -119,7 +119,7 @@
             dialogModel.selectedFilters.start_date = '10/12/2019';
             dialogModel.selectedFilters.end_date = '15/12/2019';
             dialogModel.selectedFilters.award_types = '1,2';
-            dialogModel.selectedFilters.statuses = '3,4';
+            dialogModel.selectedFilters.statuses = '2,3';
             dialogModel.applyFilterAndCloseDialog();
             $rootScope.$digest();
           });
@@ -135,7 +135,8 @@
             });
             expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', {
               case_type_id: { IN: [1, 2] },
-              status_id: { IN: ['3', '4'] }
+              status_id: { IN: ['2', '3'] },
+              'status_id.grouping': { IN: ['Closed', 'Opened'] }
             });
           });
         });
