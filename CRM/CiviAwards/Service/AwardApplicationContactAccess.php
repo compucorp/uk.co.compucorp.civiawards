@@ -54,18 +54,31 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
   private function processVisibilitySettings(array $visibilitySettings) {
     $applicationTags = [];
     $applicationStatus = [];
+    $statusToMoveTo = [];
     $anonymizeApplication = TRUE;
+    $hasAllTagsAccess = FALSE;
+    $hasAllStatusAccess = FALSE;
 
     foreach ($visibilitySettings as $visibilitySetting) {
       if (isset($visibilitySetting['application_tags'])) {
         $applicationTags = array_merge($applicationTags, $visibilitySetting['application_tags']);
+        if (empty($visibilitySetting['application_tags'])) {
+          $hasAllTagsAccess = TRUE;
+        }
       }
       if (isset($visibilitySetting['application_status'])) {
         $applicationStatus = array_merge($applicationStatus, $visibilitySetting['application_status']);
+        if (empty($visibilitySetting['application_status'])) {
+          $hasAllStatusAccess = TRUE;
+        }
       }
 
       if (isset($visibilitySetting['anonymize_application']) && $visibilitySetting['anonymize_application'] == 0) {
         $anonymizeApplication = FALSE;
+      }
+
+      if (!empty($visibilitySetting['is_application_status_restricted'])) {
+        $statusToMoveTo = array_merge($statusToMoveTo, $visibilitySetting['restricted_application_status']);
       }
     }
     $applicationTags = array_unique($applicationTags);
@@ -74,9 +87,10 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
     sort($applicationTags);
 
     return [
-      'application_tags' => $applicationTags,
-      'application_status' => $applicationStatus,
+      'application_tags' => $hasAllTagsAccess ? [] : $applicationTags,
+      'application_status' => $hasAllStatusAccess ? [] : $applicationStatus,
       'anonymize_application' => $anonymizeApplication,
+      'status_to_move_to' => $statusToMoveTo,
     ];
   }
 
