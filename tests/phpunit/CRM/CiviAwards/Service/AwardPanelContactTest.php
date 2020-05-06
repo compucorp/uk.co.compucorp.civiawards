@@ -7,10 +7,15 @@ use CRM_CiviAwards_Test_Fabricator_RelationshipType as RelationshipTypeFabricato
 use CRM_CiviAwards_Test_Fabricator_Relationship as RelationshipFabricator;
 
 /**
+ * CRM_CiviAwards_Service_AwardPanelContactTest.
+ *
  * @group headless
  */
 class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
 
+  /**
+   * Test Get Returns Contacts Belonging To Group.
+   */
   public function testGetReturnsContactsBelongingToGroup() {
     $groupA = $this->createGroup('Group A');
     $groupB = $this->createGroup('Group B');
@@ -25,8 +30,8 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
 
     $params = [
       'contact_settings' => [
-        'include_groups' => [$groupA, $groupB]
-      ]
+        'include_groups' => [$groupA, $groupB],
+      ],
     ];
 
     $awardPanel = AwardReviewPanelFabricator::fabricate($params);
@@ -41,14 +46,17 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
       $contactB['id'] => [
         'display_name' => $contactB['display_name'],
         'email' => '',
-      ]
+      ],
     ];
     $this->cleanupUnwantedKeys($contacts);
 
     $this->assertEquals($expectedResult, $contacts);
   }
 
-  public function testGetDoesNotReturnsExcludedGroupContacts() {
+  /**
+   * Test Get Does Not Return Excluded Group Contacts.
+   */
+  public function testGetDoesNotReturnExcludedGroupContacts() {
     $groupA = $this->createGroup('Group A');
     $groupB = $this->createGroup('Group B');
     $groupC = $this->createGroup('Group C');
@@ -64,15 +72,15 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
     $params = [
       'contact_settings' => [
         'include_groups' => [$groupA, $groupB],
-        'exclude_groups' => [$groupC]
-      ]
+        'exclude_groups' => [$groupC],
+      ],
     ];
 
     $awardPanel = AwardReviewPanelFabricator::fabricate($params);
     $awardPanelContact = new AwardPanelContact();
     $contacts = $awardPanelContact->get($awardPanel->id);
 
-    //Contact B should be excluded because contact belongs to Group C also.
+    // Contact B should be excluded because contact belongs to Group C also.
     $expectedResult = [
       $contactA['id'] => [
         'display_name' => $contactA['display_name'],
@@ -81,13 +89,16 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
       $contactC['id'] => [
         'display_name' => $contactC['display_name'],
         'email' => '',
-      ]
+      ],
     ];
     $this->cleanupUnwantedKeys($contacts);
 
     $this->assertEquals($expectedResult, $contacts);
   }
 
+  /**
+   * Test Get Returns Contacts Based On Relationship.
+   */
   public function testGetReturnsContactsBasedOnRelationship() {
     $relationshipTypeAParams = [
       'name_a_b' => 'Manager is',
@@ -105,20 +116,29 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
     $contactA = ContactFabricator::fabricate();
     $contactB = ContactFabricator::fabricate();
     $contactC = ContactFabricator::fabricate();
+    $contactD = ContactFabricator::fabricate();
 
-    //Contact B is Manager to Contact A
+    // Contact B is Manager to Contact A.
     $params = [
       'contact_id_b' => $contactB['id'],
       'contact_id_a' => $contactA['id'],
-      'relationship_type_id' => $relationshipTypeA['id']
+      'relationship_type_id' => $relationshipTypeA['id'],
     ];
     RelationshipFabricator::fabricate($params);
 
-    //Contact B is Regulator to Contact C
+    // Contact B is Manager to Contact D.
+    $params = [
+      'contact_id_b' => $contactB['id'],
+      'contact_id_a' => $contactD['id'],
+      'relationship_type_id' => $relationshipTypeA['id'],
+    ];
+    RelationshipFabricator::fabricate($params);
+
+    // Contact B is Regulator to Contact C.
     $params = [
       'contact_id_b' => $contactB['id'],
       'contact_id_a' => $contactC['id'],
-      'relationship_type_id' => $relationshipTypeB['id']
+      'relationship_type_id' => $relationshipTypeB['id'],
     ];
     RelationshipFabricator::fabricate($params);
 
@@ -126,21 +146,21 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
       'contact_settings' => [
         'relationship' => [
           [
-            'contact_id' => $contactB['id'],
+            'contact_id' => [$contactB['id']],
             'is_a_to_b' => 1,
-            'relationship_type_id' => $relationshipTypeA['id']
+            'relationship_type_id' => $relationshipTypeA['id'],
           ],
           [
-            'contact_id' => $contactC['id'],
+            'contact_id' => [$contactC['id']],
             'is_a_to_b' => 0,
-            'relationship_type_id' => $relationshipTypeB['id']
+            'relationship_type_id' => $relationshipTypeB['id'],
           ],
         ],
-      ]
+      ],
     ];
 
-    // Returned contacts should be ContactA : Since it's manager is contact B
-    // Contact B since He is Regulator of ContactC
+    // Returned contacts should be ContactA : Since it's manager is contact B.
+    // Contact B is regulator of Contact C and Contact D: manager is Contact B.
     $awardPanel = AwardReviewPanelFabricator::fabricate($params);
     $awardPanelContact = new AwardPanelContact();
     $contacts = $awardPanelContact->get($awardPanel->id);
@@ -153,13 +173,20 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
       $contactB['id'] => [
         'display_name' => $contactB['display_name'],
         'email' => '',
-      ]
+      ],
+      $contactD['id'] => [
+        'display_name' => $contactB['display_name'],
+        'email' => '',
+      ],
     ];
     $this->cleanupUnwantedKeys($contacts);
 
     $this->assertEquals($expectedResult, $contacts);
   }
 
+  /**
+   * Test Get Returns Contacts Based On Relationship And Groups.
+   */
   public function testGetReturnsContactsBasedOnRelationshipAndGroups() {
     $relationshipTypeAParams = [
       'name_a_b' => 'Manager is',
@@ -172,11 +199,11 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
     $contactB = ContactFabricator::fabricate();
     $contactC = ContactFabricator::fabricate();
 
-    //Contact B is Manager to Contact A
+    // Contact B is Manager to Contact A.
     $params = [
       'contact_id_b' => $contactB['id'],
       'contact_id_a' => $contactA['id'],
-      'relationship_type_id' => $relationshipTypeA['id']
+      'relationship_type_id' => $relationshipTypeA['id'],
     ];
     RelationshipFabricator::fabricate($params);
 
@@ -188,12 +215,12 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
         'include_groups' => [$groupC],
         'relationship' => [
           [
-            'contact_id' => $contactB['id'],
+            'contact_id' => [$contactB['id']],
             'is_a_to_b' => 1,
-            'relationship_type_id' => $relationshipTypeA['id']
+            'relationship_type_id' => $relationshipTypeA['id'],
           ],
         ],
-      ]
+      ],
     ];
 
     $awardPanel = AwardReviewPanelFabricator::fabricate($params);
@@ -208,13 +235,16 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
       $contactC['id'] => [
         'display_name' => $contactC['display_name'],
         'email' => '',
-      ]
+      ],
     ];
     $this->cleanupUnwantedKeys($contacts);
 
     $this->assertEquals($expectedResult, $contacts);
   }
 
+  /**
+   * Test Get Returns Contacts Belonging To Group When Contact Filter Is Passed.
+   */
   public function testGetReturnsContactsBelongingToGroupWhenContactFilterIsPassed() {
     $groupA = $this->createGroup('Group A');
     $groupB = $this->createGroup('Group B');
@@ -226,27 +256,30 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
 
     $params = [
       'contact_settings' => [
-        'include_groups' => [$groupA, $groupB]
-      ]
+        'include_groups' => [$groupA, $groupB],
+      ],
     ];
 
     $awardPanel = AwardReviewPanelFabricator::fabricate($params);
     $awardPanelContact = new AwardPanelContact();
-    // ContactA and ContactB is supposed to be returned but since we are filtering
-    // By contactB, only contactB is returned
+    // ContactA and ContactB is supposed to be returned but since we are
+    // filtering By contactB, only contactB is returned.
     $contacts = $awardPanelContact->get($awardPanel->id, [$contactB['id']]);
 
     $expectedResult = [
       $contactB['id'] => [
         'display_name' => $contactB['display_name'],
         'email' => '',
-      ]
+      ],
     ];
     $this->cleanupUnwantedKeys($contacts);
 
     $this->assertEquals($expectedResult, $contacts);
   }
 
+  /**
+   * Test Get Returns Contacts Based On Relationship When Filter Is Passed.
+   */
   public function testGetReturnsContactsBasedOnRelationshipWhenContactFilterIsPassed() {
     $relationshipTypeAParams = [
       'name_a_b' => 'Manager is',
@@ -265,19 +298,19 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
     $contactB = ContactFabricator::fabricate();
     $contactC = ContactFabricator::fabricate();
 
-    //Contact B is Manager to Contact A
+    // Contact B is Manager to Contact A.
     $params = [
       'contact_id_b' => $contactB['id'],
       'contact_id_a' => $contactA['id'],
-      'relationship_type_id' => $relationshipTypeA['id']
+      'relationship_type_id' => $relationshipTypeA['id'],
     ];
     RelationshipFabricator::fabricate($params);
 
-    //Contact B is Regulator to Contact C
+    // Contact B is Regulator to Contact C.
     $params = [
       'contact_id_b' => $contactB['id'],
       'contact_id_a' => $contactC['id'],
-      'relationship_type_id' => $relationshipTypeB['id']
+      'relationship_type_id' => $relationshipTypeB['id'],
     ];
     RelationshipFabricator::fabricate($params);
 
@@ -285,21 +318,21 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
       'contact_settings' => [
         'relationship' => [
           [
-            'contact_id' => $contactB['id'],
+            'contact_id' => [$contactB['id']],
             'is_a_to_b' => 1,
-            'relationship_type_id' => $relationshipTypeA['id']
+            'relationship_type_id' => $relationshipTypeA['id'],
           ],
           [
-            'contact_id' => $contactC['id'],
+            'contact_id' => [$contactC['id']],
             'is_a_to_b' => 0,
-            'relationship_type_id' => $relationshipTypeB['id']
+            'relationship_type_id' => $relationshipTypeB['id'],
           ],
         ],
-      ]
+      ],
     ];
 
-    // Returned contacts should be ContactA and ContactA but since we are filtering
-    // By contactA, only contactA is returned
+    // Returned contacts should be ContactA and ContactA but since we are
+    // filtering By contactA, only contactA is returned.
     $awardPanel = AwardReviewPanelFabricator::fabricate($params);
     $awardPanelContact = new AwardPanelContact();
     $contacts = $awardPanelContact->get($awardPanel->id, [$contactA['id']]);
@@ -315,19 +348,21 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
     $this->assertEquals($expectedResult, $contacts);
   }
 
+  /**
+   * Test Get Does Not Return Duplicate Contact.
+   */
   public function testGetDoesNotReturnDuplicateContactForContactBelongingToDifferentGroup() {
     $groupA = $this->createGroup('Group A');
     $groupB = $this->createGroup('Group B');
 
     $contactA = ContactFabricator::fabricate();
-    $contactB = ContactFabricator::fabricate();
     $this->addContactToGroup($groupA, $contactA['id']);
     $this->addContactToGroup($groupB, $contactA['id']);
 
     $params = [
       'contact_settings' => [
-        'include_groups' => [$groupA, $groupB]
-      ]
+        'include_groups' => [$groupA, $groupB],
+      ],
     ];
 
     $awardPanel = AwardReviewPanelFabricator::fabricate($params);
@@ -338,13 +373,16 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
       $contactA['id'] => [
         'display_name' => $contactA['display_name'],
         'email' => '',
-      ]
+      ],
     ];
     $this->cleanupUnwantedKeys($contacts);
 
     $this->assertEquals($expectedResult, $contacts);
   }
 
+  /**
+   * Test Get Does Not Return Duplicate Contact For More Than One Relationships.
+   */
   public function testGetDoesNotReturnDuplicateContactForContactInvolvedInMoreThanOneRelationship() {
     $relationshipTypeAParams = [
       'name_a_b' => 'Manager is',
@@ -363,38 +401,38 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
     $contactB = ContactFabricator::fabricate();
     $contactC = ContactFabricator::fabricate();
 
-    //Contact B is Manager to Contact A
+    // Contact B is Manager to Contact A.
     $params = [
       'contact_id_b' => $contactB['id'],
       'contact_id_a' => $contactA['id'],
-      'relationship_type_id' => $relationshipTypeA['id']
+      'relationship_type_id' => $relationshipTypeA['id'],
     ];
     RelationshipFabricator::fabricate($params);
 
-    //Contact C is Regulator to Contact A
+    // Contact C is Regulator to Contact A.
     $params = [
       'contact_id_b' => $contactC['id'],
       'contact_id_a' => $contactA['id'],
-      'relationship_type_id' => $relationshipTypeB['id']
+      'relationship_type_id' => $relationshipTypeB['id'],
     ];
     RelationshipFabricator::fabricate($params);
 
-    //Both parameter condition should return Contact A
+    // Both parameter condition should return Contact A.
     $params = [
       'contact_settings' => [
         'relationship' => [
           [
-            'contact_id' => $contactB['id'],
+            'contact_id' => [$contactB['id']],
             'is_a_to_b' => 1,
-            'relationship_type_id' => $relationshipTypeA['id']
+            'relationship_type_id' => $relationshipTypeA['id'],
           ],
           [
-            'contact_id' => $contactC['id'],
+            'contact_id' => [$contactC['id']],
             'is_a_to_b' => 1,
-            'relationship_type_id' => $relationshipTypeB['id']
+            'relationship_type_id' => $relationshipTypeB['id'],
           ],
         ],
-      ]
+      ],
     ];
 
     $awardPanel = AwardReviewPanelFabricator::fabricate($params);
@@ -411,6 +449,15 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
 
     $this->assertEquals($expectedResult, $contacts);
   }
+
+  /**
+   * Add contact to group.
+   *
+   * @param int $groupId
+   *   Group ID.
+   * @param int $contactId
+   *   Contact ID.
+   */
   private function addContactToGroup($groupId, $contactId) {
     civicrm_api3('GroupContact', 'create', [
       'group_id' => $groupId,
@@ -418,6 +465,15 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
     ]);
   }
 
+  /**
+   * Create group.
+   *
+   * @param string $title
+   *   Group title.
+   *
+   * @return int
+   *   Group Id.
+   */
   private function createGroup($title) {
     $result = civicrm_api3('Group', 'create', [
       'title' => $title,
@@ -427,18 +483,22 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
   }
 
   /**
+   * Cleanup unwanted keys.
+   *
    * The return result from the Contact.get API is not reliable
    * based on the parameters it returns even if the specific parameters
    * are passed in the return array.
    * This function makes sure only the keys we are concerned with are present.
    *
    * @param array $contacts
+   *   Contacts.
    */
-  private function cleanupUnwantedKeys(&$contacts) {
+  private function cleanupUnwantedKeys(array &$contacts) {
     $expectedKeys = ['email' => 0, 'display_name' => 1];
     foreach ($contacts as &$contact) {
       $contact = array_intersect_key($contact, $expectedKeys);
     }
 
   }
+
 }
