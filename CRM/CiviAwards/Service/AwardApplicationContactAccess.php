@@ -15,7 +15,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
    *   Contact Id.
    * @param int $awardId
    *   Award Id.
-   * @param AwardReviewPanelContact $awardPanelContact
+   * @param CRM_CiviAwards_Service_AwardPanelContact $awardPanelContact
    *   Award Panel contact service.
    *
    * @return array|void
@@ -33,6 +33,10 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
       if (!empty($awardPanelContact->get($awardPanelId, [$contactId]))) {
         $visibilitySettings[] = $this->getAwardVisibilitySettings($awardPanelId);
       }
+    }
+
+    if (empty($visibilitySettings)) {
+      throw new Exception("This contact does not have any access to the panels on this Award");
     }
 
     return $this->processVisibilitySettings($visibilitySettings);
