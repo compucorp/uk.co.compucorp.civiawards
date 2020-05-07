@@ -100,8 +100,8 @@ class CRM_CiviAwards_Service_AwardPanelContact {
    *   Relationship type Id.
    * @param bool $isAToB
    *   If relationship is a to b or not.
-   * @param int $contactId
-   *   Contact Id linked to the relationship.
+   * @param array $contactId
+   *   Contact Ids linked to the relationship.
    * @param array $filterContacts
    *   If present, filters the results to return only for
    *   contacts present in filter contacts.
@@ -109,13 +109,13 @@ class CRM_CiviAwards_Service_AwardPanelContact {
    * @return array
    *   Relationship contacts.
    */
-  private function getRelationshipContacts($relationshipTypeId, $isAToB, $contactId, array $filterContacts = []) {
+  private function getRelationshipContacts($relationshipTypeId, $isAToB, array $contactId, array $filterContacts = []) {
     $relationshipTable = CRM_Contact_BAO_Relationship::getTableName();
     $relationshipTypeTable = CRM_Contact_BAO_RelationshipType::getTableName();
     $contactTable = CRM_Contact_BAO_Contact::getTableName();
     $contactEmailTable = CRM_Core_BAO_Email::getTableName();
     $relationshipJoinCondition = $isAToB ? 'ON r.contact_id_a = c.id' : 'ON r.contact_id_b = c.id';
-    $contactCondition = $isAToB ? 'AND r.contact_id_b = %1' : 'AND r.contact_id_a = %1';
+    $contactCondition = $isAToB ? 'AND r.contact_id_b IN (%1)' : 'AND r.contact_id_a IN (%1)';
     $filterContactCondition = $filterContacts ? 'AND c.id IN(' . implode(', ', $filterContacts) . ')' : '';
 
     $query = "
@@ -137,7 +137,7 @@ class CRM_CiviAwards_Service_AwardPanelContact {
     ";
 
     $params = [
-      1 => [$contactId, 'Integer'],
+      1 => [implode(',', $contactId), 'CommaSeparatedIntegers'],
       2 => [$relationshipTypeId, 'Integer'],
       3 => [date('Y-m-d'), 'String'],
     ];
