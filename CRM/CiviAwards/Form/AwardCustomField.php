@@ -13,10 +13,10 @@ class CRM_CiviAwards_Form_AwardCustomField extends CRM_Civicase_Form_CaseCategor
   public function preProcess() {
     $awardId = CRM_Utils_Request::retrieve('entityId', 'Positive', $this, TRUE);
     if (!$this->isValidAwardType($awardId)) {
-      CRM_Core_Session::setStatus(ts('An error occurred'), 'Error', 'error');
+      $this->assign('invalidAwardType', TRUE);
     }
 
-    $this->assign('invalidAwardType', TRUE);
+    parent::preProcess();
   }
 
   /**
