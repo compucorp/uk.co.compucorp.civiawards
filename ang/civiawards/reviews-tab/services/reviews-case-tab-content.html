@@ -1,3 +1,9 @@
 <civiawards-reviews-case-tab-content
+  ng-if="isMainContentVisible()"
   case-item="item"
 ></civiawards-reviews-case-tab-content>
+
+<div
+  ng-if="isPlaceHolderVisible()"
+  ng-include="'~/civiawards/reviews-tab/services/reviews-case-tab-placeholder.html'">
+</div>
