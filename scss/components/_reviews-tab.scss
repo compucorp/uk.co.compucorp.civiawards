@@ -18,4 +18,29 @@
     margin-top: 40px;
     opacity: 0.65;
   }
+
+  &__text-fields {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    * {
+      display: inline;
+      white-space: nowrap;
+    }
+
+    br {
+      display: none;
+    }
+  }
+
+  &__text-fields--Text {
+    width: 100px;
+  }
+
+  &__text-fields--TextArea,
+  &__text-fields--RichTextEditor {
+    width: 150px;
+  }
 }
