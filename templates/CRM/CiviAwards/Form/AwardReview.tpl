@@ -3,10 +3,10 @@
     <div class="panel panel-default">
       <div class="panel-body">
         <div class="form-group row">
-          {if $displayMissingFieldsError}
-            <p class="alert alert-warning">There are no review fields assigned to this award type.
-            Please add Review Fields by editing the the Award
-            Type located under the Overview dropdown in Award Dashboard.</p>
+          {if $errorMessage}
+            <p class="alert alert-warning">
+              {$errorMessage}
+            </p>
           {/if}
           {if $isViewAction}
             <div class="col-sm-5">
@@ -15,13 +15,18 @@
               </label>
             </div>
             <div class="col-sm-7">
+                {if !$isReviewFromSsp }
               <a
                 class="view-contact no-popup"
-                href="{crmURL p="civicrm/contact/view" q="reset=1&cid=`$sourceContactId`"}"
+                href=
+                "{crmURL p="civicrm/contact/view" q="reset=1&cid=`$sourceContactId`"}"
                 title="{ts}View Contact{/ts}"
               >
                 {$sourceContactName}
               </a>
+              {else}
+                {$sourceContactName}
+              {/if}
             </div>
           {/if}
           {if !$isViewAction}
@@ -43,9 +48,6 @@
         {/foreach}
       </div>
       <div class="crm-submit-buttons panel-footer clearfix">
-        {if $isViewAction}
-          <a href="{crmURL p='civicrm/awardreview' q=$editUrlParams}" class="edit button" title="{ts}Edit{/ts}"><span><i class="crm-i fa-pencil"></i> {ts}Edit{/ts}</span></a>
-        {/if}
         {include file="CRM/common/formButtons.tpl" location="bottom"}
       </div>
     </div>
