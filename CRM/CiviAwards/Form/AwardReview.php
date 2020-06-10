@@ -11,6 +11,16 @@ use CRM_CiviAwards_BAO_AwardDetail as AwardDetail;
 class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
   /**
+   * URL for accessing review form from SSP.
+   */
+  const SSP_REVIEW_URL = 'civicrm/award-review-ssp';
+
+  /**
+   * URL for accessing review form from civicrm.
+   */
+  const CIVICRM_REVIEW_URL = 'civicrm/awardreview';
+
+  /**
    * Case ID.
    *
    * @var int
@@ -198,7 +208,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       CRM_Core_Session::setStatus(ts('An error occurred'), 'Error', 'error');
     }
 
-    $awardPath = $this->isReviewFromSsp() ? 'civicrm/award-review-ssp' : 'civicrm/awardreview';
+    $awardPath = $this->isReviewFromSsp() ? self::SSP_REVIEW_URL : self::CIVICRM_REVIEW_URL;
     $url = CRM_Utils_System::url($awardPath, [
       'action' => 'view',
       'id' => $activityId,
@@ -602,7 +612,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    *   From SSP portal or not.
    */
   private function isReviewFromSsp() {
-    return CRM_Utils_System::currentPath() == 'civicrm/award-review-ssp';
+    return CRM_Utils_System::currentPath() == self::SSP_REVIEW_URL;
   }
 
   /**
