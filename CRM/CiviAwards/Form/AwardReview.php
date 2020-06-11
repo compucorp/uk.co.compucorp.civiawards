@@ -461,7 +461,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   private function getPageTitle() {
     $title = $this->caseContactDisplayName . ' - ' . $this->caseTypeName;
     if ($this->caseTags) {
-      $title = $title . ' - ' . $this->getCaseTags();
+      $title = $title . ' &nbsp; ' . $this->getCaseTags('badge');
     }
 
     return $title;
