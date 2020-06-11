@@ -386,12 +386,14 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
     $caseTags = [];
     foreach ($result['values'] as $caseTag) {
-      $caseTags[] = [
+      $caseTag = [
         'id'               => $caseTag['api.Tag.getsingle']['id'],
         'parent_id'        => $caseTag['api.Tag.getsingle']['parent_id'],
         'name'             => $caseTag['api.Tag.getsingle']['name'],
         'background_color' => !empty($caseTag['api.Tag.getsingle']['color']) ? $caseTag['api.Tag.getsingle']['color'] : '#ffffff',
       ];
+      $caseTag['color'] = $this->getTextColor($caseTag['background_color']);
+      $caseTags[] = $caseTag;
     }
 
     return $caseTags;
@@ -411,7 +413,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       case 'badge':
         $res = [];
         foreach ($this->caseTags as $caseTag) {
-          $res[] = '<span class="crm-tag-item" style="background-color: ' . $caseTag['background_color'] . '">' . $caseTag['name'] . '</span>';
+          $res[] = '<span class="crm-tag-item" style="background-color: ' . $caseTag['background_color'] . '; color: ' . $caseTag['color'] . '">' . $caseTag['name'] . '</span>';
         }
 
         $res = implode(' ', $res);
@@ -422,6 +424,32 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
 
     return $res;
+  }
+
+  /**
+   * Returns contrasting text color for given background color.
+   *
+   * @param string $bgColor
+   *   Background color in hex format (e.g: #ffffff).
+   *
+   * @return string
+   *   Text color suitable for background color in hex format (e.g: #000000).
+   *   Returns black text color for light background and white text color
+   *   for dark background.
+   */
+  private function getTextColor($bgColor) {
+    // Ensure that the color code will have # in the beginning.
+    if (strpos($bgColor, '#') === FALSE) {
+      $bgColor = '#' . $bgColor;
+    }
+
+    // Calculate background color luminance.
+    list($r, $g, $b) = sscanf($bgColor, "#%02x%02x%02x");
+    $luminance = 1 - (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+    // Calculate text color.
+    $color = $luminance < 0.5 ? '#000000' : '#ffffff';
+
+    return $color;
   }
 
   /**
