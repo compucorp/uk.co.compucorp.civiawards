@@ -99,7 +99,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $this->profileId = $this->getProfileIdFromCaseType();
     $this->caseContactDisplayName = $this->getCaseContactDisplayName();
     $this->caseTypeName = $this->getCaseTypeName();
-    $this->caseTags = $this->getCaseTags();
+    $this->caseTags = $this->loadCaseTags();
   }
 
   /**
@@ -191,7 +191,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
     $this->assign('caseContactDisplayName', $this->getCaseContactDisplayName());
     $this->assign('caseTypeName', $this->caseTypeName);
-    $this->assign('caseTags', $this->caseTags);
+    $this->assign('caseTags', $this->getCaseTags());
     $this->assign('isViewAction', $isViewAction);
 
     if ($isViewAction) {
@@ -368,12 +368,12 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   }
 
   /**
-   * Gets the tags for a case.
+   * Load the tags for a case.
    *
    * @return array|string
    *   Case tags.
    */
-  private function getCaseTags() {
+  private function loadCaseTags() {
     $result = civicrm_api3('EntityTag', 'get', [
       'sequential' => 1,
       'entity_table' => 'civicrm_case',
@@ -381,15 +381,37 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     ]);
 
     if ($result['count'] == 0) {
-      return '';
+      return [];
     }
 
-    $caseTags = '';
+    $caseTags = [];
     foreach ($result['values'] as $caseTag) {
-      $caseTags .= $caseTag['api.Tag.getsingle']['name'] . ', ';
+      $caseTags[] = [
+        'id'               => $caseTag['api.Tag.getsingle']['id'],
+        'parent_id'        => $caseTag['api.Tag.getsingle']['parent_id'],
+        'name'             => $caseTag['api.Tag.getsingle']['name'],
+        'background_color' => !empty($caseTag['api.Tag.getsingle']['color']) ? $caseTag['api.Tag.getsingle']['color'] : '#ffffff',
+      ];
     }
 
-    return rtrim($caseTags, "', '");
+    return $caseTags;
+  }
+
+  /**
+   * Get Case tags list.
+   *
+   * @param string $format
+   *   (Optional) Output format, defaults to plain text.
+   *
+   * @return string
+   *   Case tags list.
+   */
+  private function getCaseTags($format = 'plain') {
+    switch ($format) {
+      default: $res = implode(', ', array_column($this->caseTags, 'name'));
+    }
+
+    return $res;
   }
 
   /**
@@ -401,7 +423,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   private function getPageTitle() {
     $title = $this->caseContactDisplayName . ' - ' . $this->caseTypeName;
     if ($this->caseTags) {
-      $title = $title . ' - ' . $this->caseTags;
+      $title = $title . ' - ' . $this->getCaseTags();
     }
 
     return $title;
