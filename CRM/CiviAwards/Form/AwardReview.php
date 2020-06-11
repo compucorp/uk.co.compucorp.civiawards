@@ -408,7 +408,17 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    */
   private function getCaseTags($format = 'plain') {
     switch ($format) {
-      default: $res = implode(', ', array_column($this->caseTags, 'name'));
+      case 'badge':
+        $res = [];
+        foreach ($this->caseTags as $caseTag) {
+          $res[] = '<span class="crm-tag-item" style="background-color: ' . $caseTag['background_color'] . '">' . $caseTag['name'] . '</span>';
+        }
+
+        $res = implode(' ', $res);
+        break;
+
+      default:
+        $res = implode(', ', array_column($this->caseTags, 'name'));
     }
 
     return $res;
