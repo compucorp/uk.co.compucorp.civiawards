@@ -386,9 +386,9 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $caseTags = [];
     foreach ($result['values'] as $caseTag) {
       $caseTag = [
-        'id'               => $caseTag['api.Tag.getsingle']['id'],
-        'parent_id'        => $caseTag['api.Tag.getsingle']['parent_id'],
-        'name'             => $caseTag['api.Tag.getsingle']['name'],
+        'id' => $caseTag['api.Tag.getsingle']['id'],
+        'parent_id' => $caseTag['api.Tag.getsingle']['parent_id'],
+        'name' => $caseTag['api.Tag.getsingle']['name'],
         'background_color' => !empty($caseTag['api.Tag.getsingle']['color']) ? $caseTag['api.Tag.getsingle']['color'] : '#ffffff',
       ];
       $caseTag['color'] = $this->getTextColor($caseTag['background_color']);
@@ -401,28 +401,17 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   /**
    * Get Case tags list.
    *
-   * @param string $format
-   *   (Optional) Output format, defaults to plain text.
-   *
    * @return string
-   *   Case tags list.
+   *   HTML code of Case tags as badge list.
    */
-  private function getCaseTags($format = 'plain') {
-    switch ($format) {
-      case 'badge':
-        $res = [];
-        foreach ($this->caseTags as $caseTag) {
-          $res[] = '<span class="crm-tag-item" style="background-color: ' . $caseTag['background_color'] . '; color: ' . $caseTag['color'] . '">' . $caseTag['name'] . '</span>';
-        }
-
-        $res = implode(' ', $res);
-        break;
-
-      default:
-        $res = implode(', ', array_column($this->caseTags, 'name'));
+  private function getCaseTags() {
+    $res = [];
+    foreach ($this->caseTags as $caseTag) {
+      $res[] = '<span class="crm-tag-item" style="background-color: ' . $caseTag['background_color'] . '; color: ' . $caseTag['color'] . '">'
+        . $caseTag['name'] . '</span>';
     }
 
-    return $res;
+    return implode(' ', $res);
   }
 
   /**
@@ -460,7 +449,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   private function getPageTitle() {
     $title = $this->caseContactDisplayName . ' - ' . $this->caseTypeName;
     if ($this->caseTags) {
-      $title = $title . ' &nbsp; ' . $this->getCaseTags('badge');
+      $title = $title . ' &nbsp; ' . $this->getCaseTags();
     }
 
     return $title;
