@@ -165,9 +165,16 @@
 
     /**
      * Converts HTML entities in popup title to their corresponding characters.
+     *
+     * @param {object} event
+     *   Event object.
+     * @param {object} data
+     *   Loaded form data.
      */
-    function popupTitleDecodeEntities () {
-      $('.ui-dialog-title').each(function () {
+    function popupTitleDecodeEntities (event, data) {
+      var $popup = $(event.target).closest('.ui-dialog');
+
+      $popup.find('.ui-dialog-title').each(function () {
         $(this).html(htmlEntitiesDecode($(this).html()));
       });
     }
