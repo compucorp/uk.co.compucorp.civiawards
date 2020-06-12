@@ -269,7 +269,7 @@
             mockedFormElement.trigger(CRM_FORM_LOAD_EVENT);
           });
 
-          it('case tags in popup title are html objects', () => {
+          it('displays the tags with background and text color', () => {
             expect(mockedFormElement.find('.crm-tag-item').length).toBe(1);
           });
         });
