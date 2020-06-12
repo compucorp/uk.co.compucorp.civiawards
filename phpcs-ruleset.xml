@@ -11,5 +11,7 @@
         <!--Drupal expects function names like civiawards_civicrm_pre_process but civi can have-->
         <!--civiawards_civicrm_preProcess which is valid for civi.-->
         <exclude name="Drupal.NamingConventions.ValidFunctionName.InvalidName"/>
+        <!-- this was was added in drupal, but in civicrm we ignore this rule -->
+        <exclude name="Drupal.Classes.UseGlobalClass.RedundantUseStatement"/>
     </rule>
 </ruleset>
