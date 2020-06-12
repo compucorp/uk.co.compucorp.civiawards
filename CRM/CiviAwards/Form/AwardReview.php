@@ -191,7 +191,6 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
     $this->assign('caseContactDisplayName', $this->getCaseContactDisplayName());
     $this->assign('caseTypeName', $this->caseTypeName);
-    $this->assign('caseTags', $this->getCaseTags());
     $this->assign('isViewAction', $isViewAction);
 
     if ($isViewAction) {
