@@ -11,6 +11,16 @@ use CRM_CiviAwards_BAO_AwardDetail as AwardDetail;
 class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
   /**
+   * URL for accessing review form from SSP.
+   */
+  const SSP_REVIEW_URL = 'civicrm/award-review-ssp';
+
+  /**
+   * URL for accessing review form from civicrm.
+   */
+  const CIVICRM_REVIEW_URL = 'civicrm/awardreview';
+
+  /**
    * Case ID.
    *
    * @var int
@@ -23,6 +33,13 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * @var int
    */
   private $activityId;
+
+  /**
+   * Activity details.
+   *
+   * @var array
+   */
+  private $activity;
 
   /**
    * Profile Id.
@@ -87,6 +104,10 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * {@inheritDoc}
    */
   public function preProcess() {
+    if (!in_array($this->_action, [CRM_Core_Action::ADD, CRM_Core_Action::VIEW])) {
+      throw new Exception('Action not supported!');
+    }
+
     if ($this->_action & CRM_Core_Action::ADD) {
       $this->caseId = CRM_Utils_Request::retrieve('case_id', 'Positive', $this);
     }
@@ -110,14 +131,46 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       $this->profileId, FALSE, CRM_Core_Action::ADD, NULL,
       NULL, FALSE, NULL, FALSE, NULL, CRM_Core_Permission::CREATE, 'weight'
     );
-    $shouldDisplayMissingFieldsError = empty($fields);
 
-    if ($shouldDisplayMissingFieldsError) {
-      $this->displayMissingFieldsError();
+    $error = $this->getErrorMessage($fields);
+    if ($error) {
+      $this->displayErrorMessage($error);
     }
     else {
       $this->displayReviewForm($fields);
     }
+  }
+
+  /**
+   * Returns the error messages for the form if any.
+   *
+   * @param array|null $fields
+   *   Form fields.
+   *
+   * @return string
+   *   Error message.
+   */
+  private function getErrorMessage($fields) {
+    if (empty($fields)) {
+      return 'There are no review fields assigned to this award type. 
+        Please add Review Fields by editing the the Award Type located under the 
+        Overview dropdown in Award Dashboard.';
+    }
+
+    $isViewAction = $this->_action & CRM_Core_Action::VIEW;
+    $isAddAction = $this->_action & CRM_Core_Action::ADD;
+    $hasSubmittedReview = $this->userAlreadySubmittedReview();
+    $canNotViewReview = $isViewAction && $this->isReviewFromSsp() && !$this->isReviewOwner();
+
+    if ($hasSubmittedReview && $isAddAction) {
+      return 'You have already submitted a review for this Award and you can not add another review';
+    }
+
+    if ($canNotViewReview) {
+      return 'You can only view the reviews that you have added!';
+    }
+
+    return NULL;
   }
 
   /**
@@ -155,8 +208,9 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       CRM_Core_Session::setStatus(ts('An error occurred'), 'Error', 'error');
     }
 
-    $url = CRM_Utils_System::url('civicrm/awardreview', [
-      'action' => 'update',
+    $awardPath = $this->isReviewFromSsp() ? self::SSP_REVIEW_URL : self::CIVICRM_REVIEW_URL;
+    $url = CRM_Utils_System::url($awardPath, [
+      'action' => 'view',
       'id' => $activityId,
       'reset' => 1,
     ]);
@@ -165,12 +219,15 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   }
 
   /**
-   * Displays an error message when no review fields have been configured.
+   * Displays an error message when there are errors for the form.
+   *
+   * @param string $errorMessage
+   *   Error message.
    */
-  private function displayMissingFieldsError() {
+  private function displayErrorMessage($errorMessage) {
     CRM_Utils_System::setTitle(E::ts('Warning'));
 
-    $this->assign('displayMissingFieldsError', TRUE);
+    $this->assign('errorMessage', $errorMessage);
 
     $this->addButtons([
       [
@@ -193,6 +250,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $this->assign('caseTypeName', $this->caseTypeName);
     $this->assign('caseTags', $this->caseTags);
     $this->assign('isViewAction', $isViewAction);
+    $this->assign('isReviewFromSsp', $this->isReviewFromSsp());
 
     if ($isViewAction) {
       $this->assign('sourceContactId', $this->activity['source_contact_id']);
@@ -213,12 +271,17 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       CRM_Core_BAO_UFGroup::buildProfile($this, $field, CRM_Profile_Form::MODE_CREATE);
     }
 
-    if ($this->_action & CRM_Core_Action::VIEW) {
+    if ($isViewAction) {
       foreach ($this->_elements as $element) {
         if (in_array($element->_attributes['name'], $elementNames)) {
           $element->freeze();
         }
       }
+    }
+
+    if (!$isViewAction && $this->isReviewFromSsp()) {
+      $sourceContact = $this->getElement('source_contact_id');
+      $sourceContact->freeze();
     }
 
     $this->profileFields = $elementNames;
@@ -492,6 +555,42 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       'id' => $this->activityId,
       'source_contact_id' => $values['source_contact_id'],
     ]);
+  }
+
+  /**
+   * Checks if this form was loaded from SSP portal.
+   *
+   * @return bool
+   *   From SSP portal or not.
+   */
+  private function isReviewFromSsp() {
+    return CRM_Utils_System::currentPath() == self::SSP_REVIEW_URL;
+  }
+
+  /**
+   * Checks if logged in user is the owner of review activity.
+   *
+   * @return bool
+   *   Whether owner or not.
+   */
+  private function isReviewOwner() {
+    return $this->activity['source_contact_id'] == CRM_Core_Session::getLoggedInContactID();
+  }
+
+  /**
+   * Checks if the user has already submitted a review for the Award.
+   *
+   * @return bool
+   *   Bool value.
+   */
+  private function userAlreadySubmittedReview() {
+    $result = civicrm_api3('Activity', 'get', [
+      'activity_type_id' => 'Applicant Review',
+      'case_id' => $this->caseId,
+      'source_contact_id' => "user_contact_id",
+    ]);
+
+    return $result['count'] > 0;
   }
 
 }
