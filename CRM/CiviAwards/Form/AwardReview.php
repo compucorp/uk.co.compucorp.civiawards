@@ -152,8 +152,8 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    */
   private function getErrorMessage($fields) {
     if (empty($fields)) {
-      return 'There are no review fields assigned to this award type. 
-        Please add Review Fields by editing the the Award Type located under the 
+      return 'There are no review fields assigned to this award type.
+        Please add Review Fields by editing the the Award Type located under the
         Overview dropdown in Award Dashboard.';
     }
 
@@ -201,8 +201,8 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
     try {
       civicrm_api3('Profile', 'submit', $profileFields);
-      $status = $this->_action == CRM_Core_Action::ADD ? 'Added' : 'Updated';
-      CRM_Core_Session::setStatus(ts("The review has been {$status} successfully"), 'Success', 'success');
+      $status = $this->_action == CRM_Core_Action::ADD ? 'Submitted' : 'Updated';
+      CRM_Core_Session::setStatus(ts('The review has been ' . strtolower($status) . ' successfully.'), ts('Review ' . $status), 'success');
     }
     catch (Exception $e) {
       CRM_Core_Session::setStatus(ts('An error occurred'), 'Error', 'error');
