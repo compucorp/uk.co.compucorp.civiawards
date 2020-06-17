@@ -239,6 +239,43 @@
       });
     });
 
+    describe('check popup title processing when viewing a review', () => {
+      let mockedFormElement, selectedReview;
+      const CRM_FORM_LOAD_EVENT = 'crmFormLoad';
+
+      beforeEach(() => {
+        mockedFormElement = $('<div class="ui-dialog">\n' +
+          '  <div class="ui-dialog-titlebar">\n' +
+          '    <span class="ui-dialog-title">View Review - Demo - Award &amp;nbsp; &lt;span class="crm-tag-item" style="background-color: #652881; color: #ffffff"&gt;Tag&lt;/span&gt;</span>\n' +
+          '  </div>\n' +
+          '  <div class="ui-dialog-content">\n' +
+          '  </div>\n' +
+          '</div>');
+        selectedReview = _.chain(ReviewActivitiesMockData)
+          .first()
+          .cloneDeep()
+          .value();
+
+        CRM.loadForm.and.returnValue(mockedFormElement);
+      });
+
+      describe('when clicking the View review menu link', () => {
+        beforeEach(() => {
+          $scope.handleViewReviewActivity(selectedReview);
+        });
+
+        describe('after the form has been loaded', () => {
+          beforeEach(() => {
+            mockedFormElement.trigger(CRM_FORM_LOAD_EVENT);
+          });
+
+          it('displays the tags with background and text color', () => {
+            expect(mockedFormElement.find('.crm-tag-item').length).toBe(1);
+          });
+        });
+      });
+    });
+
     /**
      * @returns {object} the mocked response for the Activity.Get api action.
      */
