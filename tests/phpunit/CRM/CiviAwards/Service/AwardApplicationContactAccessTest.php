@@ -104,8 +104,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
     $expectedResult = [
       'application_tags' => [1, 2, 6, 8],
       'application_status' => [3, 5, 6, 9],
-      'anonymize_application' => FALSE,
-      'status_to_move_to' => [],
     ];
 
     $this->assertEquals($expectedResult, $applicationContactAccess->get($contactId, $caseType['id'], $awardPanelContact));
@@ -144,8 +142,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
     $expectedResult = [
       'application_tags' => [],
       'application_status' => [],
-      'anonymize_application' => TRUE,
-      'status_to_move_to' => [],
     ];
 
     $this->assertEquals($expectedResult, $applicationContactAccess->get($contactId, $caseType['id'], $awardPanelContact));
@@ -197,8 +193,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
     $expectedResult = [
       'application_tags' => [],
       'application_status' => [],
-      'anonymize_application' => FALSE,
-      'status_to_move_to' => [2],
     ];
 
     $this->assertEquals($expectedResult, $applicationContactAccess->get($contactId, $caseType['id'], $awardPanelContact));
