@@ -46,11 +46,11 @@
               {/if}
             </h1>
             <div class="ssp-details-page-section__sub-heading">
-              <span class="ssp-applicant-card__award ssp-text-large">Dummy Award</span>
+              <span class="ssp-applicant-card__award ssp-text-large">{$caseTypeName}</span>
               <span>
-                <span class="label label-primary" style="background-color: #f3e11b">Lorem ipsum</span>
-                <span class="label label-primary" style="background-color: #d73737"> Dolor sit </span>
-              </span>
+                {foreach from=$caseTags item=caseTag}
+                  <span class="label label-primary" style="background-color: {$caseTag.background_color}">{$caseTag.name}</span>
+                {/foreach}
             </div>
           {else}
             {* View Mode *}
