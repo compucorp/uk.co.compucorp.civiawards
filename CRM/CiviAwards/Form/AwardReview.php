@@ -2,6 +2,8 @@
 
 use CRM_CiviAwards_ExtensionUtil as E;
 use CRM_CiviAwards_BAO_AwardDetail as AwardDetail;
+use CRM_CiviAwards_Service_AwardPanelContact as AwardPanelContact;
+use CRM_CiviAwards_Service_AwardApplicationContactAccess as AwardApplicationContactAccess;
 
 /**
  * Form controller class.
@@ -170,7 +172,36 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       return 'You can only view the reviews that you have added!';
     }
 
+    if ($this->isReviewFromSsp() && !$this->contactHasPanelAccessToAward()) {
+      return 'You are not a member of any panel on this Award';
+    }
+
     return NULL;
+  }
+
+  /**
+   * Checks if the logged in contact has access to the Award.
+   *
+   * The contact has access if it belongs to a panel on the
+   * award.
+   *
+   * @return bool
+   *   Whether contact has access or not.
+   */
+  private function contactHasPanelAccessToAward() {
+    $loggedInContact = CRM_Core_Session::getLoggedInContactID();
+    $awardId = $this->getCaseTypeId();
+    $awardPanelContact = new AwardPanelContact();
+    $contactAccessService = new AwardApplicationContactAccess();
+
+    try {
+      $contactAccess = $contactAccessService->get($loggedInContact, $awardId, $awardPanelContact);
+
+      return !empty($contactAccess) ? TRUE : FALSE;
+    }
+    catch (Exception $e) {
+      return FALSE;
+    }
   }
 
   /**
@@ -262,15 +293,18 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       $this->addEntityRef('source_contact_id', ts('Reported By'));
     }
 
-    $customFieldLabels = $this->getCustomFieldLabels(array_keys($fields));
-    $elementNames = [];
+    $customFieldData = $this->getCustomFieldData(array_keys($fields));
+    $elementData = [];
 
     foreach ($fields as $name => $field) {
-      $elementNames[] = $field['name'];
-      $field['title'] = $customFieldLabels[$field['name']];
+      $elementData[$field['name']]['name'] = $field['name'];
+      $elementData[$field['name']]['help_post'] = $customFieldData[$field['name']]['help_post'];
+      $elementData[$field['name']]['help_pre'] = $customFieldData[$field['name']]['help_pre'];
+      $field['title'] = $customFieldData[$field['name']]['label'];
       CRM_Core_BAO_UFGroup::buildProfile($this, $field, CRM_Profile_Form::MODE_CREATE);
     }
 
+    $elementNames = array_keys($elementData);
     if ($isViewAction) {
       foreach ($this->_elements as $element) {
         if (in_array($element->_attributes['name'], $elementNames)) {
@@ -285,7 +319,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
 
     $this->profileFields = $elementNames;
-    $this->assign('elementNames', $elementNames);
+    $this->assign('elementData', $elementData);
 
     if ($this->_action & CRM_Core_Action::VIEW) {
       $pageTitle = 'View Review - ' . $this->getPageTitle();
@@ -562,11 +596,13 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   }
 
   /**
-   * Gets Custom field profile labels.
+   * Gets Custom field profile data.
    *
    * The custom fields for a review (which is an activity) are stored
    * on a profile but the actual labels of these custom fields may change
    * so we need to fetch these labels from the custom fields and use that.
+   * Also we need some other data from the custom fields like pre and post
+   * help fields.
    *
    * @param array $customFieldNames
    *   Custom field names on profile.
@@ -574,7 +610,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * @return array
    *   Array of profile field label/values.
    */
-  private function getCustomFieldLabels(array $customFieldNames) {
+  private function getCustomFieldData(array $customFieldNames) {
     $customFieldIds = [];
     foreach ($customFieldNames as $customFieldName) {
       $customFieldIds[] = substr($customFieldName, 7);
@@ -582,16 +618,18 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
     $results = civicrm_api3('CustomField', 'get', [
       'sequential' => 1,
-      'return' => ['label'],
+      'return' => ['label', 'help_pre', 'help_post'],
       'id' => ['IN' => $customFieldIds],
     ]);
 
-    $customFieldLabels = [];
+    $customFieldData = [];
     foreach ($results['values'] as $customField) {
-      $customFieldLabels['custom_' . $customField['id']] = $customField['label'];
+      $customFieldData['custom_' . $customField['id']]['label'] = $customField['label'];
+      $customFieldData['custom_' . $customField['id']]['help_pre'] = $customField['help_pre'];
+      $customFieldData['custom_' . $customField['id']]['help_post'] = $customField['help_post'];
     }
 
-    return $customFieldLabels;
+    return $customFieldData;
   }
 
   /**
