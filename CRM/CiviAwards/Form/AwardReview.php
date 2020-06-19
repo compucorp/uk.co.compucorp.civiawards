@@ -13,7 +13,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   /**
    * URL for accessing review form from SSP.
    */
-  const SSP_REVIEW_URL = 'civicrm/award-review-ssp';
+  const SSP_REVIEW_URL = 'civicrm/ssp/awardreview';
 
   /**
    * URL for accessing review form from civicrm.
