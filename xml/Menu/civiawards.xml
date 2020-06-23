@@ -7,10 +7,10 @@
     <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
-    <path>civicrm/award-review-ssp</path>
+    <path>civicrm/ssp/awardreview</path>
     <page_callback>CRM_CiviAwards_Form_AwardReview</page_callback>
     <title>Award Review</title>
-    <access_arguments>access applicant portal</access_arguments>
+    <access_arguments>access awards panel portal</access_arguments>
     <is_public>true</is_public>
   </item>
   <item>
