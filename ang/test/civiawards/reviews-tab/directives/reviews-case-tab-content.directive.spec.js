@@ -171,32 +171,6 @@
         });
       });
 
-      describe('when editing a review', () => {
-        beforeEach(() => {
-          expectedUrl = getCrmUrl(REVIEW_FORM_URL, {
-            action: 'update',
-            id: selectedReview.id,
-            reset: 1
-          });
-
-          $scope.handleEditReviewActivity(selectedReview);
-        });
-
-        it('calls the form to edit the selected review', () => {
-          expect(CRM.loadForm).toHaveBeenCalledWith(expectedUrl);
-        });
-
-        describe('when saving the form', () => {
-          beforeEach(() => {
-            mockedFormElement.trigger(CRM_FORM_SUCCESS_EVENT);
-          });
-
-          it('reloads the reviews', () => {
-            expect(crmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
-          });
-        });
-      });
-
       describe('when deleting a review', () => {
         beforeEach(() => {
           $scope.handleDeleteReviewActivity(selectedReview);

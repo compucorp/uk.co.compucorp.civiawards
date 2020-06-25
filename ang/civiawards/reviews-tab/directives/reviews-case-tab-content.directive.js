@@ -36,7 +36,6 @@
 
     $scope.handleAddReviewActivity = handleAddReviewActivity;
     $scope.handleViewReviewActivity = handleViewReviewActivity;
-    $scope.handleEditReviewActivity = handleEditReviewActivity;
     $scope.handleDeleteReviewActivity = handleDeleteReviewActivity;
     $scope.trustAsHtml = $sce.trustAsHtml;
 
@@ -126,24 +125,6 @@
       });
 
       loadForm(formUrl)
-        .on(CRM_FORM_SUCCESS_EVENT, loadReviewActivities);
-    }
-
-    /**
-     * Opens a form to edit the given review. It refreshes the list of reviews after
-     * successfully saving the form.
-     *
-     * @param {object} reviewActivity the review to edit.
-     */
-    function handleEditReviewActivity (reviewActivity) {
-      var formUrl = getCrmUrl(REVIEW_FORM_URL, {
-        action: 'update',
-        id: reviewActivity.id,
-        reset: 1
-      });
-
-      loadForm(formUrl)
-        .on(CRM_FORM_LOAD_EVENT, popupTitleDecodeEntities)
         .on(CRM_FORM_SUCCESS_EVENT, loadReviewActivities);
     }
 
