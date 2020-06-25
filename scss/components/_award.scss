@@ -60,6 +60,20 @@
   }
 }
 
+.civiawards__award__search-review-fields {
+  position: relative;
+
+  input {
+    padding-right: 30px;
+  }
+
+  .fa-search {
+    position: absolute;
+    right: 20px;
+    top: 5px;
+  }
+}
+
 .civiawards__award__review-fields--selected,
 .civiawards__award__review-panels__list {
   margin: 0 $gutter-width $gutter-width !important;
