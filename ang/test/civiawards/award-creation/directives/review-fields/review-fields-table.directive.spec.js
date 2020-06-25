@@ -6,7 +6,7 @@
 
     beforeEach(module('civiawards.templates', 'civiawards', 'civicase.data', 'civiawards.data', function ($provide) {
       $provide.value('crmApi', jasmine.createSpy('crmApi'));
-      $provide.value('dialogService', jasmine.createSpyObj('dialogService', ['open']));
+      $provide.value('dialogService', jasmine.createSpyObj('dialogService', ['open', 'close']));
     }));
 
     beforeEach(inject((_$q_, _$controller_, _$rootScope_, _crmApi_, _ReviewFieldsMockData_, _AwardAdditionalDetailsMockData_, _dialogService_) => {
@@ -140,7 +140,6 @@
     describe('when "Add Review Fields" button is clicked', () => {
       beforeEach(() => {
         createController();
-
         $scope.openReviewFieldSelectionPopup();
       });
 
@@ -149,7 +148,25 @@
           autoOpen: false,
           height: 'auto',
           width: '600px',
-          title: 'Select Review Fields'
+          title: 'Select Review Fields',
+          buttons: [{
+            text: 'Done',
+            icons: { primary: 'fa-check' },
+            click: jasmine.any(Function)
+          }]
+        });
+      });
+
+      describe('when the DONE button is clicked', () => {
+        beforeEach(() => {
+          var doneButtonClickFunction =
+            dialogService.open.calls.mostRecent().args[3].buttons[0].click;
+
+          doneButtonClickFunction();
+        });
+
+        it('closes the review fields popup', () => {
+          expect(dialogService.close).toHaveBeenCalledWith('ReviewFields');
         });
       });
     });
