@@ -2,12 +2,15 @@
   <form class="form-horizontal">
     <div class="form-group">
       <label class="col-sm-4 control-label">Filter by Field Name</label>
-      <div class="col-sm-7 civiawards__award__search-review-fields">
+      <div class="col-sm-7 has-feedback">
         <input
           type="text" ng-model="model.searchText"
           class="form-control"
           placeholder="Enter text to filter"/>
-        <i class="crm-i fa-search"></i>
+        <span
+          class="glyphicon glyphicon-search form-control-feedback"
+          aria-hidden="true">
+        </span>
       </div>
     </div>
   </form>
