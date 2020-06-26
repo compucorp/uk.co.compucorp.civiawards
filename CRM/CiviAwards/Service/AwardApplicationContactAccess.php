@@ -100,6 +100,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
     $allCaseTagAccess = !empty($visibilitySettings['tags']['all']['status_to_move_to']) ?
       $visibilitySettings['tags']['all']['status_to_move_to'] : [];
     $caseTagAccess = [];
+    $caseTagAnonymization = TRUE;
 
     foreach ($caseTags as $tag) {
       $statusToMoveTo = !empty($visibilitySettings['tags'][$tag]['status_to_move_to']) ? $visibilitySettings['tags'][$tag]['status_to_move_to'] : [];
@@ -109,8 +110,8 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
     $statusToMoveApplicationTo = array_merge($caseStatusAccess, $allCaseStatusAccess, $caseTagAccess);
     if (!empty($caseTags)) {
       $statusToMoveApplicationTo = array_merge($statusToMoveApplicationTo, $allCaseTagAccess);
+      $caseTagAnonymization = $this->getCaseTagsAnonymization($visibilitySettings, $caseTags);
     }
-    $caseTagAnonymization = $this->getCaseTagsAnonymization($visibilitySettings, $caseTags);
     $caseStatusAnonymization = $this->getCaseStatusAnonymization($visibilitySettings, [$caseStatus]);
     $statusToMoveApplicationTo = array_unique($statusToMoveApplicationTo);
     sort($statusToMoveApplicationTo);

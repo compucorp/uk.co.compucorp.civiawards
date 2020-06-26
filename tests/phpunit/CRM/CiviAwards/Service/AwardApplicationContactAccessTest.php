@@ -554,6 +554,52 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
   }
 
   /**
+   * Test Anonymization logic for all tags when case has no tags.
+   */
+  public function testAnonymisationLogicWhenCaseHasNoTagsAndAllTagsInAccessInPanelAllowsApplicationToBeNonAnonymised() {
+    $caseType = CaseTypeFabricator::fabricate();
+    $caseStatus = 1;
+    $applicationContactAccess = new ApplicationContactAccess();
+    $case = CaseFabricator::fabricate(['status_id' => $caseStatus, 'case_type_id' => $caseType['id']]);
+    $contactId = 1;
+
+    $params = [
+      [
+        'case_type_id' => $caseType['id'],
+        'visibility_settings' => [
+          'application_status' => [3],
+          'application_tags' => [],
+          'anonymize_application' => 0,
+          'is_application_status_restricted' => 0,
+        ],
+      ],
+      [
+        'case_type_id' => $caseType['id'],
+        'visibility_settings' => [
+          'application_status' => [$caseStatus],
+          'anonymize_application' => 1,
+          'is_application_status_restricted' => 0,
+        ],
+      ],
+    ];
+
+    $awardPanel = [];
+    foreach ($params as $param) {
+      $awardPanel[] = AwardReviewPanelFabricator::fabricate($param);
+    }
+
+    $awardPanelContact = $this->getAwardPanelContactObject($awardPanel, $contactId);
+
+    // Application should be anonymised.
+    $expectedResult = [
+      'status_to_move_to' => [],
+      'anonymize_application' => TRUE,
+    ];
+
+    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $case['id'], $awardPanelContact));
+  }
+
+  /**
    * Returns Award Panel Object for Contact.
    *
    * @param object $awardPanel
