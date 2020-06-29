@@ -9,7 +9,9 @@
     };
   });
 
-  module.controller('CiviawardReviewFieldsTableController', function ($rootScope, $scope, CaseStatus, crmApi, dialogService, reviewScoringFieldsGroupName) {
+  module.controller('CiviawardReviewFieldsTableController', function (
+    $rootScope, $scope, CaseStatus, crmApi, dialogService, ts,
+    reviewScoringFieldsGroupName) {
     $scope.reviewFields = [];
     $scope.resourcesBaseUrl = CRM.config.resourceBase;
     $scope.toggleReviewField = toggleReviewField;
@@ -183,7 +185,14 @@
         autoOpen: false,
         height: 'auto',
         width: '600px',
-        title: 'Select Review Fields'
+        title: 'Select Review Fields',
+        buttons: [{
+          text: ts('Done'),
+          icons: { primary: 'fa-check' },
+          click: function () {
+            dialogService.close('ReviewFields');
+          }
+        }]
       });
     }
 
