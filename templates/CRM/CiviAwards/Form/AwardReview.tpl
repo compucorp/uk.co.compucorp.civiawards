@@ -118,6 +118,9 @@
           {/if}
         {else}
           <div class="crm-submit-buttons panel-footer clearfix">
+              {if $isViewAction}
+                <a href="{crmURL p='civicrm/awardreview' q=$editUrlParams}" class="edit button" title="{ts}Edit{/ts}"><span><i class="crm-i fa-pencil"></i> {ts}Edit{/ts}</span></a>
+              {/if}
             {include file="CRM/common/formButtons.tpl" location="bottom"}
           </div>
         {/if}

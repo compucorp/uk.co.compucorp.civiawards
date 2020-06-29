@@ -106,7 +106,13 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * {@inheritDoc}
    */
   public function preProcess() {
-    if (!in_array($this->_action, [CRM_Core_Action::ADD, CRM_Core_Action::VIEW])) {
+    if (!in_array($this->_action, [
+      CRM_Core_Action::ADD, CRM_Core_Action::VIEW, CRM_Core_Action::UPDATE,
+    ])) {
+      throw new Exception('Action not supported!');
+    }
+
+    if ($this->isReviewFromSsp() && $this->_action == CRM_Core_Action::UPDATE) {
       throw new Exception('Action not supported!');
     }
 
@@ -164,7 +170,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $hasSubmittedReview = $this->userAlreadySubmittedReview();
     $canNotViewReview = $isViewAction && $this->isReviewFromSsp() && !$this->isReviewOwner();
 
-    if ($hasSubmittedReview && $isAddAction) {
+    if ($this->isReviewFromSsp() && $hasSubmittedReview && $isAddAction) {
       return 'You have already submitted a review for this Award and you can not add another review';
     }
 
