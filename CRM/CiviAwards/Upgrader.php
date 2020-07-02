@@ -1,6 +1,7 @@
 <?php
 
 use CRM_CiviAwards_Setup_CreateAwardsCaseCategoryOption as CreateAwardsCaseCategoryOption;
+use CRM_CiviAwards_Setup_CreateApplicantManagementOption as CreateApplicantManagementOption;
 use CRM_CiviAwards_Setup_ProcessAwardsCategoryForCustomGroupSupport as ProcessAwardsCategoryForCustomGroupSupport;
 use CRM_CiviAwards_Setup_DeleteAwardsCaseCategoryOption as DeleteAwardsCaseCategoryOption;
 use CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup as CreateAwardTypeOptionGroup;
@@ -30,6 +31,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
       new CreateAwardsCaseCategoryOption(),
       new ProcessAwardsCategoryForCustomGroupSupport(),
       new CreateAwardTypeOptionGroup(),
+      new CreateApplicantManagementOption(),
       new CreateApplicantReviewActivityType(),
       new AddAwardsCategoryWordReplacement(),
       new CreateAwardsMenus(),
