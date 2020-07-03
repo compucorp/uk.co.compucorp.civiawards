@@ -6,6 +6,7 @@
 class CRM_CiviAwards_Helper_CaseTypeCategory {
 
   const AWARDS_CASE_TYPE_CATEGORY_NAME = 'awards';
+  const APPLICATION_MANAGEMENT_NAME = 'applicant_management';
 
   /**
    * Returns the case types for the awards category.
