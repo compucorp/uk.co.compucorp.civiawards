@@ -23,16 +23,11 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
    */
   public function get($contactId, $awardId, AwardReviewPanelContact $awardPanelContact) {
     $visibilitySettings = $this->processVisibilitySettings($this->getContactVisibilitySettings($contactId, $awardId, $awardPanelContact));
-    $tags = array_keys($visibilitySettings['tags']);
-    $tags = in_array('all', $tags) ? [] : $tags;
-    $status = array_keys($visibilitySettings['status']);
-    $status = in_array('all', $status) ? [] : $status;
-    sort($status);
-    sort($tags);
-    return [
-      'application_tags' => $tags,
-      'application_status' => $status,
-    ];
+    foreach ($visibilitySettings as &$visibilitySetting) {
+      unset($visibilitySetting['status_to_move_to'], $visibilitySetting['anonymize_application']);
+    }
+
+    return $visibilitySettings;
   }
 
   /**
@@ -70,135 +65,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
   }
 
   /**
-   * Returns the review access a contact has to the Award Application.
-   *
-   * Basically returns the statuses that a contact can move an application
-   * to and if the data for the application should be anonymized or not.
-   *
-   * @param int $contactId
-   *   Contact Id.
-   * @param int $applicationId
-   *   Award Id.
-   * @param CRM_CiviAwards_Service_AwardPanelContact $awardPanelContact
-   *   Award Panel contact service.
-   *
-   * @return array
-   *   Review access array.
-   */
-  public function getReviewAccess($contactId, $applicationId, AwardReviewPanelContact $awardPanelContact) {
-    $applicationDetails = $this->getApplicationDetails($applicationId);
-    $awardId = $applicationDetails['case_type_id'];
-    $visibilitySettings = $this->processVisibilitySettings($this->getContactVisibilitySettings($contactId, $awardId, $awardPanelContact));
-
-    $caseTags = !empty($applicationDetails['tag_id']) ? array_keys($applicationDetails['tag_id']) : [];
-    $caseStatus = $applicationDetails['status_id'];
-
-    $caseStatusAccess = !empty($visibilitySettings['status'][$caseStatus]['status_to_move_to']) ?
-      $visibilitySettings['status'][$caseStatus]['status_to_move_to'] : [];
-    $allCaseStatusAccess = !empty($visibilitySettings['status']['all']['status_to_move_to']) ?
-      $visibilitySettings['status']['all']['status_to_move_to'] : [];
-    $allCaseTagAccess = !empty($visibilitySettings['tags']['all']['status_to_move_to']) ?
-      $visibilitySettings['tags']['all']['status_to_move_to'] : [];
-    $caseTagAccess = [];
-    $caseTagAnonymization = TRUE;
-
-    foreach ($caseTags as $tag) {
-      $statusToMoveTo = !empty($visibilitySettings['tags'][$tag]['status_to_move_to']) ? $visibilitySettings['tags'][$tag]['status_to_move_to'] : [];
-      $caseTagAccess = array_merge($caseTagAccess, $statusToMoveTo);
-    }
-
-    $statusToMoveApplicationTo = array_merge($caseStatusAccess, $allCaseStatusAccess, $caseTagAccess);
-    if (!empty($caseTags)) {
-      $statusToMoveApplicationTo = array_merge($statusToMoveApplicationTo, $allCaseTagAccess);
-      $caseTagAnonymization = $this->getCaseTagsAnonymization($visibilitySettings, $caseTags);
-    }
-    $caseStatusAnonymization = $this->getCaseStatusAnonymization($visibilitySettings, [$caseStatus]);
-    $statusToMoveApplicationTo = array_unique($statusToMoveApplicationTo);
-    sort($statusToMoveApplicationTo);
-
-    return [
-      'anonymize_application' => $caseTagAnonymization && $caseStatusAnonymization ? TRUE : FALSE,
-      'status_to_move_to' => $statusToMoveApplicationTo,
-    ];
-  }
-
-  /**
-   * Gets anonymization value for case status or case tags data.
-   *
-   * @param array $visibilitySettings
-   *   Visibility settings.
-   * @param array $data
-   *   Data array to get anonymization data for.
-   * @param string $key
-   *   Visibility key: tags or status.
-   *
-   * @return bool
-   *   Anonymization value.
-   */
-  private function getAnonymizationForReview(array $visibilitySettings, array $data, $key) {
-    $anonymizeApplication = TRUE;
-    foreach ($data as $value) {
-      if ($anonymizeApplication === TRUE) {
-        $anonymizeApplication = $this->getReviewAnonymizationValue($visibilitySettings, $value, $key);
-      }
-    }
-    $allDataAnonymization = $this->getReviewAnonymizationValue($visibilitySettings, 'all', $key);
-
-    return $anonymizeApplication && $allDataAnonymization ? TRUE : FALSE;
-  }
-
-  /**
-   * Gets anonymization value for case tags data.
-   *
-   * @param array $visibilitySettings
-   *   Visibility settings.
-   * @param array $caseTags
-   *   Data array to get anonymization data for.
-   *
-   * @return bool
-   *   Anonymization value.
-   */
-  private function getCaseTagsAnonymization(array $visibilitySettings, array $caseTags) {
-    return $this->getAnonymizationForReview($visibilitySettings, $caseTags, 'tags');
-  }
-
-  /**
-   * Gets anonymization value for case status data.
-   *
-   * @param array $visibilitySettings
-   *   Visibility settings.
-   * @param array $caseStatus
-   *   Data array to get anonymization data for.
-   *
-   * @return bool
-   *   Anonymization value.
-   */
-  private function getCaseStatusAnonymization(array $visibilitySettings, array $caseStatus) {
-    return $this->getAnonymizationForReview($visibilitySettings, $caseStatus, 'status');
-  }
-
-  /**
-   * Gets review anonymization value.
-   *
-   * @param array $visibilitySettings
-   *   Visibility settings.
-   * @param mixed $value
-   *   Case status or tag value.
-   * @param string $key
-   *   Visibility key: tags or status.
-   *
-   * @return bool|mixed
-   *   Anonymization value.
-   */
-  private function getReviewAnonymizationValue(array $visibilitySettings, $value, $key) {
-    if (isset($visibilitySettings[$key][$value]['anonymize_application'])) {
-      return $visibilitySettings[$key][$value]['anonymize_application'];
-    }
-
-    return TRUE;
-  }
-
-  /**
    * Returns the Award ID given an application ID.
    *
    * @param int $applicationId
@@ -231,101 +97,62 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
    *   The contact access to the Award applications.
    */
   private function processVisibilitySettings(array $visibilitySettings) {
-    $tags = [];
-    $status = [];
+    $response = [];
     foreach ($visibilitySettings as $visibilitySetting) {
-      if (isset($visibilitySetting['application_tags']) && empty($visibilitySetting['application_tags'])) {
-        $tagKey = 'all';
-        $this->setVisibilityData($tags, $tagKey, $visibilitySetting);
-      }
-      elseif (!empty($visibilitySetting['application_tags'])) {
-        foreach ($visibilitySetting['application_tags'] as $tagKey) {
-          $this->setVisibilityData($tags, $tagKey, $visibilitySetting);
-        }
-      }
-
-      if (isset($visibilitySetting['application_status']) && empty($visibilitySetting['application_status'])) {
-        $statusKey = 'all';
-        $this->setVisibilityData($status, $statusKey, $visibilitySetting);
-      }
-      elseif (!empty($visibilitySetting['application_status'])) {
-        foreach ($visibilitySetting['application_status'] as $statusKey) {
-          $this->setVisibilityData($status, $statusKey, $visibilitySetting);
-        }
-      }
+      $response[] = [
+        'application_tags' => isset($visibilitySetting['application_tags']) ? $visibilitySetting['application_tags'] : [],
+        'application_status' => isset($visibilitySetting['application_status']) ? $visibilitySetting['application_status'] : [],
+        'status_to_move_to' => !empty($visibilitySetting['is_application_status_restricted']) ? $visibilitySetting['restricted_application_status'] : [],
+        'anonymize_application' => isset($visibilitySetting['anonymize_application']) && $visibilitySetting['anonymize_application'] == 0 ? FALSE : TRUE,
+      ];
     }
 
-    return [
-      'tags' => $tags,
-      'status' => $status,
-    ];
+    return $response;
   }
 
   /**
-   * Sets visibility data for status or tag.
+   * Returns the review access a contact has to the Award Application.
    *
-   * @param array $data
-   *   Data array to set visivility data to.
-   * @param mixed $key
-   *   Array key.
-   * @param array $visibilitySetting
-   *   Visibility setting for award panel.
-   */
-  private function setVisibilityData(array &$data, $key, array $visibilitySetting) {
-    $this->initializeArray($data, $key);
-    $data[$key]['status_to_move_to'] = $this->getRestrictedStatus($data[$key]['status_to_move_to'], $visibilitySetting);
-    $data[$key]['anonymize_application'] = $data[$key]['anonymize_application'] === FALSE ? FALSE : $this->getAnonymization($visibilitySetting);
-  }
-
-  /**
-   * Create an entry for the key in the array if not present.
+   * Basically returns the statuses that a contact can move an application
+   * to and if the data for the application should be anonymized or not.
    *
-   * @param array $data
-   *   Array to initialize data in.
-   * @param mixed $key
-   *   Key to initialize data for.
-   */
-  private function initializeArray(array &$data, $key) {
-    if (!isset($data[$key]['status_to_move_to'])) {
-      $data[$key]['status_to_move_to'] = [];
-    }
-
-    if (!isset($data[$key]['anonymize_application'])) {
-      $data[$key]['anonymize_application'] = TRUE;
-    }
-  }
-
-  /**
-   * Gets anonymization from visibility setting.
-   *
-   * @param array $visibilitySetting
-   *   Visibility setting for award panel.
-   *
-   * @return bool
-   *   Return anonymization.
-   */
-  private function getAnonymization(array $visibilitySetting) {
-    if (isset($visibilitySetting['anonymize_application']) && $visibilitySetting['anonymize_application'] == 0) {
-      return FALSE;
-    }
-
-    return TRUE;
-  }
-
-  /**
-   * Returns restricted status data.
-   *
-   * @param mixed $oldValue
-   *   Old value.
-   * @param array $visibilitySetting
-   *   Visibility setting for award panel.
+   * @param int $contactId
+   *   Contact Id.
+   * @param int $applicationId
+   *   Award Id.
+   * @param CRM_CiviAwards_Service_AwardPanelContact $awardPanelContact
+   *   Award Panel contact service.
    *
    * @return array
-   *   New value for restricted status.
+   *   Review access array.
    */
-  private function getRestrictedStatus($oldValue, array $visibilitySetting) {
-    return array_merge($oldValue, !empty($visibilitySetting['is_application_status_restricted']) ?
-      $visibilitySetting['restricted_application_status'] : []);
+  public function getReviewAccess($contactId, $applicationId, AwardReviewPanelContact $awardPanelContact) {
+    $applicationDetails = $this->getApplicationDetails($applicationId);
+    $awardId = $applicationDetails['case_type_id'];
+    $visibilitySettings = $this->processVisibilitySettings($this->getContactVisibilitySettings($contactId, $awardId, $awardPanelContact));
+
+    $caseTags = !empty($applicationDetails['tag_id']) ? array_keys($applicationDetails['tag_id']) : [];
+    $caseStatus = [$applicationDetails['status_id']];
+    $statusToMoveApplicationTo = [];
+    $anonymization = TRUE;
+
+    foreach ($visibilitySettings as $visibilitySetting) {
+      $caseStatusMatch = array_intersect($visibilitySetting['application_status'], $caseStatus) || empty($visibilitySetting['application_status']);
+      $caseTagMatch = !empty($caseTags) && (array_intersect($visibilitySetting['application_tags'], $caseTags) || empty($visibilitySetting['application_tags']));
+
+      if ($caseStatusMatch && $caseTagMatch) {
+        $statusToMoveApplicationTo = array_merge($statusToMoveApplicationTo, $visibilitySetting['status_to_move_to']);
+        $anonymization = $visibilitySetting['anonymize_application'] === FALSE ? FALSE : $anonymization;
+      }
+    }
+
+    $statusToMoveApplicationTo = array_unique($statusToMoveApplicationTo);
+    sort($statusToMoveApplicationTo);
+
+    return [
+      'anonymize_application' => $anonymization,
+      'status_to_move_to' => $statusToMoveApplicationTo,
+    ];
   }
 
   /**
