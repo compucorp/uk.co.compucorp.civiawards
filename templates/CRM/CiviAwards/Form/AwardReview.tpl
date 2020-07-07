@@ -39,11 +39,7 @@
         <div class="form-group {$form_group_class}">
           {if $isReviewFromSsp}
             <h1 class="header-pager">
-              {if $isViewAction}
-                {$sourceContactName}
-              {else}
-                {$form.source_contact_id.html}
-              {/if}
+              {$caseContactDisplayName}
             </h1>
             <div class="ssp-details-page-section__sub-heading">
               <span class="ssp-applicant-card__award ssp-text-large">{$caseTypeName}</span>
