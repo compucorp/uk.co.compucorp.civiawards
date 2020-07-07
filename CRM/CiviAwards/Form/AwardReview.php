@@ -239,7 +239,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     try {
       civicrm_api3('Profile', 'submit', $profileFields);
       $status = $this->_action == CRM_Core_Action::ADD ? 'Submitted' : 'Updated';
-      CRM_Core_Session::setStatus(ts('The review has been ' . strtolower($status) . ' successfully.'), ts('Review ' . $status), 'success');
+      CRM_Core_Session::setStatus(ts('Your review has been ' . strtolower($status) . ' successfully.'), ts('Review ' . $status), 'success');
     }
     catch (Exception $e) {
       CRM_Core_Session::setStatus(ts('An error occurred'), 'Error', 'error');
