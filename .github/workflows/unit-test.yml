@@ -10,6 +10,8 @@ jobs:
 
     env:
       CIVICRM_EXTENSIONS_DIR: site/web/sites/all/modules/civicrm/tools/extensions
+      GITHUB_BASE_REF: ${{ github.base_ref }}
+      GITHUB_HEAD_REF: ${{ github.head_ref }}
 
     services:
       mysql:
@@ -35,12 +37,27 @@ jobs:
         with:
             path: ${{ env.CIVICRM_EXTENSIONS_DIR }}/uk.co.compucorp.civiawards
 
-      - name: Installing CiviAwards and its dependencies
+      - name: Download CiviAwards dependencies
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}
         run: |
           git clone --depth 1 https://github.com/civicrm/org.civicrm.shoreditch.git
-          git clone --depth 1 https://github.com/compucorp/uk.co.compucorp.civicase.git
-          cv en shoreditch civicase civiawards
+          git clone --depth 1 --no-single-branch https://github.com/compucorp/uk.co.compucorp.civicase.git
+
+      - name: Switch Civicase Branch
+        working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}/uk.co.compucorp.civicase
+        run: |
+          if [[ $(git ls-remote --heads origin ${GITHUB_HEAD_REF}) ]]
+          then
+              git checkout ${GITHUB_HEAD_REF}
+          elif [[ $(git ls-remote --heads origin ${GITHUB_BASE_REF}) ]]
+          then
+              git checkout ${GITHUB_BASE_REF}
+          fi
+        shell: bash
+
+      - name: Install CiviAwards and its dependencies
+        working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}
+        run: cv en shoreditch civicase civiawards
 
       - name: Run JS unit tests
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}/uk.co.compucorp.civiawards
