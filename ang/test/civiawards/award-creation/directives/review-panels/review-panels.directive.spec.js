@@ -483,7 +483,7 @@
             selectedApplicantStatus: ['1'],
             anonymizeApplication: true,
             tags: ['1', '12', '15'],
-            isApplicationStatusRestricted: false,
+            isApplicationStatusRestricted: true,
             restrictedApplicationStatus: ['1', '2']
           }
         };
