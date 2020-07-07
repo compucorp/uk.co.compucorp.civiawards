@@ -171,7 +171,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $canNotViewReview = $isViewAction && $this->isReviewFromSsp() && !$this->isReviewOwner();
 
     if ($this->isReviewFromSsp() && $hasSubmittedReview && $isAddAction) {
-      return 'You have already submitted a review for this Award and you can not add another review';
+      return 'You have already submitted a review for this Award and you cannot add another review';
     }
 
     if ($canNotViewReview) {
