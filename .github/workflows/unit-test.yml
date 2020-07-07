@@ -58,8 +58,7 @@ jobs:
       - name: Install CiviAwards and its dependencies
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}
         run: |
-          cv en shoreditch civicase
-          cv en civiawards 
+          cv en -vvv shoreditch civicase civiawards
 
       - name: Run JS unit tests
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}/uk.co.compucorp.civiawards
