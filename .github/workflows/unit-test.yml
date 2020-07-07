@@ -59,7 +59,7 @@ jobs:
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}
         run: |
           cv en shoreditch civicase
-          cv en --level debug civiawards 
+          cv en -vvv civiawards 
 
       - name: Run JS unit tests
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}/uk.co.compucorp.civiawards
