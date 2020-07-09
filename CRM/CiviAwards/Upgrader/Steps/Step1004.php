@@ -1,20 +1,20 @@
 <?php
 
-use CRM_CiviAwards_Setup_AddAwardCaseTypeCustomGroupSupport as AddAwardCaseTypeCustomGroupSupport;
+use CRM_CiviAwards_Setup_AddApplicantManagementCaseTypeCustomGroupSupport as AddApplicantManagementCaseTypeCustomGroupSupport;
 
 /**
- * Upgrader that adds custom group support for Award Case Type.
+ * Upgrader that adds custom group support for Applicant management Case Types.
  */
 class CRM_CiviAwards_Upgrader_Steps_Step1004 {
 
   /**
-   * Adds Custom Group support for Award Case Type.
+   * Adds Custom Group support for Applicant management Case Types.
    *
    * @return bool
    *   returns value.
    */
   public function apply() {
-    $step = new AddAwardCaseTypeCustomGroupSupport();
+    $step = new AddApplicantManagementCaseTypeCustomGroupSupport();
     $step->apply();
 
     return TRUE;
