@@ -9,7 +9,8 @@
     };
   });
 
-  module.controller('CiviawardBasicDetailsFormController', function ($rootScope, $scope, AwardType) {
+  module.controller('CiviawardBasicDetailsFormController', function ($rootScope,
+    $scope, AwardType, isTruthy) {
     var ts = CRM.ts('civicase');
     $scope.ts = ts;
 
@@ -39,7 +40,7 @@
       $scope.basicDetails.title = caseType.title;
       $scope.basicDetails.name = caseType.name;
       $scope.basicDetails.description = caseType.description;
-      $scope.basicDetails.isEnabled = caseType.is_active === '1';
+      $scope.basicDetails.isEnabled = isTruthy(caseType.is_active);
     }
 
     /**

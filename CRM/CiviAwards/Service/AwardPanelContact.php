@@ -28,10 +28,14 @@ class CRM_CiviAwards_Service_AwardPanelContact {
 
     $includeGroups = isset($awardContactSettings['include_groups']) ? $awardContactSettings['include_groups'] : [];
     $excludeGroups = isset($awardContactSettings['exclude_groups']) ? $awardContactSettings['exclude_groups'] : [];
-    $groupContacts = [];
+    $includeGroupContacts = [];
+    $excludeGroupContacts = [];
 
     if (!empty($includeGroups)) {
-      $groupContacts = $this->getGroupContacts($includeGroups, $excludeGroups, $filterContacts);
+      $includeGroupContacts = $this->getContactsForGroup($includeGroups, $filterContacts);
+    }
+    if (!empty($excludeGroups)) {
+      $excludeGroupContacts = $this->getContactsForGroup($excludeGroups, $filterContacts);
     }
 
     $relationshipContacts = [];
@@ -46,7 +50,9 @@ class CRM_CiviAwards_Service_AwardPanelContact {
       }
     }
 
-    return $this->mergeAllRelatedContacts($groupContacts, $relationshipContacts);
+    $panelContacts = $this->mergeAllRelatedContacts($includeGroupContacts, $relationshipContacts);
+
+    return array_diff_key($panelContacts, $excludeGroupContacts);
   }
 
   /**

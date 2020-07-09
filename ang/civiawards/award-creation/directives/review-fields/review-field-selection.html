@@ -2,8 +2,15 @@
   <form class="form-horizontal">
     <div class="form-group">
       <label class="col-sm-4 control-label">Filter by Field Name</label>
-      <div class="col-sm-7">
-        <input type="text" ng-model="model.searchText" class="form-control" placeholder="Enter text to filter">
+      <div class="col-sm-7 has-feedback">
+        <input
+          type="text" ng-model="model.searchText"
+          class="form-control"
+          placeholder="Enter text to filter"/>
+        <span
+          class="glyphicon glyphicon-search form-control-feedback"
+          aria-hidden="true">
+        </span>
       </div>
     </div>
   </form>

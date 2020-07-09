@@ -451,6 +451,73 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
   }
 
   /**
+   * Test Get Does Not Return Excluded Group Contact.
+   *
+   * Excluded group contact is not returned even when contact belongs
+   * to an included group or is part of a relationship condition.
+   */
+  public function testGetDoesNotReturnExcludedGroupContactWhenContactBelongsToGroupAndRelationShip() {
+    $relationshipTypeAParams = [
+      'name_a_b' => 'Manager is',
+      'name_b_a' => 'Manager',
+    ];
+
+    $relationshipTypeA = RelationshipTypeFabricator::fabricate($relationshipTypeAParams);
+    $contactA = ContactFabricator::fabricate();
+    $contactB = ContactFabricator::fabricate();
+    $contactC = ContactFabricator::fabricate();
+
+    // Contact B is Manager to Contact A.
+    $params = [
+      'contact_id_b' => $contactB['id'],
+      'contact_id_a' => $contactA['id'],
+      'relationship_type_id' => $relationshipTypeA['id'],
+    ];
+    RelationshipFabricator::fabricate($params);
+
+    $groupA = $this->createGroup('Group A');
+    $groupB = $this->createGroup('Group B');
+
+    $this->addContactToGroup($groupA, $contactA['id']);
+    $this->addContactToGroup($groupA, $contactC['id']);
+    $this->addContactToGroup($groupB, $contactA['id']);
+
+    $params = [
+      'contact_settings' => [
+        'include_groups' => [$groupA],
+        'exclude_groups' => [$groupB],
+
+      ],
+      'relationship' => [
+        [
+          'contact_id' => [$contactB['id']],
+          'is_a_to_b' => 1,
+          'relationship_type_id' => $relationshipTypeA['id'],
+        ],
+      ],
+    ];
+
+    $awardPanel = AwardReviewPanelFabricator::fabricate($params);
+    $awardPanelContact = new AwardPanelContact();
+
+    // Contact A will be returned in relationship because contact B is manger
+    // Contact A will be returned in Groups because it belongs to group A
+    // But because groupB is excluded and contact A belongs to group B, only
+    // Contact C is returned.
+    $contacts = $awardPanelContact->get($awardPanel->id);
+
+    $expectedResult = [
+      $contactC['id'] => [
+        'display_name' => $contactC['display_name'],
+        'email' => '',
+      ],
+    ];
+    $this->cleanupUnwantedKeys($contacts);
+
+    $this->assertEquals($expectedResult, $contacts);
+  }
+
+  /**
    * Add contact to group.
    *
    * @param int $groupId

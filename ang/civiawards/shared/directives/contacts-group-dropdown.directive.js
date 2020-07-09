@@ -1,7 +1,7 @@
 (function (angular, $, _) {
   var module = angular.module('civiawards');
 
-  module.directive('civiawardContactsGroupDropdown', function (crmApi) {
+  module.directive('civiawardContactsGroupDropdown', function (crmApi, isTruthy) {
     return {
       link: civiawardContactsGroupDropdownLink,
       restrict: 'A',
@@ -73,7 +73,7 @@
 
         _.chain(groupsData)
           .filter(function (group) {
-            return group.extra.is_hidden === '0' && group.extra.is_active === '1';
+            return !isTruthy(group.extra.is_hidden) && isTruthy(group.extra.is_active);
           })
           .each(function (group) {
             returnData.include.push({

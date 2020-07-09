@@ -14,7 +14,7 @@
 
   module.controller('CiviawardReviewPanelsController', function (
     $q, $scope, ts, dialogService, crmApi, crmStatus, getSelect2Value,
-    CaseStatus) {
+    CaseStatus, isTruthy) {
     var relationshipTypesIndexed = {};
     var contactsIndexed = {};
     var groupsIndexed = {};
@@ -90,7 +90,7 @@
      * @returns {string} enable/disable
      */
     function getActiveStateLabel (reviewPanel) {
-      return reviewPanel.is_active === '0' ? ts('Enable') : ts('Disable');
+      return !isTruthy(reviewPanel.is_active) ? ts('Enable') : ts('Disable');
     }
 
     /**
@@ -181,7 +181,7 @@
       }
 
       return reviewPanel.contact_settings.relationship.map(function (relation) {
-        var relationType = relation.is_a_to_b === '1'
+        var relationType = isTruthy(relation.is_a_to_b)
           ? relation.relationship_type_id + '_a_b'
           : relation.relationship_type_id + '_b_a';
 
@@ -200,7 +200,7 @@
     function handleEditReviewPanel (reviewPanel) {
       $scope.currentReviewPanel = {
         id: reviewPanel.id,
-        isEnabled: reviewPanel.is_active === '1',
+        isEnabled: isTruthy(reviewPanel.is_active),
         title: reviewPanel.title,
         contactSettings: {
           groups: {
@@ -211,9 +211,9 @@
         },
         visibilitySettings: {
           selectedApplicantStatus: reviewPanel.visibility_settings.application_status,
-          anonymizeApplication: reviewPanel.visibility_settings.anonymize_application === '1',
+          anonymizeApplication: isTruthy(reviewPanel.visibility_settings.anonymize_application),
           tags: reviewPanel.visibility_settings.application_tags,
-          isApplicationStatusRestricted: reviewPanel.visibility_settings.is_application_status_restricted === '1',
+          isApplicationStatusRestricted: isTruthy(reviewPanel.visibility_settings.is_application_status_restricted),
           restrictedApplicationStatus: reviewPanel.visibility_settings.restricted_application_status
         }
       };
@@ -267,7 +267,7 @@
 
         var promise = crmApi('AwardReviewPanel', 'create', {
           id: reviewPanel.id,
-          is_active: reviewPanel.is_active === '0' ? '1' : '0'
+          is_active: isTruthy(reviewPanel.is_active) ? '0' : '1'
         }).then(refreshReviewPanelsList)
           .finally(function () {
             $scope.submitInProgress = false;
@@ -350,7 +350,7 @@
       _.each(reviewPanel.contact_settings.relationship, function (relationship) {
         var specificRelationDetails = { relationshipLabel: '', contacts: [] };
 
-        specificRelationDetails.relationshipLabel = relationship.is_a_to_b === '1'
+        specificRelationDetails.relationshipLabel = isTruthy(relationship.is_a_to_b)
           ? relationshipTypesIndexed[relationship.relationship_type_id].label_a_b
           : relationshipTypesIndexed[relationship.relationship_type_id].label_b_a;
 

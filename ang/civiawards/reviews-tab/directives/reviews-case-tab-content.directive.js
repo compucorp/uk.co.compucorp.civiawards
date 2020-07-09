@@ -1,4 +1,4 @@
-(function (_, angular, confirm, loadForm, setLoadingStatus, getCrmUrl) {
+(function (_, $, angular, confirm, loadForm, setLoadingStatus, getCrmUrl) {
   var module = angular.module('civiawards');
 
   module.directive('civiawardsReviewsCaseTabContent', function () {
@@ -27,6 +27,7 @@
    */
   function civiawardsReviewsCaseTabContentController ($q, $scope, $sce, crmApi, reviewsActivityTypeName,
     reviewScoringFieldsGroupName, ts) {
+    var CRM_FORM_LOAD_EVENT = 'crmFormLoad';
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
     var REVIEW_FORM_URL = 'civicrm/awardreview';
 
@@ -142,6 +143,7 @@
       });
 
       loadForm(formUrl)
+        .on(CRM_FORM_LOAD_EVENT, popupTitleDecodeEntities)
         .on(CRM_FORM_SUCCESS_EVENT, loadReviewActivities);
     }
 
@@ -157,7 +159,36 @@
         reset: 1
       });
 
-      loadForm(formUrl);
+      loadForm(formUrl)
+        .on(CRM_FORM_LOAD_EVENT, popupTitleDecodeEntities);
+    }
+
+    /**
+     * Converts HTML entities in popup title to their corresponding characters.
+     *
+     * @param {object} event
+     *   Event object.
+     * @param {object} data
+     *   Loaded form data.
+     */
+    function popupTitleDecodeEntities (event, data) {
+      var $popup = $(event.target).closest('.ui-dialog');
+
+      $popup.find('.ui-dialog-title').each(function () {
+        $(this).html(htmlEntitiesDecode($(this).html()));
+      });
+    }
+
+    /**
+     * Convert HTML entities to their corresponding characters.
+     *
+     * @param {string} string
+     *   The input string.
+     * @returns {string}
+     *   Returns the decoded string.
+     */
+    function htmlEntitiesDecode (string) {
+      return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;nbsp;/g, '&nbsp;');
     }
 
     /**
@@ -204,4 +235,4 @@
       });
     }
   }
-})(CRM._, angular, CRM.confirm, CRM.loadForm, CRM.status, CRM.url);
+})(CRM._, CRM.$, angular, CRM.confirm, CRM.loadForm, CRM.status, CRM.url);

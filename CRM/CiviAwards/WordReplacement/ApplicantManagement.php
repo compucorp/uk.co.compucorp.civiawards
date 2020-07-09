@@ -1,9 +1,12 @@
 <?php
+
 use CRM_CiviAwards_ExtensionUtil as ExtensionUtil;
+
 /**
  * Class AwardsCategory.
  */
-class CRM_CiviAwards_WordReplacement_AwardsCategory implements CRM_Civicase_WordReplacement_BaseInterface {
+class CRM_CiviAwards_WordReplacement_ApplicantManagement implements CRM_Civicase_WordReplacement_BaseInterface {
+
   /**
    * {@inheritdoc}
    *
@@ -12,7 +15,8 @@ class CRM_CiviAwards_WordReplacement_AwardsCategory implements CRM_Civicase_Word
    */
   public function get() {
     $configFile = CRM_Core_Resources::singleton()
-      ->getPath(ExtensionUtil::LONG_NAME, 'config/word_replacement/awards_category.php');
+      ->getPath(ExtensionUtil::LONG_NAME, 'config/word_replacement/applicant_management.php');
     return include $configFile;
   }
+
 }
