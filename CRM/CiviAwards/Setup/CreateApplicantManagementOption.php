@@ -2,6 +2,7 @@
 
 use CRM_Civicase_Setup_CaseCategoryInstanceSupport as CaseCategoryInstanceSupport;
 use CRM_CiviAwards_Helper_CaseTypeCategory as CaseTypeCategory;
+use CRM_Civicase_BAO_CaseCategoryInstance as CaseCategoryInstance;
 
 /**
  * Class CreateApplicantManagementOption.
@@ -13,7 +14,6 @@ class CRM_CiviAwards_Setup_CreateApplicantManagementOption {
    */
   public function apply() {
     $this->createApplicantManagementOption();
-    $this->setInstanceTypeForAwardsCategory();
   }
 
   /**
@@ -23,7 +23,7 @@ class CRM_CiviAwards_Setup_CreateApplicantManagementOption {
     $categoryInstance = new CaseCategoryInstanceSupport();
     $categoryInstance->createCaseCategoryInstanceOptionGroup();
 
-    CRM_Core_BAO_OptionValue::ensureOptionValueExists(
+    $applicantManagement = CRM_Core_BAO_OptionValue::ensureOptionValueExists(
       [
         'option_group_id' => CaseCategoryInstanceSupport::INSTANCE_OPTION_GROUP,
         'name' => CaseTypeCategory::APPLICATION_MANAGEMENT_NAME,
@@ -33,26 +33,29 @@ class CRM_CiviAwards_Setup_CreateApplicantManagementOption {
         'is_reserved' => TRUE,
       ]
     );
+
+    $this->setInstanceTypeForAwardsCategory($applicantManagement['value']);
   }
 
   /**
    * Sets the instance type for the awards case type category.
+   *
+   * @param mixed $instanceValue
+   *   Applicant management instance value.
    */
-  private function setInstanceTypeForAwardsCategory() {
-    $params = [
-      'category_id' => CaseTypeCategory::AWARDS_CASE_TYPE_CATEGORY_NAME,
-      'instance_id' => CaseTypeCategory::APPLICATION_MANAGEMENT_NAME,
-    ];
+  private function setInstanceTypeForAwardsCategory($instanceValue) {
+    $caseCategories = CRM_Core_OptionGroup::values('case_type_categories', TRUE, FALSE, TRUE, NULL, 'name');
+    $awardCaseCategoryValue = $caseCategories[CaseTypeCategory::AWARDS_CASE_TYPE_CATEGORY_NAME];
+    $caseCategoryInstance = new CaseCategoryInstance();
+    $caseCategoryInstance->instance_id = $instanceValue;
+    $caseCategoryInstance->category_id = $awardCaseCategoryValue;
+    $caseCategoryInstance->find(TRUE);
 
-    $result = civicrm_api3('CaseCategoryInstance', 'get', [
-      'category_id' => CaseTypeCategory::AWARDS_CASE_TYPE_CATEGORY_NAME,
-    ]);
-
-    if ($result['count'] == 1) {
+    if (!empty($caseCategoryInstance->id)) {
       return;
     }
 
-    civicrm_api3('CaseCategoryInstance', 'create', $params);
+    $caseCategoryInstance->save();
   }
 
 }

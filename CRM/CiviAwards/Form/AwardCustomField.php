@@ -12,7 +12,7 @@ class CRM_CiviAwards_Form_AwardCustomField extends CRM_Civicase_Form_CaseCategor
    */
   public function preProcess() {
     $awardId = CRM_Utils_Request::retrieve('entityId', 'Positive', $this, TRUE);
-    if (!$this->isValidAwardType($awardId)) {
+    if (!$this->isValidApplicantManagementType($awardId)) {
       $this->assign('invalidAwardType', TRUE);
     }
 
@@ -39,7 +39,7 @@ class CRM_CiviAwards_Form_AwardCustomField extends CRM_Civicase_Form_CaseCategor
    * {@inheritDoc}
    */
   protected function getEntityType() {
-    return CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME . "Type";
+    return CaseTypeCategoryHelper::APPLICATION_MANAGEMENT_NAME . "Type";
   }
 
   /**
@@ -66,10 +66,10 @@ class CRM_CiviAwards_Form_AwardCustomField extends CRM_Civicase_Form_CaseCategor
    * @return bool
    *   Checks if award is valid or not.
    */
-  private function isValidAwardType($awardTypeId) {
-    $awardCaseTypes = CRM_CiviAwards_Helper_CaseTypeCategory::getAwardCaseTypes();
+  private function isValidApplicantManagementType($awardTypeId) {
+    $applicantManagementCaseTypes = CRM_CiviAwards_Helper_CaseTypeCategory::getApplicantManagementCaseTypes();
 
-    return !empty($awardCaseTypes[$awardTypeId]);
+    return !empty($applicantManagementCaseTypes[$awardTypeId]);
   }
 
 }
