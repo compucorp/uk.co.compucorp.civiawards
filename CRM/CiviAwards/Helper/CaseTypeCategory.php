@@ -15,6 +15,23 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
    *   Array of Case Types indexed by Id.
    */
   public static function getApplicantManagementCaseTypes() {
+    $applicantManagementCategories = self::getApplicantManagementCaseCategories();
+    if (empty($applicantManagementCategories)) {
+      return [];
+    }
+
+    $result = civicrm_api3('CaseType', 'get', [
+      'return' => ['title', 'id'],
+      'case_type_category' => ['IN' => $applicantManagementCategories],
+    ]);
+
+    return array_column($result['values'], 'title', 'id');
+  }
+
+  /**
+   * Returns the case categories for the applicant management instance.
+   */
+  public static function getApplicantManagementCaseCategories() {
     $instance = civicrm_api3('CaseCategoryInstance', 'get', [
       'instance_id' => self::APPLICATION_MANAGEMENT_NAME,
     ]);
@@ -23,13 +40,7 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
       return [];
     }
 
-    $applicantManagementCategories = array_column($instance['values'], 'category_id');
-    $result = civicrm_api3('CaseType', 'get', [
-      'return' => ['title', 'id'],
-      'case_type_category' => ['IN' => $applicantManagementCategories],
-    ]);
-
-    return array_column($result['values'], 'title', 'id');
+    return array_column($instance['values'], 'category_id');
   }
 
 }
