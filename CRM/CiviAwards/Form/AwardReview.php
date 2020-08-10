@@ -170,6 +170,11 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $hasSubmittedReview = $this->userAlreadySubmittedReview();
     $canNotViewReview = $isViewAction && $this->isReviewFromSsp() && !$this->isReviewOwner();
 
+    if ($this->isReviewFromSsp() && $this->isCaseApplicationDeleted()) {
+      $action = $isViewAction ? 'view' : 'submit';
+      return "You cannot $action a review for a deleted application.";
+    }
+
     if ($this->isReviewFromSsp() && $hasSubmittedReview && $isAddAction) {
       return 'You have already submitted a review for this Award and you cannot add another review';
     }
@@ -684,6 +689,22 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     ]);
 
     return $result['count'] > 0;
+  }
+
+  /**
+   * Checks if Case Application is deleted.
+   *
+   * @return bool
+   *   Bool value.
+   */
+  private function isCaseApplicationDeleted() {
+    $result = civicrm_api3('Case', 'get', [
+      'sequential' => 1,
+      'id' => $this->caseId,
+      'is_deleted' => 0,
+    ]);
+
+    return empty($result['values']) ? TRUE : FALSE;
   }
 
 }
