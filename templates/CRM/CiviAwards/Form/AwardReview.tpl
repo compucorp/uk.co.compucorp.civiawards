@@ -103,7 +103,7 @@
         {if $isReviewFromSsp}
           {if !$isViewAction}
             <div class="clearfix">
-              <button type="submit" class="btn btn-primary default validate pull-right"> Submit Application </button>
+              <button type="submit" class="btn btn-primary default validate pull-right"> Submit Review </button>
               <a class="btn btn-default pull-left" href="/ssp/awards/review-applications"> Cancel </a>
             </div>
           {else}
