@@ -7,7 +7,7 @@ use CRM_CiviAwards_Service_AwardPanelContact as AwardPanelContact;
 use CRM_CiviAwards_Test_Fabricator_AwardReviewPanel as AwardReviewPanelFabricator;
 
 /**
- * CRM_CiviAwards_Service_AwardApplicationContactAccessTest.
+ * Class to test handling access of a contact to an application.
  *
  * @group headless
  */
@@ -425,8 +425,8 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
     // `AND` operator between the status and case tags, it is compulsory for
     // a case to have at least a tag.
     $expectedResult = [
-      'status_to_move_to' => [],
-      'anonymize_application' => TRUE,
+      'status_to_move_to' => [2, 5],
+      'anonymize_application' => FALSE,
     ];
 
     $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['id'], $awardPanelContact));
