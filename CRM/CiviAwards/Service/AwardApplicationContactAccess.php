@@ -4,7 +4,7 @@ use CRM_CiviAwards_BAO_AwardReviewPanel as AwardReviewPanel;
 use CRM_CiviAwards_Service_AwardPanelContact as AwardReviewPanelContact;
 
 /**
- * Class CRM_CiviAwards_Service_AwardApplicationContactAccess.
+ * Class for handling access of a contact to an application.
  */
 class CRM_CiviAwards_Service_AwardApplicationContactAccess {
 
