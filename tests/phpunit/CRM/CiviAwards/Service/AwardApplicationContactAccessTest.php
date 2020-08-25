@@ -381,9 +381,9 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
   }
 
   /**
-   * Test Contact Cannot Move to Status When Case Has No Tags.
+   * Test Contact Can Move to Status When Case And Panel Both Has No Tags.
    */
-  public function testContactIsNotAbleToMoveToAnyStatusWhenCaseHasNoTags() {
+  public function testContactIsAbleToMoveToRelevantStatusWhenCaseHasNoTagsAndPanelTagsIsEmpty() {
     $caseType = CaseTypeFabricator::fabricate();
     $caseStatus = 1;
     $applicationContactAccess = new ApplicationContactAccess();
@@ -421,9 +421,8 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
 
     $awardPanelContact = $this->getAwardPanelContactObject($awardPanel, $contactId);
 
-    // No panel meets this criteria as the case has no tags and since there is
-    // `AND` operator between the status and case tags, it is compulsory for
-    // a case to have at least a tag.
+    // If a case has no tags it is accessible by panel user
+    // when panel also does not contain any tags.
     $expectedResult = [
       'status_to_move_to' => [2, 5],
       'anonymize_application' => FALSE,

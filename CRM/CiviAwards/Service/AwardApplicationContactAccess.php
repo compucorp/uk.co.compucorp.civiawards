@@ -138,7 +138,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
 
     foreach ($visibilitySettings as $visibilitySetting) {
       $caseStatusMatch = array_intersect($visibilitySetting['application_status'], $caseStatus) || empty($visibilitySetting['application_status']);
-      $caseTagMatch = (empty($visibilitySetting['application_tags']) || (!empty($caseTags) && array_intersect($visibilitySetting['application_tags'], $caseTags)));
+      $caseTagMatch = empty($visibilitySetting['application_tags']) || (!empty($caseTags) && array_intersect($visibilitySetting['application_tags'], $caseTags));
 
       if ($caseStatusMatch && $caseTagMatch) {
         $statusToMoveApplicationTo = array_merge($statusToMoveApplicationTo, $visibilitySetting['status_to_move_to']);
