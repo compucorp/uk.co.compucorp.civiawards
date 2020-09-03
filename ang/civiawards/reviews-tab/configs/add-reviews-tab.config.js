@@ -1,7 +1,8 @@
 (function (angular) {
   var module = angular.module('civiawards');
+  var INSTANCE_NAME = 'applicant_management';
 
-  module.config(function ($windowProvider, CaseDetailsTabsProvider, tsProvider) {
+  module.config(function ($windowProvider, CaseDetailsTabsProvider, CaseTypeCategoryProvider, tsProvider) {
     var $window = $windowProvider.$get();
     var ts = tsProvider.$get();
     var caseTypeCategory = getCaseTypeCategory();
@@ -11,7 +12,8 @@
       weight: 100
     };
 
-    if (caseTypeCategory === 'awards') {
+    if (caseTypeCategory &&
+      CaseTypeCategoryProvider.isInstance(caseTypeCategory, INSTANCE_NAME)) {
       CaseDetailsTabsProvider.addTabs([
         reviewsTab
       ]);
@@ -26,7 +28,7 @@
      */
     function getCaseTypeCategory () {
       var urlParamRegExp = /case_type_category=([^&]+)/i;
-      var currentSearch = $window.location.search;
+      var currentSearch = decodeURIComponent($window.location.search);
       var results = urlParamRegExp.exec(currentSearch);
 
       return results && results[1];

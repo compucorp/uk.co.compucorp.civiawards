@@ -5,6 +5,7 @@
     return {
       scope: {
         awardId: '=',
+        caseTypeCategoryId: '=',
         focusedTabName: '@'
       },
       controller: 'CiviAwardCreateEditAwardController',
@@ -192,7 +193,9 @@
      * Navigate to the Dashboard Page
      */
     function navigateToDashboard () {
-      $window.location.href = '/civicrm/case/a/?case_type_category=awards#/case?case_type_category=awards';
+      var caseTypeCategoryname = CaseTypeCategory.findById($scope.caseTypeCategoryId).name;
+
+      $window.location.href = '/civicrm/case/a/?case_type_category=' + caseTypeCategoryname + '#/case?case_type_category=' + caseTypeCategoryname;
     }
 
     /**
@@ -215,7 +218,7 @@
         title: $scope.basicDetails.title,
         description: $scope.basicDetails.description,
         is_active: $scope.basicDetails.isEnabled,
-        case_type_category: CaseTypeCategory.findByName('awards').value,
+        case_type_category: $scope.caseTypeCategoryId,
         name: generateAwardName($scope.basicDetails.title),
         definition: {
           activityTypes: DEFAULT_ACTIVITY_TYPES,
