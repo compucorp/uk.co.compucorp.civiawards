@@ -4,7 +4,7 @@ use CRM_CiviAwards_BAO_AwardReviewPanel as AwardReviewPanel;
 use CRM_CiviAwards_Service_AwardPanelContact as AwardReviewPanelContact;
 
 /**
- * Class CRM_CiviAwards_Service_AwardApplicationContactAccess.
+ * Class for handling access of a contact to an application.
  */
 class CRM_CiviAwards_Service_AwardApplicationContactAccess {
 
@@ -138,7 +138,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
 
     foreach ($visibilitySettings as $visibilitySetting) {
       $caseStatusMatch = array_intersect($visibilitySetting['application_status'], $caseStatus) || empty($visibilitySetting['application_status']);
-      $caseTagMatch = !empty($caseTags) && (array_intersect($visibilitySetting['application_tags'], $caseTags) || empty($visibilitySetting['application_tags']));
+      $caseTagMatch = empty($visibilitySetting['application_tags']) || (!empty($caseTags) && array_intersect($visibilitySetting['application_tags'], $caseTags));
 
       if ($caseStatusMatch && $caseTagMatch) {
         $statusToMoveApplicationTo = array_merge($statusToMoveApplicationTo, $visibilitySetting['status_to_move_to']);
