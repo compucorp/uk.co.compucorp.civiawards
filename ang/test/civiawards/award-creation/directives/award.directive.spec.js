@@ -372,6 +372,9 @@
       if (!params.ifNewAward) {
         $scope.awardId = '10';
       }
+
+      $scope.caseTypeCategoryId = '3';
+
       $controller('CiviAwardCreateEditAwardController', {
         $scope: $scope
       });
