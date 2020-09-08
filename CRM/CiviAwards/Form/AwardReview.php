@@ -318,9 +318,12 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $elementNames = array_keys($elementData);
     if ($isViewAction) {
       foreach ($this->_elements as $element) {
+        // This check eliminates checkbox and radio buttons as
+        // freeze should not be called on those elements.
         if (in_array($element->_attributes['name'], $elementNames)) {
           $element->freeze();
         }
+        $this->disableField($element);
       }
     }
 
@@ -357,6 +360,35 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
 
     CRM_Utils_System::setTitle(E::ts($pageTitle));
+  }
+
+  /**
+   * Disable field.
+   *
+   * @param HTML_QuickForm_element $element
+   *   Form element object.
+   */
+  private function disableField(HTML_QuickForm_element $element) {
+    if ($element instanceof HTML_QuickForm_group) {
+      foreach ($element->_elements as $elem) {
+        $this->setDisableAttribute($elem);
+      }
+      return;
+    }
+
+    $this->setDisableAttribute($element);
+  }
+
+  /**
+   * Set disabled attribute on form element.
+   *
+   * @param HTML_QuickForm_element $element
+   *   Form element object.
+   */
+  private function setDisableAttribute(HTML_QuickForm_element $element) {
+    $attributes = $element->getAttributes();
+    $attributes['disabled'] = TRUE;
+    $element->setAttributes($attributes);
   }
 
   /**
