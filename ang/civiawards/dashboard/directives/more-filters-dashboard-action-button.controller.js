@@ -15,10 +15,10 @@
    * @param {object} ts translation service
    * @param {object} CaseStatus Case Status service
    * @param {object} AwardType Award Type service
-   * @param {Function} isAwardsScreen is award screen function
+   * @param {Function} isApplicationManagementScreen is application management screen function
    */
   function MoreFiltersDashboardActionButtonController ($rootScope, $scope, $q,
-    getSelect2Value, crmApi, dialogService, ts, CaseStatus, AwardType, isAwardsScreen) {
+    getSelect2Value, crmApi, dialogService, ts, CaseStatus, AwardType, isApplicationManagementScreen) {
     var model = {
       statuses: _.map(CaseStatus.getAll(), mapSelectOptions),
       award_types: _.map(AwardType.getAll(), mapSelectOptions),
@@ -38,10 +38,10 @@
 
     $scope.openMoreFiltersDialog = openMoreFiltersDialog;
     $scope.isNotificationVisible = isNotificationVisible;
-    $scope.isVisible = isAwardsScreen;
+    $scope.isVisible = isApplicationManagementScreen;
 
     (function init () {
-      if (isAwardsScreen()) {
+      if (isApplicationManagementScreen()) {
         applyFilter();
       }
     }());

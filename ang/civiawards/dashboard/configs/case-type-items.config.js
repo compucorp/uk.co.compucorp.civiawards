@@ -1,13 +1,15 @@
 (function (angular, _, url) {
   var module = angular.module('civiawards');
-  var AWARDS_CATEGORY_NAME = 'awards';
+  var INSTANCE_NAME = 'applicant_management';
 
   module.config(function (CaseTypeProvider, CaseTypeCategoryProvider, DashboardCaseTypeItemsProvider) {
-    var awardCategory = CaseTypeCategoryProvider.findByName(AWARDS_CATEGORY_NAME);
-    var awardCaseTypes = CaseTypeProvider.getByCategory(awardCategory.value);
+    var applicationManagementCategories = CaseTypeCategoryProvider.findAllByInstance(INSTANCE_NAME);
 
     (function () {
-      _.forEach(awardCaseTypes, addConfigurationButtonsToCaseType);
+      _.forEach(applicationManagementCategories, function (applicationManagementCategory) {
+        var caseTypes = CaseTypeProvider.getByCategory(applicationManagementCategory.value);
+        _.forEach(caseTypes, addConfigurationButtonsToCaseType);
+      });
     })();
 
     /**
