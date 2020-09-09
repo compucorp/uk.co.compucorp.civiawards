@@ -11,10 +11,13 @@
    * @param {Function} canCreateOrEditAwards can create or edit awards function.
    * @param {object} CaseTypeCategory Case Type Category service.
    */
-  function EditAwardButtonController ($scope, $routeParams, canCreateOrEditAwards, CaseTypeCategory) {
-    var currentCaseTypeCategoryValue = CaseTypeCategory.findByName($routeParams.case_type_category).value;
+  function EditAwardButtonController ($scope, $routeParams,
+    canCreateOrEditAwards, CaseTypeCategory) {
+    var currentCaseTypeCategoryValue =
+      CaseTypeCategory.findByName($routeParams.case_type_category).value;
 
     $scope.canEditAwards = canCreateOrEditAwards;
-    $scope.editAwardUrl = 'civicrm/award/a/#/awards/' + $scope.caseType.id + '/' + currentCaseTypeCategoryValue;
+    $scope.editAwardUrl = 'civicrm/award/a/#/awards/' +
+     currentCaseTypeCategoryValue + '/' + $scope.caseType.id;
   }
 })(angular, CRM.url);

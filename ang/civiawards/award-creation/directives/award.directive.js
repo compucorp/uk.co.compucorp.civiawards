@@ -193,9 +193,9 @@
      * Navigate to the Dashboard Page
      */
     function navigateToDashboard () {
-      var caseTypeCategoryname = CaseTypeCategory.findById($scope.caseTypeCategoryId).name;
+      var caseTypeCategoryName = CaseTypeCategory.findById($scope.caseTypeCategoryId).name;
 
-      $window.location.href = '/civicrm/case/a/?case_type_category=' + caseTypeCategoryname + '#/case?case_type_category=' + caseTypeCategoryname;
+      $window.location.href = '/civicrm/case/a/?case_type_category=' + caseTypeCategoryName + '#/case?case_type_category=' + caseTypeCategoryName;
     }
 
     /**
@@ -204,7 +204,7 @@
      * @param {string/number} awardID id of the award
      */
     function navigateToAwardEditPage (awardID) {
-      $location.path('/awards/' + awardID + '/stages');
+      $location.path('/awards/' + $scope.caseTypeCategoryId + '/' + awardID + '/stages');
     }
 
     /**

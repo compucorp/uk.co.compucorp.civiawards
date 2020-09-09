@@ -22,7 +22,8 @@
     function isApplicationManagementScreen () {
       var urlParams = $location.search();
 
-      return urlParams.case_type_category && CaseTypeCategory.isInstance(urlParams.case_type_category, 'applicant_management');
+      return urlParams.case_type_category &&
+        CaseTypeCategory.isInstance(urlParams.case_type_category, 'applicant_management');
     }
   }
 })(angular);

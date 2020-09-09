@@ -13,7 +13,8 @@
    * @param {Function} isApplicationManagementScreen is application management screen function
    * @param {object} CaseTypeCategory case type category service
    */
-  function AddAwardDashboardActionButtonController ($scope, $routeParams, $window, canCreateOrEditAwards, isApplicationManagementScreen, CaseTypeCategory) {
+  function AddAwardDashboardActionButtonController ($scope, $routeParams,
+    $window, canCreateOrEditAwards, isApplicationManagementScreen, CaseTypeCategory) {
     $scope.isVisible = isVisible;
     $scope.redirectToAwardsCreationScreen = redirectToAwardsCreationScreen;
 

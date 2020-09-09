@@ -308,7 +308,7 @@
       });
 
       it('redirects to edit the award', () => {
-        expect($location.path).toHaveBeenCalledWith('/awards/10/stages');
+        expect($location.path).toHaveBeenCalledWith('/awards/3/10/stages');
       });
 
       it('shows a notification after save is successfull', () => {
