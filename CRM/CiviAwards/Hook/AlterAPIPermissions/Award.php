@@ -2,11 +2,10 @@
 
 use CRM_CiviAwards_Helper_ApplicantReview as ApplicantReviewHelper;
 use CRM_Civicase_Helper_CaseCategory as CaseCategoryHelper;
-use CRM_CiviAwards_Helper_CaseTypeCategory as CaseAwardHelper;
-use CRM_Civicase_Service_CaseCategoryPermission as CaseCategoryPermission;
+use CRM_CiviAwards_Helper_CaseTypeCategory as CaseTypeCategoryHelper;
 
 /**
- * Class CRM_Civicase_Hook_APIPermissions_alterPermissions.
+ * APIPermissions Class for Awards.
  */
 class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
 
@@ -23,19 +22,11 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
    *   The API permissions.
    */
   public function run($entity, $action, array &$params, array &$permissions) {
-    $permissionService = new CaseCategoryPermission();
-    $caseCategoryPermissions = $permissionService->get(CaseAwardHelper::AWARDS_CASE_TYPE_CATEGORY_NAME);
-    $permissions['award_detail']['get'] = [
-      [
-        $caseCategoryPermissions['ACCESS_MY_CASE_CATEGORY_AND_ACTIVITIES']['name'],
-        $caseCategoryPermissions['ACCESS_CASE_CATEGORY_AND_ACTIVITIES']['name'],
-        $caseCategoryPermissions['BASIC_CASE_CATEGORY_INFO']['name'],
-      ],
-    ];
     $awardCreatePermission = [
       ['administer CiviCase', 'create/edit awards'],
     ];
     $permissions['award_detail']['create'] = $permissions['award_detail']['update'] = $awardCreatePermission;
+    $permissions['award_detail']['get'] = $awardCreatePermission;
     $permissions['award_manager']['get'] = $awardCreatePermission;
     $permissions['award_review_panel']['get'] = $awardCreatePermission;
     $permissions['award_review_panel']['create'] = $awardCreatePermission;
@@ -70,13 +61,17 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
    *   Whether to modify API permission or not.
    */
   private function modifyCaseTypeApiPermission($entity, $action, array &$params) {
-    $isCaseTypeCreateOrEdit = $entity == 'case_type' && in_array($action, ['create', 'update']);
+    $isCaseTypeCreateOrEdit = $entity == 'case_type' && in_array($action, [
+      'create',
+      'update',
+    ]);
     if (!$isCaseTypeCreateOrEdit) {
       return FALSE;
     }
 
     $caseCategoryName = $this->getCaseCategoryNameForCaseTypeWhenActionIsCreateOrEdit($params);
-    if ($caseCategoryName == CaseAwardHelper::AWARDS_CASE_TYPE_CATEGORY_NAME) {
+    $instanceName = CaseCategoryHelper::getInstanceName($caseCategoryName);
+    if ($instanceName == CaseTypeCategoryHelper::APPLICATION_MANAGEMENT_NAME) {
       return TRUE;
     }
 
