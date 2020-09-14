@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class CRM_CiviAwards_Service_ApplicantManagementMenu.
+ * Applicant Management Menu class.
  */
 class CRM_CiviAwards_Service_ApplicantManagementMenu extends CRM_Civicase_Service_CaseCategoryMenu {
 
@@ -28,7 +28,7 @@ class CRM_CiviAwards_Service_ApplicantManagementMenu extends CRM_Civicase_Servic
         'label' => ts('Manage Applications'),
         'name' => "manage_{$caseTypeCategoryName}_applications",
         'url' => 'civicrm/case/a/?case_type_category=' . $caseTypeCategoryName . '#/case/list?cf={"case_type_category":"' . $caseTypeCategoryName . '"}',
-        'permission' => 'access my awards and activities,access all awards and activities',
+        'permission' => "{$permissions['ACCESS_MY_CASE_CATEGORY_AND_ACTIVITIES']['name']},{$permissions['ACCESS_CASE_CATEGORY_AND_ACTIVITIES']['name']}",
         'permission_operator' => 'OR',
       ],
     ];
