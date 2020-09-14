@@ -1,4 +1,4 @@
-(function (angular, $, _) {
+(function (angular, $, _, getCrmUrl) {
   var module = angular.module('civiawards');
 
   module.directive('civiawardCustomFieldSets', function ($q) {
@@ -52,6 +52,7 @@
         $(submitButtonLink).trigger('click');
 
         element.on('crmFormSuccess', function () {
+          $(element).find('.civiaward__custom-field-sets__container').unblock();
           defer.resolve();
         });
 
@@ -59,4 +60,4 @@
       }
     }
   });
-})(angular, CRM.$, CRM._);
+})(angular, CRM.$, CRM._, CRM.url);

@@ -33,6 +33,7 @@
         });
 
         spyOn($.fn, 'trigger').and.callThrough();
+        spyOn($.fn, 'unblock').and.callThrough();
 
         promise = customFieldSetsTabObj.save();
 
@@ -52,6 +53,10 @@
 
         it('saves the award itself', () => {
           expect(customFieldSetsTabCallbackFn).toHaveBeenCalled();
+        });
+
+        it('hides the loading screen for custom field sets', () => {
+          expect($.fn.unblock).toHaveBeenCalled();
         });
       });
     });
