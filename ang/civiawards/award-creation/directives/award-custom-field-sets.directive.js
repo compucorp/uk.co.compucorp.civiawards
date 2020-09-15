@@ -1,4 +1,4 @@
-(function (angular, $, _, getCrmUrl) {
+(function (angular, $, _) {
   var module = angular.module('civiawards');
 
   module.directive('civiawardCustomFieldSets', function ($q) {
@@ -60,4 +60,4 @@
       }
     }
   });
-})(angular, CRM.$, CRM._, CRM.url);
+})(angular, CRM.$, CRM._);

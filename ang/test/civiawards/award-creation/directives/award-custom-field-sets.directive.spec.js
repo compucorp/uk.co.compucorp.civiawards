@@ -23,6 +23,7 @@
     });
 
     describe('when saving the award', () => {
+      var originalTriggerFn, originalUnblockFn;
       var promise, customFieldSetsTabCallbackFn;
 
       beforeEach(() => {
@@ -32,6 +33,8 @@
           return tabObj.name === 'customFieldSets';
         });
 
+        originalTriggerFn = $.fn.trigger;
+        originalUnblockFn = $.fn.unblock;
         spyOn($.fn, 'trigger').and.callThrough();
         spyOn($.fn, 'unblock').and.callThrough();
 
@@ -39,6 +42,11 @@
 
         customFieldSetsTabCallbackFn = jasmine.createSpy('promise');
         promise.then(customFieldSetsTabCallbackFn);
+      });
+
+      afterEach(() => {
+        $.fn.trigger = originalTriggerFn;
+        $.fn.unblock = originalUnblockFn;
       });
 
       it('saves the custom field set values', () => {
