@@ -466,6 +466,18 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    *   Contact display name.
    */
   private function getCaseContactDisplayName() {
+    if ($this->isReviewFromSsp()) {
+      // Alter display name of contact to "Anonymous [case-id]" if award
+      // ssp review panel has anonymize_application set to true.
+      $userID = CRM_Core_Session::getLoggedInContactID();
+      $contactAccessService = new CRM_CiviAwards_Service_AwardApplicationContactAccess();
+      $awardPanelContact = new CRM_CiviAwards_Service_AwardPanelContact();
+      $contactAccess = $contactAccessService->getReviewAccess($userID, $this->caseId, $awardPanelContact);
+      if (!empty($contactAccess) && $contactAccess['anonymize_application']) {
+        return 'Anonymous ' . $this->caseId;
+      }
+    }
+
     $result = civicrm_api3('CaseContact', 'get', [
       'sequential' => 1,
       'case_id' => $this->caseId,
