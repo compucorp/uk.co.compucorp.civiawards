@@ -529,6 +529,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $result = civicrm_api3('EntityTag', 'get', [
       'sequential' => 1,
       'entity_table' => 'civicrm_case',
+      'entity_id' => $this->caseId,
       'api.Tag.getsingle' => ['id' => "\$value.tag_id"],
     ]);
 
