@@ -170,6 +170,11 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $hasSubmittedReview = $this->userAlreadySubmittedReview();
     $canNotViewReview = $isViewAction && $this->isReviewFromSsp() && !$this->isReviewOwner();
 
+    if ($this->isReviewFromSsp() && $this->isCaseApplicationDeleted()) {
+      $action = $isViewAction ? 'view' : 'submit';
+      return "You cannot $action a review for a deleted application.";
+    }
+
     if ($this->isReviewFromSsp() && $hasSubmittedReview && $isAddAction) {
       return 'You have already submitted a review for this Award and you cannot add another review';
     }
@@ -313,9 +318,12 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $elementNames = array_keys($elementData);
     if ($isViewAction) {
       foreach ($this->_elements as $element) {
+        // This check eliminates checkbox and radio buttons as
+        // freeze should not be called on those elements.
         if (in_array($element->_attributes['name'], $elementNames)) {
           $element->freeze();
         }
+        $this->disableField($element);
       }
     }
 
@@ -352,6 +360,35 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
 
     CRM_Utils_System::setTitle(E::ts($pageTitle));
+  }
+
+  /**
+   * Disable field.
+   *
+   * @param HTML_QuickForm_element $element
+   *   Form element object.
+   */
+  private function disableField(HTML_QuickForm_element $element) {
+    if ($element instanceof HTML_QuickForm_group) {
+      foreach ($element->_elements as $elem) {
+        $this->setDisableAttribute($elem);
+      }
+      return;
+    }
+
+    $this->setDisableAttribute($element);
+  }
+
+  /**
+   * Set disabled attribute on form element.
+   *
+   * @param HTML_QuickForm_element $element
+   *   Form element object.
+   */
+  private function setDisableAttribute(HTML_QuickForm_element $element) {
+    $attributes = $element->getAttributes();
+    $attributes['disabled'] = TRUE;
+    $element->setAttributes($attributes);
   }
 
   /**
@@ -429,6 +466,18 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    *   Contact display name.
    */
   private function getCaseContactDisplayName() {
+    if ($this->isReviewFromSsp()) {
+      // Alter display name of contact to "Anonymous [case-id]" if award
+      // ssp review panel has anonymize_application set to true.
+      $userID = CRM_Core_Session::getLoggedInContactID();
+      $contactAccessService = new CRM_CiviAwards_Service_AwardApplicationContactAccess();
+      $awardPanelContact = new CRM_CiviAwards_Service_AwardPanelContact();
+      $contactAccess = $contactAccessService->getReviewAccess($userID, $this->caseId, $awardPanelContact);
+      if (!empty($contactAccess) && $contactAccess['anonymize_application']) {
+        return 'Anonymous ' . $this->caseId;
+      }
+    }
+
     $result = civicrm_api3('CaseContact', 'get', [
       'sequential' => 1,
       'case_id' => $this->caseId,
@@ -684,6 +733,22 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     ]);
 
     return $result['count'] > 0;
+  }
+
+  /**
+   * Checks if Case Application is deleted.
+   *
+   * @return bool
+   *   Bool value.
+   */
+  private function isCaseApplicationDeleted() {
+    $result = civicrm_api3('Case', 'get', [
+      'sequential' => 1,
+      'id' => $this->caseId,
+      'is_deleted' => 0,
+    ]);
+
+    return empty($result['values']) ? TRUE : FALSE;
   }
 
 }
