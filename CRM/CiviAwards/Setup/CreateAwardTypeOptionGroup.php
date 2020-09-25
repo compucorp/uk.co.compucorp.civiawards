@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup.
+ * Sets up the Award type option group and values.
  */
 class CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup {
 
