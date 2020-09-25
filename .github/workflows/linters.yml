@@ -20,17 +20,16 @@ jobs:
       run: git fetch -n origin ${GITHUB_BASE_REF}
             
     - name: Run phpcs linter 
-      run: git diff origin/${GITHUB_BASE_REF} --name-only -- '*.php' | xargs -r ./bin/phpcs.phar --standard=phpcs-ruleset.xml
+      run: git diff --diff-filter=d origin/${GITHUB_BASE_REF} --name-only -- '*.php' | xargs -r ./bin/phpcs.phar --standard=phpcs-ruleset.xml
 
     - name: Run stylelint linter
       #This step will always run regardless of previous step's status
       #without if: ${{ always() }}, if the previous step is failure,
-      #the remaining step will not be executed. 
-      if: ${{ always() }} 
-      run: git diff origin/${GITHUB_BASE_REF} --name-only -- '*.scss' | xargs -r  npx stylelint --config .stylelintrc 
-        
+      #the remaining step will not be executed.
+      if: ${{ always() }}
+      run: git diff --diff-filter=d origin/${GITHUB_BASE_REF} --name-only -- '*.scss' | xargs -r  npx stylelint --config .stylelintrc
+
 
     - name: Run eslint linter
       if: ${{ always() }}
-      run: git diff origin/${GITHUB_BASE_REF} --name-only -- '*.js' | xargs -r  npx eslint --max-warnings=0 -c .eslintrc.json 
-        
+      run: git diff --diff-filter=d origin/${GITHUB_BASE_REF} --name-only -- '*.js' | xargs -r  npx eslint --max-warnings=0 -c .eslintrc.json

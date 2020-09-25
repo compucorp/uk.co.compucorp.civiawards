@@ -1,13 +1,16 @@
 <?php
 
 use CRM_CiviAwards_Setup_CreateAwardsCaseCategoryOption as CreateAwardsCaseCategoryOption;
+use CRM_CiviAwards_Setup_CreateApplicantManagementOption as CreateApplicantManagementOption;
 use CRM_CiviAwards_Setup_ProcessAwardsCategoryForCustomGroupSupport as ProcessAwardsCategoryForCustomGroupSupport;
+use CRM_CiviAwards_Setup_AddApplicantManagementCaseTypeCustomGroupSupport as AddApplicantManagementCaseTypeCustomGroupSupport;
 use CRM_CiviAwards_Setup_DeleteAwardsCaseCategoryOption as DeleteAwardsCaseCategoryOption;
 use CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup as CreateAwardTypeOptionGroup;
 use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
 use CRM_CiviAwards_Setup_DeleteApplicantReviewCustomField as DeleteApplicantReviewCustomField;
-use CRM_CiviAwards_Setup_AddAwardsCategoryWordReplacement as AddAwardsCategoryWordReplacement;
+use CRM_CiviAwards_Setup_AddApplicationManagementWordReplacement as AddApplicationManagementWordReplacement;
 use CRM_CiviAwards_Uninstall_RemoveCustomGroupSupportForAwardsCategory as RemoveCustomGroupSupportForAwardsCategory;
+use CRM_CiviAwards_Uninstall_RemoveCustomGroupSupportForApplicantManagement as RemoveCustomGroupSupportForApplicantManagement;
 use CRM_CiviAwards_Setup_CreateAwardsMenus as CreateAwardsMenus;
 
 /**
@@ -29,9 +32,11 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
     $steps = [
       new CreateAwardsCaseCategoryOption(),
       new ProcessAwardsCategoryForCustomGroupSupport(),
+      new AddApplicantManagementCaseTypeCustomGroupSupport(),
       new CreateAwardTypeOptionGroup(),
+      new CreateApplicantManagementOption(),
       new CreateApplicantReviewActivityType(),
-      new AddAwardsCategoryWordReplacement(),
+      new AddApplicationManagementWordReplacement(),
       new CreateAwardsMenus(),
     ];
 
@@ -66,6 +71,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
       new DeleteAwardsCaseCategoryOption(),
       new RemoveCustomGroupSupportForAwardsCategory(),
       new DeleteApplicantReviewCustomField(),
+      new RemoveCustomGroupSupportForApplicantManagement(),
     ];
 
     foreach ($steps as $step) {

@@ -106,3 +106,20 @@ function getParameterValue(array $params, $parameterName) {
 
   return $params[$parameterName];
 }
+
+/**
+ * AwardDetail.getInstanceCategories API.
+ *
+ * @param array $params
+ *   API parameters.
+ *
+ * @return array
+ *   API result descriptor.
+ */
+function civicrm_api3_award_detail_getinstancecategories(array $params) {
+  $applicantManagementCategories = CRM_CiviAwards_Helper_CaseTypeCategory::getApplicantManagementCaseCategories();
+  $caseTypeCategories = CRM_Case_BAO_CaseType::buildOptions('case_type_category', 'validate');
+  $categoryDetails = array_intersect_key($caseTypeCategories, array_flip($applicantManagementCategories));
+
+  return civicrm_api3_create_success($categoryDetails);
+}

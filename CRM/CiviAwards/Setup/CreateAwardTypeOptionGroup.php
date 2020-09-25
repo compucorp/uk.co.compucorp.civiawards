@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup.
+ * Sets up the Award type option group and values.
  */
 class CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup {
 
@@ -47,7 +47,7 @@ class CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup {
     foreach ($optionValues as $optionValue) {
       CRM_Core_BAO_OptionValue::ensureOptionValueExists([
         'option_group_id' => $this->awardOptionGroupName,
-        'name' => $optionValues,
+        'name' => $optionValue,
         'label' => ucfirst($optionValue),
         'is_active' => TRUE,
         'is_reserved' => TRUE,

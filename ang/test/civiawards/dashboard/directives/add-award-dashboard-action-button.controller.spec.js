@@ -2,16 +2,17 @@
 
 (function (_, getCrmUrl) {
   describe('Add Award Dashboard Action Button', () => {
-    let $location, $window, $scope, $controller, $rootScope, canCreateOrEditAwards, isAwardsScreen;
+    let $location, $window, $scope, $controller, $rootScope, canCreateOrEditAwards, isApplicationManagementScreen;
 
     beforeEach(module('civiawards', ($provide) => {
       $window = { location: { href: '' } };
       canCreateOrEditAwards = jasmine.createSpy('canCreateOrEditAwards');
-      isAwardsScreen = jasmine.createSpy('isAwardsScreen');
+      isApplicationManagementScreen = jasmine.createSpy('isApplicationManagementScreen');
 
       $provide.value('$window', $window);
+      $provide.value('$routeParams', { case_type_category: 'awards' });
       $provide.value('canCreateOrEditAwards', canCreateOrEditAwards);
-      $provide.value('isAwardsScreen', isAwardsScreen);
+      $provide.value('isApplicationManagementScreen', isApplicationManagementScreen);
     }));
 
     beforeEach(inject((_$location_, _$controller_, _$rootScope_) => {
@@ -25,9 +26,9 @@
     describe('button visibility', () => {
       var isButtonVisible;
 
-      describe('when viewing the awards dashboard', () => {
+      describe('when viewing the application management dashboard', () => {
         beforeEach(() => {
-          isAwardsScreen.and.returnValue(true);
+          isApplicationManagementScreen.and.returnValue(true);
         });
 
         describe('and the user can create awards', () => {
@@ -57,7 +58,7 @@
 
       describe('when viewing any other dashboard', () => {
         beforeEach(() => {
-          isAwardsScreen.and.returnValue(false);
+          isApplicationManagementScreen.and.returnValue(false);
 
           isButtonVisible = $scope.isVisible();
         });
@@ -69,7 +70,8 @@
     });
 
     describe('when clicking the action button', () => {
-      const expectedUrl = getCrmUrl('civicrm/award/a/#/awards/new');
+      const awardCaseTypeCategoryId = 3;
+      const expectedUrl = getCrmUrl('civicrm/award/a/#/awards/new/' + awardCaseTypeCategoryId);
 
       beforeEach(() => {
         spyOn($location, 'url');

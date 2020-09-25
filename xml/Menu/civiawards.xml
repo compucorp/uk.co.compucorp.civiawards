@@ -14,6 +14,12 @@
     <is_public>true</is_public>
   </item>
   <item>
+    <path>civicrm/award/customfield</path>
+    <page_callback>CRM_CiviAwards_Form_AwardCustomField</page_callback>
+    <title>Award Custom Fields</title>
+    <access_arguments>create/edit awards</access_arguments>
+  </item>
+  <item>
     <path>civicrm/award/a</path>
     <page_callback>CRM_CiviAwards_Page_AwardAngular</page_callback>
     <access_arguments>create/edit awards</access_arguments>
