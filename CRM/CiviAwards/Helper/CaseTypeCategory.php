@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class CRM_CiviAwards_Helper_CaseTypeCategory.
+ * Helper class with useful functions for managing case type categories.
  */
 class CRM_CiviAwards_Helper_CaseTypeCategory {
 

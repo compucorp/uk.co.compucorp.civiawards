@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class CRM_CiviAwards_Test_Fabricator_CaseCategory.
+ * Case type category fabricator.
  */
 class CRM_CiviAwards_Test_Fabricator_CaseCategory {
 

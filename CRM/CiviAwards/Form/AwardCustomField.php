@@ -3,7 +3,7 @@
 use CRM_CiviAwards_Helper_CaseTypeCategory as CaseTypeCategoryHelper;
 
 /**
- * Class CRM_CiviAwards_Form_AwardCustomField.
+ * This form class defines the custom fields form for an Award.
  */
 class CRM_CiviAwards_Form_AwardCustomField extends CRM_Civicase_Form_CaseCategoryTypeCustomField {
 
