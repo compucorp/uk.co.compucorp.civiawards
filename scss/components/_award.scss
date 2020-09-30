@@ -35,6 +35,12 @@
   }
 }
 
+.civiawards__award__review-panel-form-visibility--submitted {
+  .ng-invalid {
+    border-color: $brand-danger;
+  }
+}
+
 .civiawards__award__review-panel-form--submitted {
   .ng-invalid { //for crm-ui-select
     border-color: $brand-danger;

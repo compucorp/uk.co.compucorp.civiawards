@@ -619,7 +619,7 @@
      * @returns {boolean} if Save button should be disabled
      */
     function ifSaveButtonDisabled () {
-      return !$scope.review_panel_form.$valid || $scope.submitInProgress;
+      return !$scope.review_panel_form.$valid || !$scope.review_panel_form_visibility.$valid || $scope.submitInProgress;
     }
 
     /**

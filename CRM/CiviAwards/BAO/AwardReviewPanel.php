@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class CRM_CiviAwards_BAO_AwardReviewPanel.
+ * Manages award review panel entity.
  */
 class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReviewPanel {
 
@@ -178,7 +178,8 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
       if (empty($setting['is_required']) && !isset($params[$fieldName])) {
         continue;
       }
-      if (!empty($setting['is_required']) && !isset($params[$fieldName])) {
+      if (!empty($setting['is_required']) &&
+        (!isset($params[$fieldName]) || (is_array(($params[$fieldName])) && empty(($params[$fieldName]))))) {
         throw new Exception(ts("{$settingName}: {$fieldName} is required"));
       }
 

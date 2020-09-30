@@ -99,6 +99,7 @@
       beforeEach(() => {
         createController();
         $scope.review_panel_form = {};
+        $scope.review_panel_form_visibility = {};
 
         dialogService.open.and.callFake(function (__, ___, ____, options) {
           saveButtonClickHandler = options.buttons[0].click;
@@ -144,6 +145,7 @@
         beforeEach(() => {
           $scope.awardId = 1;
           $scope.review_panel_form.$valid = true;
+          $scope.review_panel_form_visibility.$valid = true;
           $scope.submitInProgress = false;
           $scope.currentReviewPanel.title = 'New Review Panel';
           $scope.currentReviewPanel.isEnabled = true;

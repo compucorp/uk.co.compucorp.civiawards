@@ -115,8 +115,9 @@
       </form>
     </div>
     <div class="tab-pane active" ng-show="model.activeTab === 'permissions'">
-      <form
-        class="form-horizontal">
+      <form name="model.review_panel_form_visibility"
+        class="form-horizontal civiawards__award__review-panel-form-visibility"
+            ng-class="{'civiawards__award__review-panel-form-visibility--submitted': model.submitButtonClickedOnce}">
         <div class="form-group">
           <label class="col-sm-6 control-label">Anonymise Contacts for this Panel?</label>
           <div class="col-sm-3">
@@ -133,11 +134,12 @@
         </div>
 
         <div class="form-group" ng-show="model.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted">
-          <label class="col-sm-6 control-label">
+          <label class="col-sm-6 control-label required-mark">
             Statuses
           </label>
           <div class="col-sm-6">
             <input class="form-control"
+              ng-required="model.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted"
               ng-disabled="!model.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted"
               ng-model="model.currentReviewPanel.visibilitySettings.restrictedApplicationStatus"
               placeholder="Applicant Status(s)"
