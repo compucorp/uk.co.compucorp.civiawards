@@ -11,13 +11,27 @@
     }));
 
     describe('basic tests', () => {
-      beforeEach(() => {
-        initDirective();
+      describe('when creating new award', function () {
+        beforeEach(() => {
+          CRM.loadForm.calls.reset();
+          initDirective();
+        });
+
+        it('does not fetch the custom fields information', () => {
+          expect(CRM.loadForm).not.toHaveBeenCalled();
+        });
       });
 
-      it('shows the custom field set UI', () => {
-        expect(CRM.loadForm).toHaveBeenCalledWith('/civicrm/award/customfield?entityId=5', {
-          target: jasmine.any(Object)
+      describe('when editing existing award', function () {
+        beforeEach(() => {
+          CRM.loadForm.calls.reset();
+          initDirective(5);
+        });
+
+        it('shows the custom field set UI', () => {
+          expect(CRM.loadForm).toHaveBeenCalledWith('/civicrm/award/customfield?entityId=5', {
+            target: jasmine.any(Object)
+          });
         });
       });
     });
@@ -27,7 +41,7 @@
       var promise, customFieldSetsTabCallbackFn;
 
       beforeEach(() => {
-        initDirective();
+        initDirective(5);
 
         var customFieldSetsTabObj = _.find($scope.tabs, function (tabObj) {
           return tabObj.name === 'customFieldSets';
@@ -71,11 +85,13 @@
 
     /**
      * Initialise directive
+     *
+     * @param {string/number} awardId award id
      */
-    function initDirective () {
+    function initDirective (awardId) {
       var html = '<civiaward-custom-field-sets></civiaward-custom-field-sets>';
       $scope = $rootScope.$new();
-      $scope.awardId = '5';
+      $scope.awardId = awardId;
       $scope.tabs = [
         { name: 'basicDetails', label: 'Basic Details' },
         { name: 'stages', label: 'Award Stages' },

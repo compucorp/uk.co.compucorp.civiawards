@@ -22,7 +22,9 @@
         });
         customFieldSetsTabObj.save = save;
 
-        loadCustomFieldSetScreen();
+        if (scope.awardId) {
+          loadCustomFieldSetScreen();
+        }
       }());
 
       /**
@@ -47,6 +49,11 @@
        */
       function save () {
         var defer = $q.defer();
+
+        if (!scope.awardId) {
+          defer.resolve();
+        }
+
         var submitButtonLink = '.civiaward__custom-field-sets__container .award-custom-field';
 
         $(submitButtonLink).trigger('click');
