@@ -1,3 +1,5 @@
+[![Build Status](https://github.com/compucorp/uk.co.compucorp.civiawards/workflows/Tests/badge.svg)](https://github.com/compucorp/uk.co.compucorp.civiawards/workflows/Tests/badge.svg)
+
 # CiviAwards
 
 ## Is CiviAwards for me?
