@@ -267,19 +267,40 @@
       });
 
       it('displays all relationship type on the UI', () => {
-        expect($scope.relationshipTypes).toEqual([{
-          text: 'Application Manager is',
-          id: '17_a_b'
-        }, {
-          text: 'Application Manager',
-          id: '17_b_a'
-        }, {
-          text: 'Benefits Specialist is',
-          id: '14_a_b'
-        }, {
-          text: 'Benefits Specialist',
-          id: '14_b_a'
-        }]);
+        expect($scope.relationshipTypes).toEqual([
+          {
+            text: 'Application Manager is',
+            id: '17_a_b'
+          },
+          {
+            text: 'Application Manager',
+            id: '17_b_a'
+          },
+          {
+            text: 'Benefits Specialist is',
+            id: '14_a_b'
+          },
+          {
+            text: 'Benefits Specialist',
+            id: '14_b_a'
+          },
+          {
+            text: 'Health Services Coordinator is',
+            id: '12_a_b'
+          },
+          {
+            text: 'Health Services Coordinator',
+            id: '12_b_a'
+          },
+          {
+            text: 'Homeless Services Coordinator is',
+            id: '11_a_b'
+          },
+          {
+            text: 'Homeless Services Coordinator',
+            id: '11_b_a'
+          }
+        ]);
       });
 
       describe('when ADD MORE button is clicked for a specific relationship', () => {
