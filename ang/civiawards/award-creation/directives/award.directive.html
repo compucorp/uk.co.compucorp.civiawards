@@ -41,6 +41,11 @@
               <civiaward-award-stages-table></civiaward-award-stages-table>
             </div>
           </div>
+          <div class="tab-pane active" ng-show="activeTab === 'customFieldSets'">
+            <div class="table-tab">
+              <civiaward-custom-field-sets></civiaward-custom-field-sets>
+            </div>
+          </div>
           <div class="tab-pane active" ng-show="activeTab === 'reviewPanels'">
             <div class="table-tab">
               <civiaward-review-panels award-id="awardId"></civiaward-review-panels>

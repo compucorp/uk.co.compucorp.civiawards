@@ -34,6 +34,7 @@
     $scope.tabs = [
       { name: 'basicDetails', label: ts('Basic Details') },
       { name: 'stages', label: ts('Award Stages') },
+      { name: 'customFieldSets', label: ts('Custom Field Sets') },
       { name: 'reviewPanels', label: ts('Panels') },
       { name: 'reviewFields', label: ts('Review Fields') }
     ];
@@ -165,7 +166,8 @@
     function saveAward () {
       $scope.submitInProgress = true;
 
-      var promise = saveCaseTypeBasicDetails()
+      var promise = saveIndividualTabsIfApplicable()
+        .then(saveCaseTypeBasicDetails)
         .then(saveAdditionAwardDetails)
         .then(function (award) {
           return award.case_type_id;
@@ -187,6 +189,23 @@
         start: $scope.ts('Saving Award...'),
         success: $scope.ts('Saved')
       }, promise);
+    }
+
+    /**
+     * Run save logic for individual tabs if present
+     *
+     * @returns {Promise} promise
+     */
+    function saveIndividualTabsIfApplicable () {
+      var promises = [];
+
+      _.each($scope.tabs, function (tabObj) {
+        if (tabObj.save) {
+          promises.push(tabObj.save());
+        }
+      });
+
+      return $q.all(promises);
     }
 
     /**

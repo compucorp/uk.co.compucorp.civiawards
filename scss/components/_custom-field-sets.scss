@@ -1,0 +1,24 @@
+.civiaward__custom-field-sets__container {
+  .crm-submit-buttons {
+    display: none;
+  }
+
+  .crm-accordion-body {
+    .html-adjust {
+      padding-bottom: 15px;
+    }
+
+    [type='checkbox'],
+    [type='radio'] {
+      margin: 0;
+    }
+  }
+
+  .crm-case-custom-form-block {
+    box-shadow: none;
+  }
+
+  .crm-case-custom-form-block-empty {
+    margin: 20px 0;
+  }
+}

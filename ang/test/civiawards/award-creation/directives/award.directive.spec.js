@@ -36,6 +36,22 @@
     }));
 
     describe('basic tests', () => {
+      describe('tabs', function () {
+        beforeEach(() => {
+          createController({ ifNewAward: true });
+        });
+
+        it('shows all the tabs', () => {
+          expect($scope.tabs).toEqual([
+            { name: 'basicDetails', label: 'Basic Details' },
+            { name: 'stages', label: 'Award Stages' },
+            { name: 'customFieldSets', label: 'Custom Field Sets' },
+            { name: 'reviewPanels', label: 'Panels' },
+            { name: 'reviewFields', label: 'Review Fields' }
+          ]);
+        });
+      });
+
       describe('when creating new award', function () {
         beforeEach(() => {
           createController({ ifNewAward: true });
@@ -247,6 +263,11 @@
           createController({ ifNewAward: false });
           $scope.awardStages = CaseStatus.getAll();
           $scope.basicDetails.selectedAwardStages = { 1: true };
+
+          _.each($scope.tabs, function (tabObj) {
+            tabObj.save = jasmine.createSpy('tabSaveFn');
+          });
+
           setAwardDetails();
 
           crmApi.and.returnValue($q.resolve({
@@ -254,6 +275,12 @@
           }));
           $scope.saveAwardInBG();
           $scope.$digest();
+        });
+
+        it('runs individual tabs save logic', () => {
+          _.each($scope.tabs, function (tabObj) {
+            expect(tabObj.save).toHaveBeenCalled();
+          });
         });
 
         it('shows saving notification while save is in progress', () => {
