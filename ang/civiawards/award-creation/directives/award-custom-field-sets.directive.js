@@ -43,20 +43,22 @@
 
       /**
        * Save the custom field set PHP form by triggering the hidden save button
-       * using jQuery
+       * using jQuery.
+       *
+       * If there is no custom fields form, it will continue as normal.
        *
        * @returns {Promise} promise
        */
       function save () {
+        var $submitButtonLink = $('.civiaward__custom-field-sets__container .award-custom-field');
+        var hasCustomFields = $submitButtonLink.length > 0;
         var defer = $q.defer();
 
-        if (!scope.awardId) {
+        if (!scope.awardId || !hasCustomFields) {
           defer.resolve();
         }
 
-        var submitButtonLink = '.civiaward__custom-field-sets__container .award-custom-field';
-
-        $(submitButtonLink).trigger('click');
+        $submitButtonLink.trigger('click');
 
         element.on('crmFormSuccess', function () {
           $(element).find('.civiaward__custom-field-sets__container').unblock();
