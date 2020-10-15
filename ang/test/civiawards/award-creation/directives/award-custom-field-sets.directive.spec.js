@@ -37,13 +37,18 @@
     });
 
     describe('when saving the award', () => {
-      var originalTriggerFn, originalUnblockFn;
-      var promise, customFieldSetsTabCallbackFn;
+      let originalTriggerFn, originalUnblockFn, promise,
+        customFieldSetsTabCallbackFn, customFieldSetsTabObj;
+      const fixture = `
+        <div class="civiaward__custom-field-sets__container test-fixture">
+          <div class="award-custom-field"></div>
+        </div>
+      `;
 
       beforeEach(() => {
         initDirective(5);
 
-        var customFieldSetsTabObj = _.find($scope.tabs, function (tabObj) {
+        customFieldSetsTabObj = _.find($scope.tabs, function (tabObj) {
           return tabObj.name === 'customFieldSets';
         });
 
@@ -51,11 +56,6 @@
         originalUnblockFn = $.fn.unblock;
         spyOn($.fn, 'trigger').and.callThrough();
         spyOn($.fn, 'unblock').and.callThrough();
-
-        promise = customFieldSetsTabObj.save();
-
-        customFieldSetsTabCallbackFn = jasmine.createSpy('promise');
-        promise.then(customFieldSetsTabCallbackFn);
       });
 
       afterEach(() => {
@@ -63,22 +63,50 @@
         $.fn.unblock = originalUnblockFn;
       });
 
-      it('saves the custom field set values', () => {
-        expect($.fn.trigger).toHaveBeenCalledWith('click');
+      describe('when there are custom fields defined', () => {
+        beforeEach(() => {
+          $('body').append(fixture);
+          promise = customFieldSetsTabObj.save();
+
+          customFieldSetsTabCallbackFn = jasmine.createSpy('promise');
+          promise.then(customFieldSetsTabCallbackFn);
+        });
+
+        afterEach(() => {
+          $('.test-fixture').remove();
+        });
+
+        it('saves the custom field set values', () => {
+          expect($.fn.trigger).toHaveBeenCalledWith('click');
+        });
+
+        describe('when the save is complete', () => {
+          beforeEach(() => {
+            civiawardCustomFieldSetsDirective.trigger('crmFormSuccess');
+            $scope.$digest();
+          });
+
+          it('saves the award itself', () => {
+            expect(customFieldSetsTabCallbackFn).toHaveBeenCalled();
+          });
+
+          it('hides the loading screen for custom field sets', () => {
+            expect($.fn.unblock).toHaveBeenCalled();
+          });
+        });
       });
 
-      describe('when the save is complete', () => {
+      describe('and there are no custom fields defined', () => {
         beforeEach(() => {
-          civiawardCustomFieldSetsDirective.trigger('crmFormSuccess');
+          promise = customFieldSetsTabObj.save();
+          customFieldSetsTabCallbackFn = jasmine.createSpy('promise');
+
+          promise.then(customFieldSetsTabCallbackFn);
           $scope.$digest();
         });
 
         it('saves the award itself', () => {
           expect(customFieldSetsTabCallbackFn).toHaveBeenCalled();
-        });
-
-        it('hides the loading screen for custom field sets', () => {
-          expect($.fn.unblock).toHaveBeenCalled();
         });
       });
     });
