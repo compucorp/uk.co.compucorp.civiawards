@@ -1,11 +1,20 @@
 <?php
 
+use CRM_CiviAwards_BAO_AwardDetail as AwardDetail;
+
 /**
  * Helper class with useful functions for managing case type categories.
  */
 class CRM_CiviAwards_Helper_CaseTypeCategory {
 
+  /**
+   * Award category name.
+   */
   const AWARDS_CASE_TYPE_CATEGORY_NAME = 'awards';
+
+  /**
+   * Applicant management instance name.
+   */
   const APPLICATION_MANAGEMENT_NAME = 'applicant_management';
 
   /**
@@ -41,6 +50,16 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
     }
 
     return array_column($instance['values'], 'category_id');
+  }
+
+  /**
+   * Returns the option values for Award Subtypes.
+   *
+   * @return array
+   *   Award Subtypes.
+   */
+  public static function getSubTypes() {
+    return AwardDetail::buildOptions('award_type');
   }
 
 }
