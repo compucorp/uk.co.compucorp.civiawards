@@ -33,7 +33,7 @@ class CRM_CiviAwards_Service_ApplicantManagementMenu extends CRM_Civicase_Servic
         'has_separator' => 1,
       ],
       [
-        'label' => ts("Manage" . $caseTypeCategoryName),
+        'label' => ts("Manage " . $caseTypeCategoryName),
         'name' => "manage_{$caseTypeCategoryName}_workflows",
         'url' => 'civicrm/workflow/a?case_type_category=' . $caseTypeCategoryName . '#/list',
         'permission' => "{$permissions['ADMINISTER_CASE_CATEGORY']['name']}, administer CiviCRM",
