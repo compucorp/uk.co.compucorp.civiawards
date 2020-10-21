@@ -62,6 +62,19 @@ function civiawards_civicrm_enable() {
 }
 
 /**
+ * Implements hook_civicrm_buildForm().
+ */
+function civiawards_civicrm_buildForm($formName, &$form) {
+  $hooks = [
+    new CRM_CiviAwards_Hook_BuildForm_SetCustomGroupSubTypeValues(),
+  ];
+
+  foreach ($hooks as $hook) {
+    $hook->run($form, $formName);
+  }
+}
+
+/**
  * Implements hook_civicrm_disable().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_disable
@@ -206,6 +219,19 @@ function civiawards_civicrm_aclGroup($type, $contactID, $tableName, &$allGroups,
 
   foreach ($hooks as $hook) {
     $hook->run($type, $contactID, $tableName, $allGroups, $currentGroups);
+  }
+}
+
+/**
+ * Implements hook_civicrm_post().
+ */
+function civiawards_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  $hooks = [
+    new CRM_CiviAwards_Hook_Post_UpdateCaseTypeListForCustomGroup(),
+  ];
+
+  foreach ($hooks as $hook) {
+    $hook->run($op, $objectName, $objectId, $objectRef);
   }
 }
 
