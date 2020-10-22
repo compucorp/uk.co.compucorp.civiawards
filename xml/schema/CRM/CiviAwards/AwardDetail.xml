@@ -24,6 +24,15 @@
     <type>int unsigned</type>
     <comment>FK to Case Type</comment>
     <required>true</required>
+    <html>
+      <type>Select</type>
+    </html>
+    <pseudoconstant>
+      <table>civicrm_case_type</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>title</labelColumn>
+    </pseudoconstant>
+    <add>2.0</add>
   </field>
   <foreignKey>
     <name>case_type_id</name>
