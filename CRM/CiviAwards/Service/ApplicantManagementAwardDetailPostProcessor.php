@@ -85,7 +85,9 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessor {
   public function processCaseTypeCustomGroupsOnUpdate(AwardDetail $awardDetail) {
     $caseTypeId = $awardDetail->case_type_id;
     $mismatchCustomGroups = $this->postProcessHelper->getCaseTypeCustomGroupsWithCategoryMismatch($caseTypeId);
+    $runCreateFunction = FALSE;
     if (!empty($mismatchCustomGroups)) {
+      $runCreateFunction = TRUE;
       foreach ($mismatchCustomGroups as $cusGroup) {
         $entityColumnValues = array_diff($cusGroup['extends_entity_column_value'], [$caseTypeId]);
         $entityColumnValues = $entityColumnValues ? $entityColumnValues : NULL;
@@ -94,6 +96,7 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessor {
     }
 
     if ($this->awardSubTypeChanged($awardDetail)) {
+      $runCreateFunction = TRUE;
       $matchedCustomGroups = $this->postProcessHelper->getCaseTypeCustomGroupsWithCategoryMatch($caseTypeId);
       $caseTypeSubType = $this->postProcessHelper->getSubTypesForCaseType([$caseTypeId]);
       foreach ($matchedCustomGroups as $cusGroup) {
@@ -107,7 +110,9 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessor {
       }
     }
 
-    $this->processCaseTypeCustomGroupsOnCreate($awardDetail);
+    if ($runCreateFunction) {
+      $this->processCaseTypeCustomGroupsOnCreate($awardDetail);
+    }
   }
 
   /**
