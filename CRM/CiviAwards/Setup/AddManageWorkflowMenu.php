@@ -11,7 +11,8 @@ class CRM_CiviAwards_Setup_AddManageWorkflowMenu {
    * And Create Manage Workflow Menu for applicant management categories.
    */
   public function apply() {
-    CaseCategoryMenu::createManageWorkflowMenuForExistingCaseCategories('applicant_management', TRUE);
+    $caseCategoryMenuObj = new CaseCategoryMenu();
+    $caseCategoryMenuObj->createManageWorkflowMenu('applicant_management', TRUE);
   }
 
 }
