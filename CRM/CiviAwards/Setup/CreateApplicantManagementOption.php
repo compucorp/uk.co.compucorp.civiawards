@@ -47,14 +47,9 @@ class CRM_CiviAwards_Setup_CreateApplicantManagementOption {
     $caseCategories = CRM_Core_OptionGroup::values('case_type_categories', TRUE, FALSE, TRUE, NULL, 'name');
     $awardCaseCategoryValue = $caseCategories[CaseTypeCategory::AWARDS_CASE_TYPE_CATEGORY_NAME];
     $caseCategoryInstance = new CaseCategoryInstance();
-    $caseCategoryInstance->instance_id = $instanceValue;
     $caseCategoryInstance->category_id = $awardCaseCategoryValue;
     $caseCategoryInstance->find(TRUE);
-
-    if (!empty($caseCategoryInstance->id)) {
-      return;
-    }
-
+    $caseCategoryInstance->instance_id = $instanceValue;
     $caseCategoryInstance->save();
   }
 
