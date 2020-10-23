@@ -61,7 +61,7 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessor {
     foreach ($customGroups as $cusGroup) {
       $extendColValue = !empty($cusGroup['extends_entity_column_value']) ? $cusGroup['extends_entity_column_value'] : [];
       $customGroupSubTypeList = !empty($this->customGroupSubTypes[$cusGroup['id']]) ? $this->customGroupSubTypes[$cusGroup['id']] : [];
-      if (array_intersect($customGroupSubTypeList, $caseTypeSubType) && !empty($extendColValue)) {
+      if (array_intersect($customGroupSubTypeList, $caseTypeSubType)) {
         $entityColumnValues = array_merge($extendColValue, [$caseTypeId]);
         $this->updateCustomGroup($cusGroup['id'], $entityColumnValues);
       }
