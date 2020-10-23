@@ -714,8 +714,8 @@
       return {
         is_error: 0,
         version: 3,
-        count: RelationshipTypeData.values.length,
-        values: _.cloneDeep(RelationshipTypeData.values)
+        count: 8,
+        values: _.cloneDeep(_.slice(RelationshipTypeData.values, 0, 4))
       };
     }
 

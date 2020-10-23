@@ -3,9 +3,16 @@
 use CRM_CiviAwards_Service_AwardDetail as AwardDetailService;
 
 /**
- * Class CRM_CiviAwards_BAO_AwardDetail.
+ * AwardDetail Business logic class.
  */
 class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
+
+  /**
+   * The award detail object before it gets updated.
+   *
+   * @var CRM_CiviAwards_BAO_AwardDetail
+   */
+  public $oldAwardDetail;
 
   /**
    * Create a new AwardDetail based on array-data.
@@ -24,6 +31,9 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
     unset($params['profile_id']);
     CRM_Utils_Hook::pre($hook, $entityName, CRM_Utils_Array::value('id', $params), $params);
     $instance = new self();
+    if ($hook == 'edit') {
+      $instance->loadOldAwardDetail($params['id']);
+    }
     $instance->copyValues($params);
     $instance->save();
     CRM_Utils_Hook::post($hook, $entityName, $instance->id, $instance);
@@ -77,12 +87,21 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
     }
   }
 
+  /**
+   * Load an Award detail object.
+   *
+   * @param int $id
+   *   The Id of the award detail.
+   */
+  private function loadOldAwardDetail($id) {
+    $this->oldAwardDetail = self::findById($id);
+  }
 
   /**
    * Validates review_field options to ensure legal options are passed.
    *
    * @param array $params
-   *  Request Parameters
+   *   Request Parameters.
    *
    * @throws \Exception
    */

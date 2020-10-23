@@ -5,7 +5,7 @@ use CRM_Civicase_Service_CaseCategoryCustomDataType as CaseCategoryCustomDataTyp
 use CRM_Civicase_Service_CaseCategoryCustomFieldExtends as CaseCategoryCustomFieldExtends;
 
 /**
- * Class CRM_CiviAwards_Setup_ProcessAwardsCategoryForCustomGroupSupport.
+ * Process Awards Category For CustomGroup Support.
  */
 class CRM_CiviAwards_Setup_ProcessAwardsCategoryForCustomGroupSupport {
 
@@ -17,7 +17,11 @@ class CRM_CiviAwards_Setup_ProcessAwardsCategoryForCustomGroupSupport {
   public function apply() {
     $caseCategoryCustomData = new CaseCategoryCustomDataType();
     $caseCategoryCustomFieldExtends = new CaseCategoryCustomFieldExtends();
-    $caseCategoryCustomFieldExtends->create(CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME, self::AWARDS_CATEGORY_CG_LABEL);
+    $caseCategoryCustomFieldExtends->create(
+      CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME,
+      self::AWARDS_CATEGORY_CG_LABEL,
+      'CRM_CiviAwards_Helper_CaseTypeCategory::getSubTypes;'
+    );
     $caseCategoryCustomData->create(CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME);
   }
 
