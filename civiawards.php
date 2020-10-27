@@ -243,6 +243,13 @@ function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
 }
 
 /**
+ * Implements addCiviCaseDependentAngularModules().
+ */
+function civiawards_addWorkflowDependentAngularModules(&$dependentModules) {
+  $dependentModules[] = "civiawards-workflow";
+}
+
+/**
  * Implements hook_civicrm_alterMenu().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterMenu

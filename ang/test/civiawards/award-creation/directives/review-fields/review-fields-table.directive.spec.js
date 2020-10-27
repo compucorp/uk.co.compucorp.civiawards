@@ -16,7 +16,7 @@
       dialogService = _dialogService_;
       crmApi = _crmApi_;
       ReviewFieldsMockData = _ReviewFieldsMockData_;
-      AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_;
+      AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_.get();
       $scope = $rootScope.$new();
 
       dialogService.dialogs = {};

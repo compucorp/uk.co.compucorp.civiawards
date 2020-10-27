@@ -10,7 +10,7 @@
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       AwardMockData = _AwardMockData_;
-      AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_;
+      AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_.get();
       $scope = $rootScope.$new();
 
       $scope.$digest();

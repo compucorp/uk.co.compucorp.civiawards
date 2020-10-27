@@ -39,12 +39,16 @@ module.exports = function (config) {
       extPath + '/ang/civiawards.js',
       { pattern: extPath + '/ang/civiawards/**/*.js' },
 
+      extPath + '/ang/civiawards-workflow.js',
+      { pattern: extPath + '/ang/civiawards-workflow/**/*.js' },
+
       // Spec files
       { pattern: civicasePath + '/ang/test/mocks/modules.mock.js' },
       { pattern: civicasePath + '/ang/test/mocks/**/*.js' },
       { pattern: extPath + '/ang/test/mocks/modules.mock.js' },
       { pattern: extPath + '/ang/test/mocks/**/*.js' },
-      { pattern: extPath + '/ang/test/civiawards/**/*.js' }
+      { pattern: extPath + '/ang/test/civiawards/**/*.js' },
+      { pattern: extPath + '/ang/test/civiawards-workflow/**/*.js' }
     ],
     exclude: [
     ],
