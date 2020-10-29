@@ -12,7 +12,7 @@ use CRM_Civicase_Helper_GlobRecursive as GlobRecursive;
 use CRM_Civicase_Helper_OptionValues as OptionValuesHelper;
 
 $options = [
-  'awardSubtypes' => 'civiawards_award_type',
+  'awardSubtypes' => 'civiawards_award_subtype',
 ];
 
 OptionValuesHelper::setToJsVariables($options);

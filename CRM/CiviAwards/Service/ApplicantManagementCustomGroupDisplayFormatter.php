@@ -63,7 +63,7 @@ class CRM_CiviAwards_Service_ApplicantManagementCustomGroupDisplayFormatter exte
     }
 
     $customGroupSubTypesList = $this->customGroupSubTypes[$row['id']];
-    $subTypesList = AwardDetail::buildOptions('award_type');
+    $subTypesList = AwardDetail::buildOptions('award_subtype');
     $relevantSubTypes = implode(', ', array_intersect_key($subTypesList, array_flip($customGroupSubTypesList)));
     $row['extends_entity_column_value'] = $relevantSubTypes;
   }

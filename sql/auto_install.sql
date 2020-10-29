@@ -30,7 +30,7 @@ SET FOREIGN_KEY_CHECKS=1;
 CREATE TABLE `civicrm_civiawards_award_detail` (
      `id` int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Unique AwardDetails ID',
      `case_type_id` int unsigned NOT NULL   COMMENT 'FK to Case Type',
-     `award_type` varchar(30) NOT NULL   COMMENT 'One of the values of the award_type option group',
+     `award_subtype` varchar(30) NOT NULL   COMMENT 'One of the values of the award_subtype option group',
      `start_date` date NOT NULL   COMMENT 'Award Start Date',
      `end_date` date    COMMENT 'Award End Date',
      `profile_id` int unsigned    COMMENT 'FK to UF Group',

@@ -32,12 +32,14 @@ class CRM_CiviAwards_Setup_RenameAwardTypeField {
   }
 
   /**
-   * Renames `award_type` column to `award_subtype`, .
+   * Renames `award_type` column to `award_subtype`.
    */
   private function renameDbColumn() {
-    $renameDBColumnSql = 'ALTER TABLE civicrm_civiawards_award_detail RENAME COLUMN award_type TO award_subtype;';
+    $renameColumnSql = "ALTER TABLE
+      civicrm_civiawards_award_detail
+      CHANGE award_type award_subtype varchar(30) NOT NULL COMMENT 'One of the values of the award_subtype option group'";
 
-    CRM_Core_DAO::executeQuery($renameDBColumnSql);
+    CRM_Core_DAO::executeQuery($renameColumnSql);
   }
 
 }

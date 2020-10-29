@@ -29,7 +29,7 @@ class CRM_CiviAwards_Helper_CustomGroupPostProcess extends CRM_Civicase_Helper_I
 
     $subTypes = array_filter($subTypes);
     if (!empty($subTypes)) {
-      $params['award_type'] = ['IN' => $subTypes];
+      $params['award_subtype'] = ['IN' => $subTypes];
     }
 
     $result = civicrm_api3('AwardDetail', 'get', $params);
