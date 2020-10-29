@@ -41,7 +41,7 @@
       it('duplicates the workflow', () => {
         expect(civicaseCrmApiMock).toHaveBeenCalledWith([
           ['AwardDetail', 'get', { sequential: 1, case_type_id: workflow.id }],
-          ['CaseType', 'create', _.extend(workflow, { id: null })]
+          ['CaseType', 'create', _.extend({}, workflow, { id: null })]
         ]);
 
         expect(civicaseCrmApiMock).toHaveBeenCalledWith([

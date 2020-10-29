@@ -18,7 +18,7 @@
     function create (workflow) {
       return civicaseCrmApi([
         ['AwardDetail', 'get', { sequential: 1, case_type_id: workflow.id }],
-        ['CaseType', 'create', _.extend(workflow, { id: null })]
+        ['CaseType', 'create', _.extend({}, workflow, { id: null })]
       ]).then(function (data) {
         var awardsDetailsData = data[0].values[0];
 
