@@ -118,7 +118,7 @@
             dialogModel.selectedFilters.awardFilter = 'my_awards';
             dialogModel.selectedFilters.start_date = '10/12/2019';
             dialogModel.selectedFilters.end_date = '15/12/2019';
-            dialogModel.selectedFilters.award_types = '1,2';
+            dialogModel.selectedFilters.award_subtypes = '1,2';
             dialogModel.selectedFilters.statuses = '2,3';
             dialogModel.applyFilterAndCloseDialog();
             $rootScope.$digest();
@@ -131,7 +131,7 @@
               start_date: '10/12/2019',
               end_date: '15/12/2019',
               case_type_id: { IN: [1, 2] },
-              award_type: { IN: ['1', '2'] }
+              award_subtype: { IN: ['1', '2'] }
             });
             expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', {
               case_type_id: { IN: [1, 2] },
@@ -171,7 +171,7 @@
         beforeEach(() => {
           dialogModel.selectedFilters.awardFilter = 'my_awards';
           dialogModel.selectedFilters.statuses = '';
-          dialogModel.selectedFilters.award_types = '';
+          dialogModel.selectedFilters.award_subtypes = '';
           dialogModel.selectedFilters.start_date = null;
           dialogModel.selectedFilters.end_date = null;
           dialogModel.applyFilterAndCloseDialog();
@@ -186,7 +186,7 @@
         beforeEach(() => {
           dialogModel.selectedFilters.awardFilter = 'all_awards';
           dialogModel.selectedFilters.statuses = '';
-          dialogModel.selectedFilters.award_types = '';
+          dialogModel.selectedFilters.award_subtypes = '';
           dialogModel.selectedFilters.start_date = null;
           dialogModel.selectedFilters.end_date = null;
           dialogModel.applyFilterAndCloseDialog();

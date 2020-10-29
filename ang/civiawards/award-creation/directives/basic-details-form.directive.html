@@ -1,15 +1,15 @@
 <form name="basic_details_form" class="form-horizontal civiawards__award__basic-details">
   <div class="form-group">
     <label class="col-sm-3 control-label required-mark">
-      Award Type
+      Subtype
     </label>
     <div class="col-sm-5">
       <input class="form-control"
-        ng-model="additionalDetails.awardType"
+        ng-model="additionalDetails.awardSubtype"
         crm-ui-select="{
           allowClear: true,
-          placeholder: 'Award Type',
-          data: awardTypeSelect2Options
+          placeholder: 'Subtype',
+          data: awardSubtypeSelect2Options
         }"
         required
         ng-minlength="1"

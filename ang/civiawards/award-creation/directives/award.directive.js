@@ -29,7 +29,7 @@
     $scope.pageTitle = 'New Award';
     $scope.isNameDisabled = true;
     $scope.submitInProgress = false;
-    $scope.awardTypeSelect2Options = [];
+    $scope.awardSubtypeSelect2Options = [];
     $scope.awardDetailsID = null;
     $scope.tabs = [
       { name: 'basicDetails', label: ts('Basic Details') },
@@ -45,7 +45,7 @@
       isEnabled: true
     };
     $scope.additionalDetails = {
-      awardType: null,
+      awardSubtype: null,
       startDate: null,
       endDate: null,
       awardManagers: [],
@@ -308,7 +308,7 @@
         case_type_id: award.id,
         start_date: $scope.additionalDetails.startDate,
         end_date: $scope.additionalDetails.endDate,
-        award_type: $scope.additionalDetails.awardType,
+        award_subtype: $scope.additionalDetails.awardSubtype,
         review_fields: prepareReviewFields()
       };
 

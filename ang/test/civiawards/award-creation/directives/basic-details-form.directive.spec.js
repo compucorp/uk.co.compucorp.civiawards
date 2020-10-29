@@ -21,8 +21,8 @@
         createController();
       });
 
-      it('displays all award types', () => {
-        expect($scope.awardTypeSelect2Options).toEqual([
+      it('displays all award sub types', () => {
+        expect($scope.awardSubtypeSelect2Options).toEqual([
           { id: '1', text: 'Medal', name: 'Medal' },
           { id: '2', text: 'Prize', name: 'Prize' },
           { id: '3', text: 'Programme', name: 'Programme' },
@@ -57,7 +57,7 @@
         expect($scope.awardDetailsID).toEqual('1');
         expect($scope.additionalDetails.startDate).toEqual('2019-10-29');
         expect($scope.additionalDetails.endDate).toEqual('2019-11-29');
-        expect($scope.additionalDetails.awardType).toEqual('1');
+        expect($scope.additionalDetails.awardSubtype).toEqual('1');
         expect($scope.additionalDetails.awardManagers).toEqual('2,1');
       });
     });
