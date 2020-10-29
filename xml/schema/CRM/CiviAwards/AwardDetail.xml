@@ -42,14 +42,14 @@
   </foreignKey>
 
   <field>
-    <name>award_type</name>
-    <title>Award Type</title>
+    <name>award_subtype</name>
+    <title>Award Subtype</title>
     <type>varchar</type>
     <length>30</length>
-    <comment>One of the values of the award_type option group</comment>
+    <comment>One of the values of the award_subtype option group</comment>
     <required>true</required>
     <pseudoconstant>
-      <optionGroupName>civiawards_award_type</optionGroupName>
+      <optionGroupName>civiawards_award_subtype</optionGroupName>
     </pseudoconstant>
   </field>
 

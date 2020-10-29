@@ -1,6 +1,6 @@
-{if $invalidAwardType}
+{if $invalidAwardSubtype}
   <p class="alert alert-warning">
-    Invalid Award Type
+    Invalid Sub Type
   </p>
 {else}
   <div class="crm-block crm-form-block crm-case-custom-form-block">

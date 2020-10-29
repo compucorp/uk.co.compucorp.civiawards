@@ -1,40 +1,40 @@
 <?php
 
 /**
- * Sets up the Award type option group and values.
+ * Sets up the Award sub type option group and values.
  */
-class CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup {
+class CRM_CiviAwards_Setup_CreateAwardSubtypeOptionGroup {
 
   /**
    * Award option group name.
    *
    * @var string
    */
-  private $awardOptionGroupName = 'civiawards_award_type';
+  private $awardOptionGroupName = 'civiawards_award_subtype';
 
   /**
    * Creates the Awards Type option group with default values.
    */
   public function apply() {
-    $this->createOptionGroupForAwardType();
-    $this->createOptionValuesForAwardType();
+    $this->createOptionGroupForAwardSubtype();
+    $this->createOptionValuesForAwardSubtype();
   }
 
   /**
-   * Creates the award type option group.
+   * Creates the award sub type option group.
    */
-  private function createOptionGroupForAwardType() {
+  private function createOptionGroupForAwardSubtype() {
     CRM_Core_BAO_OptionGroup::ensureOptionGroupExists([
       'name' => $this->awardOptionGroupName,
-      'title' => ts('Award Types'),
+      'title' => ts('Award Sub Types'),
       'is_reserved' => 1,
     ]);
   }
 
   /**
-   * Creates default option values for award type option group.
+   * Creates default option values for award sub type option group.
    */
-  private function createOptionValuesForAwardType() {
+  private function createOptionValuesForAwardSubtype() {
     $optionValues = [
       'medal',
       'prize',

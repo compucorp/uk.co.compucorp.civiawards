@@ -37,7 +37,7 @@ class CRM_CiviAwards_Upgrader_Steps_Step1005 {
     foreach ($result['values'] as $id => $value) {
       civicrm_api3('OptionValue', 'create', [
         'id' => $id,
-        'description' => 'CRM_CiviAwards_Helper_CaseTypeCategory::getSubTypes;',
+        'description' => 'CRM_CiviAwards_Helper_CaseTypeCategory::getAwardSubtypes;',
       ]);
     }
   }

@@ -5,7 +5,7 @@ use CRM_CiviAwards_Setup_CreateApplicantManagementOption as CreateApplicantManag
 use CRM_CiviAwards_Setup_ProcessAwardsCategoryForCustomGroupSupport as ProcessAwardsCategoryForCustomGroupSupport;
 use CRM_CiviAwards_Setup_AddApplicantManagementCaseTypeCustomGroupSupport as AddApplicantManagementCaseTypeCustomGroupSupport;
 use CRM_CiviAwards_Setup_DeleteAwardsCaseCategoryOption as DeleteAwardsCaseCategoryOption;
-use CRM_CiviAwards_Setup_CreateAwardTypeOptionGroup as CreateAwardTypeOptionGroup;
+use CRM_CiviAwards_Setup_CreateAwardSubtypeOptionGroup as CreateAwardSubtypeOptionGroup;
 use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
 use CRM_CiviAwards_Setup_DeleteApplicantReviewCustomField as DeleteApplicantReviewCustomField;
 use CRM_CiviAwards_Setup_AddApplicationManagementWordReplacement as AddApplicationManagementWordReplacement;
@@ -33,7 +33,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
       new CreateAwardsCaseCategoryOption(),
       new ProcessAwardsCategoryForCustomGroupSupport(),
       new AddApplicantManagementCaseTypeCustomGroupSupport(),
-      new CreateAwardTypeOptionGroup(),
+      new CreateAwardSubtypeOptionGroup(),
       new CreateApplicantManagementOption(),
       new CreateApplicantReviewActivityType(),
       new AddApplicationManagementWordReplacement(),

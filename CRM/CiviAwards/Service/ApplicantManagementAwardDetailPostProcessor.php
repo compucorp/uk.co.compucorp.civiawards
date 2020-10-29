@@ -57,7 +57,7 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessor {
     if (empty($customGroups)) {
       return;
     }
-    $caseTypeSubType = $this->postProcessHelper->getSubTypesForCaseType([$caseTypeId]);
+    $caseTypeSubType = $this->postProcessHelper->getAwardSubtypesForCaseType([$caseTypeId]);
     foreach ($customGroups as $cusGroup) {
       $extendColValue = !empty($cusGroup['extends_entity_column_value']) ? $cusGroup['extends_entity_column_value'] : [];
       $customGroupSubTypeList = !empty($this->customGroupSubTypes[$cusGroup['id']]) ? $this->customGroupSubTypes[$cusGroup['id']] : [];
@@ -98,7 +98,7 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessor {
     if ($this->awardSubTypeChanged($awardDetail)) {
       $runCreateFunction = TRUE;
       $matchedCustomGroups = $this->postProcessHelper->getCaseTypeCustomGroupsWithCategoryMatch($caseTypeId);
-      $caseTypeSubType = $this->postProcessHelper->getSubTypesForCaseType([$caseTypeId]);
+      $caseTypeSubType = $this->postProcessHelper->getAwardSubtypesForCaseType([$caseTypeId]);
       foreach ($matchedCustomGroups as $cusGroup) {
         $customGroupSubTypeList = !empty($this->customGroupSubTypes[$cusGroup['id']]) ? $this->customGroupSubTypes[$cusGroup['id']] : [];
         $extendColValue = !empty($cusGroup['extends_entity_column_value']) ? $cusGroup['extends_entity_column_value'] : [];
