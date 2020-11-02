@@ -196,6 +196,7 @@ class CRM_CiviAwards_DAO_AwardDetail extends CRM_Core_DAO {
           'entity' => 'AwardDetail',
           'bao' => 'CRM_CiviAwards_DAO_AwardDetail',
           'localizable' => 0,
+          'FKClassName' => 'CRM_Core_DAO_UFGroup',
           'add' => NULL,
         ],
       ];
