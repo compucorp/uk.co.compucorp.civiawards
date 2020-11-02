@@ -47,7 +47,7 @@ class CRM_CiviAwards_Helper_CustomGroupPostProcess extends CRM_Civicase_Helper_I
    * @param array $caseTypes
    *   Case Types.
    */
-  public function getAwardSubtypesForCaseType(array $caseTypes) {
+  public function getSubTypesForCaseType(array $caseTypes) {
     $result = civicrm_api3('AwardDetail', 'get', [
       'return' => ['award_subtype'],
       'case_type_id' => ['IN' => $caseTypes],
@@ -104,7 +104,7 @@ class CRM_CiviAwards_Helper_CustomGroupPostProcess extends CRM_Civicase_Helper_I
 
     $subtypesList = array_filter($subtypesList);
     if (!empty($subtypesList) && $subtypesList[0] == 'null') {
-      $subtypesList = array_keys(CaseCategoryHelper::getAwardSubtypes());
+      $subtypesList = array_keys(CaseCategoryHelper::getSubTypes());
     }
 
     $customGroupSubTypes[$customGroupId] = $subtypesList;

@@ -34,7 +34,7 @@ class CRM_CiviAwards_Service_ApplicantManagementUtils extends CRM_Civicase_Servi
    * entity types for a custom group entity.
    */
   public function getCustomGroupEntityTypesFunction() {
-    return 'CRM_CiviAwards_Helper_CaseTypeCategory::getAwardSubtypes;';
+    return 'CRM_CiviAwards_Helper_CaseTypeCategory::getSubTypes;';
   }
 
   /**

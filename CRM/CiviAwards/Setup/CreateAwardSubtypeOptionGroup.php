@@ -10,7 +10,14 @@ class CRM_CiviAwards_Setup_CreateAwardSubtypeOptionGroup {
    *
    * @var string
    */
-  private $awardOptionGroupName = 'civiawards_award_subtype';
+  public $awardOptionGroupName = 'civiawards_award_subtype';
+
+  /**
+   * Award option group title.
+   *
+   * @var string
+   */
+  public $awardOptionGroupTitle = 'Award Sub Types';
 
   /**
    * Creates the Awards Type option group with default values.
@@ -26,7 +33,7 @@ class CRM_CiviAwards_Setup_CreateAwardSubtypeOptionGroup {
   private function createOptionGroupForAwardSubtype() {
     CRM_Core_BAO_OptionGroup::ensureOptionGroupExists([
       'name' => $this->awardOptionGroupName,
-      'title' => ts('Award Sub Types'),
+      'title' => ts($this->awardOptionGroupTitle),
       'is_reserved' => 1,
     ]);
   }

@@ -20,7 +20,7 @@ class CRM_CiviAwards_Setup_ProcessAwardsCategoryForCustomGroupSupport {
     $caseCategoryCustomFieldExtends->create(
       CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME,
       self::AWARDS_CATEGORY_CG_LABEL,
-      'CRM_CiviAwards_Helper_CaseTypeCategory::getAwardSubtypes;'
+      'CRM_CiviAwards_Helper_CaseTypeCategory::getSubTypes;'
     );
     $caseCategoryCustomData->create(CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME);
   }
