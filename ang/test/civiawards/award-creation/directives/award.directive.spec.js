@@ -23,7 +23,7 @@
       crmApi = _crmApi_;
       CaseStatus = _CaseStatus_;
       AwardMockData = _AwardMockData_;
-      AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_;
+      AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_.get();
       ReviewFieldsMockData = _ReviewFieldsMockData_;
       $scope = $rootScope.$new();
 
