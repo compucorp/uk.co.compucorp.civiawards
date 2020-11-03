@@ -24,8 +24,6 @@ class CRM_CiviAwards_Upgrader_Steps_Step1007 {
    * Renames `civiawards_award_type` option group to `civiawards_award_subtype`.
    */
   private function renameOptionGroup() {
-    $awardSubtypeOptionGroup = new CreateAwardSubtypeOptionGroup();
-
     $awardTypeOptionGroup = civicrm_api3('OptionGroup', 'get', [
       'sequential' => 1,
       'name' => "civiawards_award_type",
@@ -37,8 +35,8 @@ class CRM_CiviAwards_Upgrader_Steps_Step1007 {
 
     civicrm_api3('OptionGroup', 'create', [
       'id' => $awardTypeOptionGroup[0]['id'],
-      'name' => $awardSubtypeOptionGroup->awardOptionGroupName,
-      'title' => ts($awardSubtypeOptionGroup->awardOptionGroupTitle),
+      'name' => CreateAwardSubtypeOptionGroup::AWARD_OPTION_GROUP_NAME,
+      'title' => ts(CreateAwardSubtypeOptionGroup::AWARD_OPTION_GROUP_TITLE),
       'is_reserved' => 1,
     ]);
   }

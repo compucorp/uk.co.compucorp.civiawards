@@ -7,17 +7,13 @@ class CRM_CiviAwards_Setup_CreateAwardSubtypeOptionGroup {
 
   /**
    * Award option group name.
-   *
-   * @var string
    */
-  public $awardOptionGroupName = 'civiawards_award_subtype';
+  const AWARD_OPTION_GROUP_NAME = 'civiawards_award_subtype';
 
   /**
    * Award option group title.
-   *
-   * @var string
    */
-  public $awardOptionGroupTitle = 'Award Sub Types';
+  const AWARD_OPTION_GROUP_TITLE = 'Award Sub Types';
 
   /**
    * Creates the Awards Type option group with default values.
@@ -32,8 +28,8 @@ class CRM_CiviAwards_Setup_CreateAwardSubtypeOptionGroup {
    */
   private function createOptionGroupForAwardSubtype() {
     CRM_Core_BAO_OptionGroup::ensureOptionGroupExists([
-      'name' => $this->awardOptionGroupName,
-      'title' => ts($this->awardOptionGroupTitle),
+      'name' => self::AWARD_OPTION_GROUP_NAME,
+      'title' => ts(self::AWARD_OPTION_GROUP_TITLE),
       'is_reserved' => 1,
     ]);
   }
@@ -53,7 +49,7 @@ class CRM_CiviAwards_Setup_CreateAwardSubtypeOptionGroup {
 
     foreach ($optionValues as $optionValue) {
       CRM_Core_BAO_OptionValue::ensureOptionValueExists([
-        'option_group_id' => $this->awardOptionGroupName,
+        'option_group_id' => self::AWARD_OPTION_GROUP_NAME,
         'name' => $optionValue,
         'label' => ucfirst($optionValue),
         'is_active' => TRUE,
