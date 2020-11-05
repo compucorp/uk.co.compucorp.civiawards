@@ -59,7 +59,7 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
    *   Award Subtypes.
    */
   public static function getSubTypes() {
-    return AwardDetail::buildOptions('award_type');
+    return AwardDetail::buildOptions('award_subtype');
   }
 
 }

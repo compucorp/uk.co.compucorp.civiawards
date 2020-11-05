@@ -60,16 +60,16 @@ class CRM_CiviAwards_Form_AwardCustomField extends CRM_Civicase_Form_CaseCategor
   /**
    * Checks if the award case type is valid.
    *
-   * @param int $awardTypeId
-   *   Award Type Id.
+   * @param int $awardId
+   *   Award Sub Type Id.
    *
    * @return bool
    *   Checks if award is valid or not.
    */
-  private function isValidApplicantManagementType($awardTypeId) {
+  private function isValidApplicantManagementType($awardId) {
     $applicantManagementCaseTypes = CRM_CiviAwards_Helper_CaseTypeCategory::getApplicantManagementCaseTypes();
 
-    return !empty($applicantManagementCaseTypes[$awardTypeId]);
+    return !empty($applicantManagementCaseTypes[$awardId]);
   }
 
 }

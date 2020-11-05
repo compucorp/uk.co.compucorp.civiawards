@@ -9,7 +9,7 @@ use CRM_Civicase_Service_CaseCategoryCaseTypeCustomFieldExtends as CaseCategoryC
 class CRM_CiviAwards_Uninstall_RemoveCustomGroupSupportForApplicantManagement {
 
   /**
-   * Deletes the Award Type option from the CG Extends option values.
+   * Deletes the Award Sub Type option from the CG Extends option values.
    */
   public function apply() {
     $caseCategoryCaseTypeCustomFieldExtends = new CaseCategoryCaseTypeCustomFieldExtends();

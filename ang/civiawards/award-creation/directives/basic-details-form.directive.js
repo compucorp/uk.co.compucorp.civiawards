@@ -10,12 +10,12 @@
   });
 
   module.controller('CiviawardBasicDetailsFormController', function ($rootScope,
-    $scope, AwardType, isTruthy) {
+    $scope, AwardSubtype, isTruthy) {
     var ts = CRM.ts('civicase');
     $scope.ts = ts;
 
     (function init () {
-      $scope.awardTypeSelect2Options = getAwardTypeSelect2Options();
+      $scope.awardSubtypeSelect2Options = getAwardSubtypeSelect2Options();
       $rootScope.$on('civiawards::edit-award::details-fetched', setDetails);
     }());
 
@@ -52,18 +52,18 @@
       $scope.awardDetailsID = additionalDetails.id;
       $scope.additionalDetails.startDate = additionalDetails.start_date;
       $scope.additionalDetails.endDate = additionalDetails.end_date;
-      $scope.additionalDetails.awardType = additionalDetails.award_type;
+      $scope.additionalDetails.awardSubtype = additionalDetails.award_subtype;
       $scope.additionalDetails.awardManagers = additionalDetails.award_manager.join();
     }
 
     /**
-     * Returns Award Types to be used in the UI
+     * Returns Award Subtype to be used in the UI
      *
-     * @returns {Array} award types array in a format suitable for select 2
+     * @returns {Array} award subtype array in a format suitable for select 2
      */
-    function getAwardTypeSelect2Options () {
-      return _.map(AwardType.getAll(), function (awardType) {
-        return { id: awardType.value, text: awardType.label, name: awardType.name };
+    function getAwardSubtypeSelect2Options () {
+      return _.map(AwardSubtype.getAll(), function (subType) {
+        return { id: subType.value, text: subType.label, name: subType.name };
       });
     }
   });

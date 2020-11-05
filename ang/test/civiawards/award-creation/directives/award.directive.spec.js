@@ -81,7 +81,7 @@
 
           it('defines all additional details fields as empty', () => {
             expect($scope.additionalDetails).toEqual({
-              awardType: null,
+              awardSubtype: null,
               startDate: null,
               endDate: null,
               awardManagers: [],
@@ -242,7 +242,7 @@
               case_type_id: '1',
               start_date: AwardAdditionalDetailsMockData.start_date,
               end_date: AwardAdditionalDetailsMockData.end_date,
-              award_type: AwardAdditionalDetailsMockData.award_type,
+              award_subtype: AwardAdditionalDetailsMockData.award_subtype,
               award_manager: ['2', '1'],
               review_fields: [{ id: '19', required: '0', weight: 1 }]
             });
@@ -378,7 +378,7 @@
       $scope.additionalDetails.awardManagers = '2,1';
       $scope.additionalDetails.startDate = AwardAdditionalDetailsMockData.start_date;
       $scope.additionalDetails.endDate = AwardAdditionalDetailsMockData.end_date;
-      $scope.additionalDetails.awardType = AwardAdditionalDetailsMockData.award_type;
+      $scope.additionalDetails.awardSubtype = AwardAdditionalDetailsMockData.award_subtype;
       $scope.additionalDetails.selectedReviewFields = [{
         id: ReviewFieldsMockData[0].id,
         required: false,

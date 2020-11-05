@@ -1,7 +1,7 @@
 (function () {
   var module = angular.module('civiawards.data');
 
-  CRM.civiawards.awardTypes = {
+  CRM.civiawards.awardSubtypes = {
     1: {
       value: '1',
       label: 'Medal',
@@ -40,5 +40,5 @@
     }
   };
 
-  module.constant('AwardTypeMockData', CRM.civiawards.awardTypes);
+  module.constant('AwardSubtypeMockData', CRM.civiawards.awardSubtypes);
 }());

@@ -95,7 +95,7 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessor {
       }
     }
 
-    if ($this->awardSubTypeChanged($awardDetail)) {
+    if ($this->awardSubtypeChanged($awardDetail)) {
       $runCreateFunction = TRUE;
       $matchedCustomGroups = $this->postProcessHelper->getCaseTypeCustomGroupsWithCategoryMatch($caseTypeId);
       $caseTypeSubType = $this->postProcessHelper->getSubTypesForCaseType([$caseTypeId]);
@@ -124,8 +124,8 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessor {
    * @return bool
    *   Whether award subtype changed or not.
    */
-  private function awardSubTypeChanged(AwardDetail $awardDetail) {
-    return !empty($awardDetail->award_type) && $awardDetail->award_type != $awardDetail->oldAwardDetail->award_type;
+  private function awardSubtypeChanged(AwardDetail $awardDetail) {
+    return !empty($awardDetail->award_subtype) && $awardDetail->award_subtype != $awardDetail->oldAwardDetail->award_subtype;
   }
 
   /**

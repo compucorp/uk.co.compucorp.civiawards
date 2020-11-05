@@ -14,14 +14,15 @@
    * @param {object} dialogService the dialog service
    * @param {object} ts translation service
    * @param {object} CaseStatus Case Status service
-   * @param {object} AwardType Award Type service
+   * @param {object} AwardSubtype Award Sub Type service
    * @param {Function} isApplicationManagementScreen is application management screen function
    */
   function MoreFiltersDashboardActionButtonController ($rootScope, $scope, $q,
-    getSelect2Value, crmApi, dialogService, ts, CaseStatus, AwardType, isApplicationManagementScreen) {
+    getSelect2Value, crmApi, dialogService, ts, CaseStatus, AwardSubtype,
+    isApplicationManagementScreen) {
     var model = {
       statuses: _.map(CaseStatus.getAll(), mapSelectOptions),
-      award_types: _.map(AwardType.getAll(), mapSelectOptions),
+      award_subtypes: _.map(AwardSubtype.getAll(), mapSelectOptions),
       awardOptions: [
         { text: ts('My Awards'), id: 'my_awards' },
         { text: ts('All Awards'), id: 'all_awards' }
@@ -29,7 +30,7 @@
       selectedFilters: {
         awardFilter: 'my_awards',
         statuses: '',
-        award_types: '',
+        award_subtypes: '',
         start_date: null,
         end_date: null
       },
@@ -55,7 +56,7 @@
       return !_.isEqual(model.selectedFilters, {
         awardFilter: 'my_awards',
         statuses: '',
-        award_types: '',
+        award_subtypes: '',
         start_date: null,
         end_date: null
       });
@@ -88,10 +89,10 @@
      */
     function applyFilter () {
       processMyAwardsFilter()
-        .then(processAwardTypeFilters)
-        .then(function (awardTypeIds) {
+        .then(processAwardSubtypeFilters)
+        .then(function (awardSubtypeIds) {
           var param = {
-            case_type_id: awardTypeIds.length > 0 ? { IN: awardTypeIds } : { 'IS NULL': 1 }
+            case_type_id: awardSubtypeIds.length > 0 ? { IN: awardSubtypeIds } : { 'IS NULL': 1 }
           };
 
           if (model.selectedFilters.statuses.length > 0) {
@@ -127,12 +128,12 @@
     }
 
     /**
-     * Process Award Type Filters
+     * Process Award Sub Type Filters
      *
      * @param {number[]} caseTypeIDs case type ids
      * @returns {Promise<number[]>} promise
      */
-    function processAwardTypeFilters (caseTypeIDs) {
+    function processAwardSubtypeFilters (caseTypeIDs) {
       var filters = { sequential: 1 };
 
       if (caseTypeIDs.length === 0) {
@@ -141,8 +142,8 @@
         filters.case_type_id = { IN: caseTypeIDs };
       }
 
-      if (model.selectedFilters.award_types !== '') {
-        filters.award_type = { IN: getSelect2Value(model.selectedFilters.award_types) };
+      if (model.selectedFilters.award_subtypes !== '') {
+        filters.award_subtype = { IN: getSelect2Value(model.selectedFilters.award_subtypes) };
       }
       if (model.selectedFilters.start_date) {
         filters.start_date = model.selectedFilters.start_date;

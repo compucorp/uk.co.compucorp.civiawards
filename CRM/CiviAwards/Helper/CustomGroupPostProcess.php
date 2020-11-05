@@ -29,7 +29,7 @@ class CRM_CiviAwards_Helper_CustomGroupPostProcess extends CRM_Civicase_Helper_I
 
     $subTypes = array_filter($subTypes);
     if (!empty($subTypes)) {
-      $params['award_type'] = ['IN' => $subTypes];
+      $params['award_subtype'] = ['IN' => $subTypes];
     }
 
     $result = civicrm_api3('AwardDetail', 'get', $params);
@@ -49,7 +49,7 @@ class CRM_CiviAwards_Helper_CustomGroupPostProcess extends CRM_Civicase_Helper_I
    */
   public function getSubTypesForCaseType(array $caseTypes) {
     $result = civicrm_api3('AwardDetail', 'get', [
-      'return' => ['award_type'],
+      'return' => ['award_subtype'],
       'case_type_id' => ['IN' => $caseTypes],
     ]);
 
@@ -57,7 +57,7 @@ class CRM_CiviAwards_Helper_CustomGroupPostProcess extends CRM_Civicase_Helper_I
       return [];
     }
 
-    return array_column($result['values'], 'award_type');
+    return array_column($result['values'], 'award_subtype');
   }
 
   /**
