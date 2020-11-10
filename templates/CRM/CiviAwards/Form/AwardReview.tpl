@@ -109,8 +109,8 @@
           {else}
             <button disabled="true" class="btn btn-primary default validate pull-right">
               <i class="fas fa-check"></i>
-              Review Submitted
-            </button >
+              <span>Review Submitted</span>
+            </button>
           {/if}
         {else}
           <div class="crm-submit-buttons panel-footer clearfix">
