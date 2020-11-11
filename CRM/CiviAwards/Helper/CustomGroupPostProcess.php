@@ -2,6 +2,7 @@
 
 use CRM_CiviAwards_Service_ApplicantManagementCustomGroupPostProcessor as ApplicantManagementCustomGroupPostProcessor;
 use CRM_CiviAwards_Helper_CaseTypeCategory as CaseCategoryHelper;
+use CRM_CiviAwards_BAO_AwardDetail as AwardDetail;
 
 /**
  * Custom Group Post-Process Applicant management helper.
@@ -129,6 +130,16 @@ class CRM_CiviAwards_Helper_CustomGroupPostProcess extends CRM_Civicase_Helper_I
     }
 
     return !empty($customGroupSubTypes[$customGroupId]) ? $customGroupSubTypes[$customGroupId] : [];
+  }
+
+  /**
+   * Provide the list of sub types.
+   *
+   * @return array
+   *   List of sub types.
+   */
+  public function getAwardSubTypes() {
+    return AwardDetail::buildOptions('award_subtype');
   }
 
 }

@@ -2,7 +2,6 @@
 
 use CRM_Civicase_Service_BaseCustomGroupDisplayFormatter as BaseCustomGroupDisplayFormatter;
 use CRM_CiviAwards_Helper_CustomGroupPostProcess as CustomGroupPostProcessHelper;
-use CRM_CiviAwards_BAO_AwardDetail as AwardDetail;
 
 /**
  * Case Management Instance Custom Group page formatter.
@@ -63,7 +62,7 @@ class CRM_CiviAwards_Service_ApplicantManagementCustomGroupDisplayFormatter exte
     }
 
     $customGroupSubTypesList = $this->customGroupSubTypes[$row['id']];
-    $subTypesList = AwardDetail::buildOptions('award_subtype');
+    $subTypesList = $this->postProcessHelper->getAwardSubTypes();
     $relevantSubTypes = implode(', ', array_intersect_key($subTypesList, array_flip($customGroupSubTypesList)));
     $row['extends_entity_column_value'] = $relevantSubTypes;
   }
