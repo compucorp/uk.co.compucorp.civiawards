@@ -80,6 +80,13 @@
     <key>id</key>
   </foreignKey>
 
+  <field>
+    <name>is_template</name>
+    <type>boolean</type>
+    <default>0</default>
+    <comment>Whether the award detail is for a template or not</comment>
+  </field>
+
   <index>
     <name>unique_case_type</name>
     <fieldName>case_type_id</fieldName>
