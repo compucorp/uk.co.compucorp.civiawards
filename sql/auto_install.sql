@@ -34,6 +34,7 @@ CREATE TABLE `civicrm_civiawards_award_detail` (
      `start_date` date NOT NULL   COMMENT 'Award Start Date',
      `end_date` date    COMMENT 'Award End Date',
      `profile_id` int unsigned    COMMENT 'FK to UF Group',
+     `is_template` tinyint   DEFAULT 0 COMMENT 'Whether the award detail is for a template or not',
     PRIMARY KEY (`id`),
     UNIQUE INDEX `unique_case_type`(case_type_id),
     CONSTRAINT FK_civicrm_civiawards_award_detail_case_type_id FOREIGN KEY (`case_type_id`) REFERENCES `civicrm_case_type`(`id`) ON DELETE CASCADE,
