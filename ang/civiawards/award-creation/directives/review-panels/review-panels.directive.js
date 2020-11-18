@@ -7,7 +7,8 @@
       templateUrl: '~/civiawards/award-creation/directives/review-panels/review-panels.directive.html',
       restrict: 'E',
       scope: {
-        awardId: '='
+        awardId: '<',
+        statusOptions: '<'
       }
     };
   });
@@ -43,7 +44,6 @@
     $scope.selectTab = selectTab;
 
     (function init () {
-      $scope.applicantStatusSelect2Options = getApplicantStatusSelect2Options();
       resetReviewPanelPopup();
       handleInitialDataLoad();
     }());
@@ -60,17 +60,6 @@
         options: { limit: 0 }
       }).then(function (data) {
         return data.values;
-      });
-    }
-
-    /**
-     * Returns Applicant Status's to be used in the UI
-     *
-     * @returns {Array} applicant status's array in a format suitable for select 2
-     */
-    function getApplicantStatusSelect2Options () {
-      return _.map(caseStatusesIndexed, function (caseStatus) {
-        return { id: caseStatus.value, text: caseStatus.label, name: caseStatus.name };
       });
     }
 
@@ -494,7 +483,8 @@
           height: 'auto',
           width: '650px',
           title: ts('Create Review Panel'),
-          buttons: prepareButtonsForReviewPanelPopup()
+          buttons: prepareButtonsForReviewPanelPopup(),
+          statusOptions: $scope.statusOptions
         }
       );
     }

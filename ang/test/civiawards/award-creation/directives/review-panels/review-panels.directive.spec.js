@@ -3,7 +3,7 @@
   describe('civiawardReviewPanels', () => {
     let $rootScope, $controller, $scope, crmApi, $q, crmStatus, ts, ContactsData,
       dialogService, RelationshipTypeData, GroupData, ReviewPanelsMockData,
-      entityActionHandlers, TagsMockData;
+      entityActionHandlers, TagsMockData, statusOptions;
 
     beforeEach(module('civiawards.templates', 'civiawards', 'crmUtil', 'civicase.data', 'civiawards.data', function ($provide) {
       $provide.value('crmApi', getCrmApiMock());
@@ -30,6 +30,11 @@
       $scope = $rootScope.$new();
 
       dialogService.dialogs = {};
+      statusOptions = [
+        { id: '1', text: 'Ongoing', name: 'Open' },
+        { id: '2', text: 'Resolved', name: 'Closed' },
+        { id: '3', text: 'Urgent', name: 'Urgent' }
+      ];
 
       $scope.$digest();
     }));
@@ -83,14 +88,6 @@
           }
         });
       });
-
-      it('shows list of application statuses inside the applications tab of review panel popup', () => {
-        expect($scope.applicantStatusSelect2Options).toEqual([
-          { id: '1', text: 'Ongoing', name: 'Open' },
-          { id: '2', text: 'Resolved', name: 'Closed' },
-          { id: '3', text: 'Urgent', name: 'Urgent' }
-        ]);
-      });
     });
 
     describe('when "Add Review Panel" button is clicked', () => {
@@ -113,6 +110,16 @@
           '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
           $scope,
           jasmine.any(Object)
+        );
+      });
+
+      it('provides the list of status options to the panel popup', () => {
+        expect(dialogService.open).toHaveBeenCalledWith('ReviewPanels',
+          '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
+          $scope,
+          jasmine.objectContaining({
+            statusOptions: statusOptions
+          })
         );
       });
 
@@ -702,6 +709,8 @@
      * Create Controller
      */
     function createController () {
+      $scope.statusOptions = statusOptions;
+
       $controller('CiviawardReviewPanelsController', {
         $scope: $scope
       });

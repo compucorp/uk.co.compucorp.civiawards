@@ -48,7 +48,10 @@
           </div>
           <div class="tab-pane active" ng-show="activeTab === 'reviewPanels'">
             <div class="table-tab">
-              <civiaward-review-panels award-id="awardId"></civiaward-review-panels>
+              <civiaward-review-panels
+                award-id="awardId"
+                status-options="applicationStatusOptions"
+              ></civiaward-review-panels>
             </div>
           </div>
           <div class="tab-pane active" ng-show="activeTab === 'reviewFields'">
