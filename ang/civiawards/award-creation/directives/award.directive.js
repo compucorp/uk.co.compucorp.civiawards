@@ -15,7 +15,8 @@
   });
 
   module.controller('CiviAwardCreateEditAwardController', function (
-    $location, $q, $scope, $window, CaseTypeCategory, crmApi, crmStatus, getSelect2Value) {
+    $location, $q, $scope, $window, CaseTypeCategory, CaseStatus, crmApi, crmStatus,
+    getSelect2Value) {
     var ts = CRM.ts('civicase');
     var DEFAULT_ACTIVITY_TYPES = [
       { name: 'Applicant Review' },
@@ -25,6 +26,7 @@
       { name: 'Phone Call' }
     ];
 
+    $scope.applicationStatusOptions = [];
     $scope.ts = ts;
     $scope.pageTitle = 'New Award';
     $scope.isNameDisabled = true;
@@ -64,10 +66,40 @@
         $scope.activeTab = getDefaultTabName();
         fetchAwardInformation()
           .then(function (result) {
+            var applicationStatuses = getApplicationStatusesFromAwardType(result.caseType);
+            $scope.applicationStatusOptions = getApplicantStatusSelect2Options(applicationStatuses);
+
             $scope.$emit('civiawards::edit-award::details-fetched', result);
           });
       }
     }());
+
+    /**
+     * @param {object} awardType An award type data as provided by the API.
+     * @returns {object[]} A list of status objects belonging to the given award
+     *   type. This data is taken from the list of status names stored in the
+     *   award type. If no status names are stored, all statuses are returned.
+     *   This is in accordance to core behaviour.
+     */
+    function getApplicationStatusesFromAwardType (awardType) {
+      var statusNames = awardType.definition.statuses;
+      var shouldIncludeAllStatuses = _.isEmpty(statusNames);
+
+      return shouldIncludeAllStatuses
+        ? CaseStatus.getAll()
+        : getStatusesFilteredByName(statusNames);
+    }
+
+    /**
+     * @param {object[]} statuses Application Statuses.
+     * @returns {object[]} A list of application statuses as expected by the
+     *   select2 component.
+     */
+    function getApplicantStatusSelect2Options (statuses) {
+      return _.map(statuses, function (status) {
+        return { id: status.value, text: status.label, name: status.name };
+      });
+    }
 
     /**
      * Returns default Tab to be focused on load
@@ -80,6 +112,17 @@
       } else {
         return $scope.focusedTabName;
       }
+    }
+
+    /**
+     * @param {string[]} statusNames A list of application status names.
+     * @returns {object[]} A list of application status objects belonging to the
+     *   given status names.
+     */
+    function getStatusesFilteredByName (statusNames) {
+      return _.filter(CaseStatus.getAll(), function (status) {
+        return _.includes(statusNames, status.name);
+      });
     }
 
     /**

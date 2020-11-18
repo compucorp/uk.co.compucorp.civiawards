@@ -30,7 +30,9 @@
       spyOn($scope, '$emit');
       spyOn(CRM, 'alert').and.callThrough();
 
-      crmApi.and.returnValue($q.resolve({}));
+      crmApi.and.returnValue($q.resolve({
+        caseType: _.first(AwardMockData)
+      }));
       $scope.$digest();
       $scope.basic_details_form = { awardName: { $pristine: true } };
     }));
@@ -107,6 +109,61 @@
             caseType: AwardMockData[0],
             additionalDetails: AwardAdditionalDetailsMockData
           });
+        });
+      });
+    });
+
+    describe('status options', () => {
+      describe('when the controller initialises', () => {
+        beforeEach(() => {
+          createController({});
+        });
+
+        it('defines the list of status options as empty', () => {
+          expect($scope.applicationStatusOptions).toEqual([]);
+        });
+      });
+
+      describe('when the award has some status names stored', () => {
+        beforeEach(() => {
+          const award = _.chain(AwardMockData).first().cloneDeep().value();
+          award.definition.statuses = ['Open', 'Closed'];
+
+          crmApi.and.returnValue($q.resolve({
+            caseType: award
+          }));
+
+          createController({});
+          $scope.$digest();
+        });
+
+        it('stores the status data as select2 options', () => {
+          expect($scope.applicationStatusOptions).toEqual([
+            { id: '1', text: 'Ongoing', name: 'Open' },
+            { id: '2', text: 'Resolved', name: 'Closed' }
+          ]);
+        });
+      });
+
+      describe('when the award has no status names stored', () => {
+        beforeEach(() => {
+          const award = _.chain(AwardMockData).first().cloneDeep().value();
+          delete award.definition.statuses;
+
+          crmApi.and.returnValue($q.resolve({
+            caseType: award
+          }));
+
+          createController({});
+          $scope.$digest();
+        });
+
+        it('stores all the statuses data as select2 options', () => {
+          expect($scope.applicationStatusOptions).toEqual([
+            { id: '1', text: 'Ongoing', name: 'Open' },
+            { id: '2', text: 'Resolved', name: 'Closed' },
+            { id: '3', text: 'Urgent', name: 'Urgent' }
+          ]);
         });
       });
     });
