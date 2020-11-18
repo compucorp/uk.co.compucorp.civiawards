@@ -22,7 +22,6 @@
     var tagsIndexed = {};
     var caseStatusesIndexed = CaseStatus.getAll();
 
-    $scope.ts = ts;
     $scope.submitInProgress = false;
     $scope.isLoading = false;
     $scope.submitButtonClickedOnce = false;

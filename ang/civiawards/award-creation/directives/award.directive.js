@@ -16,8 +16,7 @@
 
   module.controller('CiviAwardCreateEditAwardController', function (
     $location, $q, $scope, $window, CaseTypeCategory, CaseStatus, crmApi, crmStatus,
-    getSelect2Value) {
-    var ts = CRM.ts('civicase');
+    getSelect2Value, ts) {
     var DEFAULT_ACTIVITY_TYPES = [
       { name: 'Applicant Review' },
       { name: 'Email' },
@@ -27,7 +26,6 @@
     ];
 
     $scope.applicationStatusOptions = [];
-    $scope.ts = ts;
     $scope.pageTitle = 'New Award';
     $scope.isNameDisabled = true;
     $scope.submitInProgress = false;
