@@ -54,6 +54,7 @@
       $scope.additionalDetails.endDate = additionalDetails.end_date;
       $scope.additionalDetails.awardSubtype = additionalDetails.award_subtype;
       $scope.additionalDetails.awardManagers = additionalDetails.award_manager.join();
+      $scope.additionalDetails.isTemplate = isTruthy(additionalDetails.is_template);
     }
 
     /**

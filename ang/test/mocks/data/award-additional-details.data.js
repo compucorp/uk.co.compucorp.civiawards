@@ -9,6 +9,7 @@
       start_date: '2019-10-29',
       end_date: '2019-11-29',
       award_manager: ['2', '1'],
+      is_template: true,
       review_fields: [{
         id: '19',
         weight: 1,

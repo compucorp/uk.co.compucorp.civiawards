@@ -49,7 +49,8 @@
       startDate: null,
       endDate: null,
       awardManagers: [],
-      selectedReviewFields: []
+      selectedReviewFields: [],
+      isTemplate: false
     };
 
     $scope.ifSaveButtonDisabled = ifSaveButtonDisabled;
@@ -309,7 +310,8 @@
         start_date: $scope.additionalDetails.startDate,
         end_date: $scope.additionalDetails.endDate,
         award_subtype: $scope.additionalDetails.awardSubtype,
-        review_fields: prepareReviewFields()
+        review_fields: prepareReviewFields(),
+        is_template: $scope.additionalDetails.isTemplate
       };
 
       if ($scope.awardDetailsID) {
