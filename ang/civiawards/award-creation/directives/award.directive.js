@@ -63,11 +63,10 @@
       if ($scope.awardId) {
         $scope.activeTab = getDefaultTabName();
         fetchAwardInformation()
-          .then(function (result) {
-            var applicationStatuses = getApplicationStatusesFromAwardType(result.caseType);
-            $scope.applicationStatusOptions = getApplicantStatusSelect2Options(applicationStatuses);
+          .then(function (award) {
+            updateApplicationStatusOptions(award.caseType);
 
-            $scope.$emit('civiawards::edit-award::details-fetched', result);
+            $scope.$emit('civiawards::edit-award::details-fetched', award);
           });
       }
     }());
@@ -211,7 +210,9 @@
         .then(saveCaseTypeBasicDetails)
         .then(saveAdditionAwardDetails)
         .then(function (award) {
-          return award.case_type_id;
+          updateApplicationStatusOptions(award.caseType);
+
+          return award.additionalDetails.case_type_id;
         })
         .catch(function (error) {
           var errorMesssage = error.error_code === 'already exists'
@@ -359,8 +360,22 @@
 
       return crmApi('AwardDetail', 'create', params)
         .then(function (awardData) {
-          return awardData.values[0];
+          return {
+            caseType: award,
+            additionalDetails: awardData.values[0]
+          };
         });
+    }
+
+    /**
+     * Update the application status options based on the values stored in the
+     * given case type.
+     *
+     * @param {object} caseType A Case Type object including its definition.
+     */
+    function updateApplicationStatusOptions (caseType) {
+      var applicationStatuses = getApplicationStatusesFromAwardType(caseType);
+      $scope.applicationStatusOptions = getApplicantStatusSelect2Options(applicationStatuses);
     }
   });
 })(angular, CRM.$, CRM._);
