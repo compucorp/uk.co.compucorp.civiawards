@@ -73,21 +73,21 @@
 
         _.chain(groupsData)
           .filter(function (group) {
-            return !isTruthy(group.extra.is_hidden) && isTruthy(group.extra.is_active);
+            return !isTruthy(group.is_hidden) && isTruthy(group.is_active);
           })
           .each(function (group) {
             returnData.include.push({
               id: 'include_' + group.id,
               value: group.id,
               mode: 'include',
-              text: group.label
+              text: group.title
             });
 
             returnData.exclude.push({
               id: 'exclude_' + group.id,
               value: group.id,
               mode: 'exclude',
-              text: group.label
+              text: group.title
             });
           }).value();
 
@@ -100,9 +100,8 @@
        * @returns {Promise} promise
        */
       function fetchGroupsData () {
-        return crmApi('Group', 'getlist', {
-          options: { limit: 0 },
-          extra: ['is_hidden', 'is_active']
+        return crmApi('Group', 'get', {
+          options: { limit: 0 }
         }).then(function (groupsData) {
           return groupsData.values;
         });
