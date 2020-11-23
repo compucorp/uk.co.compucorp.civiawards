@@ -59,6 +59,7 @@
         expect($scope.additionalDetails.endDate).toEqual('2019-11-29');
         expect($scope.additionalDetails.awardSubtype).toEqual('1');
         expect($scope.additionalDetails.awardManagers).toEqual('2,1');
+        expect($scope.additionalDetails.isTemplate).toEqual(true);
       });
     });
 

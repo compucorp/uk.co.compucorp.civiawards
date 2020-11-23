@@ -85,7 +85,8 @@
               startDate: null,
               endDate: null,
               awardManagers: [],
-              selectedReviewFields: []
+              selectedReviewFields: [],
+              isTemplate: false
             });
           });
         });
@@ -244,7 +245,8 @@
               end_date: AwardAdditionalDetailsMockData.end_date,
               award_subtype: AwardAdditionalDetailsMockData.award_subtype,
               award_manager: ['2', '1'],
-              review_fields: [{ id: '19', required: '0', weight: 1 }]
+              review_fields: [{ id: '19', required: '0', weight: 1 }],
+              is_template: true
             });
           });
 
@@ -379,6 +381,7 @@
       $scope.additionalDetails.startDate = AwardAdditionalDetailsMockData.start_date;
       $scope.additionalDetails.endDate = AwardAdditionalDetailsMockData.end_date;
       $scope.additionalDetails.awardSubtype = AwardAdditionalDetailsMockData.award_subtype;
+      $scope.additionalDetails.isTemplate = true;
       $scope.additionalDetails.selectedReviewFields = [{
         id: ReviewFieldsMockData[0].id,
         required: false,
