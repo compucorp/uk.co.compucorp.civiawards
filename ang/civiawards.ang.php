@@ -9,24 +9,6 @@
  */
 
 use CRM_Civicase_Helper_GlobRecursive as GlobRecursive;
-use CRM_Civicase_Helper_OptionValues as OptionValuesHelper;
-
-$options = [
-  'awardSubtypes' => 'civiawards_award_subtype',
-];
-
-OptionValuesHelper::setToJsVariables($options);
-expose_permissions();
-
-/**
- * Exposes the awards permissions values on the `CRM.permissions` object.
- */
-function expose_permissions() {
-  Civi::resources()
-    ->addPermissions([
-      'create/edit awards',
-    ]);
-}
 
 /**
  * Get a list of JS files.
@@ -42,13 +24,12 @@ return [
   'css' => [
     0 => 'css/civiawards.min.css',
   ],
-  'settings' => $options,
   'requires' => [
     'crmUi',
     'crmUtil',
     'ngRoute',
     'dialogService',
-    'civicase-base',
+    'civiawards-base',
   ],
   'partials' => [
     0 => 'ang/civiawards',

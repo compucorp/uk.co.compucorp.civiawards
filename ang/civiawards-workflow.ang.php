@@ -22,6 +22,9 @@ function get_awards_workflow_js_files() {
 return [
   'js' => get_awards_workflow_js_files(),
   'requires' => [
-    'civicase-base',
+    'civiawards-base',
+  ],
+  'partials' => [
+    0 => 'ang/civiawards-workflow',
   ],
 ];
