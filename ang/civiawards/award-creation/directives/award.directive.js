@@ -15,8 +15,8 @@
   });
 
   module.controller('CiviAwardCreateEditAwardController', function (
-    $location, $q, $scope, $window, CaseTypeCategory, crmApi, crmStatus, getSelect2Value) {
-    var ts = CRM.ts('civicase');
+    $location, $q, $scope, $window, CaseTypeCategory, CaseStatus, crmApi, crmStatus,
+    getSelect2Value, ts) {
     var DEFAULT_ACTIVITY_TYPES = [
       { name: 'Applicant Review' },
       { name: 'Email' },
@@ -25,7 +25,7 @@
       { name: 'Phone Call' }
     ];
 
-    $scope.ts = ts;
+    $scope.applicationStatusOptions = [];
     $scope.pageTitle = 'New Award';
     $scope.isNameDisabled = true;
     $scope.submitInProgress = false;
@@ -63,11 +63,40 @@
       if ($scope.awardId) {
         $scope.activeTab = getDefaultTabName();
         fetchAwardInformation()
-          .then(function (result) {
-            $scope.$emit('civiawards::edit-award::details-fetched', result);
+          .then(function (award) {
+            updateApplicationStatusOptions(award.caseType);
+
+            $scope.$emit('civiawards::edit-award::details-fetched', award);
           });
       }
     }());
+
+    /**
+     * @param {object} awardType An award type data as provided by the API.
+     * @returns {object[]} A list of status objects belonging to the given award
+     *   type. This data is taken from the list of status names stored in the
+     *   award type. If no status names are stored, all statuses are returned.
+     *   This is in accordance to core behaviour.
+     */
+    function getApplicationStatusesFromAwardType (awardType) {
+      var statusNames = awardType.definition.statuses;
+      var shouldIncludeAllStatuses = _.isEmpty(statusNames);
+
+      return shouldIncludeAllStatuses
+        ? CaseStatus.getAll()
+        : getStatusesFilteredByName(statusNames);
+    }
+
+    /**
+     * @param {object[]} statuses Application Statuses.
+     * @returns {object[]} A list of application statuses as expected by the
+     *   select2 component.
+     */
+    function getApplicantStatusSelect2Options (statuses) {
+      return _.map(statuses, function (status) {
+        return { id: status.value, text: status.label, name: status.name };
+      });
+    }
 
     /**
      * Returns default Tab to be focused on load
@@ -80,6 +109,17 @@
       } else {
         return $scope.focusedTabName;
       }
+    }
+
+    /**
+     * @param {string[]} statusNames A list of application status names.
+     * @returns {object[]} A list of application status objects belonging to the
+     *   given status names.
+     */
+    function getStatusesFilteredByName (statusNames) {
+      return _.filter(CaseStatus.getAll(), function (status) {
+        return _.includes(statusNames, status.name);
+      });
     }
 
     /**
@@ -170,7 +210,9 @@
         .then(saveCaseTypeBasicDetails)
         .then(saveAdditionAwardDetails)
         .then(function (award) {
-          return award.case_type_id;
+          updateApplicationStatusOptions(award.caseType);
+
+          return award.additionalDetails.case_type_id;
         })
         .catch(function (error) {
           var errorMesssage = error.error_code === 'already exists'
@@ -318,8 +360,22 @@
 
       return crmApi('AwardDetail', 'create', params)
         .then(function (awardData) {
-          return awardData.values[0];
+          return {
+            caseType: award,
+            additionalDetails: awardData.values[0]
+          };
         });
+    }
+
+    /**
+     * Update the application status options based on the values stored in the
+     * given case type.
+     *
+     * @param {object} caseType A Case Type object including its definition.
+     */
+    function updateApplicationStatusOptions (caseType) {
+      var applicationStatuses = getApplicationStatusesFromAwardType(caseType);
+      $scope.applicationStatusOptions = getApplicantStatusSelect2Options(applicationStatuses);
     }
   });
 })(angular, CRM.$, CRM._);

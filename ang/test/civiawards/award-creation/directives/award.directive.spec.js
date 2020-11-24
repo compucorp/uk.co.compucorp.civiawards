@@ -30,7 +30,7 @@
       spyOn($scope, '$emit');
       spyOn(CRM, 'alert').and.callThrough();
 
-      crmApi.and.returnValue($q.resolve({}));
+      crmApi.and.callFake(mockCrmApiService);
       $scope.$digest();
       $scope.basic_details_form = { awardName: { $pristine: true } };
     }));
@@ -107,6 +107,61 @@
             caseType: AwardMockData[0],
             additionalDetails: AwardAdditionalDetailsMockData
           });
+        });
+      });
+    });
+
+    describe('status options', () => {
+      describe('when the controller initialises', () => {
+        beforeEach(() => {
+          createController({});
+        });
+
+        it('defines the list of status options as empty', () => {
+          expect($scope.applicationStatusOptions).toEqual([]);
+        });
+      });
+
+      describe('when the award has some status names stored', () => {
+        beforeEach(() => {
+          const award = _.chain(AwardMockData).first().cloneDeep().value();
+          award.definition.statuses = ['Open', 'Closed'];
+
+          crmApi.and.returnValue($q.resolve({
+            caseType: award
+          }));
+
+          createController({});
+          $scope.$digest();
+        });
+
+        it('stores the status data as select2 options', () => {
+          expect($scope.applicationStatusOptions).toEqual([
+            { id: '1', text: 'Ongoing', name: 'Open' },
+            { id: '2', text: 'Resolved', name: 'Closed' }
+          ]);
+        });
+      });
+
+      describe('when the award has no status names stored', () => {
+        beforeEach(() => {
+          const award = _.chain(AwardMockData).first().cloneDeep().value();
+          delete award.definition.statuses;
+
+          crmApi.and.returnValue($q.resolve({
+            caseType: award
+          }));
+
+          createController({});
+          $scope.$digest();
+        });
+
+        it('stores all the statuses data as select2 options', () => {
+          expect($scope.applicationStatusOptions).toEqual([
+            { id: '1', text: 'Ongoing', name: 'Open' },
+            { id: '2', text: 'Resolved', name: 'Closed' },
+            { id: '3', text: 'Urgent', name: 'Urgent' }
+          ]);
         });
       });
     });
@@ -239,13 +294,33 @@
           it('saves the additional award details', () => {
             expect(crmApi).toHaveBeenCalledWith('AwardDetail', 'create', {
               sequential: true,
-              case_type_id: '1',
+              case_type_id: _.first(AwardMockData).id,
               start_date: AwardAdditionalDetailsMockData.start_date,
               end_date: AwardAdditionalDetailsMockData.end_date,
               award_subtype: AwardAdditionalDetailsMockData.award_subtype,
               award_manager: ['2', '1'],
               review_fields: [{ id: '19', required: '0', weight: 1 }]
             });
+          });
+
+          it('updates the list of application status options', () => {
+            expect($scope.applicationStatusOptions).toEqual([
+              {
+                id: '1',
+                text: 'Ongoing',
+                name: 'Open'
+              },
+              {
+                id: '2',
+                text: 'Resolved',
+                name: 'Closed'
+              },
+              {
+                id: '3',
+                text: 'Urgent',
+                name: 'Urgent'
+              }
+            ]);
           });
 
           it('shows a notification after save is successfull', () => {
@@ -269,10 +344,6 @@
           });
 
           setAwardDetails();
-
-          crmApi.and.returnValue($q.resolve({
-            values: [AwardAdditionalDetailsMockData]
-          }));
           $scope.saveAwardInBG();
           $scope.$digest();
         });
@@ -385,9 +456,7 @@
         weight: 1
       }];
 
-      crmApi.and.returnValue($q.resolve({
-        values: [AwardAdditionalDetailsMockData]
-      }));
+      crmApi.and.callFake(mockCrmApiService);
     }
 
     /**
@@ -405,6 +474,34 @@
       $controller('CiviAwardCreateEditAwardController', {
         $scope: $scope
       });
+    }
+
+    /**
+     * Mocks API calls and responses through the CRM API Service.
+     *
+     * @param {string|object} entity The Entity name or an object with multiple requests.
+     * @param {string} action The Action name
+     * @param {object} params Extra parameters to send to the endpoint.
+     *
+     * @returns {Promise} The mocked API response.
+     */
+    function mockCrmApiService (entity, action, params) {
+      const mockAwardType = _.extend({}, _.first(AwardMockData), {
+        definition: {}
+      });
+      const entityResponses = {
+        AwardDetail: { values: [AwardAdditionalDetailsMockData] },
+        CaseType: { values: [mockAwardType] }
+      };
+
+      if (_.isObject(entity)) {
+        return $q.resolve({
+          caseType: mockAwardType,
+          additionalDetails: AwardAdditionalDetailsMockData
+        });
+      }
+
+      return $q.resolve(entityResponses[entity]);
     }
   });
 }(CRM._));
