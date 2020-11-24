@@ -243,7 +243,7 @@ function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
 }
 
 /**
- * Implements addCiviCaseDependentAngularModules().
+ * Implements addWorkflowDependentAngularModules().
  */
 function civiawards_addWorkflowDependentAngularModules(&$dependentModules) {
   $dependentModules[] = "civiawards-workflow";

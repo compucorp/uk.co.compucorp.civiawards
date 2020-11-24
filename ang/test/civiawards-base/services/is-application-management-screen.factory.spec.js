@@ -3,7 +3,7 @@
   describe('isApplicationManagementScreen', function () {
     let $location, isApplicationManagementScreen;
 
-    beforeEach(module('civiawards', ($provide) => {
+    beforeEach(module('civiawards-base', ($provide) => {
       $location = jasmine.createSpyObj('$location', ['search']);
 
       $provide.value('$location', $location);
