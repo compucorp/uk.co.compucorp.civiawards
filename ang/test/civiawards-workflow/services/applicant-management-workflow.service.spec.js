@@ -4,17 +4,19 @@
   describe('applicant management workflow', () => {
     let $q, $rootScope, civicaseCrmApiMock, CaseTypesMockData,
       AwardAdditionalDetailsMockData, ApplicantmanagementWorkflow,
-      ContactsCache, ContactsData;
+      ContactsCache, ContactsData, processMyAwardsFilterMock;
 
     beforeEach(module('civiawards-workflow', 'civicase.data', 'civiawards.data', ($provide) => {
+      processMyAwardsFilterMock = jasmine.createSpy('processMyAwardsFilter');
       civicaseCrmApiMock = jasmine.createSpy('civicaseCrmApi');
 
       $provide.value('civicaseCrmApi', civicaseCrmApiMock);
+      $provide.value('processMyAwardsFilter', processMyAwardsFilterMock);
     }));
 
     beforeEach(inject((_$q_, _$rootScope_, _ApplicantmanagementWorkflow_,
       _CaseTypesMockData_, _AwardAdditionalDetailsMockData_,
-      _ContactsCache_, _ContactsData_) => {
+      _ContactsCache_, _ContactsData_, _processMyAwardsFilter_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       ContactsData = _ContactsData_;
@@ -25,17 +27,38 @@
     }));
 
     describe('when getting list of workflow', () => {
-      var result, expectedResult;
+      var scope, result, expectedResult, mockWorkflow, mockAwardDetail;
 
       beforeEach(() => {
-        var mockWorkflow = CaseTypesMockData.getSequential()[0];
+        mockWorkflow = CaseTypesMockData.getSequential()[0];
         mockWorkflow['api.AwardDetail.get'] = {
           values: [AwardAdditionalDetailsMockData.get()]
         };
 
-        civicaseCrmApiMock.and.returnValue($q.resolve(
-          { values: [mockWorkflow] }
-        ));
+        mockAwardDetail = AwardAdditionalDetailsMockData.get();
+        mockAwardDetail['api.CaseType.get'] = {
+          values: [{ is_active: true }]
+        };
+
+        processMyAwardsFilterMock.and.returnValue($q.resolve([1, 2, 3]));
+
+        civicaseCrmApiMock.and.callFake(function (entity) {
+          if (entity === 'CaseType') {
+            return $q.resolve({ values: [mockWorkflow] });
+          } else if (entity === 'AwardDetail') {
+            return $q.resolve({ values: [mockAwardDetail] });
+          }
+        });
+
+        scope = {
+          caseTypeCategory: 'some_case_type_category',
+          selectedFilters: {
+            awardFilter: 'my_awards',
+            award_subtype: [4, 5],
+            is_active: true,
+            is_template: 1
+          }
+        };
 
         expectedResult = [_.clone(mockWorkflow)];
         expectedResult[0].awardDetails = expectedResult[0]['api.AwardDetail.get'].values[0];
@@ -45,10 +68,12 @@
         };
         delete expectedResult[0]['api.AwardDetail.get'];
 
+        spyOn(ContactsCache, 'add');
         spyOn(ContactsCache, 'getCachedContact');
+        ContactsCache.add.and.returnValue($q.resolve());
         ContactsCache.getCachedContact.and.returnValue(ContactsData.values[0]);
 
-        ApplicantmanagementWorkflow.getWorkflowsList('some_case_type_category')
+        ApplicantmanagementWorkflow.getWorkflowsList(scope)
           .then(function (data) {
             result = data;
           });
@@ -59,13 +84,28 @@
         expect(civicaseCrmApiMock).toHaveBeenCalledWith('CaseType', 'get', {
           sequential: 1,
           case_type_category: 'some_case_type_category',
+          is_active: true,
           options: { limit: 0 },
-          'api.AwardDetail.get': { case_type_id: '$value.id' }
+          'api.AwardDetail.get': { case_type_id: '$value.id' },
+          id: { IN: ['10'] }
         });
       });
 
       it('displays the list of fetched workflows', () => {
         expect(result).toEqual(expectedResult);
+      });
+
+      it('filters by subtype', () => {
+        expect(civicaseCrmApiMock).toHaveBeenCalledWith('AwardDetail', 'get', {
+          sequential: 1,
+          is_template: 1,
+          case_type_id: { IN: [1, 2, 3] },
+          award_subtype: { IN: [4, 5] }
+        });
+      });
+
+      it('filters by manager', () => {
+        expect(processMyAwardsFilterMock).toHaveBeenCalledWith('my_awards');
       });
     });
 

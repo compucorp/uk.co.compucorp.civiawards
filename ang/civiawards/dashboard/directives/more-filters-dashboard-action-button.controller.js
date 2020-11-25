@@ -9,17 +9,18 @@
    * @param {object} $rootScope rootscope object
    * @param {object} $scope scope object
    * @param {object} $q angular promise object
-   * @param {object} getSelect2Value service to fetch select 2 values
-   * @param {object} crmApi the service to fetch civicrm backend
+   * @param {object} Select2Utils select 2 utility service
+   * @param {object} civicaseCrmApi the service to fetch civicrm backend
    * @param {object} dialogService the dialog service
    * @param {object} ts translation service
    * @param {object} CaseStatus Case Status service
    * @param {object} AwardSubtype Award Sub Type service
    * @param {Function} isApplicationManagementScreen is application management screen function
+   * @param {Function} processMyAwardsFilter service to process my awards filters
    */
   function MoreFiltersDashboardActionButtonController ($rootScope, $scope, $q,
-    getSelect2Value, crmApi, dialogService, ts, CaseStatus, AwardSubtype,
-    isApplicationManagementScreen) {
+    Select2Utils, civicaseCrmApi, dialogService, ts, CaseStatus, AwardSubtype,
+    isApplicationManagementScreen, processMyAwardsFilter) {
     var model = {
       statuses: _.map(CaseStatus.getAll(), mapSelectOptions),
       award_subtypes: _.map(AwardSubtype.getAll(), mapSelectOptions),
@@ -88,7 +89,7 @@
      * Apply filter
      */
     function applyFilter () {
-      processMyAwardsFilter()
+      processMyAwardsFilter(model.selectedFilters.awardFilter)
         .then(processAwardSubtypeFilters)
         .then(function (awardSubtypeIds) {
           var param = {
@@ -96,7 +97,7 @@
           };
 
           if (model.selectedFilters.statuses.length > 0) {
-            var statusIds = getSelect2Value(model.selectedFilters.statuses);
+            var statusIds = Select2Utils.getSelect2Value(model.selectedFilters.statuses);
             var statusGroupings = getGroupingsForCaseStatuses(statusIds);
 
             param.status_id = { IN: statusIds };
@@ -143,7 +144,7 @@
       }
 
       if (model.selectedFilters.award_subtypes !== '') {
-        filters.award_subtype = { IN: getSelect2Value(model.selectedFilters.award_subtypes) };
+        filters.award_subtype = { IN: Select2Utils.getSelect2Value(model.selectedFilters.award_subtypes) };
       }
       if (model.selectedFilters.start_date) {
         filters.start_date = model.selectedFilters.start_date;
@@ -152,32 +153,10 @@
         filters.end_date = model.selectedFilters.end_date;
       }
 
-      return crmApi('AwardDetail', 'get', filters)
+      return civicaseCrmApi('AwardDetail', 'get', filters)
         .then(function (awardsData) {
           return awardsData.values.map(function (award) {
             return award.case_type_id;
-          });
-        });
-    }
-
-    /**
-     * Process My Awards/All Awards filters
-     *
-     * @returns {Promise<number[]>} promise
-     */
-    function processMyAwardsFilter () {
-      var filters = {
-        sequential: 1
-      };
-
-      if (model.selectedFilters.awardFilter === 'my_awards') {
-        filters.contact_id = CRM.config.user_contact_id;
-      }
-
-      return crmApi('AwardManager', 'get', filters)
-        .then(function (awardsData) {
-          return awardsData.values.map(function (awards) {
-            return awards.case_type_id;
           });
         });
     }

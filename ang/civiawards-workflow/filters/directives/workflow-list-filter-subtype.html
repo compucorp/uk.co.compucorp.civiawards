@@ -1,0 +1,13 @@
+<div ng-controller="CiviAwardWorkflowFilterController">
+  <label>{{ts('Award Sybtypes')}}</label>
+  <input
+    class="form-control"
+    crm-ui-select="{
+      allowClear: true,
+      placeholder: ts('Subtypes'),
+      multiple: true,
+      data: allSubtypes
+    }"
+    ng-model="selectedFilters.award_subtype" />
+</div>
+
