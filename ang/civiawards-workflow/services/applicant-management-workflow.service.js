@@ -1,7 +1,7 @@
 (function (_, angular) {
   var module = angular.module('civiawards-workflow');
 
-  module.service('ApplicantmanagementWorkflow', ApplicantmanagementWorkflow);
+  module.service('ApplicantManagementWorkflow', ApplicantManagementWorkflow);
 
   /**
    * Duplicate applicant management workflows service
@@ -14,7 +14,7 @@
    * @param {object} Select2Utils select 2 utility service
    * @param {Function} isTruthy service to check if value is truthy
    */
-  function ApplicantmanagementWorkflow ($q, civicaseCrmApi, AwardSubtype,
+  function ApplicantManagementWorkflow ($q, civicaseCrmApi, AwardSubtype,
     ContactsCache, processMyAwardsFilter, Select2Utils, isTruthy) {
     var awardSubtypes = AwardSubtype.getAll();
 

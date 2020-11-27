@@ -3,7 +3,7 @@
 ((_) => {
   describe('applicant management workflow', () => {
     let $q, $rootScope, civicaseCrmApiMock, CaseTypesMockData,
-      AwardAdditionalDetailsMockData, ApplicantmanagementWorkflow,
+      AwardAdditionalDetailsMockData, ApplicantManagementWorkflow,
       ContactsCache, ContactsData, processMyAwardsFilterMock;
 
     beforeEach(module('civiawards-workflow', 'civicase.data', 'civiawards.data', ($provide) => {
@@ -14,13 +14,13 @@
       $provide.value('processMyAwardsFilter', processMyAwardsFilterMock);
     }));
 
-    beforeEach(inject((_$q_, _$rootScope_, _ApplicantmanagementWorkflow_,
+    beforeEach(inject((_$q_, _$rootScope_, _ApplicantManagementWorkflow_,
       _CaseTypesMockData_, _AwardAdditionalDetailsMockData_,
       _ContactsCache_, _ContactsData_, _processMyAwardsFilter_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       ContactsData = _ContactsData_;
-      ApplicantmanagementWorkflow = _ApplicantmanagementWorkflow_;
+      ApplicantManagementWorkflow = _ApplicantManagementWorkflow_;
       CaseTypesMockData = _CaseTypesMockData_;
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_;
       ContactsCache = _ContactsCache_;
@@ -73,7 +73,7 @@
         ContactsCache.add.and.returnValue($q.resolve());
         ContactsCache.getCachedContact.and.returnValue(ContactsData.values[0]);
 
-        ApplicantmanagementWorkflow.getWorkflowsList(scope)
+        ApplicantManagementWorkflow.getWorkflowsList(scope)
           .then(function (data) {
             result = data;
           });
@@ -120,7 +120,7 @@
           { values: [CaseTypesMockData.getSequential()[0]] }
         ));
 
-        ApplicantmanagementWorkflow.createDuplicate(_.clone(workflow));
+        ApplicantManagementWorkflow.createDuplicate(_.clone(workflow));
 
         $rootScope.$digest();
         $rootScope.$digest();
