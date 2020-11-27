@@ -2,7 +2,7 @@
 
 ((_) => {
   describe('applicant management workflow', () => {
-    let $q, $rootScope, civicaseCrmApiMock, CaseTypesMockData,
+    let $q, $rootScope, $window, civicaseCrmApiMock, CaseTypesMockData,
       AwardAdditionalDetailsMockData, ApplicantManagementWorkflow,
       ContactsCache, ContactsData, processMyAwardsFilterMock;
 
@@ -12,12 +12,14 @@
 
       $provide.value('civicaseCrmApi', civicaseCrmApiMock);
       $provide.value('processMyAwardsFilter', processMyAwardsFilterMock);
+      $provide.value('$window', { location: {} });
     }));
 
     beforeEach(inject((_$q_, _$rootScope_, _ApplicantManagementWorkflow_,
-      _CaseTypesMockData_, _AwardAdditionalDetailsMockData_,
+      _$window_, _CaseTypesMockData_, _AwardAdditionalDetailsMockData_,
       _ContactsCache_, _ContactsData_, _processMyAwardsFilter_) => {
       $q = _$q_;
+      $window = _$window_;
       $rootScope = _$rootScope_;
       ContactsData = _ContactsData_;
       ApplicantManagementWorkflow = _ApplicantManagementWorkflow_;
@@ -131,6 +133,16 @@
             case_type_id: '1'
           })]
         ]);
+      });
+    });
+
+    describe('when redirecting to the create workflow page', () => {
+      beforeEach(() => {
+        ApplicantManagementWorkflow.redirectToWorkflowCreationScreen({ value: '2' });
+      });
+
+      it('redirects to the case management new workflow page', () => {
+        expect($window.location.href).toBe('/civicrm/award/a/#/awards/new/2');
       });
     });
   });

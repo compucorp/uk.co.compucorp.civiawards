@@ -12,14 +12,15 @@
    * @param {object} ContactsCache contacts cache service
    * @param {Function} processMyAwardsFilter service to process my awards filters
    * @param {object} Select2Utils select 2 utility service
-   * @param {Function} isTruthy service to check if value is truthy
+   * @param {object} $window window object of the browser
    */
   function ApplicantManagementWorkflow ($q, civicaseCrmApi, AwardSubtype,
-    ContactsCache, processMyAwardsFilter, Select2Utils, isTruthy) {
+    ContactsCache, processMyAwardsFilter, Select2Utils, $window) {
     var awardSubtypes = AwardSubtype.getAll();
 
     this.createDuplicate = createDuplicate;
     this.getWorkflowsList = getWorkflowsList;
+    this.redirectToWorkflowCreationScreen = redirectToWorkflowCreationScreen;
 
     /**
      * @param {object} selectedFilters selected filter values
@@ -161,6 +162,15 @@
       }
 
       return filters;
+    }
+
+    /**
+     * Redirect to the workflow creation screen
+     *
+     * @param {object} caseTypeCategory case type category object
+     */
+    function redirectToWorkflowCreationScreen (caseTypeCategory) {
+      $window.location.href = '/civicrm/award/a/#/awards/new/' + caseTypeCategory.value;
     }
   }
 })(CRM._, angular);
