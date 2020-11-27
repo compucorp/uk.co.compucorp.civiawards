@@ -4,7 +4,7 @@
   module.service('ApplicantManagementWorkflow', ApplicantManagementWorkflow);
 
   /**
-   * Duplicate applicant management workflows service
+   * Applicant management workflows service
    *
    * @param {object} $q angulars $q service
    * @param {Function} civicaseCrmApi civicrm api service
@@ -28,6 +28,10 @@
     function fetchFilteredWorkflowIds (selectedFilters) {
       return processMyAwardsFilter(selectedFilters.awardFilter)
         .then(function (caseTypeIDs) {
+          if (caseTypeIDs.length === 0) {
+            return $q.resolve([]);
+          }
+
           var filters = prepareFilterObject(selectedFilters, caseTypeIDs);
 
           return civicaseCrmApi('AwardDetail', 'get', filters)
@@ -48,8 +52,13 @@
      */
     function getWorkflowsList (caseTypeCategoryName, selectedFilters) {
       return fetchFilteredWorkflowIds(selectedFilters)
-        .then(function (caseTypeIds) {
+        .then(function (workflowIds) {
+          if (workflowIds.length === 0) {
+            return $q.resolve([]);
+          }
+
           var params = {
+            id: { IN: workflowIds },
             sequential: 1,
             is_active: selectedFilters.is_active,
             case_type_category: caseTypeCategoryName,
@@ -58,13 +67,6 @@
               case_type_id: '$value.id'
             }
           };
-
-          if (caseTypeIds) {
-            if (caseTypeIds.length === 0) {
-              return $q.resolve([]);
-            }
-            params.id = { IN: caseTypeIds };
-          }
 
           return civicaseCrmApi('CaseType', 'get', params).then(function (data) {
             return getFormattedAwardDetailsData(data.values);
@@ -95,14 +97,7 @@
      * @returns {object[]} formatted list of workflows
      */
     function getFormattedAwardDetailsData (workflows) {
-      var managerContacts = [];
-
-      managerContacts = _.chain(workflows)
-        .map(function (workflow) {
-          return workflow['api.AwardDetail.get'].values[0].award_manager;
-        })
-        .flatten()
-        .value();
+      var managerContacts = getAwardManagersForWorkflows(workflows);
 
       return ContactsCache.add(managerContacts)
         .then(function () {
@@ -128,6 +123,20 @@
     }
 
     /**
+     *
+     * @param {object[]} workflows list of workflows
+     * @returns {string[]} list of award manager contact ids
+     */
+    function getAwardManagersForWorkflows (workflows) {
+      return _.chain(workflows)
+        .map(function (workflow) {
+          return workflow['api.AwardDetail.get'].values[0].award_manager;
+        })
+        .flatten()
+        .value();
+    }
+
+    /**
      * @param {object} selectedFilters selected filter values
      * @param {string[]} caseTypeIDs list of case type ids
      * @returns {object} filter object
@@ -137,11 +146,7 @@
         sequential: 1
       };
 
-      if (caseTypeIDs.length === 0) {
-        return $q.resolve([]);
-      } else {
-        filters.case_type_id = { IN: caseTypeIDs };
-      }
+      filters.case_type_id = { IN: caseTypeIDs };
 
       if (selectedFilters.award_subtype !== '') {
         filters.award_subtype = {
