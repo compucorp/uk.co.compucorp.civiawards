@@ -27,7 +27,7 @@
     }));
 
     describe('when getting list of workflow', () => {
-      var scope, result, expectedResult, mockWorkflow, mockAwardDetail;
+      var result, expectedResult, mockWorkflow, mockAwardDetail;
 
       beforeEach(() => {
         mockWorkflow = CaseTypesMockData.getSequential()[0];
@@ -50,16 +50,6 @@
           }
         });
 
-        scope = {
-          caseTypeCategory: 'some_case_type_category',
-          selectedFilters: {
-            awardFilter: 'my_awards',
-            award_subtype: [4, 5],
-            is_active: true,
-            is_template: 1
-          }
-        };
-
         expectedResult = [_.clone(mockWorkflow)];
         expectedResult[0].awardDetails = expectedResult[0]['api.AwardDetail.get'].values[0];
         expectedResult[0].awardDetailsFormatted = {
@@ -73,10 +63,14 @@
         ContactsCache.add.and.returnValue($q.resolve());
         ContactsCache.getCachedContact.and.returnValue(ContactsData.values[0]);
 
-        ApplicantManagementWorkflow.getWorkflowsList(scope)
-          .then(function (data) {
-            result = data;
-          });
+        ApplicantManagementWorkflow.getWorkflowsList('some_case_type_category', {
+          awardFilter: 'my_awards',
+          award_subtype: [4, 5],
+          is_active: true,
+          is_template: 1
+        }).then(function (data) {
+          result = data;
+        });
         $rootScope.$digest();
       });
 

@@ -22,13 +22,13 @@
     this.getWorkflowsList = getWorkflowsList;
 
     /**
-     * @param {object} scope scope object of thw workflow list controller
+     * @param {object} selectedFilters selected filter values
      * @returns {Promise} Promise which resolved to a list of case type ids
      */
-    function applyFilter (scope) {
-      return processMyAwardsFilter(scope.selectedFilters.awardFilter)
+    function fetchFilteredWorkflowIds (selectedFilters) {
+      return processMyAwardsFilter(selectedFilters.awardFilter)
         .then(function (caseTypeIDs) {
-          var filters = prepareFilterObject(scope, caseTypeIDs);
+          var filters = prepareFilterObject(selectedFilters, caseTypeIDs);
 
           return civicaseCrmApi('AwardDetail', 'get', filters)
             .then(function (awardsData) {
@@ -42,16 +42,17 @@
     /**
      * Returns workflows list for applicant management
      *
-     * @param {Array} scope scope object of the workflows list controller
+     * @param {object} caseTypeCategoryName case type category name
+     * @param {object} selectedFilters selected filter values
      * @returns {Array} api call parameters
      */
-    function getWorkflowsList (scope) {
-      return applyFilter(scope)
+    function getWorkflowsList (caseTypeCategoryName, selectedFilters) {
+      return fetchFilteredWorkflowIds(selectedFilters)
         .then(function (caseTypeIds) {
           var params = {
             sequential: 1,
-            is_active: scope.selectedFilters.is_active,
-            case_type_category: scope.caseTypeCategory,
+            is_active: selectedFilters.is_active,
+            case_type_category: caseTypeCategoryName,
             options: { limit: 0 },
             'api.AwardDetail.get': {
               case_type_id: '$value.id'
@@ -96,40 +97,42 @@
     function getFormattedAwardDetailsData (workflows) {
       var managerContacts = [];
 
-      workflows = _.map(workflows, function (workflow) {
-        workflow.awardDetails = workflow['api.AwardDetail.get'].values[0];
-        delete workflow['api.AwardDetail.get'];
-
-        managerContacts = managerContacts.concat(workflow.awardDetails.award_manager);
-
-        workflow.awardDetailsFormatted = {
-          subtypeLabel: awardSubtypes[workflow.awardDetails.award_subtype].label,
-          managers: []
-        };
-
-        return workflow;
-      });
+      managerContacts = _.chain(workflows)
+        .map(function (workflow) {
+          return workflow['api.AwardDetail.get'].values[0].award_manager;
+        })
+        .flatten()
+        .value();
 
       return ContactsCache.add(managerContacts)
         .then(function () {
-          return _.map(workflows, function (workflow) {
-            _.each(workflow.awardDetails.award_manager, function (managerID) {
-              workflow.awardDetailsFormatted.managers.push(
-                ContactsCache.getCachedContact(managerID).display_name
-              );
-            });
+          var workflowsCopy = _.clone(workflows);
 
-            return workflow;
+          _.each(workflowsCopy, function (workflow) {
+            workflow.awardDetails = workflow['api.AwardDetail.get'].values[0];
+            workflow.awardDetailsFormatted = {
+              subtypeLabel: awardSubtypes[workflow.awardDetails.award_subtype].label,
+              managers: _.map(
+                workflow.awardDetails.award_manager,
+                function (managerID) {
+                  return ContactsCache.getCachedContact(managerID).display_name;
+                }
+              )
+            };
+
+            delete workflow['api.AwardDetail.get'];
           });
+
+          return workflowsCopy;
         });
     }
 
     /**
-     * @param {object} scope scope object of thw workflow list controller
+     * @param {object} selectedFilters selected filter values
      * @param {string[]} caseTypeIDs list of case type ids
      * @returns {object} filter object
      */
-    function prepareFilterObject (scope, caseTypeIDs) {
+    function prepareFilterObject (selectedFilters, caseTypeIDs) {
       var filters = {
         sequential: 1
       };
@@ -140,14 +143,14 @@
         filters.case_type_id = { IN: caseTypeIDs };
       }
 
-      if (scope.selectedFilters.award_subtype !== '') {
+      if (selectedFilters.award_subtype !== '') {
         filters.award_subtype = {
-          IN: Select2Utils.getSelect2Value(scope.selectedFilters.award_subtype)
+          IN: Select2Utils.getSelect2Value(selectedFilters.award_subtype)
         };
       }
 
-      if (scope.selectedFilters.is_template !== '') {
-        filters.is_template = scope.selectedFilters.is_template;
+      if (selectedFilters.is_template !== '') {
+        filters.is_template = selectedFilters.is_template;
       }
 
       return filters;

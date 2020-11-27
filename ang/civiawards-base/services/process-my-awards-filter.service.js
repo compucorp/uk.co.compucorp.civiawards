@@ -14,7 +14,7 @@
      * Process My Awards/All Awards filters
      *
      * @param {object} managerFilter manager filter values
-     * @returns {Promise<number[]>} promise
+     * @returns {Promise<string[]>} promise
      */
     function processMyAwardsFilter (managerFilter) {
       var filters = {
