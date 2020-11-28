@@ -101,24 +101,26 @@
 
       return ContactsCache.add(managerContacts)
         .then(function () {
-          var workflowsCopy = _.clone(workflows);
+          return _.map(workflows, function (workflow) {
+            var awardDetails = workflow['api.AwardDetail.get'].values[0];
 
-          _.each(workflowsCopy, function (workflow) {
-            workflow.awardDetails = workflow['api.AwardDetail.get'].values[0];
-            workflow.awardDetailsFormatted = {
-              subtypeLabel: awardSubtypes[workflow.awardDetails.award_subtype].label,
-              managers: _.map(
-                workflow.awardDetails.award_manager,
-                function (managerID) {
-                  return ContactsCache.getCachedContact(managerID).display_name;
+            return _.assign(
+              {},
+              _.omit(workflow, ['api.AwardDetail.get']),
+              {
+                awardDetails: awardDetails,
+                awardDetailsFormatted: {
+                  subtypeLabel: awardSubtypes[awardDetails.award_subtype].label,
+                  managers: _.map(
+                    awardDetails.award_manager,
+                    function (managerID) {
+                      return ContactsCache.getCachedContact(managerID).display_name;
+                    }
+                  )
                 }
-              )
-            };
-
-            delete workflow['api.AwardDetail.get'];
+              }
+            );
           });
-
-          return workflowsCopy;
         });
     }
 
