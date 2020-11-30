@@ -145,5 +145,19 @@
         expect($window.location.href).toBe('/civicrm/award/a/#/awards/new/2');
       });
     });
+
+    describe('when editing a workflow', () => {
+      var returnValue;
+
+      beforeEach(() => {
+        var workflow = CaseTypesMockData.getSequential()[0];
+
+        returnValue = ApplicantManagementWorkflow.getEditWorkflowURL(workflow);
+      });
+
+      it('redirects to the case type page for the clicked workflow', () => {
+        expect(returnValue).toBe('civicrm/award/a/#/awards/1/1');
+      });
+    });
   });
 })(CRM._);

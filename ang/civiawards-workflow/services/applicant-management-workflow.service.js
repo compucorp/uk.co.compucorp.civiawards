@@ -19,8 +19,17 @@
     var awardSubtypes = AwardSubtype.getAll();
 
     this.createDuplicate = createDuplicate;
+    this.getEditWorkflowURL = getEditWorkflowURL;
     this.getWorkflowsList = getWorkflowsList;
     this.redirectToWorkflowCreationScreen = redirectToWorkflowCreationScreen;
+
+    /**
+     * @param {string/number} workflow workflow object
+     * @returns {string} url to edit workflow page
+     */
+    function getEditWorkflowURL (workflow) {
+      return 'civicrm/award/a/#/awards/' + workflow.case_type_category + '/' + workflow.id;
+    }
 
     /**
      * @param {object} selectedFilters selected filter values
