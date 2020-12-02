@@ -1,0 +1,12 @@
+<div ng-controller="CiviAwardWorkflowFilterController">
+  <label>{{ts('Manager')}}</label>
+  <input
+    class="form-control"
+    crm-ui-select="{
+      allowClear: true,
+      placeholder: ts('Manager'),
+      multiple: false,
+      data: awardOptions
+    }"
+    ng-model="selectedFilters.awardFilter" />
+</div>

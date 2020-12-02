@@ -1,5 +1,5 @@
 (function (angular, $, _, CRM) {
-  var module = angular.module('civiawards');
+  var module = angular.module('civiawards-base');
 
   module.service('AwardSubtype', AwardSubtype);
 
@@ -8,7 +8,7 @@
    */
   function AwardSubtype () {
     this.getAll = function () {
-      return CRM.civiawards.awardSubtypes;
+      return CRM['civiawards-base'].awardSubtypes;
     };
   }
 })(angular, CRM.$, CRM._, CRM);

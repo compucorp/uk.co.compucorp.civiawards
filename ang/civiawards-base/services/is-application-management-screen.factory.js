@@ -1,5 +1,5 @@
 (function (angular) {
-  var module = angular.module('civiawards');
+  var module = angular.module('civiawards-base');
 
   module.factory('isApplicationManagementScreen', isApplicationManagementScreenFactory);
 

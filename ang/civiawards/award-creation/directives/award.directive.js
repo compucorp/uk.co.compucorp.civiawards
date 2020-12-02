@@ -16,7 +16,7 @@
 
   module.controller('CiviAwardCreateEditAwardController', function (
     $location, $q, $scope, $window, CaseTypeCategory, CaseStatus, crmApi, crmStatus,
-    getSelect2Value, ts) {
+    Select2Utils, ts) {
     var DEFAULT_ACTIVITY_TYPES = [
       { name: 'Applicant Review' },
       { name: 'Email' },
@@ -347,7 +347,7 @@
     function saveAdditionAwardDetails (award) {
       var params = {
         sequential: true,
-        award_manager: getSelect2Value($scope.additionalDetails.awardManagers),
+        award_manager: Select2Utils.getSelect2Value($scope.additionalDetails.awardManagers),
         case_type_id: award.id,
         start_date: $scope.additionalDetails.startDate,
         end_date: $scope.additionalDetails.endDate,

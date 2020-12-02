@@ -14,7 +14,7 @@
   });
 
   module.controller('CiviawardReviewPanelsController', function (
-    $q, $scope, ts, dialogService, crmApi, crmStatus, getSelect2Value,
+    $q, $scope, ts, dialogService, crmApi, crmStatus, Select2Utils,
     CaseStatus, isTruthy) {
     var relationshipTypesIndexed = {};
     var contactsIndexed = {};
@@ -538,7 +538,7 @@
           return {
             is_a_to_b: isAToB ? '1' : '0',
             relationship_type_id: relationshipTypeId,
-            contact_id: getSelect2Value(relation.contacts)
+            contact_id: Select2Utils.getSelect2Value(relation.contacts)
           };
         })
         .value();
@@ -561,12 +561,12 @@
           relationship: prepareRelationshipsForSave()
         },
         visibility_settings: {
-          application_status: getSelect2Value($scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus),
+          application_status: Select2Utils.getSelect2Value($scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus),
           anonymize_application: $scope.currentReviewPanel.visibilitySettings.anonymizeApplication ? '1' : '0',
           application_tags: $scope.currentReviewPanel.visibilitySettings.tags,
           is_application_status_restricted: $scope.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted ? '1' : '0',
           restricted_application_status: $scope.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted
-            ? getSelect2Value($scope.currentReviewPanel.visibilitySettings.restrictedApplicationStatus)
+            ? Select2Utils.getSelect2Value($scope.currentReviewPanel.visibilitySettings.restrictedApplicationStatus)
             : []
         }
       };

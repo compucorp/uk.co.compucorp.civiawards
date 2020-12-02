@@ -3,27 +3,27 @@
 (function (_) {
   describe('More Filters Dashboard Action Button', () => {
     let $q, $location, $scope, $controller, $rootScope, dialogService,
-      crmApiMock, crmApi;
+      civicaseCrmApiMock, civicaseCrmApi;
 
     beforeEach(module('civiawards', function ($provide) {
-      crmApiMock = jasmine.createSpy();
+      civicaseCrmApiMock = jasmine.createSpy();
 
-      $provide.value('crmApi', crmApiMock);
+      $provide.value('civicaseCrmApi', civicaseCrmApiMock);
       $provide.value('ts', jasmine.createSpy());
     }));
 
-    beforeEach(inject((_$q_, _crmApi_, _$controller_, _$rootScope_, _$location_, _dialogService_) => {
+    beforeEach(inject((_$q_, _civicaseCrmApi_, _$controller_, _$rootScope_, _$location_, _dialogService_) => {
       $q = _$q_;
       $controller = _$controller_;
       $location = _$location_;
       $rootScope = _$rootScope_;
       dialogService = _dialogService_;
-      crmApi = _crmApi_;
+      civicaseCrmApi = _civicaseCrmApi_;
 
       spyOn($rootScope, '$broadcast').and.callThrough();
 
       dialogService.dialogs = {};
-      crmApiMock.and.returnValue($q.resolve({
+      civicaseCrmApiMock.and.returnValue($q.resolve({
         values: [{
           case_type_id: 1
         }, {
@@ -125,8 +125,8 @@
           });
 
           it('shows the awards where the logged in user is the manager and also applies the rest of filters', () => {
-            expect(crmApi).toHaveBeenCalledWith('AwardManager', 'get', { sequential: 1, contact_id: 203 });
-            expect(crmApi).toHaveBeenCalledWith('AwardDetail', 'get', {
+            expect(civicaseCrmApi).toHaveBeenCalledWith('AwardManager', 'get', { sequential: 1, contact_id: 203 });
+            expect(civicaseCrmApi).toHaveBeenCalledWith('AwardDetail', 'get', {
               sequential: 1,
               start_date: '10/12/2019',
               end_date: '15/12/2019',
@@ -163,7 +163,7 @@
         });
 
         it('shows the all the awards', () => {
-          expect(crmApi).toHaveBeenCalledWith('AwardManager', 'get', { sequential: 1 });
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardManager', 'get', { sequential: 1 });
         });
       });
 
@@ -200,7 +200,7 @@
       describe('when filters response yields no awards types ids', () => {
         beforeEach(() => {
           // Overwrite CRM API to return no results.
-          crmApiMock.and.returnValue($q.resolve({
+          civicaseCrmApiMock.and.returnValue($q.resolve({
             values: []
           }));
         });
