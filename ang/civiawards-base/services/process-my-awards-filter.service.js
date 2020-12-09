@@ -18,7 +18,8 @@
      */
     function processMyAwardsFilter (managerFilter) {
       var filters = {
-        sequential: 1
+        sequential: 1,
+        options: { limit: 0 }
       };
 
       if (managerFilter === 'my_awards') {
