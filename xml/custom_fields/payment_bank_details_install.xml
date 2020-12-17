@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<CustomData>
+  <CustomGroups>
+    <CustomGroup>
+      <name>Awards_Payment_Bank_Details</name>
+      <title>Awards Payment Bank Details</title>
+      <extends>Contact</extends>
+      <style>Tab</style>
+      <collapse_display>0</collapse_display>
+      <help_pre></help_pre>
+      <help_post></help_post>
+      <weight>33</weight>
+      <is_active>0</is_active>
+      <table_name>civicrm_value_awards_paymen_45</table_name>
+      <is_multiple>0</is_multiple>
+      <collapse_adv_display>1</collapse_adv_display>
+      <created_date>2020-12-16 13:43:27</created_date>
+      <is_reserved>0</is_reserved>
+      <is_public>1</is_public>
+      <icon></icon>
+    </CustomGroup>
+  </CustomGroups>
+  <CustomFields>
+    <CustomField>
+      <name>Bank_Name</name>
+      <label>Bank Name</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_search_range>0</is_search_range>
+      <weight>1</weight>
+      <is_active>1</is_active>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>bank_name_69</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>IBAN</name>
+      <label>IBAN</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_search_range>0</is_search_range>
+      <weight>2</weight>
+      <is_active>1</is_active>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>iban_70</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Account_Holder_Name</name>
+      <label>Account Holder Name</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_search_range>0</is_search_range>
+      <weight>3</weight>
+      <is_active>1</is_active>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>account_holder_name_71</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Sort_code</name>
+      <label>Sort code</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_search_range>0</is_search_range>
+      <weight>4</weight>
+      <is_active>1</is_active>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>sort_code_72</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Account_number</name>
+      <label>Account number</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_search_range>0</is_search_range>
+      <weight>5</weight>
+      <is_active>1</is_active>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>account_number_73</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Notes</name>
+      <label>Notes</label>
+      <data_type>Memo</data_type>
+      <html_type>TextArea</html_type>
+      <is_search_range>0</is_search_range>
+      <weight>6</weight>
+      <attributes>rows=4, cols=60</attributes>
+      <is_active>1</is_active>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>notes_74</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+  </CustomFields>
+</CustomData>
