@@ -22,7 +22,7 @@ class CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields implements API_Wrapper {
    * {@inheritdoc}
    */
   public function toApiOutput($apiRequest, $result) {
-    if ($this->canHandleTheRequest($apiRequest)) {
+    if ($this->canHandleTheRequest($apiRequest) && !empty($result['values'])) {
       $this->addAwardManagerDetails($apiRequest, $result['values']);
       $this->addProfileFields($apiRequest, $result['values']);
     }
@@ -41,9 +41,8 @@ class CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields implements API_Wrapper {
    */
   private function canHandleTheRequest(array $apiRequest) {
     return $apiRequest['entity'] === 'AwardDetail' && in_array($apiRequest['action'], [
-        'get',
-        'create',
-      ]);
+      'get', 'create',
+    ]);
   }
 
   /**
