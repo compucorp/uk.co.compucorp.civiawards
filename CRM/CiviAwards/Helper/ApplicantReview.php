@@ -28,18 +28,11 @@ class CRM_CiviAwards_Helper_ApplicantReview {
    * Return the Custom Group ID attached to the Applicant review activity type.
    */
   public static function getApplicantReviewCustomGroupId() {
-    $applicantReviewCustomGroup = [];
-    $result = civicrm_api3('CustomGroup', 'get', [
-      'sequential' => 1,
-      'extends' => 'Activity',
+    $customGroup = civicrm_api3('CustomGroup', 'getsingle', [
       'extends_entity_column_value' => self::getActivityTypeId(),
     ]);
 
-    if (!empty($result['values'])) {
-      $applicantReviewCustomGroup = array_shift($result['values']);
-    }
-
-    return $applicantReviewCustomGroup['id'];
+    return $customGroup['id'];
   }
 
 }
