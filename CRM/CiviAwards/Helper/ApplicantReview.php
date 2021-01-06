@@ -3,7 +3,7 @@
 use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
 
 /**
- * Class CRM_CiviAwards_Helper_ApplicantReview.
+ * Helper class CRM_CiviAwards_Helper_ApplicantReview.
  */
 class CRM_CiviAwards_Helper_ApplicantReview {
 
@@ -22,6 +22,17 @@ class CRM_CiviAwards_Helper_ApplicantReview {
     ]);
 
     return $result['values'][0]['value'];
+  }
+
+  /**
+   * Return the Custom Group ID attached to the Applicant review activity type.
+   */
+  public static function getApplicantReviewCustomGroupId() {
+    $customGroup = civicrm_api3('CustomGroup', 'getsingle', [
+      'extends_entity_column_value' => self::getActivityTypeId(),
+    ]);
+
+    return $customGroup['id'];
   }
 
 }
