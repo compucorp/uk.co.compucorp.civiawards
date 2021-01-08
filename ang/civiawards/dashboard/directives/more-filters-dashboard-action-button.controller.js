@@ -92,8 +92,14 @@
       processMyAwardsFilter(model.selectedFilters.awardFilter)
         .then(processAwardSubtypeFilters)
         .then(function (awardSubtypeIds) {
+          var isCaseTypeActive = model.selectedFilters.showDisabledAwards
+            ? '0'
+            : '1';
           var param = {
-            case_type_id: awardSubtypeIds.length > 0 ? { IN: awardSubtypeIds } : { 'IS NULL': 1 }
+            'case_type_id.is_active': isCaseTypeActive,
+            case_type_id: awardSubtypeIds.length > 0
+              ? { IN: awardSubtypeIds }
+              : { 'IS NULL': 1 }
           };
 
           if (model.selectedFilters.statuses.length > 0) {
