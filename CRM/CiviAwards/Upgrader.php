@@ -9,6 +9,7 @@ use CRM_CiviAwards_Setup_CreateAwardSubtypeOptionGroup as CreateAwardSubtypeOpti
 use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
 use CRM_CiviAwards_Setup_DeleteApplicantReviewCustomField as DeleteApplicantReviewCustomField;
 use CRM_CiviAwards_Setup_AddApplicationManagementWordReplacement as AddApplicationManagementWordReplacement;
+use CRM_CiviAwards_Setup_AddCurrencyRelatedCustomFields as AddCurrencyRelatedCustomFields;
 use CRM_CiviAwards_Uninstall_RemoveCustomGroupSupportForAwardsCategory as RemoveCustomGroupSupportForAwardsCategory;
 use CRM_CiviAwards_Uninstall_RemoveCustomGroupSupportForApplicantManagement as RemoveCustomGroupSupportForApplicantManagement;
 use CRM_CiviAwards_Setup_CreateAwardsMenus as CreateAwardsMenus;
@@ -45,6 +46,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
     }
 
     $this->processXmlInstallationFiles();
+    (new AddCurrencyRelatedCustomFields())->apply();
   }
 
   /**
