@@ -55,13 +55,27 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
   }
 
   /**
-   * Returns the option values for Award Subtypes.
+   * Returns the option values for Award Subtypes that has been used.
    *
    * @return array
    *   Award Subtypes.
    */
   public static function getSubTypes() {
-    return AwardDetail::buildOptions('award_subtype');
+    $usedSubTypes = civicrm_api3('AwardDetail', 'get', [
+      'return' => ['award_subtype'],
+      'options' => ['limit' => 0],
+    ]);
+    if (empty($usedSubTypes['values'])) {
+      return [];
+    }
+    $usedSubTypes = array_unique(array_column($usedSubTypes['values'], 'award_subtype'));
+
+    $allSubTypes = AwardDetail::buildOptions('award_subtype');
+    $allSubTypes = array_filter($allSubTypes, function ($key) use ($usedSubTypes) {
+      return in_array($key, $usedSubTypes);
+    }, ARRAY_FILTER_USE_KEY);
+
+    return $allSubTypes;
   }
 
 }
