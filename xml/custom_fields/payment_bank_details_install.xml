@@ -10,7 +10,7 @@
       <collapse_display>0</collapse_display>
       <help_pre></help_pre>
       <help_post></help_post>
-      <weight>33</weight>
+      <weight>10</weight>
       <is_active>0</is_active>
       <table_name>civicrm_value_awards_paymen_45</table_name>
       <is_multiple>0</is_multiple>
@@ -23,42 +23,12 @@
   </CustomGroups>
   <CustomFields>
     <CustomField>
-      <name>Bank_Name</name>
-      <label>Bank Name</label>
+      <name>Account_Holder_Name</name>
+      <label>Bank Account Holder's Name</label>
       <data_type>String</data_type>
       <html_type>Text</html_type>
       <is_search_range>0</is_search_range>
       <weight>1</weight>
-      <is_active>1</is_active>
-      <text_length>255</text_length>
-      <note_columns>60</note_columns>
-      <note_rows>4</note_rows>
-      <column_name>bank_name_69</column_name>
-      <in_selector>0</in_selector>
-      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
-    </CustomField>
-    <CustomField>
-      <name>IBAN</name>
-      <label>IBAN</label>
-      <data_type>String</data_type>
-      <html_type>Text</html_type>
-      <is_search_range>0</is_search_range>
-      <weight>2</weight>
-      <is_active>1</is_active>
-      <text_length>255</text_length>
-      <note_columns>60</note_columns>
-      <note_rows>4</note_rows>
-      <column_name>iban_70</column_name>
-      <in_selector>0</in_selector>
-      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
-    </CustomField>
-    <CustomField>
-      <name>Account_Holder_Name</name>
-      <label>Account Holder Name</label>
-      <data_type>String</data_type>
-      <html_type>Text</html_type>
-      <is_search_range>0</is_search_range>
-      <weight>3</weight>
       <is_active>1</is_active>
       <text_length>255</text_length>
       <note_columns>60</note_columns>
@@ -68,23 +38,57 @@
       <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
     </CustomField>
     <CustomField>
-      <name>Sort_code</name>
-      <label>Sort code</label>
+      <name>Account_Holder_s_Address</name>
+      <label>Account Holder's Address</label>
       <data_type>String</data_type>
       <html_type>Text</html_type>
       <is_search_range>0</is_search_range>
-      <weight>4</weight>
+      <weight>2</weight>
+      <help_pre>Please use the address which is linked to the account</help_pre>
       <is_active>1</is_active>
       <text_length>255</text_length>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
-      <column_name>sort_code_72</column_name>
+      <column_name>account_holder_s_address_81</column_name>
       <in_selector>0</in_selector>
       <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
     </CustomField>
     <CustomField>
-      <name>Account_number</name>
-      <label>Account number</label>
+      <name>Bank_Name</name>
+      <label>Bank Name</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>0</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>3</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>bank_name_69</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Bank_Address</name>
+      <label>Bank Address</label>
+      <data_type>Memo</data_type>
+      <html_type>TextArea</html_type>
+      <is_search_range>0</is_search_range>
+      <weight>4</weight>
+      <attributes>rows=4, cols=60</attributes>
+      <is_active>1</is_active>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>bank_address_82</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>SWIFT_code_BIC</name>
+      <label>SWIFT code/BIC</label>
       <data_type>String</data_type>
       <html_type>Text</html_type>
       <is_search_range>0</is_search_range>
@@ -93,7 +97,55 @@
       <text_length>255</text_length>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
+      <column_name>swift_code_bic_83</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>IBAN_Branch</name>
+      <label>IBAN Branch</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_search_range>0</is_search_range>
+      <weight>6</weight>
+      <is_active>1</is_active>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>iban_branch_84</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Account_number</name>
+      <label>Account number</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>0</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>7</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
       <column_name>account_number_73</column_name>
+      <in_selector>0</in_selector>
+      <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Routing_Code</name>
+      <label>Routing Code</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_search_range>0</is_search_range>
+      <weight>8</weight>
+      <is_active>1</is_active>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>routing_code_85</column_name>
       <in_selector>0</in_selector>
       <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
     </CustomField>
@@ -103,10 +155,9 @@
       <data_type>Memo</data_type>
       <html_type>TextArea</html_type>
       <is_search_range>0</is_search_range>
-      <weight>6</weight>
+      <weight>10</weight>
       <attributes>rows=4, cols=60</attributes>
       <is_active>1</is_active>
-      <text_length>255</text_length>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
       <column_name>notes_74</column_name>
