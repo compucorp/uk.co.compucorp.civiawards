@@ -26,9 +26,8 @@ class CRM_CiviAwards_Service_AwardImport {
 
       throw new API_Exception('Exception while saving the Case Type for Award: ' . $exception->getMessage());
     }
-    $caseTypeId = array_shift($caseType['values'])['id'];
 
-    $params['case_type_id'] = $caseTypeId;
+    $params['case_type_id'] = $caseType['id'];
     $params['award_manager'] = !empty($params['award_manager']) ? json_decode($params['award_manager'], TRUE) : [];
     $params['review_fields'] = !empty($params['review_fields']) ? json_decode($params['review_fields'], TRUE) : [];
     try {
@@ -43,7 +42,7 @@ class CRM_CiviAwards_Service_AwardImport {
     if (!empty($params['review_panel_title'])) {
       try {
         civicrm_api3('AwardReviewPanel', 'create', [
-          'case_type_id' => $caseTypeId,
+          'case_type_id' => $caseType['id'],
           'title' => $params['review_panel_title'],
           'is_active' => $params['review_panel_is_active'] ?? 1,
           'visibility_settings' => [
