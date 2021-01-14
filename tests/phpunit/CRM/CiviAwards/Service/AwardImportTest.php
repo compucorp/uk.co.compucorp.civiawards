@@ -1,7 +1,6 @@
 <?php
 
 use CRM_CiviAwards_Service_AwardImport as AwardImportService;
-use CRM_CiviAwards_Helper_ApplicantReview as ApplicantReviewHelper;
 
 /**
  * Class for test CRM_CiviAwards_Service_AwardImport.
@@ -86,32 +85,6 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
     $this->assertCount(2, $awardDetail['award_manager']);
     $this->assertContains($contactIdOne, $awardDetail['award_manager']);
     $this->assertContains($contactIdTwo, $awardDetail['award_manager']);
-  }
-
-  /**
-   * Test the creation of review fields.
-   */
-  public function testImportAwardWithReviewFieldsInformation() {
-    $customFields = [$this->createReviewField()];
-
-    $params = array_merge(
-      $this->getBaseParamsForAward(),
-      [
-        'review_fields' => json_encode($customFields),
-      ]
-    );
-
-    (new AwardImportService())->create($params);
-
-    $awardCaseType = civicrm_api3('CaseType', 'getsingle', [
-      'title' => $params['title'],
-    ]);
-    $awardDetail = civicrm_api3('AwardDetail', 'getsingle', [
-      'case_type_id' => $awardCaseType['name'],
-    ]);
-    $this->assertCaseTypeInformation($params, $awardCaseType);
-    $this->assertDetailsInformation($params, $awardDetail);
-    $this->assertEquals($customFields, $awardDetail['review_fields']);
   }
 
   /**
@@ -237,7 +210,6 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
       'end_date' => date('Y-m-d', strtotime("+14 days")),
       'is_template' => '',
       'award_manager' => '',
-      'review_fields' => '',
     ];
   }
 
@@ -275,34 +247,6 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
     $this->assertEquals($expected['start_date'], $actual['start_date']);
     $this->assertEquals($expected['end_date'], $actual['end_date']);
     $this->assertEquals($expected['award_subtype'], $actual['award_subtype']);
-  }
-
-  /**
-   * Creates a review field.
-   *
-   * @return array
-   *   Review field details.
-   */
-  private function createReviewField() {
-    $suffix = rand();
-    $customField = civicrm_api3('CustomField', 'create', [
-      'custom_group_id' => ApplicantReviewHelper::getApplicantReviewCustomGroupId(),
-      'name' => 'test_review_field_' . $suffix,
-      'label' => 'Test Review Field ' . $suffix,
-      'data_type' => 'Boolean',
-      'default_value' => 1,
-      'html_type' => 'Radio',
-      'required' => 1,
-      'weight' => 2,
-    ]);
-
-    $customField = array_shift($customField['values']);
-
-    return [
-      'id' => $customField['id'],
-      'required' => $customField['is_required'],
-      'weight' => $customField['weight'],
-    ];
   }
 
 }

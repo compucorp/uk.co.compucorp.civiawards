@@ -63,12 +63,6 @@ function _civicrm_api3_award_import_create_spec(array &$spec) {
     'description' => 'A comma-separated list of Contact IDs',
   ];
 
-  $spec['review_fields'] = [
-    'type' => CRM_Utils_Type::T_STRING,
-    'title' => 'Award review fields',
-    'description' => 'A two-dimensional array of Custom fields properties. Example [{"id": 2, "required": true, "weight": 14}]',
-  ];
-
   $spec['activity_types'] = [
     'type' => CRM_Utils_Type::T_STRING,
     'title' => 'Award activity types',

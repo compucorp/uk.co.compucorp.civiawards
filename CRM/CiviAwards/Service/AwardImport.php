@@ -29,8 +29,7 @@ class CRM_CiviAwards_Service_AwardImport {
 
     $params['case_type_id'] = $caseType['id'];
     $params['award_manager'] = !empty($params['award_manager']) ? explode(',', $params['award_manager']) : [];
-
-    $params['review_fields'] = !empty($params['review_fields']) ? json_decode($params['review_fields'], TRUE) : [];
+    $params['review_fields'] = [];
     try {
       civicrm_api3('AwardDetail', 'create', $params);
     }
