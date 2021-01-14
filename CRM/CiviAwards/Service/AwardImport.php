@@ -16,7 +16,7 @@ class CRM_CiviAwards_Service_AwardImport {
   public function create(array $params) {
     $tx = new CRM_Core_Transaction();
 
-    $params['case_type_category'] = $this->getCaseCategoryValueForAwards();
+    $params['case_type_category'] = 'awards';
     $params['definition'] = $this->createDefinition($params);
     try {
       $caseType = civicrm_api3('CaseType', 'create', $params);
