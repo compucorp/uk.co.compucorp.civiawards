@@ -88,37 +88,6 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
   }
 
   /**
-   * Test the creation of ReviewPanel.
-   */
-  public function testImportAwardWithReviewPanelInformation() {
-    $paramsForReviewPanel = [
-      'review_panel_title' => 'Review Panel Title',
-      'review_panel_is_active' => 1,
-    ];
-    $params = array_merge(
-      $this->getBaseParamsForAward(),
-      $paramsForReviewPanel
-    );
-
-    (new AwardImportService())->create($params);
-
-    $awardCaseType = civicrm_api3('CaseType', 'getsingle', [
-      'title' => $params['title'],
-    ]);
-    $awardDetail = civicrm_api3('AwardDetail', 'getsingle', [
-      'case_type_id' => $awardCaseType['name'],
-    ]);
-    $awardReviewPanel = civicrm_api3('AwardReviewPanel', 'getsingle', [
-      'title' => $paramsForReviewPanel['review_panel_title'],
-    ]);
-
-    $this->assertCaseTypeInformation($params, $awardCaseType);
-    $this->assertDetailsInformation($params, $awardDetail);
-    $this->assertEquals($paramsForReviewPanel['review_panel_title'], $awardReviewPanel['title']);
-    $this->assertEquals($paramsForReviewPanel['review_panel_is_active'], $awardReviewPanel['is_active']);
-  }
-
-  /**
    * Test the creation of case type with activity information.
    */
   public function testImportAwardWithActivityInformation() {

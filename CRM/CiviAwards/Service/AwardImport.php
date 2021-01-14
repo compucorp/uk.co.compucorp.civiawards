@@ -39,33 +39,6 @@ class CRM_CiviAwards_Service_AwardImport {
       throw new API_Exception('Exception while saving the AwardDetail: ' . $exception->getMessage());
     }
 
-    if (!empty($params['review_panel_title'])) {
-      try {
-        civicrm_api3('AwardReviewPanel', 'create', [
-          'case_type_id' => $caseType['id'],
-          'title' => $params['review_panel_title'],
-          'is_active' => $params['review_panel_is_active'] ?? 1,
-          'visibility_settings' => [
-            'application_status' => [],
-            'anonymize_application' => '1',
-            'application_tags' => [],
-            'is_application_status_restricted' => '0',
-            'restricted_application_status' => [],
-          ],
-          'contact_settings' => [
-            'exclude_groups' => [],
-            'include_groups' => [],
-            'relationship' => [],
-          ],
-        ]);
-      }
-      catch (Exception $exception) {
-        $tx->rollback();
-
-        throw new API_Exception('Exception while saving the AwardReviewPanel: ' . $exception->getMessage());
-      }
-    }
-
     return TRUE;
   }
 

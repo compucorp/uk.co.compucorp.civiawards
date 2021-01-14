@@ -74,18 +74,6 @@ function _civicrm_api3_award_import_create_spec(array &$spec) {
     'title' => 'Award statuses',
     'description' => 'A two-dimensional array of Award statuses. Example ["won", "lost"]',
   ];
-
-  $spec['review_panel_title'] = [
-    'type' => CRM_Utils_Type::T_STRING,
-    'title' => ts('Review panel title'),
-    'description' => ts('Title of the Award review panel'),
-  ];
-
-  $spec['review_panel_is_active'] = [
-    'type' => CRM_Utils_Type::T_BOOLEAN,
-    'title' => ts('Review panel enabled?'),
-    'description' => ts('Is the Review Panel enabled?'),
-  ];
 }
 
 /**
