@@ -17,7 +17,7 @@ class CRM_CiviAwards_Service_AwardImport {
     $tx = new CRM_Core_Transaction();
 
     $params['case_type_category'] = 'awards';
-    $params['definition'] = $this->createDefinition($params);
+    $params['definition'] = $this->createDefaultDefinition($params);
     try {
       $caseType = civicrm_api3('CaseType', 'create', $params);
     }
@@ -54,46 +54,27 @@ class CRM_CiviAwards_Service_AwardImport {
   }
 
   /**
-   * Create the definition for the case type.
+   * Create a default definition for the award.
    *
-   * Makes an array with all the information required for the definition field
-   * on the case type.
-   *
-   * @param array $params
-   *   Information for creating the Award.
+   * Makes an array with all the minimal default information required for
+   * the definition field on the award.
    *
    * @return array
    *   Array with details for the definition field.
    */
-  private function createDefinition(array $params) {
-    if (!isset($params['activity_types'])) {
-      $params['activity_types'] = [
+  private function createDefaultDefinition() {
+    return [
+      'activityTypes' => [
         ['name' => 'Applicant Review'],
         ['name' => 'Email'],
         ['name' => 'Follow up'],
         ['name' => 'Meeting'],
         ['name' => 'Phone Call'],
-      ];
-    }
-    else {
-      $params['activity_types'] = json_decode($params['activity_types'], TRUE);
-    }
-
-    if (!isset($params['statuses'])) {
-      $params['statuses'] = [];
-    }
-    else {
-      $params['statuses'] = json_decode($params['statuses'], TRUE);
-    }
-
-    $params['caseRoles'] = [
-      ['name' => 'Application Manager'],
-    ];
-
-    return [
-      'activityTypes' => $params['activity_types'],
-      'caseRoles' => $params['caseRoles'],
-      'statuses' => $params['statuses'],
+      ],
+      'statuses' => [],
+      'caseRoles' => [
+        ['name' => 'Application Manager'],
+      ],
     ];
   }
 

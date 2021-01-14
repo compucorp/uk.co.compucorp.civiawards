@@ -88,61 +88,6 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
   }
 
   /**
-   * Test the creation of case type with activity information.
-   */
-  public function testImportAwardWithActivityInformation() {
-    $activityTypes = [
-      ['name' => 'Email'],
-      ['name' => 'Follow up'],
-    ];
-
-    $params = array_merge(
-      $this->getBaseParamsForAward(),
-      [
-        'activity_types' => json_encode($activityTypes),
-      ]
-    );
-
-    (new AwardImportService())->create($params);
-
-    $awardCaseType = civicrm_api3('CaseType', 'getsingle', [
-      'title' => $params['title'],
-    ]);
-    $awardDetail = civicrm_api3('AwardDetail', 'getsingle', [
-      'case_type_id' => $awardCaseType['name'],
-    ]);
-    $this->assertCaseTypeInformation($params, $awardCaseType);
-    $this->assertDetailsInformation($params, $awardDetail);
-    $this->assertEquals($activityTypes, $awardCaseType['definition']['activityTypes']);
-  }
-
-  /**
-   * Test the creation of case type with statuses information.
-   */
-  public function testImportAwardWithStatusesInformation() {
-    $statuses = ['won', 'lost', 'ongoing'];
-
-    $params = array_merge(
-      $this->getBaseParamsForAward(),
-      [
-        'statuses' => json_encode($statuses),
-      ]
-    );
-
-    (new AwardImportService())->create($params);
-
-    $awardCaseType = civicrm_api3('CaseType', 'getsingle', [
-      'title' => $params['title'],
-    ]);
-    $awardDetail = civicrm_api3('AwardDetail', 'getsingle', [
-      'case_type_id' => $awardCaseType['name'],
-    ]);
-    $this->assertCaseTypeInformation($params, $awardCaseType);
-    $this->assertDetailsInformation($params, $awardDetail);
-    $this->assertEquals($statuses, $awardCaseType['definition']['statuses']);
-  }
-
-  /**
    * Test that in case of error, all the operation is cancelled.
    */
   public function testErrorImportingAwardWithDetailInformation() {
@@ -197,11 +142,6 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
 
     $caseTypeCategoryForAwards = (new AwardImportService())->getCaseCategoryValueForAwards();
     $this->assertEquals($caseTypeCategoryForAwards, $actual['case_type_category']);
-
-    // We only check the existence of the keys in definition field here,
-    // content is checked on specific tests.
-    $this->assertArrayHasKey('activityTypes', $actual['definition']);
-    $this->assertArrayHasKey('caseRoles', $actual['definition']);
   }
 
   /**
