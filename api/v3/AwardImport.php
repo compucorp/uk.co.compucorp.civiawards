@@ -14,7 +14,6 @@ use CRM_CiviAwards_Service_AwardImport as AwardImportService;
  *   Description of fields supported by this API call.
  */
 function _civicrm_api3_award_import_create_spec(array &$spec) {
-
   $spec['title'] = [
     'type' => CRM_Utils_Type::T_STRING,
     'title' => ts('Award Title'),
@@ -29,8 +28,8 @@ function _civicrm_api3_award_import_create_spec(array &$spec) {
 
   $spec['is_active'] = [
     'type' => CRM_Utils_Type::T_BOOLEAN,
-    'title' => ts('Enabled?'),
-    'description' => ts('Is this Award enabled?'),
+    'title' => ts('Is Active'),
+    'description' => ts('Is this Award active?'),
   ];
 
   $spec['award_subtype'] = [
@@ -59,20 +58,8 @@ function _civicrm_api3_award_import_create_spec(array &$spec) {
 
   $spec['award_manager'] = [
     'type' => CRM_Utils_Type::T_STRING,
-    'title' => 'Award manager',
+    'title' => 'Award Manager',
     'description' => 'A comma-separated list of Contact IDs',
-  ];
-
-  $spec['activity_types'] = [
-    'type' => CRM_Utils_Type::T_STRING,
-    'title' => 'Award activity types',
-    'description' => 'A two-dimensional array of activity types. Example [{"name": "Applicant Review"}, {"name": "Email"}]',
-  ];
-
-  $spec['statuses'] = [
-    'type' => CRM_Utils_Type::T_STRING,
-    'title' => 'Award statuses',
-    'description' => 'A two-dimensional array of Award statuses. Example ["won", "lost"]',
   ];
 }
 
