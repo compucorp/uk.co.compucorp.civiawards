@@ -30,14 +30,16 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
   }
 
   /**
-   * Test the creation of the manager information.
+   * Test the Award creation with manager information.
+   *
+   * In this test only one manager is specified.
    */
-  public function testImportAwardWithManagerInformation() {
+  public function testImportAwardWithSingleManagerInformation() {
     $contactId = CRM_CiviAwards_Test_Fabricator_Contact::fabricate()['id'];
     $params = array_merge(
       $this->getBaseParamsForAward(),
       [
-        'award_manager' => json_encode([$contactId]),
+        'award_manager' => $contactId,
       ]
     );
 
@@ -53,6 +55,37 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
     $this->assertCaseTypeInformation($params, $awardCaseType);
     $this->assertDetailsInformation($params, $awardDetail);
     $this->assertEquals($contactId, $awardDetail['award_manager'][0]);
+  }
+
+  /**
+   * Test the Award creation with manager information.
+   *
+   * In this test two managers are specified.
+   */
+  public function testImportAwardWithMultipleManagerInformation() {
+    $contactIdOne = CRM_CiviAwards_Test_Fabricator_Contact::fabricate()['id'];
+    $contactIdTwo = CRM_CiviAwards_Test_Fabricator_Contact::fabricate()['id'];
+    $params = array_merge(
+      $this->getBaseParamsForAward(),
+      [
+        'award_manager' => "$contactIdOne,$contactIdTwo",
+      ]
+    );
+
+    (new AwardImportService())->create($params);
+
+    $awardCaseType = civicrm_api3('CaseType', 'getsingle', [
+      'title' => $params['title'],
+    ]);
+    $awardDetail = civicrm_api3('AwardDetail', 'getsingle', [
+      'case_type_id' => $awardCaseType['name'],
+    ]);
+
+    $this->assertCaseTypeInformation($params, $awardCaseType);
+    $this->assertDetailsInformation($params, $awardDetail);
+    $this->assertCount(2, $awardDetail['award_manager']);
+    $this->assertContains($contactIdOne, $awardDetail['award_manager']);
+    $this->assertContains($contactIdTwo, $awardDetail['award_manager']);
   }
 
   /**

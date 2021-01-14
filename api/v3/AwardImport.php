@@ -60,7 +60,7 @@ function _civicrm_api3_award_import_create_spec(array &$spec) {
   $spec['award_manager'] = [
     'type' => CRM_Utils_Type::T_STRING,
     'title' => 'Award manager',
-    'description' => 'An array of Contact IDs',
+    'description' => 'A comma-separated list of Contact IDs',
   ];
 
   $spec['review_fields'] = [
