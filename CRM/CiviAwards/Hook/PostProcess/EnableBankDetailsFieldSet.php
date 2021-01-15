@@ -3,7 +3,7 @@
 use CRM_CiviAwards_Service_FinanceManagementSetting as FinanceManagementSettingService;
 
 /**
- * Enable Ban kDetails FieldSet Post Process Hook class.
+ * Enable Bank Details FieldSet Post Process Hook class.
  */
 class CRM_CiviAwards_Hook_PostProcess_EnableBankDetailsFieldSet extends CRM_CiviAwards_Hook_CaseCategoryFormBase {
 
