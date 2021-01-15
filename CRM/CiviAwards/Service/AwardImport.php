@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Utility class for importing Awards using CSV importer extension.
  */
@@ -14,7 +15,7 @@ class CRM_CiviAwards_Service_AwardImport {
     $tx = new CRM_Core_Transaction();
 
     $params['case_type_category'] = 'awards';
-    $params['definition'] = $this->createDefaultDefinition($params);
+    $params['definition'] = $this->getDefaultDefinitionParams();
     try {
       $caseType = civicrm_api3('CaseType', 'create', $params);
     }
@@ -40,15 +41,15 @@ class CRM_CiviAwards_Service_AwardImport {
   }
 
   /**
-   * Create a default definition for the award.
+   * Returns the default definition params for the award.
    *
    * Makes an array with all the minimal default information required for
    * the definition field on the award.
    *
    * @return array
-   *   Array with details for the definition field.
+   *   Details for the definition field.
    */
-  private function createDefaultDefinition() {
+  private function getDefaultDefinitionParams() {
     return [
       'activityTypes' => [
         ['name' => 'Applicant Review'],
