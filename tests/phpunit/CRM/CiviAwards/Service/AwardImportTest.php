@@ -1,6 +1,7 @@
 <?php
 
 use CRM_CiviAwards_Service_AwardImport as AwardImportService;
+use CRM_CiviAwards_Helper_CaseTypeCategory as CaseTypeCategory;
 
 /**
  * Class for test CRM_CiviAwards_Service_AwardImport.
@@ -140,7 +141,7 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
     $this->assertEquals($expected['description'], $actual['description']);
     $this->assertEquals($expected['is_active'], $actual['is_active']);
 
-    $caseTypeCategoryForAwards = (new AwardImportService())->getCaseCategoryValueForAwards();
+    $caseTypeCategoryForAwards = $this->getCaseCategoryValueForAwards();
     $this->assertEquals($caseTypeCategoryForAwards, $actual['case_type_category']);
   }
 
@@ -156,6 +157,17 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
     $this->assertEquals($expected['start_date'], $actual['start_date']);
     $this->assertEquals($expected['end_date'], $actual['end_date']);
     $this->assertEquals($expected['award_subtype'], $actual['award_subtype']);
+  }
+
+  /**
+   * Get the case category value for Awards.
+   *
+   * @return int
+   *   The case category id for Awards.
+   */
+  private function getCaseCategoryValueForAwards() {
+    $caseCategories = CRM_Core_OptionGroup::values('case_type_categories', TRUE, FALSE, TRUE, NULL, 'name');
+    return $caseCategories[CaseTypeCategory::AWARDS_CASE_TYPE_CATEGORY_NAME];
   }
 
 }

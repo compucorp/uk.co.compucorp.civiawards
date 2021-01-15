@@ -1,7 +1,4 @@
 <?php
-
-use CRM_CiviAwards_Helper_CaseTypeCategory as CaseTypeCategory;
-
 /**
  * Utility class for importing Awards using CSV importer extension.
  */
@@ -40,17 +37,6 @@ class CRM_CiviAwards_Service_AwardImport {
     }
 
     return TRUE;
-  }
-
-  /**
-   * Get the case category value for Awards.
-   *
-   * @return int
-   *   The case category id for Awards.
-   */
-  public function getCaseCategoryValueForAwards() {
-    $caseCategories = CRM_Core_OptionGroup::values('case_type_categories', TRUE, FALSE, TRUE, NULL, 'name');
-    return $caseCategories[CaseTypeCategory::AWARDS_CASE_TYPE_CATEGORY_NAME];
   }
 
   /**
