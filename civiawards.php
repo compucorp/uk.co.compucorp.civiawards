@@ -81,6 +81,7 @@ function civiawards_civicrm_buildForm($formName, &$form) {
 function civiawards_civicrm_postProcess($formName, &$form) {
   $hooks = [
     new CRM_CiviAwards_Hook_PostProcess_SaveFinanceManagement(),
+    new CRM_CiviAwards_Hook_PostProcess_EnableBankDetailsFieldSet(),
   ];
 
   foreach ($hooks as $hook) {

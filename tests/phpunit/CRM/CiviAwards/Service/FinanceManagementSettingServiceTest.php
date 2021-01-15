@@ -4,6 +4,8 @@ use CRM_CiviAwards_Service_FinanceManagementSetting as FinanceManagementSettingS
 
 /**
  * Test class for the finance management settings service.
+ *
+ * @group headless
  */
 class CRM_CiviAwards_Service_FinanceManagementSettingServiceTest extends BaseHeadlessTest {
 
