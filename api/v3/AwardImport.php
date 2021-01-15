@@ -14,41 +14,9 @@ use CRM_CiviAwards_Service_AwardImport as AwardImportService;
  *   Description of fields supported by this API call.
  */
 function _civicrm_api3_award_import_create_spec(array &$spec) {
-  $spec['title'] = [
-    'type' => CRM_Utils_Type::T_STRING,
-    'title' => ts('Award Title'),
-    'description' => ts('Natural language name for the Award'),
-  ];
-
-  $spec['description'] = [
-    'type' => CRM_Utils_Type::T_STRING,
-    'title' => ts('Description'),
-    'description' => ts('Description of the Award'),
-  ];
-
-  $spec['is_active'] = [
-    'type' => CRM_Utils_Type::T_BOOLEAN,
-    'title' => ts('Is Active'),
-    'description' => ts('Is this Award active?'),
-  ];
-
-  $spec['award_subtype'] = [
-    'type' => CRM_Utils_Type::T_STRING,
-    'title' => CRM_CiviAwards_ExtensionUtil::ts('Award Subtype'),
-    'description' => CRM_CiviAwards_ExtensionUtil::ts('One of the values of the award_subtype option group'),
-  ];
-
-  $spec['start_date'] = [
-    'type' => CRM_Utils_Type::T_DATE,
-    'title' => CRM_CiviAwards_ExtensionUtil::ts('Start Date'),
-    'description' => CRM_CiviAwards_ExtensionUtil::ts('Award Start Date'),
-  ];
-
-  $spec['end_date'] = [
-    'type' => CRM_Utils_Type::T_DATE,
-    'title' => CRM_CiviAwards_ExtensionUtil::ts('End Date'),
-    'description' => CRM_CiviAwards_ExtensionUtil::ts('Award End Date'),
-  ];
+  $caseTypeFields = civicrm_api3('CaseType', 'getfields', ['api_action' => 'get']);
+  $awardDetailFields = civicrm_api3('AwardDetail', 'getfields', ['api_action' => 'get']);
+  $spec = array_merge($caseTypeFields['values'], $awardDetailFields['values']);
 
   $spec['is_template'] = [
     'type' => CRM_Utils_Type::T_BOOLEAN,
@@ -60,6 +28,12 @@ function _civicrm_api3_award_import_create_spec(array &$spec) {
     'type' => CRM_Utils_Type::T_STRING,
     'title' => 'Award Manager',
     'description' => 'A comma-separated list of Contact IDs',
+  ];
+
+  $spec['award_subtype'] = [
+    'type' => CRM_Utils_Type::T_STRING,
+    'title' => CRM_CiviAwards_ExtensionUtil::ts('Award Subtype'),
+    'description' => CRM_CiviAwards_ExtensionUtil::ts('One of the values of the award_subtype option group'),
   ];
 }
 
