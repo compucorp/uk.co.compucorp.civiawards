@@ -95,6 +95,9 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
     $params = $this->getBaseParamsForAward();
     $params['start_date'] = 'invalid date';
     $this->expectException(API_Exception::class);
+    $this->expectExceptionMessage(
+      "Exception while saving the AwardDetail: start_date is not a valid date: {$params['start_date']}"
+    );
     $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
 
     (new AwardImportService())->create($params);
