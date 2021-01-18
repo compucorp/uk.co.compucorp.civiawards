@@ -19,7 +19,7 @@
     is_forkable: '1',
     is_forked: ''
   }, {
-    id: '10',
+    id: '11',
     name: 'new_award_2',
     title: 'New Award 2',
     description: 'Description 2',
