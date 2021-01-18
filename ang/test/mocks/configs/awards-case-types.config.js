@@ -1,9 +1,7 @@
-(function () {
+((_) => {
   var module = angular.module('civiawards.data');
 
   module.config((AwardMockData, CaseTypesMockDataProvider) => {
-    CaseTypesMockDataProvider.add({
-      [AwardMockData.id]: AwardMockData[0]
-    });
+    _.each(AwardMockData, CaseTypesMockDataProvider.add);
   });
-}());
+})(CRM._);
