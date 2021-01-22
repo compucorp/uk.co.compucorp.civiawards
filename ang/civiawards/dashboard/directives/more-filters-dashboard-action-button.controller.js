@@ -138,7 +138,10 @@
      * @returns {Promise<number[]>} promise
      */
     function processAwardSubtypeFilters (caseTypeIDs) {
-      var filters = { sequential: 1 };
+      var filters = {
+        sequential: 1,
+        options: { limit: 0 }
+      };
 
       if (caseTypeIDs.length === 0) {
         return $q.resolve([]);

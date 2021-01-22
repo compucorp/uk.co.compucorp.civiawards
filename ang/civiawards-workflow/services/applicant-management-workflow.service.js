@@ -155,7 +155,8 @@
      */
     function prepareFilterObject (selectedFilters, caseTypeIDs) {
       var filters = {
-        sequential: 1
+        sequential: 1,
+        options: { limit: 0 }
       };
 
       filters.case_type_id = { IN: caseTypeIDs };

@@ -133,6 +133,7 @@
             });
             expect(civicaseCrmApi).toHaveBeenCalledWith('AwardDetail', 'get', {
               sequential: 1,
+              options: { limit: 0 },
               start_date: '10/12/2019',
               end_date: '15/12/2019',
               case_type_id: { IN: [1, 2] },

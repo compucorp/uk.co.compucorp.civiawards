@@ -94,6 +94,7 @@
       it('filters by subtype', () => {
         expect(civicaseCrmApiMock).toHaveBeenCalledWith('AwardDetail', 'get', {
           sequential: 1,
+          options: { limit: 0 },
           is_template: 1,
           case_type_id: { IN: [1, 2, 3] },
           award_subtype: { IN: [4, 5] }
