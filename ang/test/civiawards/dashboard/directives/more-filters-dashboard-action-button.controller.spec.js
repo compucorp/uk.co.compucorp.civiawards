@@ -219,6 +219,7 @@
           dialogModel.selectedFilters.award_subtypes = '';
           dialogModel.selectedFilters.start_date = null;
           dialogModel.selectedFilters.end_date = null;
+          dialogModel.selectedFilters.showDisabledAwards = false;
           dialogModel.applyFilterAndCloseDialog();
         });
 
@@ -234,6 +235,7 @@
           dialogModel.selectedFilters.award_subtypes = '';
           dialogModel.selectedFilters.start_date = null;
           dialogModel.selectedFilters.end_date = null;
+          dialogModel.selectedFilters.showDisabledAwards = false;
           dialogModel.applyFilterAndCloseDialog();
         });
 

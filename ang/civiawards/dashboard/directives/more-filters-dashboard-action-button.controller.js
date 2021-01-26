@@ -21,6 +21,14 @@
   function MoreFiltersDashboardActionButtonController ($rootScope, $scope, $q,
     Select2Utils, civicaseCrmApi, dialogService, ts, CaseStatus, AwardSubtype,
     isApplicationManagementScreen, processMyAwardsFilter) {
+    var DEFAULT_FILTERS = {
+      awardFilter: 'my_awards',
+      statuses: '',
+      award_subtypes: '',
+      start_date: null,
+      end_date: null,
+      showDisabledAwards: false
+    };
     var model = {
       statuses: _.map(CaseStatus.getAll(), mapSelectOptions),
       award_subtypes: _.map(AwardSubtype.getAll(), mapSelectOptions),
@@ -28,13 +36,7 @@
         { text: ts('My Awards'), id: 'my_awards' },
         { text: ts('All Awards'), id: 'all_awards' }
       ],
-      selectedFilters: {
-        awardFilter: 'my_awards',
-        statuses: '',
-        award_subtypes: '',
-        start_date: null,
-        end_date: null
-      },
+      selectedFilters: _.clone(DEFAULT_FILTERS),
       applyFilterAndCloseDialog: applyFilterAndCloseDialog
     };
 
@@ -49,18 +51,13 @@
     }());
 
     /**
-     * Checks if Notification should be visible
+     * Checks if Notification should be visible. This is true when the user
+     * has selected a new filter value different from the default state.
      *
      * @returns {boolean} if Notification should be visible
      */
     function isNotificationVisible () {
-      return !_.isEqual(model.selectedFilters, {
-        awardFilter: 'my_awards',
-        statuses: '',
-        award_subtypes: '',
-        start_date: null,
-        end_date: null
-      });
+      return !_.isEqual(model.selectedFilters, DEFAULT_FILTERS);
     }
 
     /**
