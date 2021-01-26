@@ -27,7 +27,7 @@
       award_subtypes: '',
       start_date: null,
       end_date: null,
-      showDisabledAwards: false
+      onlyShowDisabledAwards: false
     };
     var model = {
       statuses: _.map(CaseStatus.getAll(), mapSelectOptions),
@@ -89,7 +89,7 @@
       processMyAwardsFilter(model.selectedFilters.awardFilter)
         .then(processAwardSubtypeFilters)
         .then(function (awardSubtypeIds) {
-          var isCaseTypeActive = model.selectedFilters.showDisabledAwards
+          var isCaseTypeActive = model.selectedFilters.onlyShowDisabledAwards
             ? '0'
             : '1';
           var param = {
