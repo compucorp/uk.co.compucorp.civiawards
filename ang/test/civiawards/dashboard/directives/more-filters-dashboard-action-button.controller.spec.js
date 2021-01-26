@@ -120,7 +120,7 @@
             dialogModel.selectedFilters.end_date = '15/12/2019';
             dialogModel.selectedFilters.award_subtypes = '1,2';
             dialogModel.selectedFilters.statuses = '2,3';
-            dialogModel.selectedFilters.showDisabledAwards = false;
+            dialogModel.selectedFilters.onlyShowDisabledAwards = false;
             dialogModel.applyFilterAndCloseDialog();
             $rootScope.$digest();
           });
@@ -150,7 +150,7 @@
         describe('disabled awards', () => {
           describe('when showing disabled awards', () => {
             beforeEach(() => {
-              dialogModel.selectedFilters.showDisabledAwards = true;
+              dialogModel.selectedFilters.onlyShowDisabledAwards = true;
               dialogModel.applyFilterAndCloseDialog();
               $rootScope.$digest();
             });
@@ -167,7 +167,7 @@
 
           describe('when hiding disabled awards', () => {
             beforeEach(() => {
-              dialogModel.selectedFilters.showDisabledAwards = false;
+              dialogModel.selectedFilters.onlyShowDisabledAwards = false;
               dialogModel.applyFilterAndCloseDialog();
               $rootScope.$digest();
             });
@@ -219,6 +219,7 @@
           dialogModel.selectedFilters.award_subtypes = '';
           dialogModel.selectedFilters.start_date = null;
           dialogModel.selectedFilters.end_date = null;
+          dialogModel.selectedFilters.onlyShowDisabledAwards = false;
           dialogModel.applyFilterAndCloseDialog();
         });
 
@@ -234,6 +235,7 @@
           dialogModel.selectedFilters.award_subtypes = '';
           dialogModel.selectedFilters.start_date = null;
           dialogModel.selectedFilters.end_date = null;
+          dialogModel.selectedFilters.onlyShowDisabledAwards = false;
           dialogModel.applyFilterAndCloseDialog();
         });
 
