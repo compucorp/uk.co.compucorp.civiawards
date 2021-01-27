@@ -156,6 +156,29 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
   }
 
   /**
+   * Test that the operation fails when no award start date is received.
+   */
+  public function testErrorImportingAwardWithoutStartDate() {
+    $params = $this->getBaseParamsForAward();
+    $params['start_date'] = '';
+    $this->expectException(API_Exception::class);
+    $this->expectExceptionMessage(
+      'Exception while saving the AwardDetail: Award Start Date should not be empty'
+    );
+    $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
+
+    (new AwardImportService())->create($params);
+
+    $awardCaseType = civicrm_api3('CaseType', 'get', [
+      'title' => $params['title'],
+    ]);
+    // No case type created.
+    $this->assertEquals(0, $awardCaseType['count']);
+    // No new award details found.
+    $this->assertEquals($initialAwardCount, civicrm_api3('AwardDetail', 'getcount'));
+  }
+
+  /**
    * Base information for creating the Case Type and Details.
    *
    * @return array

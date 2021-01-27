@@ -81,6 +81,10 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
    *   Parameters.
    */
   private static function validateDates(array $params) {
+    if (empty($params['start_date'])) {
+      throw new Exception("Award Start Date should not be empty");
+    }
+
     if (!empty($params['start_date']) && !empty($params['end_date'])) {
       $startDate = new DateTime($params['start_date']);
       $endDate = new DateTime($params['end_date']);
