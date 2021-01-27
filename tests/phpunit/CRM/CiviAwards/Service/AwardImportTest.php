@@ -91,13 +91,34 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
   /**
    * Test that in case of error, all the operation is cancelled.
    */
-  public function testErrorImportingAwardWithDetailInformation() {
+  public function testErrorImportingAwardWithInvalidDate() {
     $params = $this->getBaseParamsForAward();
     $params['start_date'] = 'invalid date';
     $this->expectException(API_Exception::class);
     $this->expectExceptionMessage(
       "Exception while saving the AwardDetail: start_date is not a valid date: {$params['start_date']}"
     );
+    $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
+
+    (new AwardImportService())->create($params);
+
+    $awardCaseType = civicrm_api3('CaseType', 'get', [
+      'title' => $params['title'],
+    ]);
+    // No case type created.
+    $this->assertEquals(0, $awardCaseType['count']);
+    // No new award details found.
+    $this->assertEquals($initialAwardCount, civicrm_api3('AwardDetail', 'getcount'));
+  }
+
+  /**
+   * Test that in case of error, all the operation is cancelled.
+   */
+  public function testErrorImportingAwardWithEmptyTitle() {
+    $params = $this->getBaseParamsForAward();
+    $params['title'] = '';
+    $this->expectException(API_Exception::class);
+    $this->expectExceptionMessage('Invalid param received: Award Title should not be empty');
     $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
 
     (new AwardImportService())->create($params);

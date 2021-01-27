@@ -12,6 +12,8 @@ class CRM_CiviAwards_Service_AwardImport {
    *   Information for creating the award and related entities.
    */
   public function create(array $params) {
+    $this->validateParams($params);
+
     $tx = new CRM_Core_Transaction();
 
     $params['case_type_category'] = 'awards';
@@ -63,6 +65,18 @@ class CRM_CiviAwards_Service_AwardImport {
         ['name' => 'Application Manager'],
       ],
     ];
+  }
+
+  /**
+   * Validate information received.
+   *
+   * @param array $params
+   *   Information for creating the award and related entities.
+   */
+  private function validateParams(array $params) {
+    if (empty($params['title'])) {
+      throw new API_Exception('Invalid param received: Award Title should not be empty');
+    }
   }
 
 }
