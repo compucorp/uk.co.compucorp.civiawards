@@ -140,7 +140,7 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
     $params['award_subtype'] = '';
     $this->expectException(API_Exception::class);
     $this->expectExceptionMessage(
-      'Exception while saving the AwardDetail: Award Subtype should not be empty'
+      'Exception while saving the AwardDetail: The Award Subtype field should not be empty'
     );
     $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
 
@@ -163,7 +163,7 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
     $params['start_date'] = '';
     $this->expectException(API_Exception::class);
     $this->expectExceptionMessage(
-      'Exception while saving the AwardDetail: Award Start Date should not be empty'
+      'Exception while saving the AwardDetail: The Award Start Date field should not be empty'
     );
     $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
 
@@ -186,7 +186,7 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
     $params['award_manager'] = '';
     $this->expectException(API_Exception::class);
     $this->expectExceptionMessage(
-      'Exception while saving the AwardDetail: Award Manager should not be empty'
+      'Exception while saving the AwardDetail: The Award Manager field should not be empty'
     );
     $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
 

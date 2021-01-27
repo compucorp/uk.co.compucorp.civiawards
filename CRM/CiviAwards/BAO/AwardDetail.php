@@ -66,13 +66,30 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
    *   Parameters.
    */
   private static function validateParams(array &$params) {
-    if (empty($params['award_subtype'])) {
-      throw new Exception('Award Subtype should not be empty');
-    }
-
+    self::validateMandatory($params);
     self::validateDates($params);
     self::validateReviewFields($params);
     self::validateAwardManager($params);
+  }
+
+  /**
+   * Ensures that required fields are provided.
+   *
+   * @param array $params
+   *   Parameters.
+   */
+  private static function validateMandatory(array $params) {
+    $mandatoryFields = [
+      'start_date' => 'Award Start Date',
+      'award_subtype' => 'Award Subtype',
+      'award_manager' => 'Award Manager',
+    ];
+
+    foreach ($mandatoryFields as $field => $label) {
+      if (empty($params[$field])) {
+        throw new Exception("The {$label} field should not be empty");
+      }
+    }
   }
 
   /**
@@ -82,10 +99,6 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
    *   Parameters.
    */
   private static function validateDates(array $params) {
-    if (empty($params['start_date'])) {
-      throw new Exception("Award Start Date should not be empty");
-    }
-
     if (!empty($params['start_date']) && !empty($params['end_date'])) {
       $startDate = new DateTime($params['start_date']);
       $endDate = new DateTime($params['end_date']);
@@ -129,10 +142,6 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
    * @throws \Exception
    */
   private static function validateAwardManager(array $params) {
-    if (empty($params['award_manager'])) {
-      throw new Exception('Award Manager should not be empty');
-    }
-
     $contactManagers = (array) $params['award_manager'];
     foreach ($contactManagers as $contactId) {
       $contact = civicrm_api3('Contact', 'get', [
