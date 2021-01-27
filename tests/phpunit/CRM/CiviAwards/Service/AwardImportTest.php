@@ -179,6 +179,52 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
   }
 
   /**
+   * Test that the operation fails when no award manager is received.
+   */
+  public function testErrorImportingAwardWithoutManager() {
+    $params = $this->getBaseParamsForAward();
+    $params['award_manager'] = '';
+    $this->expectException(API_Exception::class);
+    $this->expectExceptionMessage(
+      'Exception while saving the AwardDetail: Award Manager should not be empty'
+    );
+    $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
+
+    (new AwardImportService())->create($params);
+
+    $awardCaseType = civicrm_api3('CaseType', 'get', [
+      'title' => $params['title'],
+    ]);
+    // No case type created.
+    $this->assertEquals(0, $awardCaseType['count']);
+    // No new award details found.
+    $this->assertEquals($initialAwardCount, civicrm_api3('AwardDetail', 'getcount'));
+  }
+
+  /**
+   * Test that the operation fails when an invalid manager is received.
+   */
+  public function testErrorImportingAwardWithInvalidManager() {
+    $params = $this->getBaseParamsForAward();
+    $params['award_manager'] = rand(1000000, 10000000);
+    $this->expectException(API_Exception::class);
+    $this->expectExceptionMessage(
+      "Exception while saving the AwardDetail: Invalid Contact Received: {$params['award_manager']}"
+    );
+    $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
+
+    (new AwardImportService())->create($params);
+
+    $awardCaseType = civicrm_api3('CaseType', 'get', [
+      'title' => $params['title'],
+    ]);
+    // No case type created.
+    $this->assertEquals(0, $awardCaseType['count']);
+    // No new award details found.
+    $this->assertEquals($initialAwardCount, civicrm_api3('AwardDetail', 'getcount'));
+  }
+
+  /**
    * Base information for creating the Case Type and Details.
    *
    * @return array
@@ -194,7 +240,7 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
       'start_date' => date('Y-m-d', strtotime('+1 day')),
       'end_date' => date('Y-m-d', strtotime("+14 days")),
       'is_template' => '',
-      'award_manager' => '',
+      'award_manager' => '1',
     ];
   }
 

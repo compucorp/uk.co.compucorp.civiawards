@@ -72,6 +72,7 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
 
     self::validateDates($params);
     self::validateReviewFields($params);
+    self::validateAwardManager($params);
   }
 
   /**
@@ -117,6 +118,30 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
     $reviewFields = CRM_Utils_Array::value('review_fields', $params);
     $reviewFieldsValidator = new CRM_CiviAwards_Helper_CreateReviewFieldsValidator();
     $reviewFieldsValidator->validate($reviewFields);
+  }
+
+  /**
+   * Validates award_manager options to ensure legal options are passed.
+   *
+   * @param array $params
+   *   Request Parameters.
+   *
+   * @throws \Exception
+   */
+  private static function validateAwardManager(array $params) {
+    if (empty($params['award_manager'])) {
+      throw new Exception('Award Manager should not be empty');
+    }
+
+    $contactManagers = (array) $params['award_manager'];
+    foreach ($contactManagers as $contactId) {
+      $contact = civicrm_api3('Contact', 'get', [
+        'id' => $contactId,
+      ]);
+      if ($contact['count'] == 0) {
+        throw new Exception("Invalid Contact Received: {$contactId}");
+      }
+    }
   }
 
 }
