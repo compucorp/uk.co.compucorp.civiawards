@@ -112,13 +112,36 @@ class CRM_CiviAwards_Service_AwardImportTest extends BaseHeadlessTest {
   }
 
   /**
-   * Test that in case of error, all the operation is cancelled.
+   * Test that the operation fails when no award title is received.
    */
   public function testErrorImportingAwardWithEmptyTitle() {
     $params = $this->getBaseParamsForAward();
     $params['title'] = '';
     $this->expectException(API_Exception::class);
     $this->expectExceptionMessage('Invalid param received: Award Title should not be empty');
+    $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
+
+    (new AwardImportService())->create($params);
+
+    $awardCaseType = civicrm_api3('CaseType', 'get', [
+      'title' => $params['title'],
+    ]);
+    // No case type created.
+    $this->assertEquals(0, $awardCaseType['count']);
+    // No new award details found.
+    $this->assertEquals($initialAwardCount, civicrm_api3('AwardDetail', 'getcount'));
+  }
+
+  /**
+   * Test that the operation fails when no award subtype is received.
+   */
+  public function testErrorImportingAwardWithoutSubtype() {
+    $params = $this->getBaseParamsForAward();
+    $params['award_subtype'] = '';
+    $this->expectException(API_Exception::class);
+    $this->expectExceptionMessage(
+      'Exception while saving the AwardDetail: Award Subtype should not be empty'
+    );
     $initialAwardCount = civicrm_api3('AwardDetail', 'getcount');
 
     (new AwardImportService())->create($params);

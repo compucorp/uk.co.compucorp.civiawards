@@ -66,6 +66,10 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
    *   Parameters.
    */
   private static function validateParams(array &$params) {
+    if (empty($params['award_subtype'])) {
+      throw new Exception('Award Subtype should not be empty');
+    }
+
     self::validateDates($params);
     self::validateReviewFields($params);
   }
