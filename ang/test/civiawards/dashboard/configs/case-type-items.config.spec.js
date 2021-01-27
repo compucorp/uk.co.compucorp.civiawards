@@ -19,10 +19,15 @@
     }));
 
     describe('after the awards module has been configured', () => {
+      const AWARD_BUTTON_PATH = '~/civiawards/dashboard/directives/edit-award-button.html';
+
       it('it adds the edit award button template to the awards case type', () => {
         expect(DashboardCaseTypeItems).toEqual({
           [AwardMockData[0].name]: [{
-            templateUrl: '~/civiawards/dashboard/directives/edit-award-button.html'
+            templateUrl: AWARD_BUTTON_PATH
+          }],
+          [AwardMockData[1].name]: [{
+            templateUrl: AWARD_BUTTON_PATH
           }]
         });
       });

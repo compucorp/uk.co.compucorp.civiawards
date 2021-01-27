@@ -23,6 +23,14 @@
 
       <label>{{ts('Award End Date')}}</label>
       <civicase-ui-date-range date-range="model.selectedFilters.end_date"></civicase-ui-date-range>
+
+      <br />
+      <div
+        civicase-checkbox
+        ng-model="model.selectedFilters.onlyShowDisabledAwards"
+      >
+        {{ts('Only Show Disabled Awards')}}
+      </div>
     </div>
 
     <button
