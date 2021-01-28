@@ -66,8 +66,30 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
    *   Parameters.
    */
   private static function validateParams(array &$params) {
+    self::validateMandatory($params);
     self::validateDates($params);
     self::validateReviewFields($params);
+    self::validateAwardManager($params);
+  }
+
+  /**
+   * Ensures that required fields are provided.
+   *
+   * @param array $params
+   *   Parameters.
+   */
+  private static function validateMandatory(array $params) {
+    $mandatoryFields = [
+      'start_date' => 'Award Start Date',
+      'award_subtype' => 'Award Subtype',
+      'award_manager' => 'Award Manager',
+    ];
+
+    foreach ($mandatoryFields as $field => $label) {
+      if (empty($params[$field])) {
+        throw new Exception("The {$label} field should not be empty");
+      }
+    }
   }
 
   /**
@@ -109,6 +131,26 @@ class CRM_CiviAwards_BAO_AwardDetail extends CRM_CiviAwards_DAO_AwardDetail {
     $reviewFields = CRM_Utils_Array::value('review_fields', $params);
     $reviewFieldsValidator = new CRM_CiviAwards_Helper_CreateReviewFieldsValidator();
     $reviewFieldsValidator->validate($reviewFields);
+  }
+
+  /**
+   * Validates award_manager options to ensure legal options are passed.
+   *
+   * @param array $params
+   *   Request Parameters.
+   *
+   * @throws \Exception
+   */
+  private static function validateAwardManager(array $params) {
+    $contactManagers = (array) $params['award_manager'];
+    foreach ($contactManagers as $contactId) {
+      $contact = civicrm_api3('Contact', 'get', [
+        'id' => $contactId,
+      ]);
+      if ($contact['count'] == 0) {
+        throw new Exception("Invalid Contact Received: {$contactId}");
+      }
+    }
   }
 
 }
