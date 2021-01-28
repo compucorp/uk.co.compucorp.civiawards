@@ -120,6 +120,7 @@
             dialogModel.selectedFilters.end_date = '15/12/2019';
             dialogModel.selectedFilters.award_subtypes = '1,2';
             dialogModel.selectedFilters.statuses = '2,3';
+            dialogModel.selectedFilters.onlyShowDisabledAwards = false;
             dialogModel.applyFilterAndCloseDialog();
             $rootScope.$digest();
           });
@@ -140,7 +141,44 @@
             expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', {
               case_type_id: { IN: [1, 2] },
               status_id: { IN: ['2', '3'] },
-              'status_id.grouping': { IN: ['Closed', 'Opened'] }
+              'status_id.grouping': { IN: ['Closed', 'Opened'] },
+              'case_type_id.is_active': '1'
+            });
+          });
+        });
+
+        describe('disabled awards', () => {
+          describe('when showing disabled awards', () => {
+            beforeEach(() => {
+              dialogModel.selectedFilters.onlyShowDisabledAwards = true;
+              dialogModel.applyFilterAndCloseDialog();
+              $rootScope.$digest();
+            });
+
+            it('filters applications by disabled awards', () => {
+              expect($rootScope.$broadcast).toHaveBeenCalledWith(
+                'civicase::dashboard-filters::updated',
+                jasmine.objectContaining({
+                  'case_type_id.is_active': '0'
+                })
+              );
+            });
+          });
+
+          describe('when hiding disabled awards', () => {
+            beforeEach(() => {
+              dialogModel.selectedFilters.onlyShowDisabledAwards = false;
+              dialogModel.applyFilterAndCloseDialog();
+              $rootScope.$digest();
+            });
+
+            it('filters applications by enabled awards', () => {
+              expect($rootScope.$broadcast).toHaveBeenCalledWith(
+                'civicase::dashboard-filters::updated',
+                jasmine.objectContaining({
+                  'case_type_id.is_active': '1'
+                })
+              );
             });
           });
         });
@@ -181,6 +219,7 @@
           dialogModel.selectedFilters.award_subtypes = '';
           dialogModel.selectedFilters.start_date = null;
           dialogModel.selectedFilters.end_date = null;
+          dialogModel.selectedFilters.onlyShowDisabledAwards = false;
           dialogModel.applyFilterAndCloseDialog();
         });
 
@@ -196,6 +235,7 @@
           dialogModel.selectedFilters.award_subtypes = '';
           dialogModel.selectedFilters.start_date = null;
           dialogModel.selectedFilters.end_date = null;
+          dialogModel.selectedFilters.onlyShowDisabledAwards = false;
           dialogModel.applyFilterAndCloseDialog();
         });
 

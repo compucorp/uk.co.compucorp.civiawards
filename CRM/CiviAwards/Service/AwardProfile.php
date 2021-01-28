@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class CRM_CiviAwards_Service_AwardProfile.
+ * Service class CRM_CiviAwards_Service_AwardProfile.
  */
 class CRM_CiviAwards_Service_AwardProfile {
 
@@ -34,26 +34,22 @@ class CRM_CiviAwards_Service_AwardProfile {
    *   Profile Id.
    *
    * @throws \CiviCRM_API3_Exception
+   *   API3 Exception.
    */
   public function createProfileFields(array $customFields, $profileId) {
+    $this->addContactIdField($profileId);
+
     foreach ($customFields as $customField) {
-      $uFField = civicrm_api3('UFField', 'create', [
+      civicrm_api3('UFField', 'create', [
         'uf_group_id' => $profileId,
         'field_name' => 'custom_' . $customField['id'],
         'field_type' => 'Activity',
         'label' => 'Activity Field' . $customField['id'],
         'is_required' => $customField['required'],
-      ]);
-
-      // UFField weight seems to be ignored on create irrespective of whatever is
-      // passed, Civi will assign the next available weight. So we update the
-      // weight after creating.
-      civicrm_api3('UFField', 'create', [
-        'id' => $uFField['id'],
         'weight' => $customField['weight'],
+        'option.autoweight' => FALSE,
       ]);
     }
-    $this->addContactIdField($profileId);
   }
 
   /**
@@ -136,7 +132,7 @@ class CRM_CiviAwards_Service_AwardProfile {
 
     $customFields = [];
     foreach ($result['values'] as $profileField) {
-      if (strpos($profileField['field_name'], 'custom_') === 0) { 
+      if (strpos($profileField['field_name'], 'custom_') === 0) {
         $customFields[] = [
           'id' => substr($profileField['field_name'], 7),
           'required' => $profileField['is_required'],

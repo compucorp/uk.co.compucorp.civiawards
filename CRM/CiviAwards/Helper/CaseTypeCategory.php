@@ -32,6 +32,7 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
     $result = civicrm_api3('CaseType', 'get', [
       'return' => ['title', 'id'],
       'case_type_category' => ['IN' => $applicantManagementCategories],
+      'options' => ['limit' => 0],
     ]);
 
     return array_column($result['values'], 'title', 'id');
@@ -43,6 +44,7 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
   public static function getApplicantManagementCaseCategories() {
     $instance = civicrm_api3('CaseCategoryInstance', 'get', [
       'instance_id' => self::APPLICATION_MANAGEMENT_NAME,
+      'options' => ['limit' => 0],
     ]);
 
     if (empty($instance['values'])) {
