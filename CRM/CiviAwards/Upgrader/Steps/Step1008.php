@@ -16,6 +16,7 @@ class CRM_CiviAwards_Upgrader_Steps_Step1008 {
    */
   public function apply() {
     $this->addIsTemplateColumn();
+    $this->syncLogTables();
 
     return TRUE;
   }
@@ -32,6 +33,14 @@ class CRM_CiviAwards_Upgrader_Steps_Step1008 {
         ALTER TABLE {$awardDetailTable}
         ADD COLUMN {$isTemplateColumn} tinyint DEFAULT 0 COMMENT 'Whether the award detail is for a template or not'");
     }
+  }
+
+  /**
+   * Sync log tables.
+   */
+  private function syncLogTables() {
+    $logging = new CRM_Logging_Schema();
+    $logging->fixSchemaDifferencesFor(AwardDetail::getTableName());
   }
 
 }
