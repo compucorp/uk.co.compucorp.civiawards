@@ -399,45 +399,92 @@
     });
 
     describe('when saving a new award', () => {
-      beforeEach(() => {
-        createController({ ifNewAward: true });
-        setAwardDetails();
+      describe('from dashboard', () => {
+        beforeEach(() => {
+          createController({ ifNewAward: true, redirectTo: 'dashboard' });
+          setAwardDetails();
 
-        $scope.saveNewAward();
-        $scope.$digest();
+          $scope.saveNewAward();
+          $scope.$digest();
+        });
+
+        it('redirects to edit the award', () => {
+          expect($location.path).toHaveBeenCalledWith('/awards/3/10/dashboard/stages');
+        });
+
+        it('shows a notification after save is successfull', () => {
+          expect(CRM.alert).toHaveBeenCalledWith('Award Successfully Saved.', 'Saved', 'success');
+        });
       });
 
-      it('redirects to edit the award', () => {
-        expect($location.path).toHaveBeenCalledWith('/awards/3/10/stages');
-      });
+      describe('from manage workflow page', () => {
+        beforeEach(() => {
+          createController({ ifNewAward: true, redirectTo: 'workflow' });
+          setAwardDetails();
 
-      it('shows a notification after save is successfull', () => {
-        expect(CRM.alert).toHaveBeenCalledWith('Award Successfully Saved.', 'Saved', 'success');
+          $scope.saveNewAward();
+          $scope.$digest();
+        });
+
+        it('redirects to edit the award', () => {
+          expect($location.path).toHaveBeenCalledWith('/awards/3/10/workflow/stages');
+        });
+
+        it('shows a notification after save is successfull', () => {
+          expect(CRM.alert).toHaveBeenCalledWith('Award Successfully Saved.', 'Saved', 'success');
+        });
       });
     });
 
     describe('when SAVE AND DONE is clicked', () => {
-      beforeEach(() => {
-        createController({ ifNewAward: true });
-        setAwardDetails();
+      describe('from dashboard', () => {
+        beforeEach(() => {
+          createController({ ifNewAward: true, redirectTo: 'dashboard' });
+          setAwardDetails();
 
-        $scope.saveAndNavigateToDashboard();
-        $scope.$digest();
+          $scope.saveAndNavigateToPreviousPage();
+          $scope.$digest();
+        });
+
+        it('shows saving notification while save is in progress', () => {
+          expect(crmStatus).toHaveBeenCalledWith({
+            start: $scope.ts('Saving Award...'),
+            success: $scope.ts('Saved')
+          }, jasmine.any(Object));
+        });
+
+        it('redirects to award dashboard page', () => {
+          expect($window.location.href).toBe('/civicrm/case/a/?case_type_category=awards#/case?case_type_category=awards');
+        });
+
+        it('shows a notification after save is successfull', () => {
+          expect(CRM.alert).toHaveBeenCalledWith('Award Successfully Saved.', 'Saved', 'success');
+        });
       });
 
-      it('shows saving notification while save is in progress', () => {
-        expect(crmStatus).toHaveBeenCalledWith({
-          start: $scope.ts('Saving Award...'),
-          success: $scope.ts('Saved')
-        }, jasmine.any(Object));
-      });
+      describe('from manage workflow page', () => {
+        beforeEach(() => {
+          createController({ ifNewAward: true, redirectTo: 'workflow' });
+          setAwardDetails();
 
-      it('redirects to award dashboard page', () => {
-        expect($window.location.href).toBe('/civicrm/case/a/?case_type_category=awards#/case?case_type_category=awards');
-      });
+          $scope.saveAndNavigateToPreviousPage();
+          $scope.$digest();
+        });
 
-      it('shows a notification after save is successfull', () => {
-        expect(CRM.alert).toHaveBeenCalledWith('Award Successfully Saved.', 'Saved', 'success');
+        it('shows saving notification while save is in progress', () => {
+          expect(crmStatus).toHaveBeenCalledWith({
+            start: $scope.ts('Saving Award...'),
+            success: $scope.ts('Saved')
+          }, jasmine.any(Object));
+        });
+
+        it('redirects to manage awards page', () => {
+          expect($window.location.href).toBe('/civicrm/workflow/a?case_type_category=awards#/list');
+        });
+
+        it('shows a notification after save is successfull', () => {
+          expect(CRM.alert).toHaveBeenCalledWith('Award Successfully Saved.', 'Saved', 'success');
+        });
       });
     });
 
@@ -473,6 +520,7 @@
       }
 
       $scope.caseTypeCategoryId = '3';
+      $scope.redirectTo = params.redirectTo;
 
       $controller('CiviAwardCreateEditAwardController', {
         $scope: $scope

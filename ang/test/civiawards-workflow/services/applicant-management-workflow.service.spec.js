@@ -142,7 +142,7 @@
       });
 
       it('redirects to the case management new workflow page', () => {
-        expect($window.location.href).toBe('/civicrm/award/a/#/awards/new/2');
+        expect($window.location.href).toBe('/civicrm/award/a/#/awards/new/2/workflow');
       });
     });
 
@@ -156,7 +156,7 @@
       });
 
       it('redirects to the case type page for the clicked workflow', () => {
-        expect(returnValue).toBe('civicrm/award/a/#/awards/1/1');
+        expect(returnValue).toBe('civicrm/award/a/#/awards/1/1/workflow');
       });
     });
   });

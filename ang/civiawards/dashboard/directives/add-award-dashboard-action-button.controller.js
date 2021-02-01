@@ -32,7 +32,7 @@
      */
     function redirectToAwardsCreationScreen () {
       var currentCaseTypeCategoryValue = CaseTypeCategory.findByName($routeParams.case_type_category).value;
-      var newAwardUrl = getCrmUrl('civicrm/award/a/#/awards/new/' + currentCaseTypeCategoryValue);
+      var newAwardUrl = getCrmUrl('civicrm/award/a/#/awards/new/' + currentCaseTypeCategoryValue + '/dashboard');
 
       $window.location.href = newAwardUrl;
     }

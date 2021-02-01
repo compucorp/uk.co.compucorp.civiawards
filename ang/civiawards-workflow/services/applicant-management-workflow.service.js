@@ -28,7 +28,7 @@
      * @returns {string} url to edit workflow page
      */
     function getEditWorkflowURL (workflow) {
-      return 'civicrm/award/a/#/awards/' + workflow.case_type_category + '/' + workflow.id;
+      return 'civicrm/award/a/#/awards/' + workflow.case_type_category + '/' + workflow.id + '/' + 'workflow';
     }
 
     /**
@@ -179,7 +179,7 @@
      * @param {object} caseTypeCategory case type category object
      */
     function redirectToWorkflowCreationScreen (caseTypeCategory) {
-      $window.location.href = '/civicrm/award/a/#/awards/new/' + caseTypeCategory.value;
+      $window.location.href = '/civicrm/award/a/#/awards/new/' + caseTypeCategory.value + '/workflow';
     }
   }
 })(CRM._, angular);
