@@ -10,12 +10,11 @@
    * @param {Function} civicaseCrmApi civicrm api service
    * @param {object} AwardSubtype award subtype service
    * @param {object} ContactsCache contacts cache service
-   * @param {Function} processMyAwardsFilter service to process my awards filters
    * @param {object} Select2Utils select 2 utility service
    * @param {object} $window window object of the browser
    */
   function ApplicantManagementWorkflow ($q, civicaseCrmApi, AwardSubtype,
-    ContactsCache, processMyAwardsFilter, Select2Utils, $window) {
+    ContactsCache, Select2Utils, $window) {
     var awardSubtypes = AwardSubtype.getAll();
 
     this.createDuplicate = createDuplicate;

@@ -4,20 +4,18 @@
   describe('applicant management workflow', () => {
     let $q, $rootScope, $window, civicaseCrmApiMock, CaseTypesMockData,
       AwardAdditionalDetailsMockData, ApplicantManagementWorkflow,
-      ContactsCache, ContactsData, processMyAwardsFilterMock;
+      ContactsCache, ContactsData;
 
     beforeEach(module('civiawards-workflow', 'civicase.data', 'civiawards.data', ($provide) => {
-      processMyAwardsFilterMock = jasmine.createSpy('processMyAwardsFilter');
       civicaseCrmApiMock = jasmine.createSpy('civicaseCrmApi');
 
       $provide.value('civicaseCrmApi', civicaseCrmApiMock);
-      $provide.value('processMyAwardsFilter', processMyAwardsFilterMock);
       $provide.value('$window', { location: {} });
     }));
 
     beforeEach(inject((_$q_, _$rootScope_, _ApplicantManagementWorkflow_,
       _$window_, _CaseTypesMockData_, _AwardAdditionalDetailsMockData_,
-      _ContactsCache_, _ContactsData_, _processMyAwardsFilter_) => {
+      _ContactsCache_, _ContactsData_) => {
       $q = _$q_;
       $window = _$window_;
       $rootScope = _$rootScope_;
@@ -29,7 +27,7 @@
     }));
 
     describe('when getting list of workflow', () => {
-      var result, expectedResult, mockWorkflow, mockAwardDetail;
+      var result, expectedResult, mockWorkflow;
 
       beforeEach(() => {
         mockWorkflow = CaseTypesMockData.getSequential()[0];
@@ -37,72 +35,144 @@
           values: [AwardAdditionalDetailsMockData.get()]
         };
 
-        mockAwardDetail = AwardAdditionalDetailsMockData.get();
-        mockAwardDetail['api.CaseType.get'] = {
-          values: [{ is_active: true }]
-        };
+        civicaseCrmApiMock.and.returnValue($q.resolve([
+          { values: [mockWorkflow] },
+          1
+        ]));
 
-        processMyAwardsFilterMock.and.returnValue($q.resolve([1, 2, 3]));
-
-        civicaseCrmApiMock.and.callFake(function (entity) {
-          if (entity === 'CaseType') {
-            return $q.resolve({ values: [mockWorkflow] });
-          } else if (entity === 'AwardDetail') {
-            return $q.resolve({ values: [mockAwardDetail] });
-          }
-        });
-
-        expectedResult = [_.clone(mockWorkflow)];
-        expectedResult[0].awardDetails = expectedResult[0]['api.AwardDetail.get'].values[0];
-        expectedResult[0].awardDetailsFormatted = {
+        expectedResult = [
+          { values: [_.clone(mockWorkflow)] },
+          1
+        ];
+        expectedResult[0].values[0].awardDetails = expectedResult[0].values[0]['api.AwardDetail.get'].values[0];
+        expectedResult[0].values[0].awardDetailsFormatted = {
           managers: ['Default Organization', 'Default Organization'],
           subtypeLabel: 'Medal'
         };
-        delete expectedResult[0]['api.AwardDetail.get'];
+        delete expectedResult[0].values[0]['api.AwardDetail.get'];
 
         spyOn(ContactsCache, 'add');
         spyOn(ContactsCache, 'getCachedContact');
         ContactsCache.add.and.returnValue($q.resolve());
         ContactsCache.getCachedContact.and.returnValue(ContactsData.values[0]);
+      });
 
-        ApplicantManagementWorkflow.getWorkflowsList('some_case_type_category', {
-          awardFilter: 'my_awards',
-          award_subtype: [4, 5],
-          is_active: true,
-          is_template: 1
-        }).then(function (data) {
-          result = data;
+      describe('when page in page 1', () => {
+        beforeEach(() => {
+          ApplicantManagementWorkflow.getWorkflowsList('some_case_type_category', {
+            awardFilter: 'my_awards',
+            award_subtype: [4, 5],
+            is_active: true,
+            is_template: 1
+          }, {
+            size: 25,
+            num: 1
+          }).then(function (data) {
+            result = data;
+          });
+          $rootScope.$digest();
         });
-        $rootScope.$digest();
-      });
 
-      it('fetches the workflows for the case management instance', () => {
-        expect(civicaseCrmApiMock).toHaveBeenCalledWith('CaseType', 'get', {
-          sequential: 1,
-          case_type_category: 'some_case_type_category',
-          is_active: true,
-          options: { limit: 0 },
-          'api.AwardDetail.get': { case_type_id: '$value.id' },
-          id: { IN: ['10'] }
+        it('fetches the first 25 workflows for the case management instance', () => {
+          expect(civicaseCrmApiMock).toHaveBeenCalledWith([[
+            'Award',
+            'get',
+            {
+              managed_by: 203,
+              award_detail_params: {
+                is_template: 1,
+                award_subtype: { IN: [4, 5] }
+              },
+              case_type_params: {
+                sequential: 1,
+                case_type_category: 'some_case_type_category',
+                is_active: true,
+                options: { limit: 25, offset: 0 },
+                'api.AwardDetail.get': { case_type_id: '$value.id' }
+              }
+            }
+          ],
+          [
+            'Award',
+            'getcount',
+            {
+              managed_by: 203,
+              award_detail_params: {
+                is_template: 1,
+                award_subtype: { IN: [4, 5] }
+              },
+              case_type_params: {
+                sequential: 1,
+                case_type_category: 'some_case_type_category',
+                is_active: true,
+                'api.AwardDetail.get': { case_type_id: '$value.id' }
+              }
+            }
+          ]]);
+        });
+
+        it('displays the results in a list view', () => {
+          expect(result).toEqual(expectedResult);
         });
       });
 
-      it('displays the list of fetched workflows', () => {
-        expect(result).toEqual(expectedResult);
-      });
-
-      it('filters by subtype', () => {
-        expect(civicaseCrmApiMock).toHaveBeenCalledWith('AwardDetail', 'get', {
-          sequential: 1,
-          options: { limit: 0 },
-          is_template: 1,
-          case_type_id: { IN: [1, 2, 3] },
-          award_subtype: { IN: [4, 5] }
+      describe('when page in page 2', () => {
+        beforeEach(() => {
+          ApplicantManagementWorkflow.getWorkflowsList('some_case_type_category', {
+            awardFilter: 'my_awards',
+            award_subtype: [4, 5],
+            is_active: true,
+            is_template: 1
+          }, {
+            size: 25,
+            num: 2
+          }).then(function (data) {
+            result = data;
+          });
+          $rootScope.$digest();
         });
-      });
 
-      it('filters by manager', () => {
-        expect(processMyAwardsFilterMock).toHaveBeenCalledWith('my_awards');
+        it('fetches the 26th to 50th workflows for the case management instance', () => {
+          expect(civicaseCrmApiMock).toHaveBeenCalledWith([[
+            'Award',
+            'get',
+            {
+              managed_by: 203,
+              award_detail_params: {
+                is_template: 1,
+                award_subtype: { IN: [4, 5] }
+              },
+              case_type_params: {
+                sequential: 1,
+                case_type_category: 'some_case_type_category',
+                is_active: true,
+                options: { limit: 25, offset: 25 },
+                'api.AwardDetail.get': { case_type_id: '$value.id' }
+              }
+            }
+          ],
+          [
+            'Award',
+            'getcount',
+            {
+              managed_by: 203,
+              award_detail_params: {
+                is_template: 1,
+                award_subtype: { IN: [4, 5] }
+              },
+              case_type_params: {
+                sequential: 1,
+                case_type_category: 'some_case_type_category',
+                is_active: true,
+                'api.AwardDetail.get': { case_type_id: '$value.id' }
+              }
+            }
+          ]]);
+        });
+
+        it('displays the results in a list view', () => {
+          expect(result).toEqual(expectedResult);
+        });
       });
     });
 
