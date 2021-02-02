@@ -32,56 +32,52 @@
     }
 
     /**
-     * @param {object} selectedFilters selected filter values
-     * @returns {Promise} Promise which resolved to a list of case type ids
-     */
-    function fetchFilteredWorkflowIds (selectedFilters) {
-      return processMyAwardsFilter(selectedFilters.awardFilter)
-        .then(function (caseTypeIDs) {
-          if (caseTypeIDs.length === 0) {
-            return $q.resolve([]);
-          }
-
-          var filters = prepareFilterObject(selectedFilters, caseTypeIDs);
-
-          return civicaseCrmApi('AwardDetail', 'get', filters)
-            .then(function (awardsData) {
-              return _.map(awardsData.values, function (award) {
-                return award.case_type_id;
-              });
-            });
-        });
-    }
-
-    /**
      * Returns workflows list for applicant management
      *
      * @param {object} caseTypeCategoryName case type category name
      * @param {object} selectedFilters selected filter values
+     * @param {object} page page object needed for pagination
      * @returns {Array} api call parameters
      */
-    function getWorkflowsList (caseTypeCategoryName, selectedFilters) {
-      return fetchFilteredWorkflowIds(selectedFilters)
-        .then(function (workflowIds) {
-          if (workflowIds.length === 0) {
-            return $q.resolve([]);
-          }
+    function getWorkflowsList (caseTypeCategoryName, selectedFilters, page) {
+      var params = {};
 
-          var params = {
-            id: { IN: workflowIds },
-            sequential: 1,
-            is_active: selectedFilters.is_active,
-            case_type_category: caseTypeCategoryName,
-            options: { limit: 0 },
-            'api.AwardDetail.get': {
-              case_type_id: '$value.id'
-            }
-          };
+      if (selectedFilters.awardFilter === 'my_awards') {
+        params.managed_by = CRM.config.user_contact_id;
+      }
 
-          return civicaseCrmApi('CaseType', 'get', params).then(function (data) {
-            return getFormattedAwardDetailsData(data.values);
-          });
-        });
+      params.award_detail_params = prepareFilterObject(selectedFilters, params);
+      params.case_type_params = {
+        sequential: 1,
+        is_active: selectedFilters.is_active,
+        case_type_category: caseTypeCategoryName,
+        'api.AwardDetail.get': {
+          case_type_id: '$value.id'
+        }
+      };
+
+      var paramsWithLimit = _.cloneDeep(params);
+      paramsWithLimit.case_type_params.options = {
+        limit: page.size,
+        offset: page.size * (page.num - 1)
+      };
+
+      var apiCalls = [
+        [
+          'Award',
+          'get',
+          paramsWithLimit
+
+        ],
+        [
+          'Award',
+          'getcount', params
+        ]
+      ];
+
+      return civicaseCrmApi(apiCalls).then(function (data) {
+        return getFormattedAwardDetailsData(data);
+      });
     }
 
     /**
@@ -103,15 +99,15 @@
     }
 
     /**
-     * @param {object[]} workflows list of workflows
-     * @returns {object[]} formatted list of workflows
+     * @param {object[]} results results
+     * @returns {object[]} formatted results
      */
-    function getFormattedAwardDetailsData (workflows) {
-      var managerContacts = getAwardManagersForWorkflows(workflows);
+    function getFormattedAwardDetailsData (results) {
+      var managerContacts = getAwardManagersForWorkflows(results[0].values);
 
       return ContactsCache.add(managerContacts)
         .then(function () {
-          return _.map(workflows, function (workflow) {
+          results[0].values = _.map(results[0].values, function (workflow) {
             var awardDetails = workflow['api.AwardDetail.get'].values[0];
 
             return _.assign(
@@ -131,6 +127,8 @@
               }
             );
           });
+
+          return results;
         });
     }
 
@@ -150,16 +148,10 @@
 
     /**
      * @param {object} selectedFilters selected filter values
-     * @param {string[]} caseTypeIDs list of case type ids
      * @returns {object} filter object
      */
-    function prepareFilterObject (selectedFilters, caseTypeIDs) {
-      var filters = {
-        sequential: 1,
-        options: { limit: 0 }
-      };
-
-      filters.case_type_id = { IN: caseTypeIDs };
+    function prepareFilterObject (selectedFilters) {
+      var filters = {};
 
       if (selectedFilters.award_subtype !== '') {
         filters.award_subtype = {
