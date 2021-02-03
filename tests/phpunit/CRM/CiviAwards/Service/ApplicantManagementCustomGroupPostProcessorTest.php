@@ -86,7 +86,7 @@ class CRM_CiviAwards_Service_ApplicantManagementCustomGroupPostProcessorTest ext
       ],
       [
         2,
-        'null',
+        CRM_Core_DAO::VALUE_SEPARATOR . 0 . CRM_Core_DAO::VALUE_SEPARATOR,
         NULL,
       ],
       [
