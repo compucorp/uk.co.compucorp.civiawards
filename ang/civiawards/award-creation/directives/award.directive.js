@@ -6,6 +6,7 @@
       scope: {
         awardId: '=',
         caseTypeCategoryId: '=',
+        redirectTo: '@',
         focusedTabName: '@'
       },
       controller: 'CiviAwardCreateEditAwardController',
@@ -57,8 +58,8 @@
     $scope.selectTab = selectTab;
     $scope.saveAwardInBG = saveAwardInBG;
     $scope.saveNewAward = saveNewAward;
-    $scope.saveAndNavigateToDashboard = saveAndNavigateToDashboard;
-    $scope.navigateToDashboard = navigateToDashboard;
+    $scope.saveAndNavigateToPreviousPage = saveAndNavigateToPreviousPage;
+    $scope.navigateToPreviousPage = navigateToPreviousPage;
 
     (function init () {
       if ($scope.awardId) {
@@ -184,11 +185,11 @@
     }
 
     /**
-     * Saves an existing Award and navigates to dashboard
+     * Saves an existing Award and navigates to the previous page
      */
-    function saveAndNavigateToDashboard () {
+    function saveAndNavigateToPreviousPage () {
       saveAward()
-        .then(navigateToDashboard)
+        .then(navigateToPreviousPage)
         .then(showSucessNotification);
     }
 
@@ -252,12 +253,17 @@
     }
 
     /**
-     * Navigate to the Dashboard Page
+     * Navigate to the Previous Page
      */
-    function navigateToDashboard () {
+    function navigateToPreviousPage () {
       var caseTypeCategoryName = CaseTypeCategory.findById($scope.caseTypeCategoryId).name;
+      var url = '/civicrm/workflow/a?case_type_category=' + caseTypeCategoryName + '#/list';
 
-      $window.location.href = '/civicrm/case/a/?case_type_category=' + caseTypeCategoryName + '#/case?case_type_category=' + caseTypeCategoryName;
+      if ($scope.redirectTo === 'dashboard') {
+        url = '/civicrm/case/a/?case_type_category=' + caseTypeCategoryName + '#/case?case_type_category=' + caseTypeCategoryName;
+      }
+
+      $window.location.href = url;
     }
 
     /**
@@ -266,7 +272,7 @@
      * @param {string/number} awardID id of the award
      */
     function navigateToAwardEditPage (awardID) {
-      $location.path('/awards/' + $scope.caseTypeCategoryId + '/' + awardID + '/stages');
+      $location.path('/awards/' + $scope.caseTypeCategoryId + '/' + awardID + '/' + $scope.redirectTo + '/stages');
     }
 
     /**
