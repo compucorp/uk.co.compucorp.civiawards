@@ -4,11 +4,12 @@
   module.config(function (WorkflowListFiltersProvider) {
     var actionItems = [
       {
-        filterIdentifier: 'awardFilter',
+        filterIdentifier: 'managed_by',
         defaultValue: '',
         onlyVisibleForInstance: 'applicant_management',
         templateUrl: '~/civiawards-workflow/filters/directives/workflow-list-filter-manager.html'
       }, {
+        filterSubObject: 'award_detail_params',
         filterIdentifier: 'award_subtype',
         defaultValue: '',
         onlyVisibleForInstance: 'applicant_management',
@@ -19,6 +20,7 @@
         onlyVisibleForInstance: 'applicant_management',
         templateUrl: '~/civiawards-workflow/filters/directives/workflow-list-filter-is-active.html'
       }, {
+        filterSubObject: 'award_detail_params',
         filterIdentifier: 'is_template',
         defaultValue: false,
         onlyVisibleForInstance: 'applicant_management',

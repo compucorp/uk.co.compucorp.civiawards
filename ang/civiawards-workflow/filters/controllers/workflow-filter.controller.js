@@ -15,7 +15,7 @@
     Select2Utils) {
     $scope.allSubtypes = _.map(AwardSubtype.getAll(), Select2Utils.mapSelectOptions);
     $scope.awardOptions = [
-      { text: 'My ' + $scope.caseTypeCategory, id: 'my_awards' },
+      { text: 'My ' + $scope.caseTypeCategory, id: CRM.config.user_contact_id },
       { text: 'All ' + $scope.caseTypeCategory, id: 'all_awards' }
     ];
   }

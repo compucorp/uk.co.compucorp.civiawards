@@ -1,5 +1,5 @@
 (function (_, angular) {
-  var module = angular.module('civiawards-workflow');
+  var module = angular.module('civiawards-base');
 
   module.service('ApplicantManagementWorkflow', ApplicantManagementWorkflow);
 
@@ -17,10 +17,22 @@
     ContactsCache, Select2Utils, $window) {
     var awardSubtypes = AwardSubtype.getAll();
 
+    this.getActivityFilters = getActivityFilters;
     this.createDuplicate = createDuplicate;
     this.getEditWorkflowURL = getEditWorkflowURL;
     this.getWorkflowsList = getWorkflowsList;
     this.redirectToWorkflowCreationScreen = redirectToWorkflowCreationScreen;
+
+    /**
+     * Get Initial Activity Filters to load dashboard
+     *
+     * @returns {object} filter
+     */
+    function getActivityFilters () {
+      return {
+        case_filter: { 'case_type_id.is_active': 1, contact_is_deleted: 0 }
+      };
+    }
 
     /**
      * @param {string/number} workflow workflow object
@@ -33,27 +45,35 @@
     /**
      * Returns workflows list for applicant management
      *
-     * @param {object} caseTypeCategoryName case type category name
      * @param {object} selectedFilters selected filter values
      * @param {object} page page object needed for pagination
+     * @param {boolean} formatResults if results should be formatted
      * @returns {Array} api call parameters
      */
-    function getWorkflowsList (caseTypeCategoryName, selectedFilters, page) {
+    function getWorkflowsList (selectedFilters, page, formatResults) {
       var params = {};
 
-      if (selectedFilters.awardFilter === 'my_awards') {
-        params.managed_by = CRM.config.user_contact_id;
+      if (selectedFilters.managed_by !== 'all_awards') {
+        params.managed_by = selectedFilters.managed_by;
       }
 
-      params.award_detail_params = prepareFilterObject(selectedFilters, params);
-      params.case_type_params = {
-        sequential: 1,
-        is_active: selectedFilters.is_active,
-        case_type_category: caseTypeCategoryName,
-        'api.AwardDetail.get': {
+      if (selectedFilters.award_detail_params) {
+        params.award_detail_params = prepareFilterObject(selectedFilters.award_detail_params, params);
+      }
+
+      params.case_type_params = _.extend(
+        {},
+        _.omit(selectedFilters, function (value, key) {
+          return key === 'award_detail_params' || key === 'managed_by';
+        }),
+        { sequential: 1 }
+      );
+
+      if (formatResults) {
+        params.case_type_params['api.AwardDetail.get'] = {
           case_type_id: '$value.id'
-        }
-      };
+        };
+      }
 
       var paramsWithLimit = _.cloneDeep(params);
       paramsWithLimit.case_type_params.options = {
@@ -62,20 +82,12 @@
       };
 
       var apiCalls = [
-        [
-          'Award',
-          'get',
-          paramsWithLimit
-
-        ],
-        [
-          'Award',
-          'getcount', params
-        ]
+        ['Award', 'get', paramsWithLimit],
+        ['Award', 'getcount', params]
       ];
 
       return civicaseCrmApi(apiCalls).then(function (data) {
-        return getFormattedAwardDetailsData(data);
+        return formatResults ? getFormattedAwardDetailsData(data) : data;
       });
     }
 
@@ -146,20 +158,20 @@
     }
 
     /**
-     * @param {object} selectedFilters selected filter values
+     * @param {object} awardTypeFilters selected award type filter values
      * @returns {object} filter object
      */
-    function prepareFilterObject (selectedFilters) {
-      var filters = {};
+    function prepareFilterObject (awardTypeFilters) {
+      var filters = _.extend({}, awardTypeFilters);
 
-      if (selectedFilters.award_subtype !== '') {
+      if (awardTypeFilters.award_subtype &&
+        awardTypeFilters.award_subtype !== '' &&
+        awardTypeFilters.award_subtype.length > 0) {
         filters.award_subtype = {
-          IN: Select2Utils.getSelect2Value(selectedFilters.award_subtype)
+          IN: Select2Utils.getSelect2Value(awardTypeFilters.award_subtype)
         };
-      }
-
-      if (selectedFilters.is_template !== '') {
-        filters.is_template = selectedFilters.is_template;
+      } else {
+        delete filters.award_subtype;
       }
 
       return filters;
