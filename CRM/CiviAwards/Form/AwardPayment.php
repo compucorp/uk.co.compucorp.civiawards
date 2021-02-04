@@ -22,6 +22,13 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
   private $activityId;
 
   /**
+   * Whether Activity Status is Exported or not.
+   *
+   * @var bool
+   */
+  private $isActivityStatusExported;
+
+  /**
    * Custom fields group tree.
    *
    * @var array
@@ -78,6 +85,11 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
     }
 
     $this->setActivityStatuses();
+    $this->isActivityStatusExported = $this->activity['status_id'] == $this->getValueForActivityStatus('exported_complete');
+    if ($this->isActivityStatusExported && $this->_action == CRM_Core_Action::UPDATE) {
+      throw new Exception('Action not supported!');
+    }
+
     $this->setCustomFieldGroupTree();
   }
 
@@ -94,12 +106,20 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
     $this->assign('entityID', $this->activityId);
     $this->assign('groupID', NULL);
     $this->assign('subType', NULL);
+    $this->assign('activityStatusIsLocked', $this->activityStatusIsLocked());
+    $this->assign('isActivityStatusExported', $this->isActivityStatusExported);
 
     if ($isViewAction) {
       $this->freeze();
       $editUrlParams = "action=update&id={$this->activityId}&reset=1";
       $this->assign('editUrlParams', $editUrlParams);
     }
+
+    $nonEditableFields = $isUpdateAction && $this->activityStatusIsLocked() ?
+      $this->getDefinedNonEditableFormFields() : [];
+    CRM_Core_Resources::singleton()
+      ->addScriptFile('uk.co.compucorp.civiawards', 'js/award-payment-form.js');
+    CRM_Core_Resources::singleton()->addSetting(['nonEditableFields' => $nonEditableFields]);
   }
 
   /**
@@ -253,6 +273,7 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
     // Adds custom field form fields.
     CRM_Core_BAO_CustomGroup::buildQuickForm($this, $this->groupTree);
     $this->add('datepicker', 'activity_date_time', ts('Due Date'), [], FALSE, ['time' => TRUE]);
+    $this->add('hidden', 'activity_id', $this->activityId);
     $this->addSelect(
       'status_id',
       [
@@ -355,13 +376,12 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
         continue;
       }
       $elementName = $element->getName();
-      $tagName = $element->getAttribute('data-crm-custom') ? $element->getAttribute('data-crm-custom') : $elementName;
       if (in_array($elementName, $allFieldsToInsert)) {
         continue;
       }
       $elementNames[] = $elementName;
-      if (!empty($toInsertAfter[$tagName])) {
-        $elementNames = array_merge($elementNames, $toInsertAfter[$tagName]);
+      if (!empty($toInsertAfter[$elementName])) {
+        $elementNames = array_merge($elementNames, $toInsertAfter[$elementName]);
       }
     }
 
@@ -396,11 +416,44 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
    */
   private function getFieldsToInsertAfter() {
     return [
-      'Awards_Payment_Information:Payment_Currency' => ['activity_date_time'],
-      'Awards_Payment_Information:Payee_Ref' => ['separator'],
-      'Awards_Payment_Information:Date_Paid' => ['separator'],
+      $this->getCustomFieldFormElementName('Payment_Currency') => ['activity_date_time'],
+      $this->getCustomFieldFormElementName('Payee_Ref') => ['separator'],
+      $this->getCustomFieldFormElementName('Date_Paid') => ['separator'],
       'status_id' => ['separator'],
     ];
+  }
+
+  /**
+   * Returns the form element name for the custom field.
+   *
+   * @param string $customFieldName
+   *   Custom field name.
+   *
+   * @return string
+   *   form element name.
+   */
+  private function getCustomFieldFormElementName($customFieldName) {
+    $customGroupId = $this->getCustomGroupId('Awards_Payment_Information');
+    foreach ($this->groupTree[$customGroupId]['fields'] as $customFieldData) {
+      if ($customFieldName === $customFieldData['name']) {
+        return $customFieldData['element_name'];
+      }
+    }
+  }
+
+  /**
+   * Returns the custom group Id.
+   *
+   * @param string $customGroupName
+   *   Custom group name.
+   *
+   * @return int
+   *   Custom group Id.
+   */
+  private function getCustomGroupId($customGroupName) {
+    $result = civicrm_api3('CustomGroup', 'getsingle', ['name' => $customGroupName]);
+
+    return $result['id'];
   }
 
   /**
@@ -408,6 +461,62 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
    */
   public function getDefaultEntity() {
     return 'Activity';
+  }
+
+  /**
+   * Returns whether to make some pre-determined fields un-editable.
+   *
+   * @return bool
+   *   Make editable or not.
+   */
+  private function activityStatusIsLocked() {
+    $activityStatus = $this->activity['status_id'];
+    $notEditableStatuses = [
+      $this->getValueForActivityStatus('paid_complete'),
+      $this->getValueForActivityStatus('failed_incomplete'),
+      $this->getValueForActivityStatus('exported_complete'),
+    ];
+
+    return in_array($activityStatus, $notEditableStatuses) ? TRUE : FALSE;
+  }
+
+  /**
+   * Get pre-defined fields that are to be un-editable.
+   *
+   * @return array
+   *   Form fields.
+   */
+  private function getDefinedNonEditableFormFields() {
+    return [
+      [
+        'name' => $this->getCustomFieldFormElementName('Type'),
+        'type' => 'select2',
+      ],
+      [
+        'name' => $this->getCustomFieldFormElementName('Payment_Amount_Currency_Type'),
+        'type' => 'select2',
+      ],
+      [
+        'name' => $this->getCustomFieldFormElementName('Payment_Amount_Value'),
+        'type' => 'text',
+      ],
+      [
+        'name' => $this->getCustomFieldFormElementName('Payment_Currency'),
+        'type' => 'select2',
+      ],
+      [
+        'name' => $this->getCustomFieldFormElementName('Payee_Ref'),
+        'type' => 'text',
+      ],
+      [
+        'name' => 'activity_date_time',
+        'type' => 'crmdatetime',
+      ],
+      [
+        'name' => 'target_contact_id',
+        'type' => 'select',
+      ],
+    ];
   }
 
 }
