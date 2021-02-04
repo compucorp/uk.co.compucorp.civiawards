@@ -101,11 +101,7 @@
       }
 
       $scope.activityFilters.case_filter['case_type_id.award_detail_params'] = getAwardApiFilters();
-      console.log($scope.activityFilters);
 
-      // case_type_id: awardSubtypeIds.length > 0
-      //     ? { IN: awardSubtypeIds }
-      //     : { 'IS NULL': 1 }
       $rootScope.$broadcast('civicase::dashboard-filters::updated');
     }
 

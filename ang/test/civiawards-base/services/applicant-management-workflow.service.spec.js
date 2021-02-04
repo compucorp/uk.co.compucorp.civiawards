@@ -29,149 +29,300 @@
     describe('when getting list of workflow', () => {
       var result, expectedResult, mockWorkflow;
 
-      beforeEach(() => {
-        mockWorkflow = CaseTypesMockData.getSequential()[0];
-        mockWorkflow['api.AwardDetail.get'] = {
-          values: [AwardAdditionalDetailsMockData.get()]
-        };
+      describe('formatted results', () => {
+        beforeEach(() => {
+          mockWorkflow = CaseTypesMockData.getSequential()[0];
+          mockWorkflow['api.AwardDetail.get'] = {
+            values: [AwardAdditionalDetailsMockData.get()]
+          };
 
-        civicaseCrmApiMock.and.returnValue($q.resolve([
-          { values: [mockWorkflow] },
-          1
-        ]));
+          civicaseCrmApiMock.and.returnValue($q.resolve([
+            { values: [mockWorkflow] },
+            1
+          ]));
 
-        expectedResult = [
-          { values: [_.clone(mockWorkflow)] },
-          1
-        ];
-        expectedResult[0].values[0].awardDetails = expectedResult[0].values[0]['api.AwardDetail.get'].values[0];
-        expectedResult[0].values[0].awardDetailsFormatted = {
-          managers: ['Default Organization', 'Default Organization'],
-          subtypeLabel: 'Medal'
-        };
-        delete expectedResult[0].values[0]['api.AwardDetail.get'];
+          expectedResult = [
+            { values: [_.clone(mockWorkflow)] },
+            1
+          ];
+          expectedResult[0].values[0].awardDetails = expectedResult[0].values[0]['api.AwardDetail.get'].values[0];
+          expectedResult[0].values[0].awardDetailsFormatted = {
+            managers: ['Default Organization', 'Default Organization'],
+            subtypeLabel: 'Medal'
+          };
+          delete expectedResult[0].values[0]['api.AwardDetail.get'];
 
-        spyOn(ContactsCache, 'add');
-        spyOn(ContactsCache, 'getCachedContact');
-        ContactsCache.add.and.returnValue($q.resolve());
-        ContactsCache.getCachedContact.and.returnValue(ContactsData.values[0]);
+          spyOn(ContactsCache, 'add');
+          spyOn(ContactsCache, 'getCachedContact');
+          ContactsCache.add.and.returnValue($q.resolve());
+          ContactsCache.getCachedContact.and.returnValue(ContactsData.values[0]);
+        });
+
+        describe('when page in page 1', () => {
+          beforeEach(() => {
+            ApplicantManagementWorkflow.getFormattedWorkflowsList({
+              case_type_category: 'some_case_type_category',
+              managed_by: 203,
+              award_detail_params: {
+                award_subtype: [4, 5],
+                is_template: 1
+              },
+              is_active: true
+
+            }, {
+              size: 25,
+              num: 1
+            }, true).then(function (data) {
+              result = data;
+            });
+            $rootScope.$digest();
+          });
+
+          it('fetches the first 25 workflows for the case management instance', () => {
+            expect(civicaseCrmApiMock).toHaveBeenCalledWith([[
+              'Award',
+              'get',
+              {
+                managed_by: 203,
+                award_detail_params: {
+                  is_template: 1,
+                  award_subtype: { IN: [4, 5] }
+                },
+                case_type_params: {
+                  sequential: 1,
+                  case_type_category: 'some_case_type_category',
+                  is_active: true,
+                  options: { limit: 25, offset: 0 },
+                  'api.AwardDetail.get': { case_type_id: '$value.id' }
+                }
+              }
+            ],
+            [
+              'Award',
+              'getcount',
+              {
+                managed_by: 203,
+                award_detail_params: {
+                  is_template: 1,
+                  award_subtype: { IN: [4, 5] }
+                },
+                case_type_params: {
+                  sequential: 1,
+                  case_type_category: 'some_case_type_category',
+                  is_active: true,
+                  'api.AwardDetail.get': { case_type_id: '$value.id' }
+                }
+              }
+            ]]);
+          });
+
+          it('displays the results in a list view', () => {
+            expect(result).toEqual(expectedResult);
+          });
+        });
+
+        describe('when page in page 2', () => {
+          beforeEach(() => {
+            ApplicantManagementWorkflow.getFormattedWorkflowsList({
+              case_type_category: 'some_case_type_category',
+              managed_by: 203,
+              award_detail_params: {
+                award_subtype: [4, 5],
+                is_template: 1
+              },
+              is_active: true
+            }, {
+              size: 25,
+              num: 2
+            }, true).then(function (data) {
+              result = data;
+            });
+            $rootScope.$digest();
+          });
+
+          it('fetches the 26th to 50th workflows for the case management instance', () => {
+            expect(civicaseCrmApiMock).toHaveBeenCalledWith([[
+              'Award',
+              'get',
+              {
+                managed_by: 203,
+                award_detail_params: {
+                  is_template: 1,
+                  award_subtype: { IN: [4, 5] }
+                },
+                case_type_params: {
+                  sequential: 1,
+                  case_type_category: 'some_case_type_category',
+                  is_active: true,
+                  options: { limit: 25, offset: 25 },
+                  'api.AwardDetail.get': { case_type_id: '$value.id' }
+                }
+              }
+            ],
+            [
+              'Award',
+              'getcount',
+              {
+                managed_by: 203,
+                award_detail_params: {
+                  is_template: 1,
+                  award_subtype: { IN: [4, 5] }
+                },
+                case_type_params: {
+                  sequential: 1,
+                  case_type_category: 'some_case_type_category',
+                  is_active: true,
+                  'api.AwardDetail.get': { case_type_id: '$value.id' }
+                }
+              }
+            ]]);
+          });
+
+          it('displays the results in a list view', () => {
+            expect(result).toEqual(expectedResult);
+          });
+        });
       });
 
-      describe('when page in page 1', () => {
+      describe('unformatted results', () => {
         beforeEach(() => {
-          ApplicantManagementWorkflow.getWorkflowsList('some_case_type_category', {
-            awardFilter: 'my_awards',
-            award_subtype: [4, 5],
-            is_active: true,
-            is_template: 1
-          }, {
-            size: 25,
-            num: 1
-          }).then(function (data) {
-            result = data;
+          mockWorkflow = CaseTypesMockData.getSequential()[0];
+
+          civicaseCrmApiMock.and.returnValue($q.resolve([
+            { values: [mockWorkflow] },
+            1
+          ]));
+
+          expectedResult = [
+            { values: [_.clone(mockWorkflow)] },
+            1
+          ];
+
+          spyOn(ContactsCache, 'add');
+          spyOn(ContactsCache, 'getCachedContact');
+          ContactsCache.add.and.returnValue($q.resolve());
+          ContactsCache.getCachedContact.and.returnValue(ContactsData.values[0]);
+        });
+
+        describe('when page in page 1', () => {
+          beforeEach(() => {
+            ApplicantManagementWorkflow.getWorkflowsList({
+              case_type_category: 'some_case_type_category',
+              managed_by: 203,
+              award_detail_params: {
+                award_subtype: [4, 5],
+                is_template: 1
+              },
+              is_active: true
+
+            }, {
+              size: 25,
+              num: 1
+            }, true).then(function (data) {
+              result = data;
+            });
+            $rootScope.$digest();
           });
-          $rootScope.$digest();
-        });
 
-        it('fetches the first 25 workflows for the case management instance', () => {
-          expect(civicaseCrmApiMock).toHaveBeenCalledWith([[
-            'Award',
-            'get',
-            {
-              managed_by: 203,
-              award_detail_params: {
-                is_template: 1,
-                award_subtype: { IN: [4, 5] }
-              },
-              case_type_params: {
-                sequential: 1,
-                case_type_category: 'some_case_type_category',
-                is_active: true,
-                options: { limit: 25, offset: 0 },
-                'api.AwardDetail.get': { case_type_id: '$value.id' }
+          it('fetches the first 25 workflows for the case management instance', () => {
+            expect(civicaseCrmApiMock).toHaveBeenCalledWith([[
+              'Award',
+              'get',
+              {
+                managed_by: 203,
+                award_detail_params: {
+                  is_template: 1,
+                  award_subtype: { IN: [4, 5] }
+                },
+                case_type_params: {
+                  sequential: 1,
+                  case_type_category: 'some_case_type_category',
+                  is_active: true,
+                  options: { limit: 25, offset: 0 }
+                }
               }
-            }
-          ],
-          [
-            'Award',
-            'getcount',
-            {
-              managed_by: 203,
-              award_detail_params: {
-                is_template: 1,
-                award_subtype: { IN: [4, 5] }
-              },
-              case_type_params: {
-                sequential: 1,
-                case_type_category: 'some_case_type_category',
-                is_active: true,
-                'api.AwardDetail.get': { case_type_id: '$value.id' }
+            ],
+            [
+              'Award',
+              'getcount',
+              {
+                managed_by: 203,
+                award_detail_params: {
+                  is_template: 1,
+                  award_subtype: { IN: [4, 5] }
+                },
+                case_type_params: {
+                  sequential: 1,
+                  case_type_category: 'some_case_type_category',
+                  is_active: true
+                }
               }
-            }
-          ]]);
-        });
-
-        it('displays the results in a list view', () => {
-          expect(result).toEqual(expectedResult);
-        });
-      });
-
-      describe('when page in page 2', () => {
-        beforeEach(() => {
-          ApplicantManagementWorkflow.getWorkflowsList('some_case_type_category', {
-            awardFilter: 'my_awards',
-            award_subtype: [4, 5],
-            is_active: true,
-            is_template: 1
-          }, {
-            size: 25,
-            num: 2
-          }).then(function (data) {
-            result = data;
+            ]]);
           });
-          $rootScope.$digest();
+
+          it('displays the results in a list view', () => {
+            expect(result).toEqual(expectedResult);
+          });
         });
 
-        it('fetches the 26th to 50th workflows for the case management instance', () => {
-          expect(civicaseCrmApiMock).toHaveBeenCalledWith([[
-            'Award',
-            'get',
-            {
+        describe('when page in page 2', () => {
+          beforeEach(() => {
+            ApplicantManagementWorkflow.getWorkflowsList({
+              case_type_category: 'some_case_type_category',
               managed_by: 203,
               award_detail_params: {
-                is_template: 1,
-                award_subtype: { IN: [4, 5] }
+                award_subtype: [4, 5],
+                is_template: 1
               },
-              case_type_params: {
-                sequential: 1,
-                case_type_category: 'some_case_type_category',
-                is_active: true,
-                options: { limit: 25, offset: 25 },
-                'api.AwardDetail.get': { case_type_id: '$value.id' }
-              }
-            }
-          ],
-          [
-            'Award',
-            'getcount',
-            {
-              managed_by: 203,
-              award_detail_params: {
-                is_template: 1,
-                award_subtype: { IN: [4, 5] }
-              },
-              case_type_params: {
-                sequential: 1,
-                case_type_category: 'some_case_type_category',
-                is_active: true,
-                'api.AwardDetail.get': { case_type_id: '$value.id' }
-              }
-            }
-          ]]);
-        });
+              is_active: true
+            }, {
+              size: 25,
+              num: 2
+            }, true).then(function (data) {
+              result = data;
+            });
+            $rootScope.$digest();
+          });
 
-        it('displays the results in a list view', () => {
-          expect(result).toEqual(expectedResult);
+          it('fetches the 26th to 50th workflows for the case management instance', () => {
+            expect(civicaseCrmApiMock).toHaveBeenCalledWith([[
+              'Award',
+              'get',
+              {
+                managed_by: 203,
+                award_detail_params: {
+                  is_template: 1,
+                  award_subtype: { IN: [4, 5] }
+                },
+                case_type_params: {
+                  sequential: 1,
+                  case_type_category: 'some_case_type_category',
+                  is_active: true,
+                  options: { limit: 25, offset: 25 }
+                }
+              }
+            ],
+            [
+              'Award',
+              'getcount',
+              {
+                managed_by: 203,
+                award_detail_params: {
+                  is_template: 1,
+                  award_subtype: { IN: [4, 5] }
+                },
+                case_type_params: {
+                  sequential: 1,
+                  case_type_category: 'some_case_type_category',
+                  is_active: true
+                }
+              }
+            ]]);
+          });
+
+          it('displays the results in a list view', () => {
+            expect(result).toEqual(expectedResult);
+          });
         });
       });
     });
@@ -228,6 +379,24 @@
 
       it('redirects to the case type page for the clicked workflow', () => {
         expect(returnValue).toBe('civicrm/award/a/#/awards/1/1/workflow');
+      });
+    });
+
+    describe('when loading dashboard', () => {
+      var returnValue;
+
+      beforeEach(() => {
+        returnValue = ApplicantManagementWorkflow.getActivityFilters();
+      });
+
+      it('shows the cases from active case types, non deleted contacts and managed by current user', () => {
+        expect(returnValue).toEqual({
+          case_filter: {
+            'case_type_id.is_active': 1,
+            contact_is_deleted: 0,
+            'case_type_id.managed_by': 203
+          }
+        });
       });
     });
   });

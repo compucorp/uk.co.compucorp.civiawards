@@ -6,14 +6,13 @@
   /**
    * Applicant management workflows service
    *
-   * @param {object} $q angulars $q service
    * @param {Function} civicaseCrmApi civicrm api service
    * @param {object} AwardSubtype award subtype service
    * @param {object} ContactsCache contacts cache service
    * @param {object} Select2Utils select 2 utility service
    * @param {object} $window window object of the browser
    */
-  function ApplicantManagementWorkflow ($q, civicaseCrmApi, AwardSubtype,
+  function ApplicantManagementWorkflow (civicaseCrmApi, AwardSubtype,
     ContactsCache, Select2Utils, $window) {
     var awardSubtypes = AwardSubtype.getAll();
 
@@ -21,6 +20,7 @@
     this.createDuplicate = createDuplicate;
     this.getEditWorkflowURL = getEditWorkflowURL;
     this.getWorkflowsList = getWorkflowsList;
+    this.getFormattedWorkflowsList = getFormattedWorkflowsList;
     this.redirectToWorkflowCreationScreen = redirectToWorkflowCreationScreen;
 
     /**
@@ -51,10 +51,63 @@
      *
      * @param {object} selectedFilters selected filter values
      * @param {object} page page object needed for pagination
-     * @param {boolean} formatResults if results should be formatted
      * @returns {Array} api call parameters
      */
-    function getWorkflowsList (selectedFilters, page, formatResults) {
+    function getWorkflowsList (selectedFilters, page) {
+      var params = getWorkflowsListApiCallParams(selectedFilters);
+
+      var paramsWithLimit = _.cloneDeep(params);
+      paramsWithLimit.case_type_params.options = {
+        limit: page.size,
+        offset: page.size * (page.num - 1)
+      };
+
+      var apiCalls = [
+        ['Award', 'get', paramsWithLimit],
+        ['Award', 'getcount', params]
+      ];
+
+      return civicaseCrmApi(apiCalls).then(function (data) {
+        return data;
+      });
+    }
+
+    /**
+     * Returns formatted workflows list for applicant management
+     *
+     * @param {object} selectedFilters selected filter values
+     * @param {object} page page object needed for pagination
+     * @returns {Array} api call parameters
+     */
+    function getFormattedWorkflowsList (selectedFilters, page) {
+      var params = getWorkflowsListApiCallParams(selectedFilters);
+
+      params.case_type_params['api.AwardDetail.get'] = {
+        case_type_id: '$value.id'
+      };
+
+      var paramsWithLimit = _.cloneDeep(params);
+
+      paramsWithLimit.case_type_params.options = {
+        limit: page.size,
+        offset: page.size * (page.num - 1)
+      };
+
+      var apiCalls = [
+        ['Award', 'get', paramsWithLimit],
+        ['Award', 'getcount', params]
+      ];
+
+      return civicaseCrmApi(apiCalls).then(function (data) {
+        return getFormattedAwardDetailsData(data);
+      });
+    }
+
+    /**
+     * @param {object} selectedFilters selected filter values
+     * @returns {object} parameters
+     */
+    function getWorkflowsListApiCallParams (selectedFilters) {
       var params = {};
 
       if (selectedFilters.managed_by !== 'all_awards') {
@@ -73,27 +126,7 @@
         { sequential: 1 }
       );
 
-      if (formatResults) {
-        params.case_type_params['api.AwardDetail.get'] = {
-          case_type_id: '$value.id'
-        };
-      }
-
-      var paramsWithLimit = _.cloneDeep(params);
-      paramsWithLimit.case_type_params.options = {
-        limit: page.size,
-        offset: page.size * (page.num - 1)
-      };
-
-      var apiCalls = [
-        ['Award', 'get', paramsWithLimit],
-        ['Award', 'getcount', params]
-      ];
-
-      return civicaseCrmApi(apiCalls).then(function (data) {
-        console.log(data);
-        return formatResults ? getFormattedAwardDetailsData(data) : data;
-      });
+      return params;
     }
 
     /**

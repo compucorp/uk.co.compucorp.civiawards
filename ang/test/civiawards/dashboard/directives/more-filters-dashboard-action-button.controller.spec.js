@@ -3,7 +3,7 @@
 (function (_) {
   describe('More Filters Dashboard Action Button', () => {
     let $q, $location, $scope, $controller, $rootScope, dialogService,
-      civicaseCrmApiMock, civicaseCrmApi;
+      civicaseCrmApiMock;
 
     beforeEach(module('civiawards', function ($provide) {
       civicaseCrmApiMock = jasmine.createSpy();
@@ -12,13 +12,12 @@
       $provide.value('ts', jasmine.createSpy());
     }));
 
-    beforeEach(inject((_$q_, _civicaseCrmApi_, _$controller_, _$rootScope_, _$location_, _dialogService_) => {
+    beforeEach(inject((_$q_, _$controller_, _$rootScope_, _$location_, _dialogService_) => {
       $q = _$q_;
       $controller = _$controller_;
       $location = _$location_;
       $rootScope = _$rootScope_;
       dialogService = _dialogService_;
-      civicaseCrmApi = _civicaseCrmApi_;
 
       spyOn($rootScope, '$broadcast').and.callThrough();
 
@@ -49,10 +48,6 @@
         it('displays the more filter button', () => {
           expect(isButtonVisible).toBe(true);
         });
-
-        it('filters by my awards', () => {
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', jasmine.any(Object));
-        });
       });
 
       describe('when viewing any other dashboard', () => {
@@ -66,10 +61,6 @@
 
         it('does not display the more filter button', () => {
           expect(isButtonVisible).toBe(false);
-        });
-
-        it('does not filter by my awards', () => {
-          expect($rootScope.$broadcast).not.toHaveBeenCalledWith('civicase::dashboard-filters::updated', jasmine.any(Object));
         });
       });
     });
@@ -105,6 +96,7 @@
       var dialogModel;
 
       beforeEach(() => {
+        $scope.activityFilters = { case_filter: {} };
         dialogService.close = jasmine.createSpy('');
         dialogService.open = function (__, templateName, model) {
           dialogModel = model;
@@ -115,7 +107,7 @@
       describe('when my awards filter is selected', () => {
         describe('when status filter is selected', () => {
           beforeEach(() => {
-            dialogModel.selectedFilters.awardFilter = 'my_awards';
+            dialogModel.selectedFilters.managed_by = '2';
             dialogModel.selectedFilters.start_date = '10/12/2019';
             dialogModel.selectedFilters.end_date = '15/12/2019';
             dialogModel.selectedFilters.award_subtypes = '1,2';
@@ -126,25 +118,18 @@
           });
 
           it('shows the awards where the logged in user is the manager and also applies the rest of filters', () => {
-            expect(civicaseCrmApi).toHaveBeenCalledWith('AwardManager', 'get', {
-              sequential: 1,
-              contact_id: 203,
-              options: { limit: 0 }
-            });
-            expect(civicaseCrmApi).toHaveBeenCalledWith('AwardDetail', 'get', {
-              sequential: 1,
-              options: { limit: 0 },
-              start_date: '10/12/2019',
-              end_date: '15/12/2019',
-              case_type_id: { IN: [1, 2] },
-              award_subtype: { IN: ['1', '2'] }
-            });
-            expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', {
-              case_type_id: { IN: [1, 2] },
+            expect($scope.activityFilters.case_filter).toEqual({
+              'case_type_id.is_active': '1',
               status_id: { IN: ['2', '3'] },
               'status_id.grouping': { IN: ['Closed', 'Opened'] },
-              'case_type_id.is_active': '1'
+              'case_type_id.managed_by': '2',
+              'case_type_id.award_detail_params': {
+                award_subtype: '1,2',
+                start_date: '10/12/2019',
+                end_date: '15/12/2019'
+              }
             });
+            expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated');
           });
         });
 
@@ -157,12 +142,12 @@
             });
 
             it('filters applications by disabled awards', () => {
-              expect($rootScope.$broadcast).toHaveBeenCalledWith(
-                'civicase::dashboard-filters::updated',
-                jasmine.objectContaining({
-                  'case_type_id.is_active': '0'
-                })
-              );
+              expect($scope.activityFilters.case_filter).toEqual({
+                'case_type_id.is_active': '0',
+                status_id: { 'IS NOT NULL': 1 },
+                'case_type_id.award_detail_params': {},
+                'case_type_id.managed_by': 203
+              });
             });
           });
 
@@ -174,12 +159,12 @@
             });
 
             it('filters applications by enabled awards', () => {
-              expect($rootScope.$broadcast).toHaveBeenCalledWith(
-                'civicase::dashboard-filters::updated',
-                jasmine.objectContaining({
-                  'case_type_id.is_active': '1'
-                })
-              );
+              expect($scope.activityFilters.case_filter).toEqual({
+                'case_type_id.is_active': '1',
+                status_id: { 'IS NOT NULL': 1 },
+                'case_type_id.award_detail_params': {},
+                'case_type_id.managed_by': 203
+              });
             });
           });
         });
@@ -192,30 +177,34 @@
           });
 
           it('does not hide all cases and activities', () => {
-            expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', jasmine.objectContaining({
-              status_id: { 'IS NOT NULL': 1 }
-            }));
+            expect($scope.activityFilters.case_filter).toEqual({
+              'case_type_id.is_active': '1',
+              status_id: { 'IS NOT NULL': 1 },
+              'case_type_id.award_detail_params': {},
+              'case_type_id.managed_by': 203
+            });
           });
         });
       });
 
       describe('when all awards filter is selected', () => {
         beforeEach(() => {
-          dialogModel.selectedFilters.awardFilter = 'all_awards';
+          dialogModel.selectedFilters.managed_by = 'all_awards';
           dialogModel.applyFilterAndCloseDialog();
         });
 
         it('shows the all the awards', () => {
-          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardManager', 'get', {
-            sequential: 1,
-            options: { limit: 0 }
+          expect($scope.activityFilters.case_filter).toEqual({
+            'case_type_id.is_active': '1',
+            status_id: { 'IS NOT NULL': 1 },
+            'case_type_id.award_detail_params': {}
           });
         });
       });
 
       describe('when filters are not changed', () => {
         beforeEach(() => {
-          dialogModel.selectedFilters.awardFilter = 'my_awards';
+          dialogModel.selectedFilters.managed_by = 203;
           dialogModel.selectedFilters.statuses = '';
           dialogModel.selectedFilters.award_subtypes = '';
           dialogModel.selectedFilters.start_date = null;
@@ -231,7 +220,7 @@
 
       describe('when any of the filters are changed', () => {
         beforeEach(() => {
-          dialogModel.selectedFilters.awardFilter = 'all_awards';
+          dialogModel.selectedFilters.managed_by = 'all_awards';
           dialogModel.selectedFilters.statuses = '';
           dialogModel.selectedFilters.award_subtypes = '';
           dialogModel.selectedFilters.start_date = null;
@@ -242,26 +231,6 @@
 
         it('shows a red dot inside the more filters button', () => {
           expect($scope.isNotificationVisible()).toBe(true);
-        });
-      });
-
-      describe('when filters response yields no awards types ids', () => {
-        beforeEach(() => {
-          // Overwrite CRM API to return no results.
-          civicaseCrmApiMock.and.returnValue($q.resolve({
-            values: []
-          }));
-        });
-
-        beforeEach(() => {
-          dialogModel.applyFilterAndCloseDialog();
-          $rootScope.$digest();
-        });
-
-        it('hides all case types, cases and activities from dashboard', () => {
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('civicase::dashboard-filters::updated', jasmine.objectContaining({
-            case_type_id: { 'IS NULL': 1 }
-          }));
         });
       });
     });
