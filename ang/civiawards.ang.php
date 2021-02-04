@@ -9,6 +9,9 @@
  */
 
 use CRM_Civicase_Helper_GlobRecursive as GlobRecursive;
+use CRM_CiviAwards_Service_FinanceManagementSetting as FinanceManagementSettingService;
+
+$financeManagementSettingService = new FinanceManagementSettingService();
 
 /**
  * Get a list of JS files.
@@ -33,5 +36,8 @@ return [
   ],
   'partials' => [
     0 => 'ang/civiawards',
+  ],
+  'settings' => [
+    'instances_finance_support' => $financeManagementSettingService->get(),
   ],
 ];
