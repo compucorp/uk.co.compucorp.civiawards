@@ -14,8 +14,8 @@
 
     CaseDetailsTabsProvider.addTabs([
       {
-        name: 'Finance',
-        label: ts('Finance'),
+        name: 'Payments',
+        label: ts('Payments'),
         weight: 101
       }
     ]);

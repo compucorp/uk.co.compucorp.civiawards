@@ -1,6 +1,6 @@
 /* eslint-env jasmine */
 
-describe('AddFinanceTabConfig', () => {
+describe('AddPaymentsTabConfig', () => {
   let CaseDetailsTabsProvider, CaseTypeCategoryProvider, ts;
   const mockInstances = {
     'mock-instance-4': { value: 4 },
@@ -12,11 +12,11 @@ describe('AddFinanceTabConfig', () => {
       currentCaseCategory: 'mock-instance-4'
     }));
 
-    it('adds the finance tab', () => {
+    it('adds the payments tab', () => {
       expect(CaseDetailsTabsProvider.addTabs).toHaveBeenCalledWith([
         {
-          name: 'Finance',
-          label: ts('Finance'),
+          name: 'Payments',
+          label: ts('Payments'),
           weight: 101
         }
       ]);
@@ -28,7 +28,7 @@ describe('AddFinanceTabConfig', () => {
       currentCaseCategory: 'mock-instance-5'
     }));
 
-    it('does not add the finance tab', () => {
+    it('does not add the payments tab', () => {
       expect(CaseDetailsTabsProvider.addTabs).not.toHaveBeenCalled();
     });
   });
