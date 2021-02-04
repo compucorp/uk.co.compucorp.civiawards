@@ -94,7 +94,12 @@
         $scope.activityFilters.case_filter.status_id = { 'IS NOT NULL': 1 };
       }
 
-      $scope.activityFilters.case_filter['case_type_id.managed_by'] = model.selectedFilters.managed_by;
+      if (model.selectedFilters.managed_by !== 'all_awards') {
+        $scope.activityFilters.case_filter['case_type_id.managed_by'] = model.selectedFilters.managed_by;
+      } else {
+        delete $scope.activityFilters.case_filter['case_type_id.managed_by'];
+      }
+
       $scope.activityFilters.case_filter['case_type_id.award_detail_params'] = getAwardApiFilters();
       console.log($scope.activityFilters);
 

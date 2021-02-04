@@ -30,7 +30,11 @@
      */
     function getActivityFilters () {
       return {
-        case_filter: { 'case_type_id.is_active': 1, contact_is_deleted: 0 }
+        case_filter: {
+          'case_type_id.is_active': 1,
+          'case_type_id.managed_by': CRM.config.user_contact_id,
+          contact_is_deleted: 0
+        }
       };
     }
 
@@ -87,6 +91,7 @@
       ];
 
       return civicaseCrmApi(apiCalls).then(function (data) {
+        console.log(data);
         return formatResults ? getFormattedAwardDetailsData(data) : data;
       });
     }
