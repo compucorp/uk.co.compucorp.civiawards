@@ -1,11 +1,16 @@
 /* eslint-env jasmine */
 
 (function (CRM) {
-  CRM['civicase-base'] = {};
   CRM['civiawards-base'] = {};
-  CRM.civiawards = {};
   CRM['civiawards-workflow'] = {};
-
+  CRM['civicase-base'] = {
+    currentCaseCategory: 'awards'
+  };
+  CRM.civiawards = {
+    instances_finance_support: {
+      4: '1'
+    }
+  };
   /**
    * Dependency Injection for civiawards module, defined in
    * ang/civiawards-base.ang.php and ang/civiawards.ang.php
