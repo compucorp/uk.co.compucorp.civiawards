@@ -1,6 +1,7 @@
 <?php
 
 use Civi\API\Event\PrepareEvent;
+use CRM_CiviAwards_Service_AwardCaseFilterPreProcess as AwardCaseFilterPreProcess;
 
 /**
  * Award filter while fetching cases.
@@ -8,7 +9,7 @@ use Civi\API\Event\PrepareEvent;
 class CRM_CiviAwards_Event_Listener_AwardCaseFilter {
 
   /**
-   * Fetches case by the given award filters.
+   * Fetches cases by the given award filters.
    *
    * @param \Civi\API\Event\PrepareEvent $event
    *   API Prepare Event Object.
@@ -23,31 +24,8 @@ class CRM_CiviAwards_Event_Listener_AwardCaseFilter {
       return;
     }
 
-    $caseTypeParams = [];
-    $managedByParam = $apiRequest['params']['case_type_id.managed_by'];
-    $awardDetailParams = $apiRequest['params']['case_type_id.award_detail_params'];
-
-    foreach ($apiRequest['params'] as $param => $value) {
-      if ($param === 'case_type_id.managed_by' || $param === 'case_type_id.award_detail_params') {
-        unset($apiRequest['params'][$param]);
-      }
-      elseif (strpos($param, 'case_type_id.') === 0) {
-        unset($apiRequest['params'][$param]);
-        $caseTypeParams[substr($param, strlen('case_type_id.'))] = $value;
-      }
-    }
-
-    $filteredAwardTypes = civicrm_api3('Award', 'get', [
-      'managed_by' => $managedByParam,
-      'award_detail_params' => $awardDetailParams,
-      'case_type_params' => array_merge($caseTypeParams, [
-        'sequential' => 1,
-        'options' => ['limit' => 0],
-        'return' => ['id'],
-      ]),
-    ])['values'];
-
-    $apiRequest['params']['case_type_id'] = ['IN' => array_column($filteredAwardTypes, 'id')];
+    $awardCaseFilterPreProcess = new AwardCaseFilterPreProcess();
+    $awardCaseFilterPreProcess->onCreate($apiRequest);
 
     $event->setApiRequest($apiRequest);
   }
