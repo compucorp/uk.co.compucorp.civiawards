@@ -3,14 +3,8 @@
 (function (CRM) {
   CRM['civiawards-base'] = {};
   CRM['civiawards-workflow'] = {};
-  CRM['civicase-base'] = {
-    currentCaseCategory: 'awards'
-  };
-  CRM.civiawards = {
-    instances_finance_support: {
-      4: '1'
-    }
-  };
+  CRM['civicase-base'] = {};
+  CRM.civiawards = {};
   /**
    * Dependency Injection for civiawards module, defined in
    * ang/civiawards-base.ang.php and ang/civiawards.ang.php
