@@ -1,5 +1,5 @@
 (function (angular) {
-  var module = angular.module('civiawards');
+  var module = angular.module('civiawards-payments-tab');
 
   module.config(function (CaseDetailsTabsProvider, CaseTypeCategoryProvider,
     currentCaseCategory, instancesFinanceSupport, isTruthyProvider, tsProvider) {

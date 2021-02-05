@@ -255,6 +255,7 @@ function civiawards_civicrm_post($op, $objectName, $objectId, &$objectRef) {
  */
 function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
   $dependentModules[] = "civiawards";
+  $dependentModules[] = "civiawards-payments-tab";
 }
 
 /**
