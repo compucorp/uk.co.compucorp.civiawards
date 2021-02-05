@@ -10,7 +10,6 @@
 
 use CRM_Civicase_Helper_GlobRecursive as GlobRecursive;
 
-
 /**
  * Get a list of JS files.
  */
