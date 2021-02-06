@@ -13,7 +13,8 @@ gulp.task('sass', sassTask);
 /**
  * Runs Karma unit tests
  */
-gulp.task('test', testTask);
+gulp.task('test', (done) => testTask(done, { singleRun: true }));
+gulp.task('test:watch', (done) => testTask(done, { singleRun: false }));
 
 /**
  * Default tasks
