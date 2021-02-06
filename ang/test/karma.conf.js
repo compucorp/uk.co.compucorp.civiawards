@@ -47,6 +47,9 @@ module.exports = function (config) {
       extPath + '/ang/civiawards-workflow.js',
       { pattern: extPath + '/ang/civiawards-workflow/**/*.js' },
 
+      extPath + '/ang/civiawards-payments-tab.js',
+      { pattern: extPath + '/ang/civiawards-payments-tab/**/*.js' },
+
       // Spec files
       { pattern: civicasePath + '/ang/test/mocks/modules.mock.js' },
       { pattern: civicasePath + '/ang/test/mocks/**/*.js' },
@@ -54,7 +57,8 @@ module.exports = function (config) {
       { pattern: extPath + '/ang/test/mocks/**/*.js' },
       { pattern: extPath + '/ang/test/civiawards-base/**/*.js' },
       { pattern: extPath + '/ang/test/civiawards/**/*.js' },
-      { pattern: extPath + '/ang/test/civiawards-workflow/**/*.js' }
+      { pattern: extPath + '/ang/test/civiawards-workflow/**/*.js' },
+      { pattern: extPath + '/ang/test/civiawards-payments-tab/**/*.js' }
     ],
     exclude: [
     ],

@@ -13,4 +13,5 @@
   CRM.angular.requires['civiawards-base'] = ['civicase-base'];
   CRM.angular.requires.civiawards = ['ngRoute', 'civiawards-base', 'dialogService'];
   CRM.angular.requires['civiawards-workflow'] = ['civiawards-base'];
+  CRM.angular.requires['civiawards-payments-tab'] = ['civiawards-base'];
 }(CRM));

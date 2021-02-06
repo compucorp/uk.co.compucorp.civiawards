@@ -1,13 +1,9 @@
 /* eslint-env jasmine */
 
 describe('AddPaymentsTabConfig', () => {
-  let CaseDetailsTabsProvider, CaseTypeCategoryProvider, ts;
-  const mockInstances = {
-    'mock-instance-4': { value: 4 },
-    'mock-instance-5': { value: 5 }
-  };
+  let CaseDetailsTabsProvider, ts;
 
-  describe('when the current instance support finances', () => {
+  describe('when the module is configured', () => {
     beforeEach(() => setupModulesAndDependencies({
       currentCaseCategory: 'mock-instance-4'
     }));
@@ -23,16 +19,6 @@ describe('AddPaymentsTabConfig', () => {
     });
   });
 
-  describe('when the current instance does not support finances', () => {
-    beforeEach(() => setupModulesAndDependencies({
-      currentCaseCategory: 'mock-instance-5'
-    }));
-
-    it('does not add the payments tab', () => {
-      expect(CaseDetailsTabsProvider.addTabs).not.toHaveBeenCalled();
-    });
-  });
-
   /**
    * Setups the civiaward modules and injects mock dependencies.
    *
@@ -44,20 +30,9 @@ describe('AddPaymentsTabConfig', () => {
         '$get',
         'addTabs'
       ]);
-      CaseTypeCategoryProvider = jasmine.createSpyObj('CaseTypeCategoryProvider', [
-        '$get',
-        'findByName',
-        'findAllByInstance'
-      ]);
-
-      CaseTypeCategoryProvider.findByName.and.callFake((instanceName) => {
-        return mockInstances[instanceName];
-      });
 
       $provide.provider('CaseDetailsTabs', CaseDetailsTabsProvider);
-      $provide.provider('CaseTypeCategory', CaseTypeCategoryProvider);
-      $provide.constant('currentCaseCategory', mockValues.currentCaseCategory);
-    }, 'civiawards');
+    }, 'civiawards-payments-tab');
 
     inject((_ts_) => {
       ts = _ts_;

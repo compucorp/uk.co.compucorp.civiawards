@@ -3,7 +3,7 @@
 describe('PaymentsCaseTab', () => {
   let PaymentsCaseTab;
 
-  beforeEach(module('civiawards'));
+  beforeEach(module('civiawards-payments-tab'));
 
   beforeEach(inject((_PaymentsCaseTab_) => {
     PaymentsCaseTab = _PaymentsCaseTab_;
