@@ -53,8 +53,8 @@ module.exports = function (config) {
       // Spec files
       { pattern: civicasePath + '/ang/test/mocks/modules.mock.js' },
       { pattern: civicasePath + '/ang/test/mocks/**/*.js' },
-      { pattern: extPath + '/ang/test/mocks/modules.mock.js' },
-      { pattern: extPath + '/ang/test/mocks/**/*.js' },
+      { pattern: extPath + '/ang/test/**/mocks/modules.mock.js' },
+      { pattern: extPath + '/ang/test/**/mocks/**/*.js' },
       { pattern: extPath + '/ang/test/civiawards-base/**/*.js' },
       { pattern: extPath + '/ang/test/civiawards/**/*.js' },
       { pattern: extPath + '/ang/test/civiawards-workflow/**/*.js' },

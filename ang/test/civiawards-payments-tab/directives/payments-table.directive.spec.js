@@ -2,101 +2,19 @@
 
 ((_) => {
   describe('PaymentsTable', () => {
-    let $controller, $rootScope, $scope, civicaseCrmApi;
+    let $controller, $rootScope, $scope, civicaseCrmApi, mockPayments, paymentTypes;
     const mockApplication = {
       id: _.uniqueId()
     };
-    const mockPayments = [
-      {
-        id: _.uniqueId(),
-        custom_11: '1',
-        custom_12: 'GBP',
-        custom_13: '1099',
-        custom_14: 'N9TT-9G0A-B7FQ-RANC',
-        activity_date_time: '2000-01-01 12:00:00',
-        target_contact_name: { 10: 'Jon Snow' },
-        'status_id.label': 'paid_complete'
-      },
-      {
-        id: _.uniqueId(),
-        custom_11: '2',
-        custom_12: 'GBP',
-        custom_13: '1050',
-        custom_14: 'QK6A-JI6S-7ETR-0A6C',
-        activity_date_time: '2000-05-01 12:00:00',
-        target_contact_name: { 11: 'Jon Snow' },
-        'status_id.label': 'paid_complete'
-      },
-      {
-        id: _.uniqueId(),
-        custom_11: '1',
-        custom_12: 'GBP',
-        custom_13: '1250',
-        custom_14: 'SXFP-CHYK-ONI6-S89U',
-        activity_date_time: '2000-07-01 12:00:00',
-        target_contact_name: { 12: 'Jon Snow' },
-        'status_id.label': 'failed_incomplete'
-      }
-    ];
-    const mockFields = [
-      {
-        id: '11',
-        name: 'Type'
-      },
-      {
-        id: '12',
-        name: 'Payment_Amount_Currency_Type'
-      },
-      {
-        id: '13',
-        name: 'Payment_Amount_Value'
-      },
-      {
-        id: '14',
-        name: 'Payee_Ref'
-      }
-    ];
-    const mockPaymentTypes = {
-      1: {
-        label: 'Stipend/Salary',
-        value: '1'
-      },
-      2: {
-        label: 'Expenses',
-        value: '2'
-      }
-    };
-    const apiResponses = {
-      Activity: { count: mockPayments.length, values: mockPayments },
-      CustomField: { count: mockFields.length, values: mockFields }
-    };
 
-    beforeEach(module('civiawards-payments-tab', ($provide) => {
-      civicaseCrmApi = jasmine.createSpy('civicaseCrmApi');
+    beforeEach(module('civiawards-payments-tab', 'civiawards-payments-tab.mocks',
+      ($provide) => {
+        civicaseCrmApi = jasmine.createSpy('civicaseCrmApi');
 
-      $provide.value('civicaseCrmApi', civicaseCrmApi);
-      $provide.constant('paymentTypes', mockPaymentTypes);
-    }));
+        $provide.value('civicaseCrmApi', civicaseCrmApi);
+      }));
 
-    beforeEach(inject((_$controller_, _$rootScope_, $q) => {
-      $controller = _$controller_;
-      $rootScope = _$rootScope_;
-
-      civicaseCrmApi.and.callFake((apiCalls) => {
-        if (!_.isObject(apiCalls)) {
-          return $q.resolve({ values: [] });
-        }
-
-        return $q.resolve(
-          _.transform(apiCalls, (requestObject, requestParameters, requestKey) => {
-            const entityName = requestParameters[0];
-            requestObject[requestKey] = apiResponses[entityName];
-
-            return requestObject;
-          })
-        );
-      });
-    }));
+    beforeEach(injectDependenciesAndMocks);
 
     describe('controller definition', () => {
       it('defines the controller', () => {
@@ -152,7 +70,7 @@
 
         beforeEach(() => {
           expectedPayments = _.map(mockPayments, (mockPayment) => jasmine.objectContaining({
-            paymentTypeLabel: mockPaymentTypes[mockPayment.custom_11].label,
+            paymentTypeLabel: paymentTypes[mockPayment.custom_11].label,
             custom_Payment_Amount_Currency_Type: mockPayment.custom_12,
             custom_Payment_Amount_Value: mockPayment.custom_13,
             custom_Payee_Ref: mockPayment.custom_14
@@ -174,6 +92,39 @@
 
       $controller('civiawardsPaymentsTableController', {
         $scope
+      });
+    }
+
+    /**
+     * Hoists all dependencies needed by the spec file and provides mock services.
+     */
+    function injectDependenciesAndMocks () {
+      inject((_$controller_, _$rootScope_, $q, mockCustomFields,
+        _mockPayments_, _paymentTypes_) => {
+        $controller = _$controller_;
+        $rootScope = _$rootScope_;
+        mockPayments = _mockPayments_;
+        paymentTypes = _paymentTypes_;
+
+        const apiResponses = {
+          Activity: { count: mockPayments.length, values: mockPayments },
+          CustomField: { count: mockCustomFields.length, values: mockCustomFields }
+        };
+
+        civicaseCrmApi.and.callFake((apiCalls) => {
+          if (!_.isObject(apiCalls)) {
+            return $q.resolve({ values: [] });
+          }
+
+          return $q.resolve(
+            _.transform(apiCalls, (requestObject, requestParameters, requestKey) => {
+              const entityName = requestParameters[0];
+              requestObject[requestKey] = apiResponses[entityName];
+
+              return requestObject;
+            })
+          );
+        });
       });
     }
   });
