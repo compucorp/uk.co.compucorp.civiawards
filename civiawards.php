@@ -255,6 +255,14 @@ function civiawards_civicrm_post($op, $objectName, $objectId, &$objectRef) {
  */
 function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
   $dependentModules[] = "civiawards";
+
+  $hooks = [
+    new CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_PaymentsTabModule(),
+  ];
+
+  foreach ($hooks as $hook) {
+    $hook->run($dependentModules);
+  }
 }
 
 /**
