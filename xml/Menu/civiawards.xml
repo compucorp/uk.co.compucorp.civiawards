@@ -28,6 +28,6 @@
     <path>civicrm/awardpayment</path>
     <page_callback>CRM_CiviAwards_Form_AwardPayment</page_callback>
     <title>AwardPayment</title>
-    <access_arguments>access CiviCRM</access_arguments>
+    <access_arguments>create/edit awards</access_arguments>
   </item>
 </menu>
