@@ -477,11 +477,11 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
       $this->getValueForActivityStatus('exported_complete'),
     ];
 
-    return in_array($activityStatus, $notEditableStatuses) ? TRUE : FALSE;
+    return in_array($activityStatus, $notEditableStatuses);
   }
 
   /**
-   * Get pre-defined fields that are to be un-editable.
+   * Get pre-defined fields that are un-editable.
    *
    * @return array
    *   Form fields.
