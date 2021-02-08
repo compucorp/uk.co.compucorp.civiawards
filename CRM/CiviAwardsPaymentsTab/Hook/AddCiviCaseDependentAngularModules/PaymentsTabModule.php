@@ -8,7 +8,7 @@ use CRM_CiviAwards_Service_FinanceManagementSetting as FinanceManagementSettingS
  * This will add the payments tab module to awards instances that support
  * finances.
  */
-class CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_AddModule {
+class CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_PaymentsTabModule {
 
   /**
    * Adds the module.

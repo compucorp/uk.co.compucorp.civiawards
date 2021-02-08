@@ -257,7 +257,7 @@ function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
   $dependentModules[] = "civiawards";
 
   $hooks = [
-    new CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_AddModule(),
+    new CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_PaymentsTabModule(),
   ];
 
   foreach ($hooks as $hook) {

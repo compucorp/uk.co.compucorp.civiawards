@@ -2,14 +2,14 @@
 
 use CRM_CiviAwards_Service_FinanceManagementSetting as FinanceManagementSettingService;
 use CRM_CiviAwards_Test_Fabricator_CaseCategory as CaseCategoryFabricator;
-use CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_AddModule as AddModuleHook;
+use CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_PaymentsTabModule as PaymentsTabModule;
 
 /**
- * AddModuleTest class.
+ * PaymentsTabModule test class.
  *
  * @group headless
  */
-class CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_AddModuleTest extends BaseHeadlessTest {
+class CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_PaymentsTabModuleTest extends BaseHeadlessTest {
 
   /**
    * Test adding the payments tab module for awards that support finances.
@@ -17,13 +17,13 @@ class CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_AddModul
   public function testAddingModuleForAwardsWithFinanceSupport() {
     $modulesList = [];
     $financeManagement = new FinanceManagementSettingService();
-    $addModuleHook = new AddModuleHook();
+    $paymentsTabModule = new PaymentsTabModule();
     $caseTypeCategory = CaseCategoryFabricator::fabricate(['name' => 'category1']);
 
     $_REQUEST['case_type_category'] = $caseTypeCategory['name'];
     $financeManagement->saveForCaseCategory($caseTypeCategory['value'], TRUE);
 
-    $addModuleHook->run($modulesList);
+    $paymentsTabModule->run($modulesList);
 
     $this->assertEquals(['civiawards-payments-tab'], $modulesList);
   }
@@ -34,13 +34,13 @@ class CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_AddModul
   public function testIgnoringModuleForAwardsWithoutFinanceSupport() {
     $modulesList = [];
     $financeManagement = new FinanceManagementSettingService();
-    $addModuleHook = new AddModuleHook();
+    $paymentsTabModule = new PaymentsTabModule();
     $caseTypeCategory = CaseCategoryFabricator::fabricate(['name' => 'category1']);
 
     $_REQUEST['case_type_category'] = $caseTypeCategory['name'];
     $financeManagement->saveForCaseCategory($caseTypeCategory['value'], FALSE);
 
-    $addModuleHook->run($modulesList);
+    $paymentsTabModule->run($modulesList);
 
     $this->assertEquals([], $modulesList);
   }
