@@ -17,7 +17,7 @@
       <tr ng-repeat="payment in payments">
         <td>{{payment.id}}</td>
         <td>{{payment.target_contact_name}}</td>
-        <td>{{payment.custom_Type}}</td>
+        <td>{{payment.paymentTypeLabel}}</td>
         <td>{{payment.custom_Payment_Amount_Value|limitTo:1}}</td>
         <td>{{payment.custom_Payment_Currency}}</td>
         <td>{{payment.activity_date_time | crmDate}}</td>

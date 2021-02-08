@@ -9,7 +9,7 @@
     const mockPayments = [
       {
         id: _.uniqueId(),
-        custom_11: 'Stipend/Salary',
+        custom_11: '1',
         custom_12: 'GBP',
         custom_13: '1099',
         custom_14: 'N9TT-9G0A-B7FQ-RANC',
@@ -19,7 +19,7 @@
       },
       {
         id: _.uniqueId(),
-        custom_11: 'Stipend/Salary',
+        custom_11: '2',
         custom_12: 'GBP',
         custom_13: '1050',
         custom_14: 'QK6A-JI6S-7ETR-0A6C',
@@ -29,7 +29,7 @@
       },
       {
         id: _.uniqueId(),
-        custom_11: 'Stipend/Salary',
+        custom_11: '1',
         custom_12: 'GBP',
         custom_13: '1250',
         custom_14: 'SXFP-CHYK-ONI6-S89U',
@@ -56,6 +56,16 @@
         name: 'Payee_Ref'
       }
     ];
+    const mockPaymentTypes = {
+      1: {
+        label: 'Stipend/Salary',
+        value: '1'
+      },
+      2: {
+        label: 'Expenses',
+        value: '2'
+      }
+    };
     const apiResponses = {
       Activity: { count: mockPayments.length, values: mockPayments },
       CustomField: { count: mockFields.length, values: mockFields }
@@ -65,6 +75,7 @@
       civicaseCrmApi = jasmine.createSpy('civicaseCrmApi');
 
       $provide.value('civicaseCrmApi', civicaseCrmApi);
+      $provide.constant('paymentTypes', mockPaymentTypes);
     }));
 
     beforeEach(inject((_$controller_, _$rootScope_, $q) => {
@@ -141,7 +152,7 @@
 
         beforeEach(() => {
           expectedPayments = _.map(mockPayments, (mockPayment) => jasmine.objectContaining({
-            custom_Type: mockPayment.custom_11,
+            paymentTypeLabel: mockPaymentTypes[mockPayment.custom_11].label,
             custom_Payment_Amount_Currency_Type: mockPayment.custom_12,
             custom_Payment_Amount_Value: mockPayment.custom_13,
             custom_Payee_Ref: mockPayment.custom_14

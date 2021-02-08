@@ -23,8 +23,9 @@
    *
    * @param {object} $scope scope object.
    * @param {Function} civicaseCrmApi CRM API service.
+   * @param {object} paymentTypes payment type objects indexed by value.
    */
-  function civiawardsPaymentsTableController ($scope, civicaseCrmApi) {
+  function civiawardsPaymentsTableController ($scope, civicaseCrmApi, paymentTypes) {
     var customFields;
 
     (function init () {
@@ -42,15 +43,17 @@
      *   a string instead of an object.
      */
     function formatPayment (payment) {
+      var paymentCustomFields = getCustomFieldsAsNamesAndValues(payment);
       var targetContactName = _.chain(payment.target_contact_name)
         .toArray().first().value();
 
       return _.extend(
         {},
         payment,
-        getCustomFieldsAsNamesAndValues(payment),
+        paymentCustomFields,
         {
-          target_contact_name: targetContactName
+          target_contact_name: targetContactName,
+          paymentTypeLabel: paymentTypes[paymentCustomFields.custom_Type].label
         }
       );
     }
