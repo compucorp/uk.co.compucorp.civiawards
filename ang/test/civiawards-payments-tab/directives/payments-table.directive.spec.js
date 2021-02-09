@@ -117,8 +117,7 @@
             })
           );
 
-          $scope.filters.id = '123';
-          $scope.filterPayments();
+          $scope.filterPayments({ id: '123' });
           $scope.$digest();
         });
 
@@ -139,8 +138,7 @@
           initController();
           $scope.$digest();
 
-          $scope.filters.id = '';
-          $scope.filterPayments();
+          $scope.filterPayments({ id: '' });
           $scope.$digest();
         });
 

@@ -28,7 +28,6 @@
     var customFields;
 
     $scope.isLoading = false;
-    $scope.filters = {};
 
     $scope.filterPayments = filterPayments;
 
@@ -41,11 +40,13 @@
      *
      * A loading state is also updated before and after the activities have
      * been loaded.
+     *
+     * @param {object} filters parameters to pass to the Activity endpoint.
      */
-    function filterPayments () {
+    function filterPayments (filters) {
       $scope.isLoading = true;
 
-      loadPaymentActivitiesAndCustomFields($scope.filters)
+      loadPaymentActivitiesAndCustomFields(filters)
         .then(function (results) {
           $scope.isLoading = false;
           customFields = results.customFields.values;
