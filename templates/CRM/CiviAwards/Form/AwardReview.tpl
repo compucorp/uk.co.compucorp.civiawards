@@ -19,7 +19,7 @@
 {/if}
 
 <div {$container_attributes}>
-  <div class="civiawards__review-activity clearfix {$wrapper_class}">
+  <div class="civiawards__crm-popup__container clearfix {$wrapper_class}">
     {if !$isReviewFromSsp}
       <div class="panel panel-default">
         <div class="panel-body">
