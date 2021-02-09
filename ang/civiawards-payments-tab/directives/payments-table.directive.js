@@ -33,6 +33,7 @@
 
     (function init () {
       filterPayments();
+      $scope.$on('civiawards::paymentstable::refresh', filterPayments);
     })();
 
     /**

@@ -29,7 +29,11 @@
         <td>{{payment.activity_date_time | civicaseCrmDate}}</td>
         <td>{{payment.custom_Payee_Ref|limitTo:10}}</td>
         <td>{{payment['status_id.label']}}</td>
-        <td></td>
+        <td>
+          <civiawards-payments-case-tab-actions
+            payment="payment">
+          </civiawards-payments-case-tab-actions>
+        </td>
       </tr>
     </tbody>
   </table>
