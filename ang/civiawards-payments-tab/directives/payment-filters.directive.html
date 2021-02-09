@@ -58,6 +58,12 @@
           class="form-control"
           ng-model="filters.custom_Type"
           ng-change="onFilter({ $filters: filters })"
+          crm-ui-select="{
+            allowClear: true,
+            placeholder: ts('Select Type'),
+            multiple: false,
+            data: paymentTypeOptions
+          }"
         />
       </label>
     </div>
