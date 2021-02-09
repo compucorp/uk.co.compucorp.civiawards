@@ -1,4 +1,7 @@
-<div class="panel panel-default table-responsive">
+<div
+  ng-if="payments.length > 0"
+  class="panel panel-default table-responsive"
+>
   <table class="table">
     <thead>
       <tr>
@@ -27,4 +30,9 @@
       </tr>
     </tbody>
   </table>
+</div>
+<div
+  ng-if="payments.length === 0 && !isLoading"
+  class="text-center text-uppercase civicase__case-tab__empty">
+  {{:: ts('No Payments')}}
 </div>

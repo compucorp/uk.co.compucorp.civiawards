@@ -26,10 +26,14 @@
    */
   function civiawardsPaymentsTableController ($scope, civicaseCrmApi, paymentTypes) {
     var customFields;
+    $scope.isLoading = false;
 
     (function init () {
+      $scope.isLoading = true;
+
       loadPaymentActivitiesAndCustomFields()
         .then(function (results) {
+          $scope.isLoading = false;
           customFields = results.customFields.values;
           $scope.payments = _.map(results.payments.values, formatPayment);
         });

@@ -25,32 +25,39 @@
     describe('payment activities', () => {
       beforeEach(() => {
         initController();
-        $scope.$digest();
       });
 
-      it('requests the list of payment activities for the current application', () => {
-        expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
-          .toContain(['Activity', 'get', {
-            sequential: 1,
-            case_id: mockApplication.id,
-            activity_type_id: 'Awards Payment',
-            return: ['id', 'target_contact_id', 'status_id.label',
-              'activity_date_time', 'custom'],
-            options: { limit: 0 }
-          }]);
+      describe('when loading the payment activities', () => {
+        it('sets the loading state as true', () => {
+          expect($scope.isLoading).toBe(true);
+        });
+
+        it('requests the list of payment activities for the current application', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .toContain(['Activity', 'get', {
+              sequential: 1,
+              case_id: mockApplication.id,
+              activity_type_id: 'Awards Payment',
+              return: ['id', 'target_contact_id', 'status_id.label',
+                'activity_date_time', 'custom'],
+              options: { limit: 0 }
+            }]);
+        });
+
+        it('requests the list of payment activity custom fields', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .toContain(['CustomField', 'get', {
+              custom_group_id: 'Awards_Payment_Information'
+            }]);
+        });
       });
 
-      it('requests the list of payment activity custom fields', () => {
-        expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
-          .toContain(['CustomField', 'get', {
-            custom_group_id: 'Awards_Payment_Information'
-          }]);
-      });
-
-      describe('stored payments', () => {
+      describe('after the payment activities have been loaded', () => {
         let expectedPayments;
 
         beforeEach(() => {
+          $scope.$digest();
+
           expectedPayments = _.map(mockPayments, (mockPayment) => jasmine.objectContaining({
             id: mockPayment.id,
             'status_id.label': mockPayment['status_id.label'],
@@ -58,6 +65,10 @@
             target_contact_name: _.chain(mockPayment.target_contact_name)
               .toArray().first().value()
           }));
+        });
+
+        it('sets the loading state as false', () => {
+          expect($scope.isLoading).toBe(false);
         });
 
         it('stores the payment activities in the scope', () => {
@@ -69,6 +80,8 @@
         let expectedPayments;
 
         beforeEach(() => {
+          $scope.$digest();
+
           expectedPayments = _.map(mockPayments, (mockPayment) => jasmine.objectContaining({
             paymentTypeLabel: paymentTypes[mockPayment.custom_11].label,
             custom_Payment_Amount_Currency_Type: mockPayment.custom_12,
