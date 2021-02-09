@@ -26,18 +26,32 @@
    */
   function civiawardsPaymentsTableController ($scope, civicaseCrmApi, paymentTypes) {
     var customFields;
+
     $scope.isLoading = false;
+    $scope.filters = {};
+
+    $scope.filterPayments = filterPayments;
 
     (function init () {
+      filterPayments();
+    })();
+
+    /**
+     * Loads the payments activities using the filters values.
+     *
+     * A loading state is also updated before and after the activities have
+     * been loaded.
+     */
+    function filterPayments () {
       $scope.isLoading = true;
 
-      loadPaymentActivitiesAndCustomFields()
+      loadPaymentActivitiesAndCustomFields($scope.filters)
         .then(function (results) {
           $scope.isLoading = false;
           customFields = results.customFields.values;
           $scope.payments = _.map(results.payments.values, formatPayment);
         });
-    })();
+    }
 
     /**
      * @param {object} payment payment object.
@@ -78,19 +92,27 @@
     }
 
     /**
+     * @param {object} activityFilters list of parameters to use for filtering
+     *   the payment activities.
      * @returns {Promise<object>} resolves to payment activites and custom
      *   fields for payment activities.
      */
-    function loadPaymentActivitiesAndCustomFields () {
+    function loadPaymentActivitiesAndCustomFields (activityFilters) {
+      var paymentDefaultFilters = {
+        sequential: 1,
+        activity_type_id: 'Awards Payment',
+        case_id: $scope.caseItem.id,
+        return: ['id', 'target_contact_id', 'status_id.label',
+          'activity_date_time', 'custom'],
+        options: { limit: 0 }
+      };
+
       return civicaseCrmApi({
-        payments: ['Activity', 'get', {
-          sequential: 1,
-          activity_type_id: 'Awards Payment',
-          case_id: $scope.caseItem.id,
-          return: ['id', 'target_contact_id', 'status_id.label',
-            'activity_date_time', 'custom'],
-          options: { limit: 0 }
-        }],
+        payments: ['Activity', 'get', _.extend(
+          {},
+          paymentDefaultFilters,
+          _.pick(activityFilters, _.identity)
+        )],
         customFields: ['CustomField', 'get', {
           custom_group_id: 'Awards_Payment_Information'
         }]

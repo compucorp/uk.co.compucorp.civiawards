@@ -1,3 +1,78 @@
+<div crm-ui-accordion="{title: ts('Filters'), collapsed: true}">
+  <div class="row">
+    <div class="col-sm-6">
+      <label>
+        {{:: ts('ID') }}
+        <input
+          class="form-control"
+          ng-model="filters.id"
+          ng-model-options="{ debounce: 1000 }"
+          ng-change="filterPayments()"
+        />
+      </label>
+    </div>
+    <div class="col-sm-6">
+      <label>
+        {{:: ts('Status') }}
+        <input
+          class="form-control"
+          ng-model="filters.status_id"
+          ng-change="filterPayments()"
+        />
+      </label>
+    </div>
+    <div class="col-sm-6">
+      <label>
+        {{:: ts('Payee') }}
+        <input class="form-control"
+          style="width: 180px;"
+          ng-model="filters.target_contact_id"
+          ng-change="filterPayments()"
+          crm-entityref="{
+            create: false,
+            entity: 'Contact',
+            select: {
+              allowClear: true,
+              multiple: false,
+              placeholder: ts('Select Contact')
+            }
+          }"
+        />
+      </label>
+    </div>
+    <div class="col-sm-6">
+      <label>
+        {{:: ts('Ref') }}
+        <input
+          class="form-control"
+          ng-model="filters.custom_Payee_Ref"
+          ng-model-options="{ debounce: 1000 }"
+          ng-change="filterPayments()"
+        />
+      </label>
+    </div>
+    <div class="col-sm-6">
+      <label>
+        {{:: ts('Type') }}
+        <input
+          class="form-control"
+          ng-model="filters.custom_Type"
+          ng-change="filterPayments()"
+        />
+      </label>
+    </div>
+    <div class="col-sm-6">
+      <label>
+        {{:: ts('Due Date') }}
+        <input
+          class="form-control"
+          ng-model="filters.activity_date_time"
+          ng-change="filterPayments()"
+        />
+      </label>
+    </div>
+  </div>
+</div>
 <div
   ng-if="payments.length > 0"
   class="panel panel-default table-responsive"
