@@ -1,4 +1,3 @@
-
 (function (_, angular) {
   var module = angular.module('civiawards-payments-tab');
 
