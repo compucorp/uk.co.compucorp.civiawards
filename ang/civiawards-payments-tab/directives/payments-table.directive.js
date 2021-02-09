@@ -33,7 +33,6 @@
 
     (function init () {
       filterPayments();
-      $scope.$on('civiawards::paymentstable::refresh', filterPayments);
     })();
 
     /**
@@ -129,7 +128,7 @@
         activity_type_id: 'Awards Payment',
         case_id: $scope.caseItem.id,
         return: ['id', 'target_contact_id', 'status_id.label',
-          'activity_date_time', 'custom'],
+          'activity_date_time', 'custom', 'status_id.name'],
         options: { limit: 0 }
       };
 

@@ -22,7 +22,10 @@
       <a href ng-click="handleEditActivity(payment.id)">
         {{ ts('Edit') }}
       </a>
-      <a href ng-click="handleDeleteActivity(payment.id)">
+      <a
+        ng-if="isDeleteActionVisible(payment)"
+        href
+        ng-click="handleDeleteActivity(payment.id)">
         {{ ts('Delete') }}
       </a>
     </li>

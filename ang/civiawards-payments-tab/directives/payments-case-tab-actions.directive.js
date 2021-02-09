@@ -21,14 +21,17 @@
    * @param {Function} civicaseCrmApi service to use civicrm api
    * @param {Function} crmStatus crm status service
    * @param {Function} civicaseCrmLoadForm crm load form service
+   * @param {object} AwardsPaymentActivityStatus awards payment activity status service
    */
   function civiawardsPaymentsCaseTabActionsController (
-    ts, $scope, $rootScope, civicaseCrmApi, crmStatus, civicaseCrmLoadForm) {
+    ts, $scope, $rootScope, civicaseCrmApi, crmStatus, civicaseCrmLoadForm,
+    AwardsPaymentActivityStatus) {
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
 
     $scope.handleViewActivity = handleViewActivity;
     $scope.handleEditActivity = handleEditActivity;
     $scope.handleDeleteActivity = handleDeleteActivity;
+    $scope.isDeleteActionVisible = isDeleteActionVisible;
 
     /**
      * Open View Payment Form
@@ -93,6 +96,16 @@
       return civicaseCrmApi('Activity', 'delete', {
         id: paymentId
       });
+    }
+
+    /**
+     * Checks if the delete action should be visible.
+     *
+     * @param {object} payment payment activity object
+     * @returns {boolean} if visible
+     */
+    function isDeleteActionVisible (payment) {
+      return AwardsPaymentActivityStatus.isDeleteVisible({ status_name: payment['status_id.name'] });
     }
   }
 })(angular, CRM.confirm);
