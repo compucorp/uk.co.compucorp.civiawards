@@ -18,6 +18,12 @@
           class="form-control"
           ng-model="filters.status_id"
           ng-change="onFilter({ $filters: filters })"
+          crm-ui-select="{
+            allowClear: true,
+            placeholder: ts('Select Status'),
+            multiple: false,
+            data: paymentStatusOptions
+          }"
         />
       </label>
     </div>

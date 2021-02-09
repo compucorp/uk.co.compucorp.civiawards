@@ -27,6 +27,21 @@ describe('Payment Filters', () => {
     });
   });
 
+  describe('payment status options', () => {
+    beforeEach(initController);
+
+    it('stores the list of payment statuses as select2 options', () => {
+      expect($scope.paymentStatusOptions).toEqual([
+        jasmine.objectContaining({ id: '11', text: 'Applied for (incomplete)' }),
+        jasmine.objectContaining({ id: '12', text: 'Approved (complete)' }),
+        jasmine.objectContaining({ id: '13', text: 'Exported (complete)' }),
+        jasmine.objectContaining({ id: '14', text: 'Paid (complete)' }),
+        jasmine.objectContaining({ id: '15', text: 'Cancelled (cancelled)' }),
+        jasmine.objectContaining({ id: '16', text: 'Failed (incomplete)' })
+      ]);
+    });
+  });
+
   /**
    * Initialises the payment filters controller.
    */
