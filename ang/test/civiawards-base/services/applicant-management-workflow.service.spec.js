@@ -29,7 +29,7 @@
     describe('when getting list of workflow', () => {
       var result, expectedResult, mockWorkflow;
 
-      describe('formatted results', () => {
+      describe('for manage workflow page', () => {
         beforeEach(() => {
           mockWorkflow = CaseTypesMockData.getSequential()[0];
           mockWorkflow['api.AwardDetail.get'] = {
@@ -41,16 +41,16 @@
             1
           ]));
 
-          expectedResult = [
-            { values: [_.clone(mockWorkflow)] },
-            1
-          ];
-          expectedResult[0].values[0].awardDetails = expectedResult[0].values[0]['api.AwardDetail.get'].values[0];
-          expectedResult[0].values[0].awardDetailsFormatted = {
+          expectedResult = {
+            values: [_.clone(mockWorkflow)],
+            count: 1
+          };
+          expectedResult.values[0].awardDetails = expectedResult.values[0]['api.AwardDetail.get'].values[0];
+          expectedResult.values[0].awardDetailsFormatted = {
             managers: ['Default Organization', 'Default Organization'],
             subtypeLabel: 'Medal'
           };
-          delete expectedResult[0].values[0]['api.AwardDetail.get'];
+          delete expectedResult.values[0]['api.AwardDetail.get'];
 
           spyOn(ContactsCache, 'add');
           spyOn(ContactsCache, 'getCachedContact');
@@ -60,7 +60,7 @@
 
         describe('when page in page 1', () => {
           beforeEach(() => {
-            ApplicantManagementWorkflow.getFormattedWorkflowsList({
+            ApplicantManagementWorkflow.getWorkflowsListForManageWorkflow({
               case_type_category: 'some_case_type_category',
               managed_by: 203,
               award_detail_params: {
@@ -123,7 +123,7 @@
 
         describe('when page in page 2', () => {
           beforeEach(() => {
-            ApplicantManagementWorkflow.getFormattedWorkflowsList({
+            ApplicantManagementWorkflow.getWorkflowsListForManageWorkflow({
               case_type_category: 'some_case_type_category',
               managed_by: 203,
               award_detail_params: {
@@ -184,7 +184,7 @@
         });
       });
 
-      describe('unformatted results', () => {
+      describe('for case overview page', () => {
         beforeEach(() => {
           mockWorkflow = CaseTypesMockData.getSequential()[0];
 
@@ -193,10 +193,10 @@
             1
           ]));
 
-          expectedResult = [
-            { values: [_.clone(mockWorkflow)] },
-            1
-          ];
+          expectedResult = {
+            values: [_.clone(mockWorkflow)],
+            count: 1
+          };
 
           spyOn(ContactsCache, 'add');
           spyOn(ContactsCache, 'getCachedContact');
@@ -206,7 +206,7 @@
 
         describe('when page in page 1', () => {
           beforeEach(() => {
-            ApplicantManagementWorkflow.getWorkflowsList({
+            ApplicantManagementWorkflow.getWorkflowsListForCaseOverview({
               case_type_category: 'some_case_type_category',
               managed_by: 203,
               award_detail_params: {
@@ -267,7 +267,7 @@
 
         describe('when page in page 2', () => {
           beforeEach(() => {
-            ApplicantManagementWorkflow.getWorkflowsList({
+            ApplicantManagementWorkflow.getWorkflowsListForCaseOverview({
               case_type_category: 'some_case_type_category',
               managed_by: 203,
               award_detail_params: {

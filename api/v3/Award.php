@@ -121,23 +121,7 @@ function _filterByManager(array $params) {
  *   Description of fields supported by this API call.
  */
 function _civicrm_api3_award_getcount_spec(array &$spec) {
-  $spec['managed_by'] = [
-    'title' => 'Award Manager',
-    'description' => 'Award Manager Contact ID',
-    'type' => CRM_Utils_Type::T_STRING,
-  ];
-
-  $spec['award_detail_params'] = [
-    'title' => 'Params for AwardDetail.Get API',
-    'description' => 'Array of parameters for AwardDetail.Get API',
-    'type' => CRM_Utils_Type::T_STRING,
-  ];
-
-  $spec['case_type_params'] = [
-    'title' => 'Params for CaseType.Get API',
-    'description' => 'Array of parameters for CaseType.Get API',
-    'type' => CRM_Utils_Type::T_STRING,
-  ];
+  return _civicrm_api3_award_get_spec();
 }
 
 /**

@@ -25,7 +25,7 @@ class CRM_CiviAwards_Event_Listener_AwardCaseFilter {
     }
 
     $awardCaseFilterPreProcess = new AwardCaseFilterPreProcess();
-    $awardCaseFilterPreProcess->onCreate($apiRequest);
+    $awardCaseFilterPreProcess->onCreate($apiRequest['params']);
 
     $event->setApiRequest($apiRequest);
   }
@@ -42,7 +42,8 @@ class CRM_CiviAwards_Event_Listener_AwardCaseFilter {
   protected static function shouldRun(array $apiRequest) {
     return $apiRequest['entity'] == 'Case' &&
       $apiRequest['action'] == 'getdetails' &&
-      ($apiRequest['params']['case_type_id.managed_by'] || $apiRequest['params']['case_type_id.award_detail_params']);
+      (!empty($apiRequest['params']['case_type_id.managed_by']) ||
+        !empty($apiRequest['params']['case_type_id.award_detail_params']));
   }
 
 }
