@@ -4,10 +4,10 @@
   describe('PaymentsCaseTabActions', () => {
     let $q, $controller, $rootScope, $scope, mockPayments, crmStatus,
       civicaseCrmApi, mockedConfirmElement, loadFormOnListener,
-      crmFormSuccessFunction, civicaseCrmLoadForm;
+      crmFormSuccessFunction, civicaseCrmLoadForm, AwardsPaymentActivityStatus;
     const CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
 
-    beforeEach(module('civiawards-payments-tab', ($provide) => {
+    beforeEach(module('civiawards-payments-tab', 'civiawards-payments-tab.mocks', ($provide) => {
       civicaseCrmApi = jasmine.createSpy('civicaseCrmApi');
 
       $provide.value('civicaseCrmApi', civicaseCrmApi);
@@ -29,25 +29,16 @@
     }));
 
     beforeEach(inject((_$q_, _$controller_, _$rootScope_, _crmStatus_,
-      _civicaseCrmLoadForm_) => {
+      _civicaseCrmLoadForm_, _AwardsPaymentActivityStatus_, _mockPayments_) => {
       $q = _$q_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       crmStatus = _crmStatus_;
       civicaseCrmLoadForm = _civicaseCrmLoadForm_;
+      AwardsPaymentActivityStatus = _AwardsPaymentActivityStatus_;
+      mockPayments = _mockPayments_[0];
 
       civicaseCrmApi.and.returnValue($q.resolve());
-
-      mockPayments = {
-        id: _.uniqueId(),
-        custom_11: 'Stipend/Salary',
-        custom_12: 'GBP',
-        custom_13: '1099',
-        custom_14: 'N9TT-9G0A-B7FQ-RANC',
-        activity_date_time: '2000-01-01 12:00:00',
-        target_contact_name: { 10: 'Jon Snow' },
-        'status_id.label': 'paid_complete'
-      };
 
       initController();
 
@@ -55,6 +46,7 @@
 
       CRM.confirm.and.returnValue(mockedConfirmElement);
 
+      spyOn(AwardsPaymentActivityStatus, 'isDeleteVisible');
       spyOn($rootScope, '$broadcast');
     }));
 
@@ -87,6 +79,22 @@
         it('reloads the payments', () => {
           expect($rootScope.$broadcast).toHaveBeenCalledWith('civiawards::paymentstable::refresh');
         });
+      });
+    });
+
+    describe('delete action visibility', () => {
+      var expectedResult;
+
+      beforeEach(() => {
+        AwardsPaymentActivityStatus.isDeleteVisible.and.returnValue(true);
+        expectedResult = $scope.isDeleteActionVisible(mockPayments);
+      });
+
+      it('hides the delete action when conditions does not match', () => {
+        expect(AwardsPaymentActivityStatus.isDeleteVisible).toHaveBeenCalledWith({
+          status_name: mockPayments['status_id.name']
+        });
+        expect(expectedResult).toBe(true);
       });
     });
 
@@ -123,6 +131,7 @@
         });
       });
     });
+
     /**
      * Initialises the add payments case tab actions controller.
      */

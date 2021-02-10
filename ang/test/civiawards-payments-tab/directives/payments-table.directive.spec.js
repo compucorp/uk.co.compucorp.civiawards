@@ -40,7 +40,7 @@
               case_id: mockApplication.id,
               activity_type_id: 'Awards Payment',
               return: ['id', 'target_contact_id', 'status_id.label',
-                'activity_date_time', 'custom'],
+                'activity_date_time', 'custom', 'status_id.name'],
               options: { limit: 0 }
             }]);
         });
@@ -164,46 +164,6 @@
             .toContain(['Activity', 'get', jasmine.objectContaining({
               custom_14: '123'
             })]);
-        });
-      });
-    });
-
-    describe('when content needs to be refreshed', () => {
-      beforeEach(() => {
-        initController();
-        $scope.$digest();
-      });
-
-      it('before refreshing api is only called once', () => {
-        expect(civicaseCrmApi.calls.count()).toBe(1);
-      });
-
-      describe('after refresh', () => {
-        beforeEach(() => {
-          $rootScope.$broadcast('civiawards::paymentstable::refresh');
-        });
-
-        it('calls the api again to refresh the data', () => {
-          expect(civicaseCrmApi.calls.count()).toBe(2);
-        });
-
-        it('refreshes the list of payment activities for the current application', () => {
-          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
-            .toContain(['Activity', 'get', {
-              sequential: 1,
-              case_id: mockApplication.id,
-              activity_type_id: 'Awards Payment',
-              return: ['id', 'target_contact_id', 'status_id.label',
-                'activity_date_time', 'custom'],
-              options: { limit: 0 }
-            }]);
-        });
-
-        it('refreshes the list of payment activity custom fields', () => {
-          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
-            .toContain(['CustomField', 'get', {
-              custom_group_id: 'Awards_Payment_Information'
-            }]);
         });
       });
     });

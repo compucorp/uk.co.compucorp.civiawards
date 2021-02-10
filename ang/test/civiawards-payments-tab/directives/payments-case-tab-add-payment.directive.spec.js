@@ -1,7 +1,7 @@
 /* eslint-env jasmine */
 
 ((_) => {
-  describe('PaymentsCaseTabAddPaymnent', () => {
+  describe('PaymentsCaseTabAddPayment', () => {
     let $controller, $rootScope, $scope, civicaseCrmLoadForm,
       loadFormOnListener, crmFormSuccessFunction;
 
@@ -67,7 +67,7 @@
       $scope = $rootScope.$new();
       $scope.caseId = '5';
 
-      $controller('civiawardsPaymentsCaseTabAddPaymnentController', {
+      $controller('civiawardsPaymentsCaseTabAddPaymentController', {
         $scope
       });
     }

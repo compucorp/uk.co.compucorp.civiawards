@@ -42,11 +42,24 @@ describe('Payment Filters', () => {
     });
   });
 
+  describe('when content needs to be refreshed', () => {
+    beforeEach(() => {
+      initController();
+      $rootScope.$broadcast('civiawards::paymentstable::refresh');
+      $scope.$digest();
+    });
+
+    it('refreshes the content with filters', () => {
+      expect($scope.onFilter).toHaveBeenCalledWith({ $filters: $scope.filters });
+    });
+  });
+
   /**
    * Initialises the payment filters controller.
    */
   function initController () {
     $scope = $rootScope.$new();
+    $scope.onFilter = jasmine.createSpy('onFilter');
 
     $controller('civiawardsPaymentFiltersController', {
       $scope: $scope

@@ -1,25 +1,25 @@
 (function (angular) {
   var module = angular.module('civiawards-payments-tab');
 
-  module.directive('civiawardsPaymentsCaseTabAddPaymnent', function () {
+  module.directive('civiawardsPaymentsCaseTabAddPaymnnt', function () {
     return {
       templateUrl: '~/civiawards-payments-tab/directives/payments-case-tab-add-payment.directive.html',
       restrict: 'E',
       scope: {
         caseId: '<'
       },
-      controller: 'civiawardsPaymentsCaseTabAddPaymnentController'
+      controller: 'civiawardsPaymentsCaseTabAddPaymentController'
     };
   });
 
-  module.controller('civiawardsPaymentsCaseTabAddPaymnentController', civiawardsPaymentsCaseTabAddPaymnentController);
+  module.controller('civiawardsPaymentsCaseTabAddPaymentController', civiawardsPaymentsCaseTabAddPaymentController);
 
   /**
    * @param {object} $scope scope of the controller
    * @param {object} $rootScope rootscope of the application
    * @param {Function} civicaseCrmLoadForm crm load form service
    */
-  function civiawardsPaymentsCaseTabAddPaymnentController ($scope, $rootScope,
+  function civiawardsPaymentsCaseTabAddPaymentController ($scope, $rootScope,
     civicaseCrmLoadForm) {
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
 
