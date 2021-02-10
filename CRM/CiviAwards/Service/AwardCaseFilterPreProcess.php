@@ -11,7 +11,7 @@ class CRM_CiviAwards_Service_AwardCaseFilterPreProcess {
    * @param array $requestParams
    *   API request parameters.
    */
-  public function onCreate(array &$requestParams) {
+  public function alterRequestParams(array &$requestParams) {
     $managedByParamName = 'case_type_id.managed_by';
     $awardDetailParamName = 'case_type_id.award_detail_params';
 

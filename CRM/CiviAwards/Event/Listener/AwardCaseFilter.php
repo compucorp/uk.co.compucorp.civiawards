@@ -25,7 +25,7 @@ class CRM_CiviAwards_Event_Listener_AwardCaseFilter {
     }
 
     $awardCaseFilterPreProcess = new AwardCaseFilterPreProcess();
-    $awardCaseFilterPreProcess->onCreate($apiRequest['params']);
+    $awardCaseFilterPreProcess->alterRequestParams($apiRequest['params']);
 
     $event->setApiRequest($apiRequest);
   }
