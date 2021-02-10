@@ -23,6 +23,7 @@
    * @param {object} Select2Utils Select2 Utils service.
    */
   function paymentFiltersController ($scope, ActivityStatus, paymentTypes, Select2Utils) {
+    $scope.filters = {};
     $scope.paymentStatusOptions = [];
     $scope.paymentTypeOptions = [];
 
