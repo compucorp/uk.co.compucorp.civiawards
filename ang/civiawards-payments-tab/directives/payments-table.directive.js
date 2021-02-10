@@ -25,7 +25,7 @@
    * @param {object} paymentTypes payment type objects indexed by value.
    */
   function civiawardsPaymentsTableController ($scope, civicaseCrmApi, paymentTypes) {
-    var customFields;
+    var customFields = [];
 
     $scope.isLoading = false;
 
@@ -44,9 +44,10 @@
      * @param {object} filters parameters to pass to the Activity endpoint.
      */
     function filterPayments (filters) {
+      var realNameFilters = getFiltersRealNamesAndValues(filters);
       $scope.isLoading = true;
 
-      loadPaymentActivitiesAndCustomFields(filters)
+      loadPaymentActivitiesAndCustomFields(realNameFilters)
         .then(function (results) {
           $scope.isLoading = false;
           customFields = results.customFields.values;
@@ -89,6 +90,29 @@
         paymentCustomFields[newFieldName] = payment[oldFiledName];
 
         return paymentCustomFields;
+      }, {});
+    }
+
+    /**
+     * This transform filter keys such as `custom_Type` into `custom_123` where
+     * `123` is the ID of the custom field which is what the API understands.
+     *
+     * @param {object} filters a map of filters.
+     * @returns {object} The filters with the proper field names for custom fields.
+     */
+    function getFiltersRealNamesAndValues (filters) {
+      return _.transform(filters, function (realNameFilters, filterValue, filterName) {
+        if (_.startsWith(filterName, 'custom_')) {
+          var customFieldName = filterName.replace('custom_', '');
+          var customField = _.find(customFields, { name: customFieldName });
+          var customFieldIdName = 'custom_' + customField.id;
+
+          realNameFilters[customFieldIdName] = filterValue;
+        } else {
+          realNameFilters[filterName] = filterValue;
+        }
+
+        return realNameFilters;
       }, {});
     }
 

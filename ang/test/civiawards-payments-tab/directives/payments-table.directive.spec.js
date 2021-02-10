@@ -149,6 +149,23 @@
             })]);
         });
       });
+
+      describe('when filtering by custom fields', () => {
+        beforeEach(() => {
+          initController();
+          $scope.$digest();
+
+          $scope.filterPayments({ custom_Payee_Ref: '123' });
+          $scope.$digest();
+        });
+
+        it('filters the payment using the real custom field name', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .toContain(['Activity', 'get', jasmine.objectContaining({
+              custom_14: '123'
+            })]);
+        });
+      });
     });
 
     /**
