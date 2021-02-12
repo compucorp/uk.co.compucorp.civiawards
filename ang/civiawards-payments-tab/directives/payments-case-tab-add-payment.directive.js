@@ -1,7 +1,7 @@
 (function (angular) {
   var module = angular.module('civiawards-payments-tab');
 
-  module.directive('civiawardsPaymentsCaseTabAddPaymnnt', function () {
+  module.directive('civiawardsPaymentsCaseTabAddPayment', function () {
     return {
       templateUrl: '~/civiawards-payments-tab/directives/payments-case-tab-add-payment.directive.html',
       restrict: 'E',
