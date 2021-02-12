@@ -1,11 +1,11 @@
-<civiawards-payment-filters
-  on-filter="filterPayments($filters)"
-></civiawards-payment-filters>
-<div
-  ng-if="payments.length > 0"
-  class="panel panel-default table-responsive"
->
-  <table class="table">
+<div class="panel panel-default table-responsive">
+  <civiawards-payment-filters
+    on-filter="filterPayments($filters)"
+  ></civiawards-payment-filters>
+  <table
+    class="table"
+    ng-if="payments.length > 0"
+  >
     <thead>
       <tr>
         <th>ID</th>
