@@ -7,7 +7,8 @@
       templateUrl: '~/civiawards-payments-tab/directives/payment-filters.directive.html',
       restrict: 'E',
       scope: {
-        onFilter: '&'
+        filters: '=ngModel',
+        triggerNgChange: '&ngChange'
       }
     };
   });
@@ -30,9 +31,6 @@
     (function init () {
       $scope.paymentStatusOptions = _.map(getPaymentStatuses(), Select2Utils.mapSelectOptions);
       $scope.paymentTypeOptions = _.map(paymentTypes, Select2Utils.mapSelectOptions);
-      $scope.$on('civiawards::paymentstable::refresh', function () {
-        $scope.onFilter({ $filters: $scope.filters });
-      });
     })();
 
     /**

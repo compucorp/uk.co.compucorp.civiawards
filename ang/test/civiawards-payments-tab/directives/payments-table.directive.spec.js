@@ -23,6 +23,14 @@
       });
     });
 
+    describe('on init', () => {
+      beforeEach(initController);
+
+      it('defines an empty filter object', () => {
+        expect($scope.filters).toEqual({});
+      });
+    });
+
     describe('payment activities', () => {
       beforeEach(() => {
         initController();
@@ -165,6 +173,37 @@
               custom_14: '123'
             })]);
         });
+      });
+    });
+
+    describe('when content needs to be refreshed', () => {
+      let expectedPayments;
+
+      beforeEach(() => {
+        initController();
+
+        $scope.filters = { id: '123' };
+
+        $rootScope.$broadcast('civiawards::paymentstable::refresh');
+        $scope.$digest();
+
+        expectedPayments = _.map(
+          apiResponses.Activity.values,
+          (mockPayment) => jasmine.objectContaining({
+            id: mockPayment.id
+          })
+        );
+      });
+
+      it('requests the payments that match the current filter', () => {
+        expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+          .toContain(['Activity', 'get', jasmine.objectContaining({
+            id: '123'
+          })]);
+      });
+
+      it('stores the refreshed payments', () => {
+        expect($scope.payments).toEqual(expectedPayments);
       });
     });
 

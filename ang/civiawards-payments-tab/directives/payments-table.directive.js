@@ -27,12 +27,17 @@
   function civiawardsPaymentsTableController ($scope, civicaseCrmApi, paymentTypes) {
     var customFields = [];
 
+    $scope.filters = {};
     $scope.isLoading = false;
 
     $scope.filterPayments = filterPayments;
 
     (function init () {
       filterPayments();
+
+      $scope.$on('civiawards::paymentstable::refresh', function () {
+        filterPayments($scope.filters);
+      });
     })();
 
     /**

@@ -1,6 +1,7 @@
 <div class="panel panel-default table-responsive">
   <civiawards-payment-filters
-    on-filter="filterPayments($filters)"
+    ng-model="filters"
+    ng-change="filterPayments(filters)"
   ></civiawards-payment-filters>
   <table
     class="table"

@@ -1,7 +1,7 @@
 <div crm-ui-accordion="{title: ts('Filters'), collapsed: true}">
   <form
     class="row civiawards__payments-tab__filters"
-    ng-submit="onFilter({ $filters: filters })"
+    ng-submit="triggerNgChange()"
   >
     <div class="col-sm-3">
       <label>
