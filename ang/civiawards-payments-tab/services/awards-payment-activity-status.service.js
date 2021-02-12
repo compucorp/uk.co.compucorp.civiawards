@@ -1,4 +1,4 @@
-(function (angular) {
+(function (_, angular) {
   var module = angular.module('civiawards-payments-tab');
 
   module.service('AwardsPaymentActivityStatus', AwardsPaymentActivityStatus);
@@ -12,12 +12,12 @@
     this.isDeleteVisible = function (activity) {
       var activityStatus = activity.status_name;
       var notEditableStatuses = [
-        ActivityStatus.findByName('paid_complete').name,
-        ActivityStatus.findByName('failed_incomplete').name,
-        ActivityStatus.findByName('exported_complete').name
+        'paid_complete',
+        'failed_incomplete',
+        'exported_complete'
       ];
 
-      return notEditableStatuses.indexOf(activityStatus) === -1;
+      return !_.includes(notEditableStatuses, activityStatus);
     };
   }
-})(angular);
+})(CRM._, angular);
