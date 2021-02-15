@@ -5,10 +5,17 @@
             {if $elementName == 'separator'}
                 <hr>
             {else}
-              <div class="form-group row">
-                <label class="col-sm-2">{$form.$elementName.label}</label>
-                <div class="col-sm-10">{$form.$elementName.html}</div>
-              </div>
+                {if in_array($elementName, $fieldsAfterCurrencyTypes)}
+                    {$form.$elementName.html}</div></div>
+                {else}
+                  <div class="form-group row">
+                    <label class="col-sm-2">{$form.$elementName.label}</label>
+                    <div class="col-sm-10">{$form.$elementName.html}
+                    {if !in_array($elementName, $currencyTypeFields)}
+                    </div>
+                  </div>
+                    {/if}
+                {/if}
             {/if}
         {/foreach}
     </div>
