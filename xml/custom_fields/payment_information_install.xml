@@ -45,7 +45,7 @@
     </CustomField>
     <CustomField>
       <name>Payment_Amount_Currency_Type</name>
-      <label>Payment Amount Currency Type</label>
+      <label>Payment Amount</label>
       <data_type>String</data_type>
       <html_type>Select</html_type>
       <is_required>1</is_required>
@@ -116,7 +116,7 @@
     </CustomField>
     <CustomField>
       <name>Value_in_Functional_Currency_Type</name>
-      <label>Value in Functional Currency Type</label>
+      <label>Value in Functional Currency</label>
       <data_type>String</data_type>
       <html_type>Select</html_type>
       <is_required>0</is_required>
@@ -134,8 +134,8 @@
       <custom_group_name>Awards_Payment_Information</custom_group_name>
     </CustomField>
     <CustomField>
-      <name>Value_in_Functional_Currency</name>
-      <label>Value in Functional Currency</label>
+      <name>Value_in_Functional_Currency_Amount</name>
+      <label>Value in Functional Currency Amount</label>
       <data_type>Money</data_type>
       <html_type>Text</html_type>
       <is_searchable>1</is_searchable>
