@@ -23,14 +23,6 @@
       });
     });
 
-    describe('on init', () => {
-      beforeEach(initController);
-
-      it('defines an empty filter object', () => {
-        expect($scope.filters).toEqual({});
-      });
-    });
-
     describe('payment activities', () => {
       beforeEach(() => {
         initController();

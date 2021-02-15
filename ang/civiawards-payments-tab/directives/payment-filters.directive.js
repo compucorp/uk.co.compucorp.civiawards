@@ -7,8 +7,7 @@
       templateUrl: '~/civiawards-payments-tab/directives/payment-filters.directive.html',
       restrict: 'E',
       scope: {
-        filters: '=ngModel',
-        triggerNgChange: '&ngChange'
+        onFilter: '&'
       }
     };
   });

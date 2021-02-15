@@ -28,7 +28,6 @@
     var currentFilters = {};
     var customFields = [];
 
-    $scope.filters = {};
     $scope.isLoading = false;
 
     $scope.filterPayments = filterPayments;
