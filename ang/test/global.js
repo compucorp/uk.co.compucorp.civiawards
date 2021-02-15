@@ -3,6 +3,7 @@
 (function (CRM) {
   CRM['civiawards-base'] = {};
   CRM['civiawards-workflow'] = {};
+  CRM['civiawards-payments-tab'] = {};
   CRM['civicase-base'] = {};
   CRM.civiawards = {};
   /**
