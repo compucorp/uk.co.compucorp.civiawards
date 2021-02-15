@@ -16,7 +16,6 @@ class CRM_CiviAwards_Upgrader_Steps_Step1007 {
   public function apply() {
     $this->renameDbColumn();
     $this->renameOptionGroup();
-    $this->syncLogTables();
 
     return TRUE;
   }
@@ -51,14 +50,6 @@ class CRM_CiviAwards_Upgrader_Steps_Step1007 {
       CHANGE award_type award_subtype varchar(30) NOT NULL COMMENT 'One of the values of the award_subtype option group'";
 
     CRM_Core_DAO::executeQuery($renameColumnSql);
-  }
-
-  /**
-   * Sync log tables.
-   */
-  private function syncLogTables() {
-    $logging = new CRM_Logging_Schema();
-    $logging->fixSchemaDifferencesFor(CRM_CiviAwards_BAO_AwardDetail::getTableName());
   }
 
 }
