@@ -25,9 +25,9 @@
    * @param {object} paymentTypes payment type objects indexed by value.
    */
   function civiawardsPaymentsTableController ($scope, civicaseCrmApi, paymentTypes) {
+    var currentFilters = {};
     var customFields = [];
 
-    $scope.filters = {};
     $scope.isLoading = false;
 
     $scope.filterPayments = filterPayments;
@@ -36,7 +36,7 @@
       filterPayments();
 
       $scope.$on('civiawards::paymentstable::refresh', function () {
-        filterPayments($scope.filters);
+        filterPayments(currentFilters);
       });
     })();
 
@@ -51,6 +51,7 @@
     function filterPayments (filters) {
       var realNameFilters = getFiltersRealNamesAndValues(filters);
       $scope.isLoading = true;
+      currentFilters = filters;
 
       loadPaymentActivitiesAndCustomFields(realNameFilters)
         .then(function (results) {

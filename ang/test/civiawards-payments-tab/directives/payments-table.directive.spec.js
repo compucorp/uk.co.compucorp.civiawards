@@ -3,7 +3,7 @@
 ((_) => {
   describe('PaymentsTable', () => {
     let $controller, $rootScope, $scope, apiResponses, civicaseCrmApi,
-      mockPayments, paymentTypes;
+      expectedPayments, mockPayments, paymentTypes;
     const mockApplication = {
       id: _.uniqueId()
     };
@@ -20,14 +20,6 @@
     describe('controller definition', () => {
       it('defines the controller', () => {
         expect(() => initController()).not.toThrow();
-      });
-    });
-
-    describe('on init', () => {
-      beforeEach(initController);
-
-      it('defines an empty filter object', () => {
-        expect($scope.filters).toEqual({});
       });
     });
 
@@ -62,8 +54,6 @@
       });
 
       describe('after the payment activities have been loaded', () => {
-        let expectedPayments;
-
         beforeEach(() => {
           $scope.$digest();
 
@@ -86,8 +76,6 @@
       });
 
       describe('payment activity custom fields', () => {
-        let expectedPayments;
-
         beforeEach(() => {
           $scope.$digest();
 
@@ -106,24 +94,13 @@
     });
 
     describe('payments filtering', () => {
-      let expectedPayments;
-
       describe('when filtering payments by their ID', () => {
         beforeEach(() => {
           initController();
           $scope.$digest();
 
-          apiResponses.Activity.values = _.map(mockPayments, (mockPayment) => ({
-            ...mockPayment,
-            id: _.uniqueId()
-          }));
-
-          expectedPayments = _.map(
-            apiResponses.Activity.values,
-            (mockPayment) => jasmine.objectContaining({
-              id: mockPayment.id
-            })
-          );
+          apiResponses.Activity.values = generateNewMockPayments();
+          expectedPayments = getExpectedPaymentIds(apiResponses.Activity.values);
 
           $scope.filterPayments({ id: '123' });
           $scope.$digest();
@@ -176,34 +153,60 @@
       });
     });
 
-    describe('when content needs to be refreshed', () => {
-      let expectedPayments;
-
+    describe('payments refreshing', () => {
       beforeEach(() => {
         initController();
-
-        $scope.filters = { id: '123' };
-
-        $rootScope.$broadcast('civiawards::paymentstable::refresh');
         $scope.$digest();
-
-        expectedPayments = _.map(
-          apiResponses.Activity.values,
-          (mockPayment) => jasmine.objectContaining({
-            id: mockPayment.id
-          })
-        );
       });
 
-      it('requests the payments that match the current filter', () => {
-        expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
-          .toContain(['Activity', 'get', jasmine.objectContaining({
-            id: '123'
-          })]);
+      describe('when no payments have been filtered', () => {
+        beforeEach(() => {
+          apiResponses.Activity.values = generateNewMockPayments();
+          expectedPayments = getExpectedPaymentIds(apiResponses.Activity.values);
+
+          $rootScope.$broadcast('civiawards::paymentstable::refresh');
+          $scope.$digest();
+        });
+
+        it('requests all payments', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .toContain(['Activity', 'get', {
+              sequential: 1,
+              case_id: mockApplication.id,
+              activity_type_id: 'Awards Payment',
+              return: jasmine.any(Array),
+              options: { limit: 0 }
+            }]);
+        });
+
+        it('stores the refreshed payments', () => {
+          expect($scope.payments).toEqual(expectedPayments);
+        });
       });
 
-      it('stores the refreshed payments', () => {
-        expect($scope.payments).toEqual(expectedPayments);
+      describe('when the payments have been filtered', () => {
+        beforeEach(() => {
+          $scope.filterPayments({ id: '123' });
+          $scope.$digest();
+
+          apiResponses.Activity.values = generateNewMockPayments();
+          expectedPayments = getExpectedPaymentIds(apiResponses.Activity.values);
+
+          civicaseCrmApi.calls.reset();
+          $rootScope.$broadcast('civiawards::paymentstable::refresh');
+          $scope.$digest();
+        });
+
+        it('requests the filtered payments', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .toContain(['Activity', 'get', jasmine.objectContaining({
+              id: '123'
+            })]);
+        });
+
+        it('stores the refreshed payments', () => {
+          expect($scope.payments).toEqual(expectedPayments);
+        });
       });
     });
 
@@ -217,6 +220,34 @@
       $controller('civiawardsPaymentsTableController', {
         $scope
       });
+    }
+
+    /**
+     * Generates new mock payment objects based on the current list of mock payments.
+     * The only field that changes is the ID.
+     *
+     * @returns {object[]} a list of payment objects.
+     */
+    function generateNewMockPayments () {
+      return _.map(mockPayments, (mockPayment) => ({
+        ...mockPayment,
+        id: _.uniqueId()
+      }));
+    }
+
+    /**
+     * @param {object[]} mockPayments a list of payment objects.
+     * @returns {object[]} A list of expected payment objects. The only field
+     * that is used for matching is the ID since the rest of the fields might
+     * have changed.
+     */
+    function getExpectedPaymentIds (mockPayments) {
+      return _.map(
+        mockPayments,
+        (mockPayment) => jasmine.objectContaining({
+          id: mockPayment.id
+        })
+      );
     }
 
     /**
