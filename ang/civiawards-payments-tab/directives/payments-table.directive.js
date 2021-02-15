@@ -29,8 +29,10 @@
     var customFields = [];
 
     $scope.isLoading = false;
+    $scope.paging = { page: 1, pageSize: 25, total: 0, isDisabled: false };
 
     $scope.filterPayments = filterPayments;
+    $scope.goToPage = goToPage;
 
     (function init () {
       filterPayments();
@@ -52,12 +54,15 @@
       var realNameFilters = getFiltersRealNamesAndValues(filters);
       $scope.isLoading = true;
       currentFilters = filters;
+      $scope.paging.isDisabled = true;
 
-      loadPaymentActivitiesAndCustomFields(realNameFilters)
+      getPaymentActivitiesRequests(realNameFilters)
         .then(function (results) {
           $scope.isLoading = false;
           customFields = results.customFields.values;
           $scope.payments = _.map(results.payments.values, formatPayment);
+          $scope.paging.total = results.total;
+          $scope.paging.isDisabled = false;
         });
     }
 
@@ -128,26 +133,44 @@
      * @returns {Promise<object>} resolves to payment activites and custom
      *   fields for payment activities.
      */
-    function loadPaymentActivitiesAndCustomFields (activityFilters) {
-      var paymentDefaultFilters = {
+    function getPaymentActivitiesRequests (activityFilters) {
+      var parameters = _.extend(
+        {},
+        {
+          activity_type_id: 'Awards Payment',
+          case_id: $scope.caseItem.id
+        },
+        _.pick(activityFilters, _.identity)
+      );
+      var activityParameters = _.extend({}, parameters, {
         sequential: 1,
-        activity_type_id: 'Awards Payment',
-        case_id: $scope.caseItem.id,
         return: ['id', 'target_contact_id', 'status_id.label',
           'activity_date_time', 'custom', 'status_id.name'],
-        options: { limit: 0 }
-      };
+        options: {
+          offset: ($scope.paging.page - 1) * $scope.paging.pageSize,
+          limit: $scope.paging.pageSize
+        }
+      });
 
       return civicaseCrmApi({
-        payments: ['Activity', 'get', _.extend(
-          {},
-          paymentDefaultFilters,
-          _.pick(activityFilters, _.identity)
-        )],
+        payments: ['Activity', 'get', activityParameters],
+        total: ['Activity', 'getcount', parameters],
         customFields: ['CustomField', 'get', {
           custom_group_id: 'Awards_Payment_Information'
         }]
       });
+    }
+
+    /**
+     * Loads the payments belonging to the given page. Respect current selected
+     * filters.
+     *
+     * @param {string} pageNumber the page number to navigate to.
+     */
+    function goToPage (pageNumber) {
+      $scope.paging.page = pageNumber;
+
+      filterPayments(currentFilters);
     }
   }
 })(CRM._, angular);
