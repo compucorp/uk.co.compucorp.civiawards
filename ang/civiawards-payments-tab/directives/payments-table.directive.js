@@ -28,7 +28,6 @@
     var currentFilters = {};
     var customFields = [];
 
-    $scope.filters = {};
     $scope.isLoading = false;
     $scope.paging = { page: 1, pageSize: 25, total: 0, isDisabled: false };
 
