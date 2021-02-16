@@ -1,6 +1,9 @@
 <div crm-ui-accordion="{title: ts('Filters'), collapsed: true}">
-  <form class="row" ng-submit="onFilter({ $filters: filters })">
-    <div class="col-sm-6">
+  <form
+    class="row civiawards__payments-tab__filters"
+    ng-submit="onFilter({ $filters: filters })"
+  >
+    <div class="col-sm-3">
       <label>
         {{:: ts('ID') }}
         <input
@@ -9,7 +12,7 @@
         />
       </label>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-3 col-sm-offset-3">
       <label>
         {{:: ts('Status') }}
         <input
@@ -24,11 +27,10 @@
         />
       </label>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-3 clear">
       <label>
         {{:: ts('Payee') }}
         <input class="form-control"
-          style="width: 180px;"
           ng-model="filters.target_contact_id"
           crm-entityref="{
             create: false,
@@ -42,7 +44,7 @@
         />
       </label>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-3 col-sm-offset-3">
       <label>
         {{:: ts('Ref') }}
         <input
@@ -51,7 +53,7 @@
         />
       </label>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-3 clear">
       <label>
         {{:: ts('Type') }}
         <input
@@ -66,7 +68,7 @@
         />
       </label>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-3 col-sm-offset-3">
       <label>
         {{:: ts('Due Date') }}
         <civicase-ui-date-range
