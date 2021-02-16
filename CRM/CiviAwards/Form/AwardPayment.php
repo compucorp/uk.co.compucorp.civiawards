@@ -59,7 +59,7 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
       return;
     }
     $this->_defaultValues = [];
-    $this->_defaultValues['activity_date_time'] = date('Y-m-d H:i:s');
+    $this->_defaultValues['activity_date_time'] = date('Y-m-d');
     $this->_defaultValues['status_id'] = $this->getValueForActivityStatus('approved_complete');
 
     if ($this->activityId) {
@@ -108,6 +108,8 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
     $this->assign('subType', NULL);
     $this->assign('activityStatusIsLocked', $this->activityStatusIsLocked());
     $this->assign('isActivityStatusExported', $this->isActivityStatusExported);
+    $this->assign('fieldsAfterCurrencyTypes', $this->getFieldsAfterCurrencyTypes());
+    $this->assign('currencyTypeFields', $this->getCurrencyTypeFields());
 
     if ($isViewAction) {
       $this->freeze();
@@ -272,7 +274,7 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
     $this->addEntityRef('target_contact_id', ts('Payee'), [], TRUE);
     // Adds custom field form fields.
     CRM_Core_BAO_CustomGroup::buildQuickForm($this, $this->groupTree);
-    $this->add('datepicker', 'activity_date_time', ts('Due Date'), [], FALSE, ['time' => TRUE]);
+    $this->add('datepicker', 'activity_date_time', ts('Due Date'), [], FALSE, ['time' => FALSE]);
     $this->add('hidden', 'activity_id', $this->activityId);
     $this->addSelect(
       'status_id',
@@ -370,12 +372,16 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
     $elementNames = [];
     $allFieldsToInsert = $this->getAggregatedFieldsToInsertAfter();
     $toInsertAfter = $this->getFieldsToInsertAfter();
+    $currencyTypeFields = $this->getCurrencyTypeFields();
     foreach ($this->_elements as $element) {
       $label = $element->getLabel();
       if (empty($label)) {
         continue;
       }
       $elementName = $element->getName();
+      if (in_array($elementName, $currencyTypeFields)) {
+        $this->addAttributesForCurrencyRelatedFields($element);
+      }
       if (in_array($elementName, $allFieldsToInsert)) {
         continue;
       }
@@ -386,6 +392,49 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
     }
 
     return $elementNames;
+  }
+
+  /**
+   * Adds attributes for currency type form fields.
+   *
+   * Basically, it sets the option value link in front of the
+   * currency related field to be hidden by setting it to NULL and
+   * also sets the width to be a bit smaller.
+   *
+   * @param \HTML_QuickForm_element $element
+   *   Quick form element.
+   */
+  private function addAttributesForCurrencyRelatedFields(HTML_QuickForm_element $element) {
+    $attr = $element->getAttributes();
+    $attr['style'] = "max-width:100px;";
+    $attr['data-option-edit-path'] = NULL;
+    $element->updateAttributes($attr);
+  }
+
+  /**
+   * Return fields that are directly after currency related fields.
+   *
+   * @return array
+   *   Form field names.
+   */
+  private function getFieldsAfterCurrencyTypes() {
+    return [
+      $this->getCustomFieldFormElementName('Payment_Amount_Value'),
+      $this->getCustomFieldFormElementName('Value_in_Functional_Currency_Amount'),
+    ];
+  }
+
+  /**
+   * Returns currency related fields.
+   *
+   * @return array
+   *   Form fields.
+   */
+  private function getCurrencyTypeFields() {
+    return [
+      $this->getCustomFieldFormElementName('Payment_Amount_Currency_Type'),
+      $this->getCustomFieldFormElementName('Value_in_Functional_Currency_Type'),
+    ];
   }
 
   /**
