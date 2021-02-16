@@ -31,8 +31,8 @@
     $scope.isLoading = false;
     $scope.paging = { page: 1, pageSize: 25, total: 0, isDisabled: false };
 
-    $scope.filterPayments = filterPayments;
     $scope.goToPage = goToPage;
+    $scope.submitFilters = submitFilters;
 
     (function init () {
       filterPayments();
@@ -53,7 +53,6 @@
     function filterPayments (filters) {
       var realNameFilters = getFiltersRealNamesAndValues(filters);
       $scope.isLoading = true;
-      currentFilters = filters;
       $scope.paging.isDisabled = true;
 
       getPaymentActivitiesRequests(realNameFilters)
@@ -171,6 +170,21 @@
       $scope.paging.page = pageNumber;
 
       filterPayments(currentFilters);
+    }
+
+    /**
+     * Accepts payment filters and loads the payments that match
+     * the given filters. It will always show the first filtered page by
+     * default. The filters are stored temporarily in case the values are
+     * needed for refreshing the payments list.
+     *
+     * @param {object} filters parameters used to filter the payments.
+     */
+    function submitFilters (filters) {
+      currentFilters = filters;
+      $scope.paging.page = 1;
+
+      filterPayments(filters);
     }
   }
 })(CRM._, angular);

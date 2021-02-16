@@ -102,7 +102,7 @@
           apiResponses.Activity.get.values = generateNewMockPayments();
           expectedPayments = getExpectedPaymentIds(apiResponses.Activity.get.values);
 
-          $scope.filterPayments({ id: '123' });
+          $scope.submitFilters({ id: '123' });
           $scope.$digest();
         });
 
@@ -123,7 +123,7 @@
           initController();
           $scope.$digest();
 
-          $scope.filterPayments({ id: '' });
+          $scope.submitFilters({ id: '' });
           $scope.$digest();
         });
 
@@ -140,7 +140,7 @@
           initController();
           $scope.$digest();
 
-          $scope.filterPayments({ custom_Payee_Ref: '123' });
+          $scope.submitFilters({ custom_Payee_Ref: '123' });
           $scope.$digest();
         });
 
@@ -186,7 +186,7 @@
 
       describe('when the payments have been filtered', () => {
         beforeEach(() => {
-          $scope.filterPayments({ id: '123' });
+          $scope.submitFilters({ id: '123' });
           $scope.$digest();
 
           apiResponses.Activity.get.values = generateNewMockPayments();
@@ -256,7 +256,7 @@
           apiResponses.Activity.get.values = generateNewMockPayments();
           expectedPayments = getExpectedPaymentIds(apiResponses.Activity.get.values);
 
-          $scope.filterPayments({ id: '123' });
+          $scope.submitFilters({ id: '123' });
           $scope.$digest();
           civicaseCrmApi.calls.reset();
           $scope.goToPage(3);
@@ -305,6 +305,22 @@
           it('enables paging', () => {
             expect($scope.paging.isDisabled).toBe(false);
           });
+        });
+      });
+
+      describe('when filtering after going to a page', () => {
+        beforeEach(() => {
+          initController();
+          $scope.$digest();
+
+          $scope.goToPage(3);
+          $scope.$digest();
+          $scope.submitFilters({ id: '123' });
+          $scope.$digest();
+        });
+
+        it('goes to the first page', () => {
+          expect($scope.paging.page).toBe(1);
         });
       });
     });
