@@ -41,7 +41,7 @@
               activity_type_id: 'Awards Payment',
               return: ['id', 'target_contact_id', 'status_id.label',
                 'activity_date_time', 'custom', 'status_id.name'],
-              options: { limit: 0 }
+              options: { offset: 0, limit: 25 }
             }]);
         });
 
@@ -99,10 +99,10 @@
           initController();
           $scope.$digest();
 
-          apiResponses.Activity.values = generateNewMockPayments();
-          expectedPayments = getExpectedPaymentIds(apiResponses.Activity.values);
+          apiResponses.Activity.get.values = generateNewMockPayments();
+          expectedPayments = getExpectedPaymentIds(apiResponses.Activity.get.values);
 
-          $scope.filterPayments({ id: '123' });
+          $scope.submitFilters({ id: '123' });
           $scope.$digest();
         });
 
@@ -123,7 +123,7 @@
           initController();
           $scope.$digest();
 
-          $scope.filterPayments({ id: '' });
+          $scope.submitFilters({ id: '' });
           $scope.$digest();
         });
 
@@ -140,7 +140,7 @@
           initController();
           $scope.$digest();
 
-          $scope.filterPayments({ custom_Payee_Ref: '123' });
+          $scope.submitFilters({ custom_Payee_Ref: '123' });
           $scope.$digest();
         });
 
@@ -161,8 +161,8 @@
 
       describe('when no payments have been filtered', () => {
         beforeEach(() => {
-          apiResponses.Activity.values = generateNewMockPayments();
-          expectedPayments = getExpectedPaymentIds(apiResponses.Activity.values);
+          apiResponses.Activity.get.values = generateNewMockPayments();
+          expectedPayments = getExpectedPaymentIds(apiResponses.Activity.get.values);
 
           $rootScope.$broadcast('civiawards::paymentstable::refresh');
           $scope.$digest();
@@ -175,7 +175,7 @@
               case_id: mockApplication.id,
               activity_type_id: 'Awards Payment',
               return: jasmine.any(Array),
-              options: { limit: 0 }
+              options: { offset: 0, limit: 25 }
             }]);
         });
 
@@ -186,11 +186,11 @@
 
       describe('when the payments have been filtered', () => {
         beforeEach(() => {
-          $scope.filterPayments({ id: '123' });
+          $scope.submitFilters({ id: '123' });
           $scope.$digest();
 
-          apiResponses.Activity.values = generateNewMockPayments();
-          expectedPayments = getExpectedPaymentIds(apiResponses.Activity.values);
+          apiResponses.Activity.get.values = generateNewMockPayments();
+          expectedPayments = getExpectedPaymentIds(apiResponses.Activity.get.values);
 
           civicaseCrmApi.calls.reset();
           $rootScope.$broadcast('civiawards::paymentstable::refresh');
@@ -206,6 +206,121 @@
 
         it('stores the refreshed payments', () => {
           expect($scope.payments).toEqual(expectedPayments);
+        });
+      });
+    });
+
+    describe('payments paging', () => {
+      describe('on init', () => {
+        beforeEach(() => {
+          initController();
+        });
+
+        it('defines an paging object with no records', () => {
+          expect($scope.paging).toEqual({
+            page: 1,
+            pageSize: 25,
+            total: 0,
+            isDisabled: true
+          });
+        });
+      });
+
+      describe('when loading the payments first page', () => {
+        beforeEach(() => {
+          apiResponses.Activity.getcount = 100;
+
+          initController();
+          $scope.$digest();
+        });
+
+        it('requests the total number of payments for the given filter', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .toContain(['Activity', 'getcount', {
+              case_id: mockApplication.id,
+              activity_type_id: 'Awards Payment'
+            }]);
+        });
+
+        it('stores the total number of payments', () => {
+          expect($scope.paging.total).toBe(100);
+        });
+      });
+
+      describe('when going to a specific filtered page', () => {
+        beforeEach(() => {
+          initController();
+          $scope.$digest();
+
+          apiResponses.Activity.getcount = 100;
+          apiResponses.Activity.get.values = generateNewMockPayments();
+          expectedPayments = getExpectedPaymentIds(apiResponses.Activity.get.values);
+
+          $scope.submitFilters({ id: '123' });
+          $scope.$digest();
+          civicaseCrmApi.calls.reset();
+          $scope.goToPage(3);
+        });
+
+        it('changes the page', () => {
+          expect($scope.paging.page).toBe(3);
+        });
+
+        it('disables the paging while the records are loading', () => {
+          expect($scope.paging.isDisabled).toBe(true);
+        });
+
+        it('fetches the records belonging to the given page', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .toContain(['Activity', 'get', jasmine.objectContaining({
+              options: {
+                offset: 50,
+                limit: 25
+              }
+            })]);
+        });
+
+        it('requests the total count for the filtered payments', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .toContain(['Activity', 'getcount', {
+              id: '123',
+              case_id: mockApplication.id,
+              activity_type_id: 'Awards Payment'
+            }]);
+        });
+
+        describe('after loading the payments page', () => {
+          beforeEach(() => {
+            $scope.$digest();
+          });
+
+          it('stores the total number of payments', () => {
+            expect($scope.paging.total).toBe(100);
+          });
+
+          it('stores the payments for the given page', () => {
+            expect($scope.payments).toEqual(expectedPayments);
+          });
+
+          it('enables paging', () => {
+            expect($scope.paging.isDisabled).toBe(false);
+          });
+        });
+      });
+
+      describe('when filtering after going to a page', () => {
+        beforeEach(() => {
+          initController();
+          $scope.$digest();
+
+          $scope.goToPage(3);
+          $scope.$digest();
+          $scope.submitFilters({ id: '123' });
+          $scope.$digest();
+        });
+
+        it('goes to the first page', () => {
+          expect($scope.paging.page).toBe(1);
         });
       });
     });
@@ -262,8 +377,13 @@
         paymentTypes = _paymentTypes_;
 
         apiResponses = {
-          Activity: { count: mockPayments.length, values: mockPayments },
-          CustomField: { count: mockCustomFields.length, values: mockCustomFields }
+          Activity: {
+            get: { count: mockPayments.length, values: mockPayments },
+            getcount: mockPayments.length
+          },
+          CustomField: {
+            get: { count: mockCustomFields.length, values: mockCustomFields }
+          }
         };
 
         civicaseCrmApi.and.callFake((apiCalls) => {
@@ -274,7 +394,8 @@
           return $q.resolve(
             _.transform(apiCalls, (requestObject, requestParameters, requestKey) => {
               const entityName = requestParameters[0];
-              requestObject[requestKey] = apiResponses[entityName];
+              const actionName = requestParameters[1];
+              requestObject[requestKey] = apiResponses[entityName][actionName];
 
               return requestObject;
             })

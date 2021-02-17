@@ -1,6 +1,6 @@
 <div class="panel panel-default table-responsive">
   <civiawards-payment-filters
-    on-filter="filterPayments($filters)"
+    on-filter="submitFilters($filters)"
   ></civiawards-payment-filters>
   <table
     class="table"
@@ -37,6 +37,13 @@
       </tr>
     </tbody>
   </table>
+  <div class="panel-body" ng-if="paging.total > paging.pageSize">
+    <civicase-paging
+      class="pull-right"
+      paging-data="paging"
+      paging-action="goToPage($page)"
+    ></civicase-paging>
+  </div>
 </div>
 <div
   ng-if="payments.length === 0 && !isLoading"
