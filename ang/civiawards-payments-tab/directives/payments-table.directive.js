@@ -95,9 +95,9 @@
     function getCustomFieldsAsNamesAndValues (payment) {
       return _.transform(customFields, function (paymentCustomFields, customField) {
         var newFieldName = 'custom_' + customField.name;
-        var oldFiledName = 'custom_' + customField.id;
+        var oldFieldName = 'custom_' + customField.id;
 
-        paymentCustomFields[newFieldName] = payment[oldFiledName];
+        paymentCustomFields[newFieldName] = payment[oldFieldName];
 
         return paymentCustomFields;
       }, {});
