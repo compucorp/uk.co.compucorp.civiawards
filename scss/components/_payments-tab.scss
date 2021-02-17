@@ -1,0 +1,25 @@
+.civiawards__payments-tab__filters {
+  .form-control {
+    margin-bottom: 1em;
+  }
+
+  .select2-container {
+    width: 100% !important;
+  }
+
+  label {
+    display: inline;
+  }
+
+  .crm-form-date-wrapper {
+    width: calc(50% - 16px - 2px);
+
+    .form-control {
+      width: calc(100% - 32px - 2px) !important;
+    }
+
+    .crm-clear-link {
+      top: calc(50% - 6px);
+    }
+  }
+}

@@ -2,7 +2,8 @@
 
 ((_) => {
   describe('PaymentsTable', () => {
-    let $controller, $rootScope, $scope, civicaseCrmApi, mockPayments, paymentTypes;
+    let $controller, $rootScope, $scope, apiResponses, civicaseCrmApi,
+      mockPayments, paymentTypes;
     const mockApplication = {
       id: _.uniqueId()
     };
@@ -96,6 +97,77 @@
       });
     });
 
+    describe('payments filtering', () => {
+      let expectedPayments;
+
+      describe('when filtering payments by their ID', () => {
+        beforeEach(() => {
+          initController();
+          $scope.$digest();
+
+          apiResponses.Activity.values = _.map(mockPayments, (mockPayment) => ({
+            ...mockPayment,
+            id: _.uniqueId()
+          }));
+
+          expectedPayments = _.map(
+            apiResponses.Activity.values,
+            (mockPayment) => jasmine.objectContaining({
+              id: mockPayment.id
+            })
+          );
+
+          $scope.filterPayments({ id: '123' });
+          $scope.$digest();
+        });
+
+        it('requests the payment with the ID 123', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .toContain(['Activity', 'get', jasmine.objectContaining({
+              id: '123'
+            })]);
+        });
+
+        it('stores the filtered payments', () => {
+          expect($scope.payments).toEqual(expectedPayments);
+        });
+      });
+
+      describe('when a filter is empty', () => {
+        beforeEach(() => {
+          initController();
+          $scope.$digest();
+
+          $scope.filterPayments({ id: '' });
+          $scope.$digest();
+        });
+
+        it('does not request activities using the empty filter', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .not.toContain(['Activity', 'get', jasmine.objectContaining({
+              id: jasmine.any(String)
+            })]);
+        });
+      });
+
+      describe('when filtering by custom fields', () => {
+        beforeEach(() => {
+          initController();
+          $scope.$digest();
+
+          $scope.filterPayments({ custom_Payee_Ref: '123' });
+          $scope.$digest();
+        });
+
+        it('filters the payment using the real custom field name', () => {
+          expect(_.toArray(civicaseCrmApi.calls.mostRecent().args[0]))
+            .toContain(['Activity', 'get', jasmine.objectContaining({
+              custom_14: '123'
+            })]);
+        });
+      });
+    });
+
     /**
      * Initialises the payments table controller.
      */
@@ -119,7 +191,7 @@
         mockPayments = _mockPayments_;
         paymentTypes = _paymentTypes_;
 
-        const apiResponses = {
+        apiResponses = {
           Activity: { count: mockPayments.length, values: mockPayments },
           CustomField: { count: mockCustomFields.length, values: mockCustomFields }
         };
