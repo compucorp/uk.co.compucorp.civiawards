@@ -109,7 +109,7 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
     $this->assign('activityStatusIsLocked', $this->activityStatusIsLocked());
     $this->assign('isActivityStatusExported', $this->isActivityStatusExported);
     $this->assign('fieldsAfterCurrencyTypes', $this->getFieldsAfterCurrencyTypes());
-    $this->assign('currencyTypeFields', $this->getCurrencyTypeFields());
+    $this->assign('currencyTypeFields', $this->getCurrencyTypeFieldsBeforeAmountFields());
 
     if ($isViewAction) {
       $this->freeze();
@@ -431,6 +431,20 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
    *   Form fields.
    */
   private function getCurrencyTypeFields() {
+    return [
+      $this->getCustomFieldFormElementName('Payment_Amount_Currency_Type'),
+      $this->getCustomFieldFormElementName('Value_in_Functional_Currency_Type'),
+      $this->getCustomFieldFormElementName('Payment_Currency'),
+    ];
+  }
+
+  /**
+   * Returns currency related fields that are before amount fields.
+   *
+   * @return array
+   *   Form fields.
+   */
+  private function getCurrencyTypeFieldsBeforeAmountFields() {
     return [
       $this->getCustomFieldFormElementName('Payment_Amount_Currency_Type'),
       $this->getCustomFieldFormElementName('Value_in_Functional_Currency_Type'),
