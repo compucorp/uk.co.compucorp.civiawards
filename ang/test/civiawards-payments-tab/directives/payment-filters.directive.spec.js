@@ -47,6 +47,7 @@ describe('Payment Filters', () => {
    */
   function initController () {
     $scope = $rootScope.$new();
+    $scope.onFilter = jasmine.createSpy('onFilter');
 
     $controller('civiawardsPaymentFiltersController', {
       $scope: $scope

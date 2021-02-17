@@ -3,7 +3,7 @@
   describe('Review Case Tab Content', () => {
     let $controller, $q, $rootScope, $scope, AwardAdditionalDetailsMockData,
       caseItem, crmApi, ReviewActivitiesMockData, ReviewFieldsMockData,
-      reviewsActivityTypeName, reviewScoringFieldsGroupName;
+      reviewsActivityTypeName, reviewScoringFieldsGroupName, crmStatus;
     const entityActionHandlers = {
       'Activity.get': activityGetHandler,
       'AwardDetail.getsingle': awardDetailGetSingleHandler,
@@ -18,10 +18,11 @@
 
     beforeEach(inject((_$controller_, _$q_, _$rootScope_, _ApplicationsMockData_,
       _AwardAdditionalDetailsMockData_, _ReviewActivitiesMockData_, _ReviewFieldsMockData_,
-      _reviewsActivityTypeName_, _reviewScoringFieldsGroupName_) => {
+      _reviewsActivityTypeName_, _reviewScoringFieldsGroupName_, _crmStatus_) => {
       $controller = _$controller_;
       $q = _$q_;
       $rootScope = _$rootScope_;
+      crmStatus = _crmStatus_;
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_;
       ReviewActivitiesMockData = _ReviewActivitiesMockData_;
       ReviewFieldsMockData = _ReviewFieldsMockData_;
@@ -203,16 +204,11 @@
         });
 
         it('displays a confirmation prompt', () => {
-          expect(CRM.confirm).toHaveBeenCalledWith();
+          expect(CRM.confirm).toHaveBeenCalledWith({ title: 'Delete Review' });
         });
 
         describe('when confirming the review deletion', () => {
-          let mockedStatusResponse;
-
           beforeEach(() => {
-            mockedStatusResponse = jasmine.createSpyObj('status', ['resolve', 'reject']);
-            CRM.status.and.returnValue(mockedStatusResponse);
-
             mockedConfirmElement.trigger('crmConfirm:yes');
           });
 
@@ -223,17 +219,10 @@
           });
 
           it('shows a loading progress', () => {
-            expect(CRM.status).toHaveBeenCalledWith();
-          });
-
-          describe('after the review has been deleted', () => {
-            beforeEach(() => {
-              $rootScope.$digest();
-            });
-
-            it('displays a success message', () => {
-              expect(mockedStatusResponse.resolve).toHaveBeenCalledWith();
-            });
+            expect(crmStatus).toHaveBeenCalledWith({
+              start: 'Deleting...',
+              success: 'Deleted'
+            }, jasmine.any(Object));
           });
         });
       });

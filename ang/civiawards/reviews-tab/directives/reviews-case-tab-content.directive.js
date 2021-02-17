@@ -1,4 +1,4 @@
-(function (_, $, angular, confirm, loadForm, setLoadingStatus, getCrmUrl) {
+(function (_, $, angular, confirm, loadForm, getCrmUrl) {
   var module = angular.module('civiawards');
 
   module.directive('civiawardsReviewsCaseTabContent', function () {
@@ -24,9 +24,10 @@
    * @param {string} reviewsActivityTypeName the reviews activity type name.
    * @param {string} reviewScoringFieldsGroupName the review scoring fields group name.
    * @param {Function} ts the translation function.
+   * @param {Function} crmStatus crm status service
    */
   function civiawardsReviewsCaseTabContentController ($q, $scope, $sce, crmApi, reviewsActivityTypeName,
-    reviewScoringFieldsGroupName, ts) {
+    reviewScoringFieldsGroupName, ts, crmStatus) {
     var CRM_FORM_LOAD_EVENT = 'crmFormLoad';
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
     var REVIEW_FORM_URL = 'civicrm/awardreview';
@@ -198,20 +199,15 @@
      * @param {object} reviewActivity the review to delete.
      */
     function handleDeleteReviewActivity (reviewActivity) {
-      confirm()
+      confirm({ title: ts('Delete Review') })
         .on('crmConfirm:yes', function () {
-          var loadingStatus = setLoadingStatus();
+          var promise = deleteReviewActivity(reviewActivity.id)
+            .then(loadReviewActivities);
 
-          deleteReviewActivity(reviewActivity.id)
-            .then(loadReviewActivities)
-            .then(
-              function () {
-                loadingStatus.resolve();
-              },
-              function () {
-                loadingStatus.reject();
-              }
-            );
+          return crmStatus({
+            start: $scope.ts('Deleting...'),
+            success: $scope.ts('Deleted')
+          }, promise);
         });
     }
 
@@ -235,4 +231,4 @@
       });
     }
   }
-})(CRM._, CRM.$, angular, CRM.confirm, CRM.loadForm, CRM.status, CRM.url);
+})(CRM._, CRM.$, angular, CRM.confirm, CRM.loadForm, CRM.url);

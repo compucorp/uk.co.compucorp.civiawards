@@ -1,8 +1,8 @@
 <div class="civicase__case-tab__container">
   <div class="civicase__case-tab__actions">
-    <button type="button" class="btn btn-primary civiawards__reviews-tab__action-button">
-      {{:: ts('Add Payment')}}
-    </button>
+    <civiawards-payments-case-tab-add-payment
+      case-id="caseItem.id">
+    </civiawards-payments-case-tab-add-payment>
   </div>
   <civiawards-payments-table
     case-item="caseItem"
