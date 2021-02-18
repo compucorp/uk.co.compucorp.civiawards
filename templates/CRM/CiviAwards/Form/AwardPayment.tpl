@@ -20,6 +20,9 @@
               {/if}
           {/foreach}
       </div>
+  <div>
+    {include file="CRM/Form/attachment.tpl"}
+  </div>
       <div class="crm-submit-buttons panel-footer clearfix">
           {if $isViewAction && !$isActivityStatusExported}
             <a href="{crmURL p='civicrm/awardpayment' q=$editUrlParams}" class="edit button" title="{ts}Edit{/ts}"><span><i class="crm-i fa-pencil"></i> {ts}Edit{/ts}</span></a>
