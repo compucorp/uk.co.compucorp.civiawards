@@ -80,26 +80,32 @@ class CRM_CiviAwards_Setup_CreateAwardPaymentActivityTypes {
       [
         'name' => 'applied_for_incomplete',
         'label' => 'Applied for (incomplete)',
+        'filter' => CRM_Activity_BAO_Activity::INCOMPLETE,
       ],
       [
         'name' => 'approved_complete',
         'label' => 'Approved (complete)',
+        'filter' => CRM_Activity_BAO_Activity::COMPLETED,
       ],
       [
         'name' => 'exported_complete',
         'label' => 'Exported (complete)',
+        'filter' => CRM_Activity_BAO_Activity::COMPLETED,
       ],
       [
         'name' => 'paid_complete',
         'label' => 'Paid (complete)',
+        'filter' => CRM_Activity_BAO_Activity::COMPLETED,
       ],
       [
         'name' => 'cancelled_cancelled',
         'label' => 'Cancelled (cancelled)',
+        'filter' => CRM_Activity_BAO_Activity::CANCELLED,
       ],
       [
         'name' => 'failed_incomplete',
         'label' => 'Failed (incomplete)',
+        'filter' => CRM_Activity_BAO_Activity::INCOMPLETE,
       ],
     ];
   }
@@ -115,6 +121,7 @@ class CRM_CiviAwards_Setup_CreateAwardPaymentActivityTypes {
           'option_group_id' => 'activity_status',
           'name' => $activityStatus['name'],
           'label' => $activityStatus['label'],
+          'filter' => $activityStatus['filter'],
           'grouping' => self::AWARD_PAYMENTS_ACTIVITY_CATEGORY,
           'is_reserved' => TRUE,
         ]
