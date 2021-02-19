@@ -20,17 +20,20 @@
               {/if}
           {/foreach}
       </div>
-      <div class="crm-submit-buttons panel-footer clearfix">
-          {if $isViewAction && !$isActivityStatusExported}
-            <a href="{crmURL p='civicrm/awardpayment' q=$editUrlParams}" class="edit button" title="{ts}Edit{/ts}"><span><i class="crm-i fa-pencil"></i> {ts}Edit{/ts}</span></a>
-          {/if}
-          {if $isViewAction || $isUpdateAction}
-              {if (call_user_func(array('CRM_Core_Permission','check'), 'delete activities') && !$activityStatusIsLocked) || call_user_func(array('CRM_Core_Permission','check'), 'administer CiviCRM')}
-                <a id='award_payment_delete' class="delete button" title="{ts}Delete{/ts}"><span><i class="crm-i fa-trash"></i> {ts}Delete{/ts}</span></a>
-              {/if}
-          {/if}
-          {include file="CRM/common/formButtons.tpl" location="bottom"}
-      </div>
     </div>
+  </div>
+  <div class="civiawards__payments-form__attachments">
+    {include file="CRM/Form/attachment.tpl"}
+  </div>
+  <div class="crm-submit-buttons panel-footer clearfix">
+      {if $isViewAction && !$isActivityStatusExported}
+        <a href="{crmURL p='civicrm/awardpayment' q=$editUrlParams}" class="edit button" title="{ts}Edit{/ts}"><span><i class="crm-i fa-pencil"></i> {ts}Edit{/ts}</span></a>
+      {/if}
+      {if $isViewAction || $isUpdateAction}
+          {if (call_user_func(array('CRM_Core_Permission','check'), 'delete activities') && !$activityStatusIsLocked) || call_user_func(array('CRM_Core_Permission','check'), 'administer CiviCRM')}
+            <a id='award_payment_delete' class="delete button" title="{ts}Delete{/ts}"><span><i class="crm-i fa-trash"></i> {ts}Delete{/ts}</span></a>
+          {/if}
+      {/if}
+      {include file="CRM/common/formButtons.tpl" location="bottom"}
   </div>
 </div>

@@ -100,9 +100,11 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
     $isViewAction = $this->_action & CRM_Core_Action::VIEW;
     $isUpdateAction = $this->_action & CRM_Core_Action::UPDATE;
     $this->addFormFields();
+    $elementNames = $this->getRenderableElementNames();
+    $this->addAttachmentFields();
     $this->assign('isViewAction', $isViewAction);
     $this->assign('isUpdateAction', $isUpdateAction);
-    $this->assign('elementNames', $this->getRenderableElementNames());
+    $this->assign('elementNames', $elementNames);
     $this->assign('entityID', $this->activityId);
     $this->assign('groupID', NULL);
     $this->assign('subType', NULL);
@@ -128,7 +130,7 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
    * {@inheritDoc}
    */
   public function postProcess() {
-    $values = $this->exportValues();
+    $values = $this->controller->exportValues($this->_name);
 
     if ($this->_action & CRM_Core_Action::ADD) {
       $activityId = $this->createActivity();
@@ -144,6 +146,14 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
       $activityId,
       'Activity'
     );
+    // Process and save attachments.
+    CRM_Core_BAO_File::formatAttachment(
+      $values,
+      $values,
+      'civicrm_activity',
+      $this->activityId
+    );
+    CRM_Core_BAO_File::processAttachment($values, 'civicrm_activity', $activityId);
 
     $status = $this->_action == CRM_Core_Action::ADD ? 'saved' : 'updated';
     CRM_Core_Session::setStatus(ts('Record ' . strtolower($status) . ' successfully.'), ts('Record ' . $status), 'success');
@@ -310,6 +320,13 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
       );
     }
     CRM_Utils_System::setTitle(E::ts($this->getPageTitle()));
+  }
+
+  /**
+   * Add attachment form fields.
+   */
+  private function addAttachmentFields() {
+    CRM_Core_BAO_File::buildAttachment($this, 'civicrm_activity', $this->activityId, NULL, TRUE);
   }
 
   /**

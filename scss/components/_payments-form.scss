@@ -1,0 +1,20 @@
+.civiawards__payments-form__attachments {
+  .form-layout-compressed {
+    width: 100%;
+  }
+
+  .form-layout-compressed td {
+    padding: $crm-table-form-cell-padding;
+  }
+
+  .label {
+    display: table-cell;
+    padding-left: $crm-standard-gap;
+    text-align: right;
+    width: $crm-table-label-column-width;
+  }
+
+  [type=file] {
+    display: inline-block;
+  }
+}
