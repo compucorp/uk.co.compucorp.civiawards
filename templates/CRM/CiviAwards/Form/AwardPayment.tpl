@@ -22,7 +22,7 @@
       </div>
     </div>
   </div>
-  <div>
+  <div class="civiawards__payments-form__attachments">
     {include file="CRM/Form/attachment.tpl"}
   </div>
   <div class="crm-submit-buttons panel-footer clearfix">
