@@ -27,6 +27,7 @@
       <label>Bank Account Holder's Name</label>
       <data_type>String</data_type>
       <html_type>Text</html_type>
+      <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
       <weight>1</weight>
       <is_active>1</is_active>
@@ -42,6 +43,7 @@
       <label>Account Holder's Address</label>
       <data_type>String</data_type>
       <html_type>Text</html_type>
+      <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
       <weight>2</weight>
       <help_pre>Please use the address which is linked to the account</help_pre>
@@ -59,7 +61,7 @@
       <data_type>String</data_type>
       <html_type>Text</html_type>
       <is_required>0</is_required>
-      <is_searchable>0</is_searchable>
+      <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
       <weight>3</weight>
       <is_active>1</is_active>
@@ -76,6 +78,7 @@
       <label>Bank Address</label>
       <data_type>Memo</data_type>
       <html_type>TextArea</html_type>
+      <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
       <weight>4</weight>
       <attributes>rows=4, cols=60</attributes>
@@ -87,10 +90,11 @@
       <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
     </CustomField>
     <CustomField>
-      <name>SWIFT_code_BIC</name>
-      <label>SWIFT code/BIC</label>
+      <name>SWIFT_Code_BIC</name>
+      <label>SWIFT Code/BIC</label>
       <data_type>String</data_type>
       <html_type>Text</html_type>
+      <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
       <weight>5</weight>
       <is_active>1</is_active>
@@ -106,6 +110,7 @@
       <label>IBAN Branch</label>
       <data_type>String</data_type>
       <html_type>Text</html_type>
+      <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
       <weight>6</weight>
       <is_active>1</is_active>
@@ -117,12 +122,12 @@
       <custom_group_name>Awards_Payment_Bank_Details</custom_group_name>
     </CustomField>
     <CustomField>
-      <name>Account_number</name>
-      <label>Account number</label>
+      <name>Account_Number</name>
+      <label>Account Number</label>
       <data_type>String</data_type>
       <html_type>Text</html_type>
       <is_required>0</is_required>
-      <is_searchable>0</is_searchable>
+      <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
       <weight>7</weight>
       <is_active>1</is_active>
@@ -139,6 +144,7 @@
       <label>Routing Code</label>
       <data_type>String</data_type>
       <html_type>Text</html_type>
+      <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
       <weight>8</weight>
       <is_active>1</is_active>
@@ -155,7 +161,7 @@
       <data_type>String</data_type>
       <html_type>Select</html_type>
       <is_required>0</is_required>
-      <is_searchable>0</is_searchable>
+      <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
       <weight>9</weight>
       <is_active>1</is_active>
@@ -173,6 +179,7 @@
       <label>Notes</label>
       <data_type>Memo</data_type>
       <html_type>TextArea</html_type>
+      <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
       <weight>10</weight>
       <attributes>rows=4, cols=60</attributes>
