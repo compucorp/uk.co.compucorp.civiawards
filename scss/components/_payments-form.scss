@@ -1,4 +1,35 @@
+.civiawards__payments-form {
+  .civiawards__payments-form__label {
+    float: left;
+    width: 315px;
+  }
+
+  .civiawards__payments-form__input {
+    float: left;
+    width: 350px !important;
+
+    > .select2-container,
+    > textarea,
+    > input {
+      width: 300px !important;
+    }
+  }
+
+  .civiawards__payments-form__input--double {
+    width: auto !important;
+
+    > input {
+      margin-left: 10px;
+      width: 190px !important;
+    }
+  }
+}
+
 .civiawards__payments-form__attachments {
+  .crm-accordion-body {
+    margin-left: 10px;
+  }
+
   .form-layout-compressed {
     width: 100%;
   }
@@ -9,12 +40,16 @@
 
   .label {
     display: table-cell;
-    padding-left: $crm-standard-gap;
-    text-align: right;
-    width: $crm-table-label-column-width;
+    text-align: left;
+    width: 110px;
   }
 
   [type=file] {
     display: inline-block;
+    width: 200px;
+  }
+
+  .description {
+    width: 530px;
   }
 }
