@@ -19,5 +19,14 @@
 
       return !_.includes(notEditableStatuses, activityStatus);
     };
+
+    this.isEditVisible = function (activity) {
+      var activityStatus = activity.status_name;
+      var notEditableStatuses = [
+        'exported_complete'
+      ];
+
+      return !_.includes(notEditableStatuses, activityStatus);
+    };
   }
 })(CRM._, angular);
