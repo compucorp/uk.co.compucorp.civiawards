@@ -32,6 +32,7 @@
     $scope.handleEditActivity = handleEditActivity;
     $scope.handleDeleteActivity = handleDeleteActivity;
     $scope.isDeleteActionVisible = isDeleteActionVisible;
+    $scope.isEditActionVisible = isEditActionVisible;
 
     /**
      * Open View Payment Form
@@ -106,6 +107,16 @@
      */
     function isDeleteActionVisible (payment) {
       return AwardsPaymentActivityStatus.isDeleteVisible({ status_name: payment['status_id.name'] });
+    }
+
+    /**
+     * Checks if the delete action should be visible.
+     *
+     * @param {object} payment payment activity object
+     * @returns {boolean} if visible
+     */
+    function isEditActionVisible (payment) {
+      return AwardsPaymentActivityStatus.isEditVisible({ status_name: payment['status_id.name'] });
     }
   }
 })(angular, CRM.confirm);

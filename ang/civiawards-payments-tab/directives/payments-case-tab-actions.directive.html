@@ -19,7 +19,10 @@
       <a href ng-click="handleViewActivity(payment.id)">
         {{ ts('View') }}
       </a>
-      <a href ng-click="handleEditActivity(payment.id)">
+      <a
+        ng-if="isEditActionVisible(payment)"
+        href
+        ng-click="handleEditActivity(payment.id)">
         {{ ts('Edit') }}
       </a>
       <a
