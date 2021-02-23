@@ -238,6 +238,7 @@ function civiawards_civicrm_alterAPIPermissions($entity, $action, &$params, &$pe
 function civiawards_civicrm_aclGroup($type, $contactID, $tableName, &$allGroups, &$currentGroups) {
   $hooks = [
     new CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups(),
+    new CRM_CiviAwards_Hook_AclGroup_AllowAccessToPaymentGroups(),
   ];
 
   foreach ($hooks as $hook) {
