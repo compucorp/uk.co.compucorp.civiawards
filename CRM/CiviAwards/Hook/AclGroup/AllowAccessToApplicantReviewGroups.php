@@ -1,14 +1,19 @@
 <?php
 
 use CRM_CiviAwards_Helper_ApplicantReview as ApplicantReviewHelper;
+use CRM_CiviAwards_Hook_AclGroup_ActivityTypeCustomGroupAccess as ActivityTypeCustomGroupAccess;
+use CRM_CiviAwards_Hook_AlterAPIPermissions_Award as AwardPermission;
 
 /**
- * Class CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups.
+ * Applicant review custom group ACL access class.
  */
-class CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups {
+class CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups extends ActivityTypeCustomGroupAccess {
 
   /**
-   * Determines if the hook should run or not.
+   * Modifies ACL groups for user with access review field set permission.
+   *
+   * Allows a user with access review field set to have access to the
+   * applicant review custom group and custom fields belonging to this group.
    *
    * @param string $type
    *   The type of permission needed.
@@ -25,34 +30,7 @@ class CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups {
     if (!$this->shouldRun($tableName)) {
       return;
     }
-    $applicantReviewCustomGroups = $this->getApplicantReviewCustomGroups();
-    if (!$applicantReviewCustomGroups) {
-      return;
-    }
-
-    foreach ($applicantReviewCustomGroups as $applicantReviewCustomGroup) {
-      $currentGroups[] = $applicantReviewCustomGroup['id'];
-    }
-
-    $currentGroups = array_unique($currentGroups);
-  }
-
-  /**
-   * Returns the Custom groups attached to the Applicant review activity type.
-   */
-  private function getApplicantReviewCustomGroups() {
-    $applicantReviewCustomGroups = [];
-    $result = civicrm_api3('CustomGroup', 'get', [
-      'sequential' => 1,
-      'extends' => 'Activity',
-      'extends_entity_column_value' => ApplicantReviewHelper::getActivityTypeId(),
-    ]);
-
-    if (!empty($result['values'])) {
-      $applicantReviewCustomGroups = $result['values'];
-    }
-
-    return $applicantReviewCustomGroups;
+    $this->setAccessibleCustomGroups($currentGroups);
   }
 
   /**
@@ -65,7 +43,17 @@ class CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups {
    *   returns a boolean to determine if hook will run or not.
    */
   private function shouldRun($tableName) {
-    return $tableName == CRM_Core_BAO_CustomGroup::getTableName() && CRM_Core_Permission::check('access review custom field set');
+    return $tableName == CRM_Core_BAO_CustomGroup::getTableName() && CRM_Core_Permission::check(AwardPermission::REVIEW_FIELD_SET_PERM);
+  }
+
+  /**
+   * Returns the activity type Id.
+   *
+   * @return int
+   *   Activity Type ID.
+   */
+  protected function getActivityTypeId() {
+    return ApplicantReviewHelper::getActivityTypeId();
   }
 
 }
