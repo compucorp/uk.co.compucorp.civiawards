@@ -198,10 +198,18 @@ function civiawards_civicrm_permission(&$permissions) {
     ts('Allows a user to create or edit awards'),
   ];
 
-  $permissions['access review custom field set'] = [
+  $permissions[CRM_CiviAwards_Hook_AlterAPIPermissions_Award::REVIEW_FIELD_SET_PERM] = [
     ts('CiviAwards: Access review fields '),
     ts(
       "This allows the user to view any review field sets on the reserved review activity type.
+       Note that this can also be done through ACLs or allocating the user 'Access all custom data' permission"
+    ),
+  ];
+
+  $permissions[CRM_CiviAwards_Hook_AlterAPIPermissions_Award::PAYMENT_FIELD_SET_PERM] = [
+    ts('CiviAwards: Access Payment custom fields '),
+    ts(
+      "This allows the user to view any payment field sets on the related payment activity types.
        Note that this can also be done through ACLs or allocating the user 'Access all custom data' permission"
     ),
   ];

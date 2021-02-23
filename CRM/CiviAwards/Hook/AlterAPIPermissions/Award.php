@@ -1,13 +1,25 @@
 <?php
 
-use CRM_CiviAwards_Helper_ApplicantReview as ApplicantReviewHelper;
 use CRM_Civicase_Helper_CaseCategory as CaseCategoryHelper;
 use CRM_CiviAwards_Helper_CaseTypeCategory as CaseTypeCategoryHelper;
+use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
+use CRM_CiviAwards_Setup_CreateAwardPaymentActivityTypes as CreateAwardPaymentActivityTypes;
 
 /**
  * APIPermissions Class for Awards.
  */
 class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
+
+  const REVIEW_FIELD_SET_PERM = 'access review custom field set';
+
+  const PAYMENT_FIELD_SET_PERM = 'access payment custom field set';
+
+  /**
+   * Custom field access permission.
+   *
+   * @var string
+   */
+  private $customFieldSetPermission;
 
   /**
    * Alters the API permissions.
@@ -39,7 +51,7 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
 
     if ($this->modifyCustomFieldApiPermission($entity, $action, $params)) {
       $permissions['custom_field']['get'] = [
-        ['access review custom field set', 'access all custom data'],
+        [$this->customFieldSetPermission, 'access all custom data'],
       ];
     }
   }
@@ -142,8 +154,10 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
       return FALSE;
     }
 
-    $applicantReviewId = ApplicantReviewHelper::getActivityTypeId();
+    $applicantReviewId = $this->getActivityTypeId(CreateApplicantReviewActivityType::APPLICANT_REVIEW);
+    $awardPaymentTypeId = $this->getActivityTypeId(CreateAwardPaymentActivityTypes::AWARD_PAYMENT_REQUEST_ACTIVITY_TYPE);
     $isOfApplicantReview = FALSE;
+    $isOfAwardPaymentType = FALSE;
     foreach ($groupDetails as $groupDetail) {
       $groupExtendsActivity = $groupDetail['extends'] == 'Activity';
       if (!$groupExtendsActivity) {
@@ -153,10 +167,19 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
         // Custom Group should only extend the Applicant review activity type.
         $isOfApplicantReview = in_array($applicantReviewId, $groupDetail['extends_entity_column_value'])
           && count($groupDetail['extends_entity_column_value']) == 1;
+        $isOfAwardPaymentType = in_array($awardPaymentTypeId, $groupDetail['extends_entity_column_value']);
       }
     }
 
     if ($isOfApplicantReview) {
+      $this->customFieldSetPermission = self::REVIEW_FIELD_SET_PERM;
+
+      return TRUE;
+    }
+
+    if ($isOfAwardPaymentType) {
+      $this->customFieldSetPermission = self::PAYMENT_FIELD_SET_PERM;
+
       return TRUE;
     }
 
@@ -164,13 +187,13 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
   }
 
   /**
-   * Returns the custom group details group id or name.
+   * Returns the custom group details by group id or name.
    *
    * @param mixed $customGroup
    *   Custom group name or Id.
    *
    * @return array
-   *   Case category name.
+   *   Custom group details.
    */
   private function getCustomGroupDetails($customGroup) {
     $params = [];
@@ -193,6 +216,29 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
     }
 
     return [];
+  }
+
+  /**
+   * Returns the activity type Id.
+   *
+   * @param string $optionValueName
+   *   Option value name.
+   *
+   * @return int
+   *   Activity type Id.
+   */
+  private function getActivityTypeId($optionValueName) {
+    try {
+      $result = civicrm_api3('OptionValue', 'getsingle', [
+        'option_group_id' => 'activity_type',
+        'name' => $optionValueName,
+      ]);
+
+      return $result['value'];
+    }
+    catch (Exception $e) {
+    }
+
   }
 
 }
