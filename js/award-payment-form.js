@@ -1,5 +1,7 @@
-(function ($, nonEditableFields) {
+(function ($, nonEditableFieldsString) {
   $(document).on('crmLoad', function () {
+    var nonEditableFields = JSON.parse(nonEditableFieldsString);
+
     (function init () {
       makeFieldsNonEditable();
       insertDeleteButtonAfterCancel();
@@ -43,4 +45,4 @@
       });
     });
   });
-})(CRM.$, CRM.nonEditableFields, window);
+})(CRM.$, CRM.nonEditableFields);
