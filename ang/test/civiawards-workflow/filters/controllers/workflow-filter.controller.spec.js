@@ -29,7 +29,7 @@
 
       it('shows a filter to select where I am the manager', () => {
         expect($scope.awardOptions).toEqual([
-          { text: 'My case type category', id: 'my_awards' },
+          { text: 'My case type category', id: 203 },
           { text: 'All case type category', id: 'all_awards' }
         ]);
       });
