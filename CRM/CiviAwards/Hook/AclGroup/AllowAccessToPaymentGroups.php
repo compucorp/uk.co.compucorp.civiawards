@@ -59,7 +59,7 @@ class CRM_CiviAwards_Hook_AclGroup_AllowAccessToPaymentGroups extends ActivityTy
   /**
    * Returns the payment activity type Id.
    *
-   * @return int
+   * @return int|null
    *   Activity type Id.
    */
   private function getAwardPaymentActivityTypeId() {
@@ -69,9 +69,10 @@ class CRM_CiviAwards_Hook_AclGroup_AllowAccessToPaymentGroups extends ActivityTy
         'name' => CreateAwardPaymentActivityTypes::AWARD_PAYMENT_ACTIVITY_TYPE,
       ]);
 
-      return $result['value'];
+      return !empty($result['value']) ? $result['value'] : NULL;
     }
     catch (Exception $e) {
+      return NULL;
     }
   }
 

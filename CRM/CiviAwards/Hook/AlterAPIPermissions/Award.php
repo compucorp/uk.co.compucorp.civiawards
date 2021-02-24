@@ -224,7 +224,7 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
    * @param string $optionValueName
    *   Option value name.
    *
-   * @return int
+   * @return int|null
    *   Activity type Id.
    */
   private function getActivityTypeId($optionValueName) {
@@ -234,9 +234,10 @@ class CRM_CiviAwards_Hook_AlterAPIPermissions_Award {
         'name' => $optionValueName,
       ]);
 
-      return $result['value'];
+      return !empty($result['value']) ? $result['value'] : NULL;
     }
     catch (Exception $e) {
+      return NULL;
     }
 
   }
