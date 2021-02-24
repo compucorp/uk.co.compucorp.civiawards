@@ -1,5 +1,5 @@
 (function ($, nonEditableFieldsString) {
-  $(document).on('crmLoad', function () {
+  $(document).one('crmLoad', function () {
     var nonEditableFields = JSON.parse(nonEditableFieldsString);
 
     (function init () {
