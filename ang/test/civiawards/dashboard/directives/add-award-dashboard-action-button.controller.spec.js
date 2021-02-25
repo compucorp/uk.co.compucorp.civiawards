@@ -71,7 +71,7 @@
 
     describe('when clicking the action button', () => {
       const awardCaseTypeCategoryId = 3;
-      const expectedUrl = getCrmUrl('civicrm/award/a/#/awards/new/' + awardCaseTypeCategoryId);
+      const expectedUrl = getCrmUrl('civicrm/award/a/#/awards/new/' + awardCaseTypeCategoryId + '/dashboard');
 
       beforeEach(() => {
         spyOn($location, 'url');

@@ -1,6 +1,6 @@
 /* eslint-env jasmine */
 
-(function (_, angular, getCrmUrl) {
+(function (_) {
   var AWARDS_CATEGORY_NAME = 'awards';
 
   describe('Case Type Items configuration', () => {
@@ -48,4 +48,4 @@
       });
     });
   });
-})(CRM._, angular, CRM.url);
+})(CRM._);

@@ -1,4 +1,4 @@
-(function (angular, getCrmUrl) {
+(function (angular) {
   var module = angular.module('civiawards');
 
   module.controller('EditAwardButtonController', EditAwardButtonController);
@@ -18,6 +18,6 @@
 
     $scope.canEditAwards = canCreateOrEditAwards;
     $scope.editAwardUrl = 'civicrm/award/a/#/awards/' +
-     currentCaseTypeCategoryValue + '/' + $scope.caseType.id;
+     currentCaseTypeCategoryValue + '/' + $scope.caseType.id + '/' + 'dashboard';
   }
-})(angular, CRM.url);
+})(angular);

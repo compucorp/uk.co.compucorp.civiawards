@@ -54,11 +54,13 @@ class CRM_CiviAwards_Service_ApplicantManagementCustomGroupPostProcessor extends
       return;
     }
 
-    $subTypes = empty($customGroup->extends_entity_column_value) ? [] : explode(CRM_Core_DAO::VALUE_SEPARATOR, $customGroup->extends_entity_column_value);
+    $subTypes = empty($customGroup->extends_entity_column_value) || $customGroup->extends_entity_column_value === 'null'
+      ? []
+      : explode(CRM_Core_DAO::VALUE_SEPARATOR, $customGroup->extends_entity_column_value);
     $this->postProcessHelper->updateCustomGroupSubTypesList($customGroup->id, $subTypes);
 
     $caseTypeIds = $this->postProcessHelper->getCaseTypesForSubType($this->caseTypeCategories[$customGroup->extends], $subTypes);
-    $ids = 'null';
+    $ids = CRM_Core_DAO::VALUE_SEPARATOR . 0 . CRM_Core_DAO::VALUE_SEPARATOR;
     if (!empty($caseTypeIds)) {
       $ids = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $caseTypeIds) . CRM_Core_DAO::VALUE_SEPARATOR;
     }

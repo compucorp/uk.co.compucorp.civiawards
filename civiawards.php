@@ -14,6 +14,12 @@ require_once 'civiawards.civix.php';
  */
 function civiawards_civicrm_config(&$config) {
   _civiawards_civix_civicrm_config($config);
+
+  Civi::dispatcher()->addListener(
+    'civi.api.prepare',
+    ['CRM_CiviAwards_Event_Listener_AwardCaseFilter', 'onPrepare'],
+    10
+  );
 }
 
 /**
