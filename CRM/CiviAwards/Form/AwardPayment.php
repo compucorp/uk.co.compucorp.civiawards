@@ -123,7 +123,11 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
       $this->getDefinedNonEditableFormFields() : [];
     CRM_Core_Resources::singleton()
       ->addScriptFile('uk.co.compucorp.civiawards', 'js/award-payment-form.js');
-    CRM_Core_Resources::singleton()->addSetting(['nonEditableFields' => $nonEditableFields]);
+    CRM_Core_Resources::singleton()->addSetting([
+      'civiawards-payments-tab' => [
+        'nonEditableFields' => json_encode($nonEditableFields),
+      ],
+    ]);
   }
 
   /**

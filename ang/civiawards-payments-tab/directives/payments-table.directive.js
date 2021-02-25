@@ -75,6 +75,7 @@
       var paymentCustomFields = getCustomFieldsAsNamesAndValues(payment);
       var targetContactName = _.chain(payment.target_contact_name)
         .toArray().first().value();
+      var paymentType = paymentTypes[paymentCustomFields.custom_Type];
 
       return _.extend(
         {},
@@ -82,7 +83,7 @@
         paymentCustomFields,
         {
           target_contact_name: targetContactName,
-          paymentTypeLabel: paymentTypes[paymentCustomFields.custom_Type].label
+          paymentTypeLabel: (paymentType && paymentType.label) || ''
         }
       );
     }

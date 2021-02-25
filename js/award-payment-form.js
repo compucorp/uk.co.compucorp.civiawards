@@ -1,5 +1,7 @@
-(function ($, nonEditableFields) {
-  $(document).on('crmLoad', function () {
+(function ($, paymentsSettings) {
+  $(document).one('crmLoad', function () {
+    var nonEditableFields = JSON.parse(paymentsSettings.nonEditableFields);
+
     (function init () {
       makeFieldsNonEditable();
       insertDeleteButtonAfterCancel();
@@ -43,4 +45,4 @@
       });
     });
   });
-})(CRM.$, CRM.nonEditableFields, window);
+})(CRM.$, CRM['civiawards-payments-tab']);

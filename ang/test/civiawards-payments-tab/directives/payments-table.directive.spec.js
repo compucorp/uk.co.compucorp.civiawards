@@ -91,6 +91,33 @@
           expect($scope.payments).toEqual(expectedPayments);
         });
       });
+
+      describe('when the payment custom fields are missing', () => {
+        beforeEach(() => {
+          const paymentActivityBaseFields = ['id', 'activity_date_time',
+            'target_contact_name', 'status_id.label', 'status_id.name'];
+          apiResponses.Activity.get.values = _.map(
+            generateNewMockPayments(),
+            (payment) => _.pick(payment, paymentActivityBaseFields)
+          );
+
+          initController();
+        });
+
+        it('should not throw an error due to missing information', () => {
+          expect(() => $scope.$digest()).not.toThrow();
+        });
+
+        describe('after loading the payments', () => {
+          beforeEach(() => $scope.$digest());
+
+          it('should fill the Payment Type label as an empty string', () => {
+            expect($scope.payments).toContain(jasmine.objectContaining({
+              paymentTypeLabel: ''
+            }));
+          });
+        });
+      });
     });
 
     describe('payments filtering', () => {
