@@ -1,0 +1,52 @@
+<div class="panel panel-default table-responsive">
+  <civiawards-payment-filters
+    on-filter="submitFilters($filters)"
+  ></civiawards-payment-filters>
+  <table
+    class="table"
+    ng-if="payments.length > 0"
+  >
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Payee</th>
+        <th>Type</th>
+        <th>Payment Amount</th>
+        <th>Payment Currency</th>
+        <th>Due Date</th>
+        <th>Payee Ref</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="payment in payments">
+        <td>{{payment.id}}</td>
+        <td>{{payment.target_contact_name}}</td>
+        <td>{{payment.paymentTypeLabel}}</td>
+        <td>{{payment.custom_Payment_Amount_Value}}</td>
+        <td>{{payment.custom_Payment_Currency}}</td>
+        <td>{{payment.activity_date_time | civicaseCrmDate}}</td>
+        <td>{{payment.custom_Payee_Ref|limitTo:10}}</td>
+        <td>{{payment['status_id.label']}}</td>
+        <td>
+          <civiawards-payments-case-tab-actions
+            payment="payment">
+          </civiawards-payments-case-tab-actions>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="panel-body" ng-if="paging.total > paging.pageSize">
+    <civicase-paging
+      class="pull-right"
+      paging-data="paging"
+      paging-action="goToPage($page)"
+    ></civicase-paging>
+  </div>
+</div>
+<div
+  ng-if="payments.length === 0 && !isLoading"
+  class="text-center text-uppercase civicase__case-tab__empty">
+  {{:: ts('No Payments')}}
+</div>

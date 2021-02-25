@@ -6,6 +6,7 @@
 class CRM_CiviAwards_Setup_CreateApplicantReviewActivityType {
 
   const APPLICANT_REVIEW = 'Applicant Review';
+  const CUSTOM_GROUP_NAME = 'Applicant_Review';
 
   /**
    * Adds the Applicant review activity type and category.

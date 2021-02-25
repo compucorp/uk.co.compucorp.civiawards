@@ -24,4 +24,10 @@
     <page_callback>CRM_CiviAwards_Page_AwardAngular</page_callback>
     <access_arguments>create/edit awards</access_arguments>
   </item>
+  <item>
+    <path>civicrm/awardpayment</path>
+    <page_callback>CRM_CiviAwards_Form_AwardPayment</page_callback>
+    <title>AwardPayment</title>
+    <access_arguments>create/edit awards</access_arguments>
+  </item>
 </menu>

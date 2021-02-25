@@ -73,6 +73,21 @@ function civiawards_civicrm_enable() {
 function civiawards_civicrm_buildForm($formName, &$form) {
   $hooks = [
     new CRM_CiviAwards_Hook_BuildForm_SetCustomGroupSubTypeValues(),
+    new CRM_CiviAwards_Hook_BuildForm_AddFinanceManagementField(),
+  ];
+
+  foreach ($hooks as $hook) {
+    $hook->run($form, $formName);
+  }
+}
+
+/**
+ * Implements hook_civicrm_buildForm().
+ */
+function civiawards_civicrm_postProcess($formName, &$form) {
+  $hooks = [
+    new CRM_CiviAwards_Hook_PostProcess_SaveFinanceManagement(),
+    new CRM_CiviAwards_Hook_PostProcess_EnableBankDetailsFieldSet(),
   ];
 
   foreach ($hooks as $hook) {
@@ -189,10 +204,18 @@ function civiawards_civicrm_permission(&$permissions) {
     ts('Allows a user to create or edit awards'),
   ];
 
-  $permissions['access review custom field set'] = [
+  $permissions[CRM_CiviAwards_Hook_AlterAPIPermissions_Award::REVIEW_FIELD_SET_PERM] = [
     ts('CiviAwards: Access review fields '),
     ts(
       "This allows the user to view any review field sets on the reserved review activity type.
+       Note that this can also be done through ACLs or allocating the user 'Access all custom data' permission"
+    ),
+  ];
+
+  $permissions[CRM_CiviAwards_Hook_AlterAPIPermissions_Award::PAYMENT_FIELD_SET_PERM] = [
+    ts('CiviAwards: Access Payment custom fields '),
+    ts(
+      "This allows the user to view any payment field sets on the related payment activity types.
        Note that this can also be done through ACLs or allocating the user 'Access all custom data' permission"
     ),
   ];
@@ -221,6 +244,7 @@ function civiawards_civicrm_alterAPIPermissions($entity, $action, &$params, &$pe
 function civiawards_civicrm_aclGroup($type, $contactID, $tableName, &$allGroups, &$currentGroups) {
   $hooks = [
     new CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups(),
+    new CRM_CiviAwards_Hook_AclGroup_AllowAccessToPaymentGroups(),
   ];
 
   foreach ($hooks as $hook) {
@@ -246,6 +270,14 @@ function civiawards_civicrm_post($op, $objectName, $objectId, &$objectRef) {
  */
 function civiawards_addCiviCaseDependentAngularModules(&$dependentModules) {
   $dependentModules[] = "civiawards";
+
+  $hooks = [
+    new CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_PaymentsTabModule(),
+  ];
+
+  foreach ($hooks as $hook) {
+    $hook->run($dependentModules);
+  }
 }
 
 /**
