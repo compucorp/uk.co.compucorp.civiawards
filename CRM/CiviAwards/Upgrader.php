@@ -183,4 +183,47 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
     return ltrim($file, '_');
   }
 
+  /**
+   * On upgrade.
+   *
+   * @param string $op
+   *   Operation name.
+   * @param CRM_Queue_Queue|null $queue
+   *   Queue object.
+   *
+   * @return bool[]|void
+   *   Operation result.
+   */
+  public function onUpgrade($op, CRM_Queue_Queue $queue = NULL) {
+    switch ($op) {
+      case 'check':
+        return [$this->hasPendingRevisions()];
+
+      case 'enqueue':
+        $result = $this->enqueuePendingRevisions($queue);
+        $syncLogTableTask = new CRM_Queue_Task(
+          [get_class($this), 'syncLogTables'],
+          [],
+          'Sync Log Tables'
+        );
+        $queue->createItem($syncLogTableTask);
+        return $result;
+
+      default:
+    }
+  }
+
+  /**
+   * Sync log tables.
+   *
+   * @param CRM_Queue_TaskContext $context
+   *   Queue task context.
+   */
+  public function syncLogTables(CRM_Queue_TaskContext $context) {
+    $logging = new CRM_Logging_Schema();
+    $logging->fixSchemaDifferences();
+
+    return TRUE;
+  }
+
 }
