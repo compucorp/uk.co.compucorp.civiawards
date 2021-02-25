@@ -201,7 +201,12 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
 
       case 'enqueue':
         $result = $this->enqueuePendingRevisions($queue);
-        $this->syncLogTables();
+        $syncLogTableTask = new CRM_Queue_Task(
+          [get_class($this), 'syncLogTables'],
+          [],
+          'Sync Log Tables'
+        );
+        $queue->createItem($syncLogTableTask);
         return $result;
 
       default:
@@ -210,10 +215,15 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
 
   /**
    * Sync log tables.
+   *
+   * @param CRM_Queue_TaskContext $context
+   *   Queue task context.
    */
-  private function syncLogTables() {
+  public function syncLogTables(CRM_Queue_TaskContext $context) {
     $logging = new CRM_Logging_Schema();
     $logging->fixSchemaDifferences();
+
+    return TRUE;
   }
 
 }
