@@ -1,19 +1,19 @@
 <?php
 
-use CRM_CiviAwards_Helper_ApplicantReview as ApplicantReviewHelper;
 use CRM_CiviAwards_Hook_AclGroup_ActivityTypeCustomGroupAccess as ActivityTypeCustomGroupAccess;
+use CRM_CiviAwards_Setup_CreateAwardPaymentActivityTypes as CreateAwardPaymentActivityTypes;
 use CRM_CiviAwards_Hook_AlterAPIPermissions_Award as AwardPermission;
 
 /**
- * Applicant review custom group ACL access class.
+ * Class CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups.
  */
-class CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups extends ActivityTypeCustomGroupAccess {
+class CRM_CiviAwards_Hook_AclGroup_AllowAccessToPaymentGroups extends ActivityTypeCustomGroupAccess {
 
   /**
-   * Modifies ACL groups for user with access review field set permission.
+   * Modifies ACL groups for user with access payment set permission.
    *
-   * Allows a user with access review field set to have access to the
-   * applicant review custom group and custom fields belonging to this group.
+   * Allows a user with access payment set permission to have access to the
+   * payment information custom group and custom fields belonging to this group.
    *
    * @param string $type
    *   The type of permission needed.
@@ -43,7 +43,7 @@ class CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups extends Ac
    *   returns a boolean to determine if hook will run or not.
    */
   private function shouldRun($tableName) {
-    return $tableName == CRM_Core_BAO_CustomGroup::getTableName() && CRM_Core_Permission::check(AwardPermission::REVIEW_FIELD_SET_PERM);
+    return $tableName == CRM_Core_BAO_CustomGroup::getTableName() && CRM_Core_Permission::check(AwardPermission::PAYMENT_FIELD_SET_PERM);
   }
 
   /**
@@ -53,7 +53,27 @@ class CRM_CiviAwards_Hook_AclGroup_AllowAccessToApplicantReviewGroups extends Ac
    *   Activity Type ID.
    */
   protected function getActivityTypeId() {
-    return ApplicantReviewHelper::getActivityTypeId();
+    return $this->getAwardPaymentActivityTypeId();
+  }
+
+  /**
+   * Returns the payment activity type Id.
+   *
+   * @return int|null
+   *   Activity type Id.
+   */
+  private function getAwardPaymentActivityTypeId() {
+    try {
+      $result = civicrm_api3('OptionValue', 'getsingle', [
+        'option_group_id' => 'activity_type',
+        'name' => CreateAwardPaymentActivityTypes::AWARD_PAYMENT_ACTIVITY_TYPE,
+      ]);
+
+      return !empty($result['value']) ? $result['value'] : NULL;
+    }
+    catch (Exception $e) {
+      return NULL;
+    }
   }
 
 }

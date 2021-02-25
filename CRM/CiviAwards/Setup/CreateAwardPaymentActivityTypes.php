@@ -13,6 +13,7 @@ class CRM_CiviAwards_Setup_CreateAwardPaymentActivityTypes {
   const AWARD_PAYMENTS_ACTIVITY_CATEGORY = 'Awards Payments';
   const AWARD_PAYMENT_ACTIVITY_TYPE = 'Awards Payment';
   const AWARD_PAYMENT_REQUEST_ACTIVITY_TYPE = 'Awards Payment Request';
+  const CUSTOM_GROUP_NAME = 'Awards_Payment_Information';
 
   /**
    * Adds the Applicant review activity type and category.
