@@ -52,16 +52,19 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
    * Returns the case categories for the applicant management instance.
    */
   public static function getApplicantManagementCaseCategories() {
-    $instance = civicrm_api3('CaseCategoryInstance', 'get', [
-      'instance_id' => self::APPLICATION_MANAGEMENT_NAME,
-      'options' => ['limit' => 0],
-    ]);
-
-    if (empty($instance['values'])) {
-      return [];
+    $caseCategoryIDs = [];
+    $caseCategoryInstance = new CRM_Civicase_BAO_CaseCategoryInstance();
+    $instanceId = civicrm_api3('OptionValue', 'get', [
+      'sequential' => 1,
+      'option_group_id' => 'case_category_instance_type',
+      'name' => self::APPLICATION_MANAGEMENT_NAME,
+    ])['values'][0]['value'];
+    $caseCategoryInstance->instance_id = $instanceId;
+    $caseCategoryInstance->find();
+    while ($caseCategoryInstance->fetch()) {
+      $caseCategoryIDs[] = $caseCategoryInstance->category_id;
     }
-
-    return array_column($instance['values'], 'category_id');
+    return $caseCategoryIDs;
   }
 
   /**
