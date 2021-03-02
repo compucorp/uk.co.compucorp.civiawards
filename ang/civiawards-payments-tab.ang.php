@@ -27,7 +27,10 @@ $options['instances_finance_support'] = $financeManagementSettingService->get();
 function get_awards_payments_tab_js_files() {
   return array_merge(
     ['ang/civiawards-payments-tab.js'],
-    GlobRecursive::get(dirname(__FILE__) . '/civiawards-payments-tab/*.js')
+    GlobRecursive::getRelativeToExtension(
+      'uk.co.compucorp.civiawards',
+      'ang/civiawards-payments-tab/*.js'
+    )
   );
 }
 
