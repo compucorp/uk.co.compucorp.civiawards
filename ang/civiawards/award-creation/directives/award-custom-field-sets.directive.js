@@ -1,7 +1,7 @@
 (function (angular, $, _) {
   var module = angular.module('civiawards');
 
-  module.directive('civiawardCustomFieldSets', function ($q) {
+  module.directive('civiawardCustomFieldSets', function ($q, civicaseCrmLoadForm) {
     return {
       link: civiawardCustomFieldSetsLink,
       templateUrl: '~/civiawards/award-creation/directives/award-custom-field-sets.directive.html',
@@ -35,10 +35,9 @@
       function loadCustomFieldSetScreen () {
         var url = '/civicrm/award/customfield?entityId=' + scope.awardId;
 
-        return CRM
-          .loadForm(url, {
-            target: $(element).find('.civiaward__custom-field-sets__container')
-          });
+        return civicaseCrmLoadForm(url, {
+          target: $(element).find('.civiaward__custom-field-sets__container')
+        });
       }
 
       /**

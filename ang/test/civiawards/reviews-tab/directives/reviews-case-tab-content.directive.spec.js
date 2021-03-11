@@ -3,7 +3,7 @@
     let $controller, $q, $rootScope, $scope, AwardAdditionalDetailsMockData,
       caseItem, crmApi, ReviewActivitiesMockData, ReviewFieldsMockData,
       reviewsActivityTypeName, reviewScoringFieldsGroupName, crmStatus,
-      civicaseCrmUrl;
+      civicaseCrmUrl, civicaseCrmLoadForm;
     const entityActionHandlers = {
       'Activity.get': activityGetHandler,
       'AwardDetail.getsingle': awardDetailGetSingleHandler,
@@ -19,7 +19,7 @@
     beforeEach(inject((_$controller_, _$q_, _$rootScope_, _ApplicationsMockData_,
       _AwardAdditionalDetailsMockData_, _ReviewActivitiesMockData_, _ReviewFieldsMockData_,
       _reviewsActivityTypeName_, _reviewScoringFieldsGroupName_, _crmStatus_,
-      _civicaseCrmUrl_) => {
+      _civicaseCrmUrl_, _civicaseCrmLoadForm_) => {
       $controller = _$controller_;
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -30,6 +30,7 @@
       reviewsActivityTypeName = _reviewsActivityTypeName_;
       reviewScoringFieldsGroupName = _reviewScoringFieldsGroupName_;
       civicaseCrmUrl = _civicaseCrmUrl_;
+      civicaseCrmLoadForm = _civicaseCrmLoadForm_;
 
       caseItem = _.first(_ApplicationsMockData_);
       $scope = $rootScope.$new();
@@ -130,7 +131,7 @@
           .value();
 
         CRM.confirm.and.returnValue(mockedConfirmElement);
-        CRM.loadForm.and.returnValue(mockedFormElement);
+        civicaseCrmLoadForm.and.returnValue(mockedFormElement);
       });
 
       describe('when clicking the add new review button', () => {
@@ -146,7 +147,7 @@
             case_id: $scope.caseItem.id,
             reset: 1
           });
-          expect(CRM.loadForm).toHaveBeenCalledWith(expectedUrl);
+          expect(civicaseCrmLoadForm).toHaveBeenCalledWith(expectedUrl);
         });
 
         describe('after the form has been saved', () => {
@@ -173,7 +174,7 @@
             id: selectedReview.id,
             reset: 1
           });
-          expect(CRM.loadForm).toHaveBeenCalledWith(expectedUrl);
+          expect(civicaseCrmLoadForm).toHaveBeenCalledWith(expectedUrl);
         });
       });
 
@@ -190,7 +191,7 @@
             id: selectedReview.id,
             reset: 1
           });
-          expect(CRM.loadForm).toHaveBeenCalledWith(expectedUrl);
+          expect(civicaseCrmLoadForm).toHaveBeenCalledWith(expectedUrl);
         });
 
         describe('when saving the form', () => {
@@ -251,7 +252,7 @@
           .cloneDeep()
           .value();
 
-        CRM.loadForm.and.returnValue(mockedFormElement);
+        civicaseCrmLoadForm.and.returnValue(mockedFormElement);
       });
 
       describe('when clicking the View review menu link', () => {
