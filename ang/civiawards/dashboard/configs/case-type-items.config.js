@@ -1,4 +1,4 @@
-(function (angular, _, url) {
+(function (angular, _) {
   var module = angular.module('civiawards');
   var INSTANCE_NAME = 'applicant_management';
 
@@ -24,4 +24,4 @@
       }]);
     }
   });
-})(angular, CRM._, CRM.url);
+})(angular, CRM._);

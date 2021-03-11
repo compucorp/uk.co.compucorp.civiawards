@@ -1,7 +1,7 @@
 (($, _) => {
   describe('PaymentsCaseTabActions', () => {
     let $q, $controller, $rootScope, $scope, mockPayments, crmStatus,
-      civicaseCrmApi, mockedConfirmElement, loadFormOnListener,
+      civicaseCrmApi, mockedConfirmElement, loadFormOnListener, civicaseCrmUrl,
       crmFormSuccessFunction, civicaseCrmLoadForm, AwardsPaymentActivityStatus;
     const CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
 
@@ -27,12 +27,14 @@
     }));
 
     beforeEach(inject((_$q_, _$controller_, _$rootScope_, _crmStatus_,
-      _civicaseCrmLoadForm_, _AwardsPaymentActivityStatus_, _mockPayments_) => {
+      _civicaseCrmLoadForm_, _AwardsPaymentActivityStatus_, _mockPayments_,
+      _civicaseCrmUrl_) => {
       $q = _$q_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       crmStatus = _crmStatus_;
       civicaseCrmLoadForm = _civicaseCrmLoadForm_;
+      civicaseCrmUrl = _civicaseCrmUrl_;
       AwardsPaymentActivityStatus = _AwardsPaymentActivityStatus_;
       mockPayments = _mockPayments_[0];
 
@@ -49,24 +51,38 @@
     }));
 
     describe('when viewing a payment', () => {
+      var expectedURL = 'view/payment/url';
+
       beforeEach(() => {
+        civicaseCrmUrl.and.returnValue(expectedURL);
         $scope.handleViewActivity(mockPayments.id);
       });
 
       it('opens a popup to view the activity', () => {
-        expect(civicaseCrmLoadForm)
-          .toHaveBeenCalledWith(`civicrm/awardpayment?action=view&id=${mockPayments.id}&reset=1`);
+        expect(civicaseCrmUrl).toHaveBeenCalledWith('civicrm/awardpayment', {
+          action: 'view',
+          reset: 1,
+          id: mockPayments.id
+        });
+        expect(civicaseCrmLoadForm).toHaveBeenCalledWith(expectedURL);
       });
     });
 
     describe('when editing a payment', () => {
+      var expectedURL = 'edit/payment/url';
+
       beforeEach(() => {
+        civicaseCrmUrl.and.returnValue(expectedURL);
         $scope.handleEditActivity(mockPayments.id);
       });
 
       it('opens a popup to edit the activity', () => {
-        expect(civicaseCrmLoadForm)
-          .toHaveBeenCalledWith(`civicrm/awardpayment?action=update&id=${mockPayments.id}&reset=1`);
+        expect(civicaseCrmUrl).toHaveBeenCalledWith('civicrm/awardpayment', {
+          action: 'update',
+          reset: 1,
+          id: mockPayments.id
+        });
+        expect(civicaseCrmLoadForm).toHaveBeenCalledWith(expectedURL);
       });
 
       describe('when saving the form', () => {

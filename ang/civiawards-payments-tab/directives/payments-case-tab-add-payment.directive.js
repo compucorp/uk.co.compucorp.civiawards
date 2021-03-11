@@ -18,9 +18,10 @@
    * @param {object} $scope scope of the controller
    * @param {object} $rootScope rootscope of the application
    * @param {Function} civicaseCrmLoadForm crm load form service
+   * @param {Function} civicaseCrmUrl civicrm url service
    */
   function civiawardsPaymentsCaseTabAddPaymentController ($scope, $rootScope,
-    civicaseCrmLoadForm) {
+    civicaseCrmLoadForm, civicaseCrmUrl) {
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
 
     $scope.addPayment = addPayment;
@@ -31,7 +32,7 @@
      * @param {string} caseId case id
      */
     function addPayment (caseId) {
-      var url = CRM.url('civicrm/awardpayment', {
+      var url = civicaseCrmUrl('civicrm/awardpayment', {
         action: 'add',
         reset: 1,
         case_id: caseId

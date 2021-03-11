@@ -1,8 +1,9 @@
-((_, $, getCrmUrl) => {
+((_, $) => {
   describe('Review Case Tab Content', () => {
     let $controller, $q, $rootScope, $scope, AwardAdditionalDetailsMockData,
       caseItem, crmApi, ReviewActivitiesMockData, ReviewFieldsMockData,
-      reviewsActivityTypeName, reviewScoringFieldsGroupName, crmStatus;
+      reviewsActivityTypeName, reviewScoringFieldsGroupName, crmStatus,
+      civicaseCrmUrl;
     const entityActionHandlers = {
       'Activity.get': activityGetHandler,
       'AwardDetail.getsingle': awardDetailGetSingleHandler,
@@ -17,7 +18,8 @@
 
     beforeEach(inject((_$controller_, _$q_, _$rootScope_, _ApplicationsMockData_,
       _AwardAdditionalDetailsMockData_, _ReviewActivitiesMockData_, _ReviewFieldsMockData_,
-      _reviewsActivityTypeName_, _reviewScoringFieldsGroupName_, _crmStatus_) => {
+      _reviewsActivityTypeName_, _reviewScoringFieldsGroupName_, _crmStatus_,
+      _civicaseCrmUrl_) => {
       $controller = _$controller_;
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -27,6 +29,8 @@
       ReviewFieldsMockData = _ReviewFieldsMockData_;
       reviewsActivityTypeName = _reviewsActivityTypeName_;
       reviewScoringFieldsGroupName = _reviewScoringFieldsGroupName_;
+      civicaseCrmUrl = _civicaseCrmUrl_;
+
       caseItem = _.first(_ApplicationsMockData_);
       $scope = $rootScope.$new();
       $scope.caseItem = caseItem;
@@ -131,16 +135,17 @@
 
       describe('when clicking the add new review button', () => {
         beforeEach(() => {
-          expectedUrl = getCrmUrl(REVIEW_FORM_URL, {
-            action: 'add',
-            case_id: $scope.caseItem.id,
-            reset: 1
-          });
-
+          expectedUrl = 'new/review/button/url';
+          civicaseCrmUrl.and.returnValue(expectedUrl);
           $scope.handleAddReviewActivity();
         });
 
         it('opens the form to create a new review', () => {
+          expect(civicaseCrmUrl).toHaveBeenCalledWith(REVIEW_FORM_URL, {
+            action: 'add',
+            case_id: $scope.caseItem.id,
+            reset: 1
+          });
           expect(CRM.loadForm).toHaveBeenCalledWith(expectedUrl);
         });
 
@@ -157,32 +162,34 @@
 
       describe('when viewing a particular review', () => {
         beforeEach(() => {
-          expectedUrl = getCrmUrl(REVIEW_FORM_URL, {
-            action: 'view',
-            id: selectedReview.id,
-            reset: 1
-          });
-
+          expectedUrl = 'view/review/button/url';
+          civicaseCrmUrl.and.returnValue(expectedUrl);
           $scope.handleViewReviewActivity(selectedReview);
         });
 
         it('calls the form to view the selected review', () => {
+          expect(civicaseCrmUrl).toHaveBeenCalledWith(REVIEW_FORM_URL, {
+            action: 'view',
+            id: selectedReview.id,
+            reset: 1
+          });
           expect(CRM.loadForm).toHaveBeenCalledWith(expectedUrl);
         });
       });
 
       describe('when editing a review', () => {
         beforeEach(() => {
-          expectedUrl = getCrmUrl(REVIEW_FORM_URL, {
-            action: 'update',
-            id: selectedReview.id,
-            reset: 1
-          });
-
+          expectedUrl = 'update/review/button/url';
+          civicaseCrmUrl.and.returnValue(expectedUrl);
           $scope.handleEditReviewActivity(selectedReview);
         });
 
         it('calls the form to edit the selected review', () => {
+          expect(civicaseCrmUrl).toHaveBeenCalledWith(REVIEW_FORM_URL, {
+            action: 'update',
+            id: selectedReview.id,
+            reset: 1
+          });
           expect(CRM.loadForm).toHaveBeenCalledWith(expectedUrl);
         });
 
@@ -337,4 +344,4 @@
       $controller('civiawardsReviewsCaseTabContentController', dependencies);
     }
   });
-})(CRM._, CRM.$, CRM.url);
+})(CRM._, CRM.$);

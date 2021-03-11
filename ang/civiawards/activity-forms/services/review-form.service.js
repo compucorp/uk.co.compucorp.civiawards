@@ -1,12 +1,14 @@
-(function (_, angular, getCrmUrl) {
+(function (_, angular) {
   var module = angular.module('civiawards');
 
   module.service('ReviewActivityForm', ReviewActivityForm);
 
   /**
    * Review Activity Form service.
+   *
+   * @param {object} civicaseCrmUrl civicrm url service
    */
-  function ReviewActivityForm () {
+  function ReviewActivityForm (civicaseCrmUrl) {
     this.canHandleActivity = canHandleActivity;
     this.getActivityFormUrl = getActivityFormUrl;
 
@@ -40,7 +42,7 @@
         options.case_id = activity.case_id;
       }
 
-      return getCrmUrl('civicrm/awardreview', options);
+      return civicaseCrmUrl('civicrm/awardreview', options);
     }
   }
-})(CRM._, angular, CRM.url);
+})(CRM._, angular);
