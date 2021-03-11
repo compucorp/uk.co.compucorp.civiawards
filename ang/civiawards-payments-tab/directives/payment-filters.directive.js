@@ -26,11 +26,19 @@
     $scope.filters = {};
     $scope.paymentStatusOptions = [];
     $scope.paymentTypeOptions = [];
+    $scope.clearFilters = clearFilters;
 
     (function init () {
       $scope.paymentStatusOptions = _.map(getPaymentStatuses(), Select2Utils.mapSelectOptions);
       $scope.paymentTypeOptions = _.map(paymentTypes, Select2Utils.mapSelectOptions);
     })();
+
+    /**
+     * Resets the filter object.
+     */
+    function clearFilters () {
+      $scope.filters = {};
+    }
 
     /**
      * @returns {object[]} Activity status related to payments.

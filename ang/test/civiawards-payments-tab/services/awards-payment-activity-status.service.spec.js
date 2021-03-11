@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 describe('AwardsPaymentActivityStatus', () => {
   let AwardsPaymentActivityStatus;
 

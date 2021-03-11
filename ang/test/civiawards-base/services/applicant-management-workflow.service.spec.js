@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 ((_) => {
   describe('applicant management workflow', () => {
     let $q, $rootScope, $window, civicaseCrmApiMock, CaseTypesMockData,

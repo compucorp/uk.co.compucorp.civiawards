@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 (function (_) {
   describe('civiawardReviewPanels', () => {
     let $rootScope, $controller, $scope, crmApi, $q, crmStatus, ts, ContactsData,

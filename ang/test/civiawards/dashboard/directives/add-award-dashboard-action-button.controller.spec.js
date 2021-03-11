@@ -1,8 +1,7 @@
-/* eslint-env jasmine */
-
-(function (_, getCrmUrl) {
+(function (_) {
   describe('Add Award Dashboard Action Button', () => {
-    let $location, $window, $scope, $controller, $rootScope, canCreateOrEditAwards, isApplicationManagementScreen;
+    let $location, $window, $scope, $controller, $rootScope, civicaseCrmUrl,
+      canCreateOrEditAwards, isApplicationManagementScreen;
 
     beforeEach(module('civiawards', ($provide) => {
       $window = { location: { href: '' } };
@@ -15,10 +14,12 @@
       $provide.value('isApplicationManagementScreen', isApplicationManagementScreen);
     }));
 
-    beforeEach(inject((_$location_, _$controller_, _$rootScope_) => {
+    beforeEach(inject((_$location_, _$controller_, _$rootScope_,
+      _civicaseCrmUrl_) => {
       $location = _$location_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
+      civicaseCrmUrl = _civicaseCrmUrl_;
 
       initController();
     }));
@@ -71,14 +72,16 @@
 
     describe('when clicking the action button', () => {
       const awardCaseTypeCategoryId = 3;
-      const expectedUrl = getCrmUrl('civicrm/award/a/#/awards/new/' + awardCaseTypeCategoryId + '/dashboard');
+      const expectedUrl = 'action/button/url';
 
       beforeEach(() => {
         spyOn($location, 'url');
+        civicaseCrmUrl.and.returnValue(expectedUrl);
         $scope.redirectToAwardsCreationScreen();
       });
 
       it('redirects the user to the create award screen', () => {
+        expect(civicaseCrmUrl).toHaveBeenCalledWith('civicrm/award/a/#/awards/new/' + awardCaseTypeCategoryId + '/dashboard');
         expect($window.location.href).toBe(expectedUrl);
       });
     });
@@ -92,4 +95,4 @@
       $controller('AddAwardDashboardActionButtonController', { $scope: $scope });
     }
   });
-})(CRM._, CRM.url);
+})(CRM._);

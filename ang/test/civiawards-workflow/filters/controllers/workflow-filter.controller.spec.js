@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 (function (_) {
   describe('civiawardReviewFieldsTable', () => {
     var $rootScope, $controller, $scope, AwardSubtypeMockData, Select2Utils;

@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 (() => {
   describe('Acitivity forms configuration', () => {
     let ActivityFormsProvider;

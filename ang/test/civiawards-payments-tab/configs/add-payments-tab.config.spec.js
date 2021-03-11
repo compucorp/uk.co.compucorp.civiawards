@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 describe('AddPaymentsTabConfig', () => {
   let CaseDetailsTabsProvider, ts;
 

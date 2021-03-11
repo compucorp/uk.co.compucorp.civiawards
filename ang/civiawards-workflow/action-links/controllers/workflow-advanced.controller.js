@@ -1,4 +1,4 @@
-(function ($, _, angular, getCrmUrl) {
+(function ($, _, angular) {
   var module = angular.module('civiawards-workflow');
 
   module.controller('WorkflowAdvancedController', WorkflowAdvancedController);
@@ -6,8 +6,9 @@
   /**
    * @param {object} $scope scope object
    * @param {object} $window browsers window object
+   * @param {Function} civicaseCrmUrl civicrm url service
    */
-  function WorkflowAdvancedController ($scope, $window) {
+  function WorkflowAdvancedController ($scope, $window, civicaseCrmUrl) {
     $scope.clickHandler = clickHandler;
 
     /**
@@ -16,11 +17,11 @@
      * @param {object} workflow workflow object
      */
     function clickHandler (workflow) {
-      var url = getCrmUrl(
+      var url = civicaseCrmUrl(
         'civicrm/a/#/caseType/' + workflow.id
       );
 
       $window.location.href = url;
     }
   }
-})(CRM.$, CRM._, angular, CRM.url);
+})(CRM.$, CRM._, angular);

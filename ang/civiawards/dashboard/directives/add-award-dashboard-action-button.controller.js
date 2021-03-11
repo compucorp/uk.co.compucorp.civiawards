@@ -1,4 +1,4 @@
-(function (angular, getCrmUrl) {
+(function (angular) {
   var module = angular.module('civiawards');
 
   module.controller('AddAwardDashboardActionButtonController', AddAwardDashboardActionButtonController);
@@ -12,9 +12,11 @@
    * @param {Function} canCreateOrEditAwards can create or edit awards function
    * @param {Function} isApplicationManagementScreen is application management screen function
    * @param {object} CaseTypeCategory case type category service
+   * @param {object} civicaseCrmUrl civicrm url service
    */
   function AddAwardDashboardActionButtonController ($scope, $routeParams,
-    $window, canCreateOrEditAwards, isApplicationManagementScreen, CaseTypeCategory) {
+    $window, canCreateOrEditAwards, isApplicationManagementScreen,
+    CaseTypeCategory, civicaseCrmUrl) {
     $scope.isVisible = isVisible;
     $scope.redirectToAwardsCreationScreen = redirectToAwardsCreationScreen;
 
@@ -31,10 +33,13 @@
      * Redirects the user to the awards creation screen.
      */
     function redirectToAwardsCreationScreen () {
-      var currentCaseTypeCategoryValue = CaseTypeCategory.findByName($routeParams.case_type_category).value;
-      var newAwardUrl = getCrmUrl('civicrm/award/a/#/awards/new/' + currentCaseTypeCategoryValue + '/dashboard');
+      var currentCaseTypeCategoryValue =
+        CaseTypeCategory.findByName($routeParams.case_type_category).value;
+      var newAwardUrl = civicaseCrmUrl(
+        'civicrm/award/a/#/awards/new/' + currentCaseTypeCategoryValue + '/dashboard'
+      );
 
       $window.location.href = newAwardUrl;
     }
   }
-})(angular, CRM.url);
+})(angular);

@@ -1,12 +1,14 @@
-/* eslint-env jasmine */
-((_, getCrmUrl) => {
+((_) => {
   describe('ReviewActivityForm', () => {
-    let activityFormUrl, expectedActivityFormUrl, ReviewActivityForm, canHandle, reviewActivity;
+    let ReviewActivityForm, canHandle,
+      civicaseCrmUrl, reviewActivity;
 
     beforeEach(module('civiawards', 'civicase-base', 'civiawards.data'));
 
-    beforeEach(inject((_ReviewActivitiesMockData_, _ReviewActivityForm_) => {
+    beforeEach(inject((_ReviewActivitiesMockData_, _ReviewActivityForm_,
+      _civicaseCrmUrl_) => {
       ReviewActivityForm = _ReviewActivityForm_;
+      civicaseCrmUrl = _civicaseCrmUrl_;
       reviewActivity = _.chain(_ReviewActivitiesMockData_)
         .first()
         .cloneDeep()
@@ -40,33 +42,31 @@
     describe('getting the activity form url', () => {
       describe('when getting the activity form url', () => {
         beforeEach(() => {
-          activityFormUrl = ReviewActivityForm.getActivityFormUrl(reviewActivity);
-          expectedActivityFormUrl = getCrmUrl('civicrm/awardreview', {
+          ReviewActivityForm.getActivityFormUrl(reviewActivity);
+        });
+
+        it('returns the url for the review activity form', () => {
+          expect(civicaseCrmUrl).toHaveBeenCalledWith('civicrm/awardreview', {
             action: 'view',
             id: reviewActivity.id,
             reset: 1
           });
         });
-
-        it('returns the url for the review activity form', () => {
-          expect(activityFormUrl).toEqual(expectedActivityFormUrl);
-        });
       });
 
       describe('when getting the update review form url', () => {
         beforeEach(() => {
-          activityFormUrl = ReviewActivityForm.getActivityFormUrl(reviewActivity, {
+          ReviewActivityForm.getActivityFormUrl(reviewActivity, {
             action: 'update'
-          });
-          expectedActivityFormUrl = getCrmUrl('civicrm/awardreview', {
-            action: 'update',
-            id: reviewActivity.id,
-            reset: 1
           });
         });
 
         it('returns the url for the review activity popup form', () => {
-          expect(activityFormUrl).toEqual(expectedActivityFormUrl);
+          expect(civicaseCrmUrl).toHaveBeenCalledWith('civicrm/awardreview', {
+            action: 'update',
+            id: reviewActivity.id,
+            reset: 1
+          });
         });
       });
 
@@ -74,20 +74,19 @@
         beforeEach(() => {
           delete reviewActivity.id;
           reviewActivity.case_id = _.uniqueId();
-          activityFormUrl = ReviewActivityForm.getActivityFormUrl(reviewActivity, {
+          ReviewActivityForm.getActivityFormUrl(reviewActivity, {
             action: 'add'
           });
-          expectedActivityFormUrl = getCrmUrl('civicrm/awardreview', {
+        });
+
+        it('returns the url for the review activity popup form', () => {
+          expect(civicaseCrmUrl).toHaveBeenCalledWith('civicrm/awardreview', {
             action: 'add',
             case_id: reviewActivity.case_id,
             reset: 1
           });
         });
-
-        it('returns the url for the review activity popup form', () => {
-          expect(activityFormUrl).toEqual(expectedActivityFormUrl);
-        });
       });
     });
   });
-})(CRM._, CRM.url);
+})(CRM._);

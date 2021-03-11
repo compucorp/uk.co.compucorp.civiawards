@@ -1,35 +1,36 @@
-/* eslint-env jasmine */
-
-((_, getCrmUrl) => {
+((_) => {
   describe('workflow duplicate controller', () => {
-    let $controller, $rootScope, $scope, $window, CaseTypesMockData;
+    let $controller, $rootScope, $scope, $window, CaseTypesMockData,
+      civicaseCrmUrl;
 
     beforeEach(module('civiawards-workflow', 'civicase.data', ($provide) => {
       $provide.value('$window', { location: {} });
     }));
 
     beforeEach(inject((_$controller_, _$rootScope_, _$window_,
-      _CaseTypesMockData_) => {
+      _CaseTypesMockData_, _civicaseCrmUrl_) => {
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       $window = _$window_;
       CaseTypesMockData = _CaseTypesMockData_;
+      civicaseCrmUrl = _civicaseCrmUrl_;
     }));
 
     describe('when clicked', () => {
-      var workflowObject, expectedUrl;
+      var workflowObject;
+      var expectedUrl = 'workflow/click/url';
 
       beforeEach(() => {
         workflowObject = CaseTypesMockData.getSequential()[0];
 
         initController();
+        civicaseCrmUrl.and.returnValue(expectedUrl);
 
         $scope.clickHandler(workflowObject);
-
-        expectedUrl = getCrmUrl('civicrm/a/#/caseType/1');
       });
 
       it('redirects to the core screen to edit the workflow', () => {
+        expect(civicaseCrmUrl).toHaveBeenCalledWith('civicrm/a/#/caseType/1');
         expect($window.location.href).toBe(expectedUrl);
       });
     });
@@ -43,4 +44,4 @@
       $controller('WorkflowAdvancedController', { $scope: $scope });
     }
   });
-})(CRM._, CRM.url);
+})(CRM._);

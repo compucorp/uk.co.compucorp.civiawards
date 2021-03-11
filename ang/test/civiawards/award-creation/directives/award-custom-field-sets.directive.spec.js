@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 (function (_, $) {
   describe('civiawardCustomFieldSets', () => {
     var civiawardCustomFieldSetsDirective, $compile, $rootScope, $scope;

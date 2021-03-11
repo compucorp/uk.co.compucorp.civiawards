@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 (function () {
   describe('canCreateOrEditAwards', function () {
     let canCreateOrEditAwards, permissions;

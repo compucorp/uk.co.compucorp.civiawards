@@ -1,9 +1,7 @@
-/* eslint-env jasmine */
-
 ((_) => {
   describe('PaymentsCaseTabAddPayment', () => {
     let $controller, $rootScope, $scope, civicaseCrmLoadForm,
-      loadFormOnListener, crmFormSuccessFunction;
+      loadFormOnListener, crmFormSuccessFunction, civicaseCrmUrl;
 
     const CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
 
@@ -24,10 +22,12 @@
       });
     }));
 
-    beforeEach(inject((_$controller_, _$rootScope_, _civicaseCrmLoadForm_) => {
+    beforeEach(inject((_$controller_, _$rootScope_, _civicaseCrmLoadForm_,
+      _civicaseCrmUrl_) => {
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       civicaseCrmLoadForm = _civicaseCrmLoadForm_;
+      civicaseCrmUrl = _civicaseCrmUrl_;
 
       spyOn($rootScope, '$broadcast');
     }));
@@ -39,14 +39,21 @@
     });
 
     describe('when clicking on add payment button', () => {
+      var expectedUrl = 'add/payment/url';
+
       beforeEach(() => {
         initController();
+        civicaseCrmUrl.and.returnValue(expectedUrl);
         $scope.addPayment($scope.caseId);
       });
 
       it('opens a popup to create a new payment for current application', () => {
-        expect(civicaseCrmLoadForm)
-          .toHaveBeenCalledWith('civicrm/awardpayment?action=add&case_id=5&reset=1');
+        expect(civicaseCrmUrl).toHaveBeenCalledWith('civicrm/awardpayment', {
+          action: 'add',
+          reset: 1,
+          case_id: $scope.caseId
+        });
+        expect(civicaseCrmLoadForm).toHaveBeenCalledWith(expectedUrl);
       });
 
       describe('when saving the form', () => {

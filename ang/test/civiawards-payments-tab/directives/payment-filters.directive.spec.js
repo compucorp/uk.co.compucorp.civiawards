@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 describe('Payment Filters', () => {
   let $controller, $rootScope, $scope;
 
@@ -39,6 +37,27 @@ describe('Payment Filters', () => {
         jasmine.objectContaining({ id: '15', text: 'Cancelled (cancelled)' }),
         jasmine.objectContaining({ id: '16', text: 'Failed (incomplete)' })
       ]);
+    });
+  });
+
+  describe('when pressing the clear filter button', () => {
+    beforeEach(function () {
+      initController();
+
+      $scope.filters = {
+        activity_date_time: { BETWEEN: [new Date(), new Date()] },
+        custom_Payee_Ref: '2',
+        custom_Type: '1',
+        id: '1',
+        status_id: '11',
+        target_contact_id: '2'
+      };
+
+      $scope.clearFilters();
+    });
+
+    it('resets the filters', () => {
+      expect($scope.filters).toEqual({});
     });
   });
 

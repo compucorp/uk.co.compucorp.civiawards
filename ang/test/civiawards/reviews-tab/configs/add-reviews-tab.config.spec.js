@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 (() => {
   describe('Reviews Tab configuration', () => {
     let $window, CaseDetailsTabsProvider;

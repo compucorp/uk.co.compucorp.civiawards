@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 (function (_) {
   describe('civiawardBasicDetailsForm', () => {
     var $rootScope, $controller, $scope, AwardMockData,

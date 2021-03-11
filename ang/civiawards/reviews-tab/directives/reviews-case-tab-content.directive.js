@@ -1,4 +1,4 @@
-(function (_, $, angular, confirm, loadForm, getCrmUrl) {
+(function (_, $, angular, confirm, loadForm) {
   var module = angular.module('civiawards');
 
   module.directive('civiawardsReviewsCaseTabContent', function () {
@@ -25,9 +25,11 @@
    * @param {string} reviewScoringFieldsGroupName the review scoring fields group name.
    * @param {Function} ts the translation function.
    * @param {Function} crmStatus crm status service
+   * @param {Function} civicaseCrmUrl civicrm url service
    */
-  function civiawardsReviewsCaseTabContentController ($q, $scope, $sce, crmApi, reviewsActivityTypeName,
-    reviewScoringFieldsGroupName, ts, crmStatus) {
+  function civiawardsReviewsCaseTabContentController ($q, $scope, $sce, crmApi,
+    reviewsActivityTypeName, reviewScoringFieldsGroupName, ts, crmStatus,
+    civicaseCrmUrl) {
     var CRM_FORM_LOAD_EVENT = 'crmFormLoad';
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
     var REVIEW_FORM_URL = 'civicrm/awardreview';
@@ -120,7 +122,7 @@
      * successfully saving the form.
      */
     function handleAddReviewActivity () {
-      var formUrl = getCrmUrl(REVIEW_FORM_URL, {
+      var formUrl = civicaseCrmUrl(REVIEW_FORM_URL, {
         action: 'add',
         case_id: $scope.caseItem.id,
         reset: 1
@@ -137,7 +139,7 @@
      * @param {object} reviewActivity the review to edit.
      */
     function handleEditReviewActivity (reviewActivity) {
-      var formUrl = getCrmUrl(REVIEW_FORM_URL, {
+      var formUrl = civicaseCrmUrl(REVIEW_FORM_URL, {
         action: 'update',
         id: reviewActivity.id,
         reset: 1
@@ -154,7 +156,7 @@
      * @param {object} reviewActivity the review to view.
      */
     function handleViewReviewActivity (reviewActivity) {
-      var formUrl = getCrmUrl(REVIEW_FORM_URL, {
+      var formUrl = civicaseCrmUrl(REVIEW_FORM_URL, {
         action: 'view',
         id: reviewActivity.id,
         reset: 1
@@ -231,4 +233,4 @@
       });
     }
   }
-})(CRM._, CRM.$, angular, CRM.confirm, CRM.loadForm, CRM.url);
+})(CRM._, CRM.$, angular, CRM.confirm, CRM.loadForm);

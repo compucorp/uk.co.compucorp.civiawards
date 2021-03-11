@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 (function (CRM) {
   CRM['civiawards-base'] = {};
   CRM['civiawards-workflow'] = {};

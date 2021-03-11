@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 (function (_) {
   describe('civiaward', () => {
     var $q, $controller, $rootScope, $scope, $window, $location, crmApi, crmStatus,
