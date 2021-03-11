@@ -30,6 +30,13 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
   private $caseId;
 
   /**
+   * Store form fields.
+   *
+   * @var array
+   */
+  private $fields;
+
+  /**
    * Activity Id.
    *
    * @var int
@@ -92,7 +99,9 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $isAddAction = $this->_action & CRM_Core_Action::ADD;
 
     if ($this->activityId) {
-      $this->defaultValues = $this->getProfileFieldValues();
+      $profileFieldDefaults = [];
+      CRM_Core_BAO_UFGroup::setComponentDefaults($this->fields, $this->activityId, 'Activity', $profileFieldDefaults, TRUE);
+      $this->defaultValues = $profileFieldDefaults;
     }
 
     $this->defaultValues['source_contact_id'] = $isAddAction
@@ -135,31 +144,28 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * {@inheritDoc}
    */
   public function buildQuickForm() {
-    $fields = CRM_Core_BAO_UFGroup::getFields(
+    $this->fields = CRM_Core_BAO_UFGroup::getFields(
       $this->profileId, FALSE, CRM_Core_Action::ADD, NULL,
-      NULL, FALSE, NULL, FALSE, NULL, CRM_Core_Permission::CREATE, 'weight'
+      NULL, FALSE, NULL, FALSE, 'AwardReview', CRM_Core_Permission::CREATE, 'weight'
     );
 
-    $error = $this->getErrorMessage($fields);
+    $error = $this->getErrorMessage();
     if ($error) {
       $this->displayErrorMessage($error);
     }
     else {
-      $this->displayReviewForm($fields);
+      $this->displayReviewForm();
     }
   }
 
   /**
    * Returns the error messages for the form if any.
    *
-   * @param array|null $fields
-   *   Form fields.
-   *
    * @return string
    *   Error message.
    */
-  private function getErrorMessage($fields) {
-    if (empty($fields)) {
+  private function getErrorMessage() {
+    if (empty($this->fields)) {
       return 'There are no review fields assigned to this award type.
         Please add Review Fields by editing the the Award Type located under the
         Overview dropdown in Award Dashboard.';
@@ -281,11 +287,8 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
   /**
    * Displays the View, Create, or Update form using the given review fields.
-   *
-   * @param array $fields
-   *   A list of review fields to use when displaying the form.
    */
-  private function displayReviewForm(array $fields) {
+  private function displayReviewForm() {
     $isViewAction = $this->_action & CRM_Core_Action::VIEW;
 
     $this->assign('caseContactDisplayName', $this->getCaseContactDisplayName());
@@ -304,10 +307,10 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       $this->addEntityRef('source_contact_id', ts('Reported By'));
     }
 
-    $customFieldData = $this->getCustomFieldData(array_keys($fields));
+    $customFieldData = $this->getCustomFieldData(array_keys($this->fields));
     $elementData = [];
 
-    foreach ($fields as $name => $field) {
+    foreach ($this->fields as $name => $field) {
       $elementData[$field['name']]['name'] = $field['name'];
       $elementData[$field['name']]['help_post'] = $customFieldData[$field['name']]['help_post'];
       $elementData[$field['name']]['help_pre'] = $customFieldData[$field['name']]['help_pre'];
@@ -607,25 +610,6 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
 
     return $title;
-  }
-
-  /**
-   * Gets profile fields for case type and their values.
-   *
-   * Returns the earlier submitted profile fields for a case activity.
-   *
-   * @return mixed
-   *   Profile field values.
-   */
-  private function getProfileFieldValues() {
-    $contactId = $this->getActivityTargetContact();
-    $result = civicrm_api3('Profile', 'get', [
-      'profile_id' => $this->profileId,
-      'contact_id' => $contactId,
-      'activity_id' => $this->activityId,
-    ]);
-
-    return $result['values'];
   }
 
   /**
