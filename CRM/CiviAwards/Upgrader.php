@@ -14,6 +14,7 @@ use CRM_CiviAwards_Setup_CreateAwardPaymentActivityTypes as CreateAwardPaymentAc
 use CRM_CiviAwards_Uninstall_RemoveCustomGroupSupportForAwardsCategory as RemoveCustomGroupSupportForAwardsCategory;
 use CRM_CiviAwards_Uninstall_RemoveCustomGroupSupportForApplicantManagement as RemoveCustomGroupSupportForApplicantManagement;
 use CRM_CiviAwards_Setup_CreateAwardsMenus as CreateAwardsMenus;
+use CRM_CiviAwards_Setup_UpdateAwardPaymentActivityStatusLabel as UpdateAwardPaymentActivityStatusLabel;
 
 /**
  * Collection of upgrade steps.
@@ -41,6 +42,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
       new AddApplicationManagementWordReplacement(),
       new CreateAwardsMenus(),
       new CreateAwardPaymentActivityTypes(),
+      new UpdateAwardPaymentActivityStatusLabel(),
     ];
 
     foreach ($steps as $step) {
