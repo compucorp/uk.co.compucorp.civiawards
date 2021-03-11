@@ -22,7 +22,7 @@ const OUTSIDE_NAMESPACE_REGEX = /^\.___outside-namespace/;
  * @param {string} selector selector
  * @returns {string} string
  */
-function removeOutsideNamespaceMarker(selector) {
+function removeOutsideNamespaceMarker (selector) {
   return selector.replace(OUTSIDE_NAMESPACE_REGEX, '');
 }
 
@@ -31,7 +31,7 @@ function removeOutsideNamespaceMarker(selector) {
  *
  * @returns {object} stream
  */
-function sassTask() {
+function sassTask () {
   return civicrmScssRoot.update()
     .then(() => {
       gulp.src('scss/civiawards.scss')
@@ -45,14 +45,14 @@ function sassTask() {
           includePaths: civicrmScssRoot.getPath(),
           precision: 10
         }).on('error', sass.logError))
-        .pipe(stripCssComments({preserve: false}))
+        .pipe(stripCssComments({ preserve: false }))
         .pipe(postcss([postcssPrefix({
           prefix: `${BOOTSTRAP_NAMESPACE} `,
           exclude: [/^body/, /page-civicrm-case/, OUTSIDE_NAMESPACE_REGEX]
         }), postcssDiscardDuplicates]))
-        .pipe(transformSelectors(removeOutsideNamespaceMarker, {splitOnCommas: true}))
-        .pipe(cleanCSS({sourceMap: true}))
-        .pipe(rename({suffix: '.min'}))
+        .pipe(transformSelectors(removeOutsideNamespaceMarker, { splitOnCommas: true }))
+        .pipe(cleanCSS({ sourceMap: true }))
+        .pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('css/'));
     });
