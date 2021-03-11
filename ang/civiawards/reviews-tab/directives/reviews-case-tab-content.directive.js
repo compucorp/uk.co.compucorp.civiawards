@@ -1,4 +1,4 @@
-(function (_, $, angular, confirm, loadForm) {
+(function (_, $, angular, confirm) {
   var module = angular.module('civiawards');
 
   module.directive('civiawardsReviewsCaseTabContent', function () {
@@ -26,10 +26,11 @@
    * @param {Function} ts the translation function.
    * @param {Function} crmStatus crm status service
    * @param {Function} civicaseCrmUrl civicrm url service
+   * @param {Function} civicaseCrmLoadForm service to load civicrm forms
    */
   function civiawardsReviewsCaseTabContentController ($q, $scope, $sce, crmApi,
     reviewsActivityTypeName, reviewScoringFieldsGroupName, ts, crmStatus,
-    civicaseCrmUrl) {
+    civicaseCrmUrl, civicaseCrmLoadForm) {
     var CRM_FORM_LOAD_EVENT = 'crmFormLoad';
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
     var REVIEW_FORM_URL = 'civicrm/awardreview';
@@ -128,7 +129,7 @@
         reset: 1
       });
 
-      loadForm(formUrl)
+      civicaseCrmLoadForm(formUrl)
         .on(CRM_FORM_SUCCESS_EVENT, loadReviewActivities);
     }
 
@@ -145,7 +146,7 @@
         reset: 1
       });
 
-      loadForm(formUrl)
+      civicaseCrmLoadForm(formUrl)
         .on(CRM_FORM_LOAD_EVENT, popupTitleDecodeEntities)
         .on(CRM_FORM_SUCCESS_EVENT, loadReviewActivities);
     }
@@ -162,7 +163,7 @@
         reset: 1
       });
 
-      loadForm(formUrl)
+      civicaseCrmLoadForm(formUrl)
         .on(CRM_FORM_LOAD_EVENT, popupTitleDecodeEntities);
     }
 
@@ -233,4 +234,4 @@
       });
     }
   }
-})(CRM._, CRM.$, angular, CRM.confirm, CRM.loadForm);
+})(CRM._, CRM.$, angular, CRM.confirm);
