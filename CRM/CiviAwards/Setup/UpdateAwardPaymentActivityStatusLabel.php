@@ -6,7 +6,7 @@
 class CRM_CiviAwards_Setup_UpdateAwardPaymentActivityStatusLabel {
 
   /**
-   * Updates the Applicant review activity status label.
+   * Updates the Applicant payment activity status label.
    */
   public function apply() {
     $this->updateActivityStatusLabels();
@@ -22,7 +22,7 @@ class CRM_CiviAwards_Setup_UpdateAwardPaymentActivityStatusLabel {
     return [
       [
         'name' => 'applied_for_incomplete',
-        'new_label' => 'Applied',
+        'new_label' => 'Applied for',
       ],
       [
         'name' => 'approved_complete',
@@ -48,13 +48,13 @@ class CRM_CiviAwards_Setup_UpdateAwardPaymentActivityStatusLabel {
   }
 
   /**
-   * Updates the Applicant review activity status label.
+   * Updates the Applicant payment activity status label.
    */
   private function updateActivityStatusLabels() {
     $activityStatusesMap = $this->getActivityStatusesMap();
 
     foreach ($activityStatusesMap as $activityStatus) {
-      $result = civicrm_api3('OptionValue', 'get', [
+      civicrm_api3('OptionValue', 'get', [
         'sequential' => 1,
         'option_group_id' => "activity_status",
         'name' => $activityStatus['name'],
