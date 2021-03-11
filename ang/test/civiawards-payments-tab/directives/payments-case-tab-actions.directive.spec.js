@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 (($, _) => {
   describe('PaymentsCaseTabActions', () => {
     let $q, $controller, $rootScope, $scope, mockPayments, crmStatus,

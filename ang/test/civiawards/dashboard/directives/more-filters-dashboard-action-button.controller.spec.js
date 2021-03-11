@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 (function (_) {
   describe('More Filters Dashboard Action Button', () => {
     let $q, $location, $scope, $controller, $rootScope, dialogService,

@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 ((_) => {
   describe('PaymentsTable', () => {
     let $controller, $rootScope, $scope, apiResponses, civicaseCrmApi,

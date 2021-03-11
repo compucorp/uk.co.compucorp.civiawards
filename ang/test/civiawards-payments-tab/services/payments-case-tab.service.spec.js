@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 describe('PaymentsCaseTab', () => {
   let PaymentsCaseTab;
 

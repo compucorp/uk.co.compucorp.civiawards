@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 (function () {
   describe('isApplicationManagementScreen', function () {
     let $location, isApplicationManagementScreen;

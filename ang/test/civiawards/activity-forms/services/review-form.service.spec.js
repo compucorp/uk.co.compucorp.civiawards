@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 ((_, getCrmUrl) => {
   describe('ReviewActivityForm', () => {
     let activityFormUrl, expectedActivityFormUrl, ReviewActivityForm, canHandle, reviewActivity;

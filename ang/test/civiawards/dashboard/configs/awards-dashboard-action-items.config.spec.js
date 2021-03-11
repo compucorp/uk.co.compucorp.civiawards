@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 (function (_) {
   describe('Awards Dashboard Action Items', () => {
     let DashboardActionItems;

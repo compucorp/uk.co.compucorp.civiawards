@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 (function (_, getCrmUrl) {
   describe('Add Award Dashboard Action Button', () => {
     let $location, $window, $scope, $controller, $rootScope, canCreateOrEditAwards, isApplicationManagementScreen;

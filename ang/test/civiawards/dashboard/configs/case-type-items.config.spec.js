@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 (function (_) {
   var AWARDS_CATEGORY_NAME = 'awards';
 

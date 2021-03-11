@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 ((_, $, getCrmUrl) => {
   describe('Review Case Tab Content', () => {
     let $controller, $q, $rootScope, $scope, AwardAdditionalDetailsMockData,

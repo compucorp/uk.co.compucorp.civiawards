@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 ((_) => {
   describe('PaymentsCaseTabAddPayment', () => {
     let $controller, $rootScope, $scope, civicaseCrmLoadForm,

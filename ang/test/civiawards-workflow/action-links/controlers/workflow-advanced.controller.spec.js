@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 ((_, getCrmUrl) => {
   describe('workflow duplicate controller', () => {
     let $controller, $rootScope, $scope, $window, CaseTypesMockData;
