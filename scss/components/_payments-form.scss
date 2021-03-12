@@ -1,4 +1,9 @@
 .civiawards__payments-form {
+  .civiawards__payments-form__label,
+  .civiawards__payments-form__input {
+    margin-left: $basic-gutter;
+  }
+
   .civiawards__payments-form__label {
     float: left;
     width: 315px;

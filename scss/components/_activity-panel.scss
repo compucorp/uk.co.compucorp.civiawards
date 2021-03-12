@@ -26,9 +26,16 @@
       display: none;
     }
   }
+
+  .civiawards__payments-form {
+    .civiawards__payments-form__label {
+      width: 150px;
+    }
+  }
 }
 
-.civicase__activity-panel--Applicant_Review {
+.civicase__activity-panel--Applicant_Review,
+.civicase__activity-panel--Awards_Payment {
   > .panel > .panel-body {
     margin-bottom: 0;
   }

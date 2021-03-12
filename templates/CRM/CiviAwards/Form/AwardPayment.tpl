@@ -1,5 +1,5 @@
 <div id="bootstrap-theme">
-  <div class="civiawards__crm-popup__container">
+  <div class="civiawards__crm-popup__container clearfix crm-form-block">
     <div class="civiawards__payments-form">
       <div class="panel panel-default">
         <div class="panel-body">
