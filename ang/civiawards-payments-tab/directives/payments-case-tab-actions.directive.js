@@ -23,10 +23,11 @@
    * @param {Function} civicaseCrmLoadForm crm load form service
    * @param {object} AwardsPaymentActivityStatus awards payment activity status service
    * @param {Function} civicaseCrmUrl civicrm url service
+   * @param {object} PaymentsActivityForm payments activity form service
    */
   function civiawardsPaymentsCaseTabActionsController (
     ts, $scope, $rootScope, civicaseCrmApi, crmStatus, civicaseCrmLoadForm,
-    AwardsPaymentActivityStatus, civicaseCrmUrl) {
+    AwardsPaymentActivityStatus, civicaseCrmUrl, PaymentsActivityForm) {
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
 
     $scope.handleViewActivity = handleViewActivity;
@@ -41,11 +42,7 @@
      * @param {string} paymentId payment id
      */
     function handleViewActivity (paymentId) {
-      var url = civicaseCrmUrl('civicrm/awardpayment', {
-        action: 'view',
-        reset: 1,
-        id: paymentId
-      });
+      var url = PaymentsActivityForm.getActivityFormUrl({ id: paymentId });
 
       civicaseCrmLoadForm(url);
     }

@@ -13,6 +13,10 @@
       {
         name: 'ReviewActivityForm',
         weight: -1
+      },
+      {
+        name: 'PaymentsActivityForm',
+        weight: -2
       }
     ];
 
