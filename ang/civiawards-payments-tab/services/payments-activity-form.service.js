@@ -4,7 +4,7 @@
   module.service('PaymentsActivityForm', PaymentsActivityForm);
 
   /**
-   * Review Activity Form service.
+   * Payment Activity Form service.
    *
    * @param {object} civicaseCrmUrl civicrm url service
    */
@@ -14,14 +14,14 @@
 
     /**
      * @param {object} activity an activity object.
-     * @returns {boolean} true when the activity is an application review.
+     * @returns {boolean} true when the activity is an application payment.
      */
     function canHandleActivity (activity) {
       return activity.type === 'Awards Payment';
     }
 
     /**
-     * Returns the form's URL for the review activity. If the form will
+     * Returns the form's URL for the payment activity. If the form will
      * be shown in a popup it automatically opens the form in edit mode.
      *
      * @param {object} activity an activity object.
