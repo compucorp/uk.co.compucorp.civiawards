@@ -16,7 +16,7 @@ class CRM_CiviAwards_Service_ApplicantManagementMenu extends CRM_Civicase_Servic
    *   Menu ID.
    */
   protected function createCaseCategorySubmenus($caseTypeCategoryName, array $permissions, $caseCategoryMenuId) {
-    $labelForMenu = ucfirst($caseTypeCategoryName);
+    $labelForMenu = ucfirst(strtolower($caseTypeCategoryName));
 
     $submenus = [
       [
