@@ -25,9 +25,19 @@
         </div>
       </div>
     </div>
-    <div class="civiawards__payments-form__attachments">
-      {include file="CRM/Form/attachment.tpl"}
-    </div>
+    {if $isViewAction}
+      <div class="civiawards__payments-form__attachments">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            {include file="CRM/Form/attachment.tpl"}
+          </div>
+        </div>
+      </div>
+    {else}
+      <div class="civiawards__payments-form__attachments">
+        {include file="CRM/Form/attachment.tpl"}
+      </div>
+    {/if}
     <div class="crm-submit-buttons panel-footer clearfix">
         {if $isViewAction && !$isActivityStatusExported}
           <a href="{crmURL p='civicrm/awardpayment' q=$editUrlParams}" class="edit button" title="{ts}Edit{/ts}"><span><i class="crm-i fa-pencil"></i> {ts}Edit{/ts}</span></a>
