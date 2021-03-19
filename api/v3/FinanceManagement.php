@@ -16,11 +16,13 @@ use CRM_CiviAwards_Service_FinanceManagementSetting as FinanceManagementSettingS
 function _civicrm_api3_finance_management_setsetting_spec(array &$spec) {
   $spec['case_type_category_id'] = [
     'title' => 'Case Type Category ID',
+    'api.required' => 1,
     'description' => 'Case Type Category ID',
   ];
 
   $spec['value'] = [
     'title' => 'Finance Management Value',
+    'api.required' => 1,
     'description' => 'Finance Management Value',
   ];
 }
