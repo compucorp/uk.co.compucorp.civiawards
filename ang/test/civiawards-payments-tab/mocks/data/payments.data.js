@@ -11,7 +11,8 @@
       activity_date_time: '2000-01-01 12:00:00',
       target_contact_name: { 10: 'Jon Snow' },
       'status_id.label': 'paid_complete',
-      'status_id.name': 'paid_complete'
+      'status_id.name': 'paid_complete',
+      type: 'Awards Payment'
     },
     {
       id: _.uniqueId(),
@@ -22,7 +23,8 @@
       activity_date_time: '2000-05-01 12:00:00',
       target_contact_name: { 11: 'Jon Snow' },
       'status_id.label': 'paid_complete',
-      'status_id.name': 'paid_complete'
+      'status_id.name': 'paid_complete',
+      type: 'Awards Payment'
     },
     {
       id: _.uniqueId(),
@@ -33,7 +35,8 @@
       activity_date_time: '2000-07-01 12:00:00',
       target_contact_name: { 12: 'Jon Snow' },
       'status_id.label': 'failed_incomplete',
-      'status_id.name': 'failed_incomplete'
+      'status_id.name': 'failed_incomplete',
+      type: 'Awards Payment'
     }
   ]);
 })(CRM._, angular);

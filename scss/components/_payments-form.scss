@@ -1,4 +1,9 @@
 .civiawards__payments-form {
+  .civiawards__payments-form__label,
+  .civiawards__payments-form__input {
+    margin-left: $basic-gutter;
+  }
+
   .civiawards__payments-form__label {
     float: left;
     width: 315px;
@@ -25,31 +30,40 @@
   }
 }
 
-.civiawards__payments-form__attachments {
-  .crm-accordion-body {
-    margin-left: 10px;
-  }
+// Applied only when inside a Modal Window, does not apply when inside Activity Feed panel
+/* stylelint-disable selector-max-compound-selectors, selector-max-id, max-nesting-depth */
+.___outside-namespace {
+  .ui-dialog-content {
+    #bootstrap-theme {
+      .civiawards__payments-form__attachments {
+        .crm-accordion-body {
+          margin-left: 10px;
+        }
 
-  .form-layout-compressed {
-    width: 100%;
-  }
+        .form-layout-compressed {
+          width: 100%;
+        }
 
-  .form-layout-compressed td {
-    padding: $crm-table-form-cell-padding;
-  }
+        .form-layout-compressed td {
+          padding: $crm-table-form-cell-padding;
+        }
 
-  .label {
-    display: table-cell;
-    text-align: left;
-    width: 110px;
-  }
+        .label {
+          display: table-cell;
+          text-align: left;
+          width: 110px;
+        }
 
-  [type=file] {
-    display: inline-block;
-    width: 200px;
-  }
+        [type=file] {
+          display: inline-block;
+          width: 200px;
+        }
 
-  .description {
-    width: 530px;
+        .description {
+          width: 530px;
+        }
+      }
+    }
   }
 }
+/* stylelint-enable selector-max-compound-selectors */

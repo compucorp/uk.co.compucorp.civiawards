@@ -1,34 +1,36 @@
 (function (_, $) {
   describe('civiawardCustomFieldSets', () => {
-    var civiawardCustomFieldSetsDirective, $compile, $rootScope, $scope;
+    var civiawardCustomFieldSetsDirective, $compile, $rootScope, $scope,
+      civicaseCrmLoadForm;
 
     beforeEach(module('civiawards.templates', 'civiawards'));
 
-    beforeEach(inject((_$compile_, _$rootScope_) => {
+    beforeEach(inject((_$compile_, _$rootScope_, _civicaseCrmLoadForm_) => {
       $compile = _$compile_;
       $rootScope = _$rootScope_;
+      civicaseCrmLoadForm = _civicaseCrmLoadForm_;
     }));
 
     describe('basic tests', () => {
       describe('when creating new award', function () {
         beforeEach(() => {
-          CRM.loadForm.calls.reset();
+          civicaseCrmLoadForm.calls.reset();
           initDirective();
         });
 
         it('does not fetch the custom fields information', () => {
-          expect(CRM.loadForm).not.toHaveBeenCalled();
+          expect(civicaseCrmLoadForm).not.toHaveBeenCalled();
         });
       });
 
       describe('when editing existing award', function () {
         beforeEach(() => {
-          CRM.loadForm.calls.reset();
+          civicaseCrmLoadForm.calls.reset();
           initDirective(5);
         });
 
         it('shows the custom field set UI', () => {
-          expect(CRM.loadForm).toHaveBeenCalledWith('/civicrm/award/customfield?entityId=5', {
+          expect(civicaseCrmLoadForm).toHaveBeenCalledWith('/civicrm/award/customfield?entityId=5', {
             target: jasmine.any(Object)
           });
         });
