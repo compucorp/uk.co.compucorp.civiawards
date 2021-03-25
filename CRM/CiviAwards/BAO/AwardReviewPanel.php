@@ -61,7 +61,7 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
    * @param array $params
    *   Parameters.
    */
-  private function validateVisibilitySettings(array $params) {
+  private static function validateVisibilitySettings(array $params) {
     if (empty($params['visibility_settings'])) {
       return;
     }

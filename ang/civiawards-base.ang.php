@@ -33,7 +33,11 @@ function expose_permissions() {
  */
 function get_awards_base_js_files() {
   return array_merge(
-    ['ang/civiawards-base.js'], GlobRecursive::get(dirname(__FILE__) . '/civiawards-base/*.js')
+    ['ang/civiawards-base.js'],
+    GlobRecursive::getRelativeToExtension(
+      'uk.co.compucorp.civiawards',
+      'ang/civiawards-base/*.js'
+    )
   );
 }
 

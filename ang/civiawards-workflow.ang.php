@@ -15,7 +15,11 @@ use CRM_Civicase_Helper_GlobRecursive as GlobRecursive;
  */
 function get_awards_workflow_js_files() {
   return array_merge(
-    ['ang/civiawards-workflow.js'], GlobRecursive::get(dirname(__FILE__) . '/civiawards-workflow/*.js')
+    ['ang/civiawards-workflow.js'],
+    GlobRecursive::getRelativeToExtension(
+      'uk.co.compucorp.civiawards',
+      'ang/civiawards-workflow/*.js'
+    )
   );
 }
 
