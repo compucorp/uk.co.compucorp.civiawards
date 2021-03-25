@@ -18,7 +18,7 @@
   <version>1.0.0-beta.13</version>
   <develStage>beta</develStage>
   <compatibility>
-    <ver>4.7</ver>
+    <ver>5.35</ver>
   </compatibility>
   <civix>
     <namespace>CRM/CiviAwards</namespace>
