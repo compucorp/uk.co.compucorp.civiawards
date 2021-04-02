@@ -35,6 +35,9 @@ jobs:
       if: ${{ always() }}
       run: git diff --diff-filter=d origin/${GITHUB_BASE_REF} --name-only -- '*.scss' | xargs -r  npx stylelint --config .stylelintrc
 
+    - name: Run htmlhint linter
+      if: ${{ always() }}
+      run: git diff --diff-filter=d origin/${GITHUB_BASE_REF} --name-only -- 'ang/**/*.html' | xargs -r  npx htmlhint
 
     - name: Run eslint linter
       if: ${{ always() }}

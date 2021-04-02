@@ -1,0 +1,18 @@
+{
+  "attr-lowercase": true,
+  "attr-no-duplication": true,
+  "attr-no-unnecessary-whitespace": true,
+  "attr-unsafe-chars": true,
+  "attr-value-double-quotes": true,
+  "alt-require": true,
+  "tag-pair": true,
+  "tag-self-close": true,
+  "tagname-lowercase": true,
+  "empty-tag-not-self-closed": true,
+  "src-not-empty": true,
+  "href-abs-or-rel": true,
+  "id-class-ad-disabled:": true,
+  "id-class-value": true,
+  "inline-script-disabled": true,
+  "space-tab-mixed-disabled": true
+}

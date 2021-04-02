@@ -9,5 +9,8 @@
   ],
   "*.php": [
     "./bin/phpcs.phar --standard=phpcs-ruleset.xml"
+  ],
+  "ang/**/*.html": [
+    "htmlhint"
   ]
 }
