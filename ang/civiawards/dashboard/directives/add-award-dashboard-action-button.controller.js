@@ -33,10 +33,8 @@
      * Redirects the user to the awards creation screen.
      */
     function redirectToAwardsCreationScreen () {
-      var currentCaseTypeCategoryValue =
-        CaseTypeCategory.findByName($routeParams.case_type_category).value;
       var newAwardUrl = civicaseCrmUrl(
-        'civicrm/award/a/#/awards/new/' + currentCaseTypeCategoryValue + '/dashboard'
+        'civicrm/award/a/#/awards/new/' + $routeParams.case_type_category + '/dashboard'
       );
 
       $window.location.href = newAwardUrl;
