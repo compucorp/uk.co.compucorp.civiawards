@@ -453,7 +453,7 @@
         });
 
         it('redirects to award dashboard page', () => {
-          expect($window.location.href).toBe('/civicrm/case/a/?case_type_category=awards#/case?case_type_category=awards');
+          expect($window.location.href).toBe('/civicrm/case/a/?case_type_category=3#/case?case_type_category=3');
         });
 
         it('shows a notification after save is successfull', () => {
@@ -478,7 +478,7 @@
         });
 
         it('redirects to manage awards page', () => {
-          expect($window.location.href).toBe('/civicrm/workflow/a?case_type_category=awards#/list');
+          expect($window.location.href).toBe('/civicrm/workflow/a?case_type_category=3#/list');
         });
 
         it('shows a notification after save is successfull', () => {
