@@ -9,7 +9,7 @@
       isApplicationManagementScreen = jasmine.createSpy('isApplicationManagementScreen');
 
       $provide.value('$window', $window);
-      $provide.value('$routeParams', { case_type_category: 'awards' });
+      $provide.value('$routeParams', { case_type_category: '3' });
       $provide.value('canCreateOrEditAwards', canCreateOrEditAwards);
       $provide.value('isApplicationManagementScreen', isApplicationManagementScreen);
     }));
