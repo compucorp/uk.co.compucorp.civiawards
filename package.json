@@ -8,7 +8,7 @@
     "postinstall": "cd bin && chmod +x ./install-php-linter && ./install-php-linter"
   },
   "engines": {
-    "node": ">=10.15.3"
+    "node": ">=14.16.0"
   },
   "repository": {
     "type": "git",
@@ -37,11 +37,12 @@
     "gulp-notify": "^3.2.0",
     "gulp-postcss": "^8.0.0",
     "gulp-rename": "^1.4.0",
-    "gulp-sass": "^4.0.2",
+    "gulp-sass": "^4.1.0",
     "gulp-sass-glob": "^1.1.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-strip-css-comments": "^2.0.0",
     "gulp-transform-selectors": "0.0.2",
+    "htmlhint": "^0.14.2",
     "husky": "^3.0.9",
     "jasmine-core": "^3.5.0",
     "karma": "^4.4.0",

@@ -1,7 +1,7 @@
 name: Linters
 
 on: pull_request
-     
+
 env:
   GITHUB_BASE_REF: ${{ github.base_ref }}
 
@@ -13,13 +13,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Set Correct NodeJS version
+      shell: bash -l {0}
+      run: |
+        nvm install
+        nvm use
+
     - name: Run npm install
       run: npm i
 
     - name: Fetch target branch
       run: git fetch -n origin ${GITHUB_BASE_REF}
-            
-    - name: Run phpcs linter 
+
+    - name: Run phpcs linter
       run: git diff --diff-filter=d origin/${GITHUB_BASE_REF} --name-only -- '*.php' | xargs -r ./bin/phpcs.phar --standard=phpcs-ruleset.xml
 
     - name: Run stylelint linter
@@ -29,6 +35,9 @@ jobs:
       if: ${{ always() }}
       run: git diff --diff-filter=d origin/${GITHUB_BASE_REF} --name-only -- '*.scss' | xargs -r  npx stylelint --config .stylelintrc
 
+    - name: Run htmlhint linter
+      if: ${{ always() }}
+      run: git diff --diff-filter=d origin/${GITHUB_BASE_REF} --name-only -- 'ang/**/*.html' | xargs -r  npx htmlhint
 
     - name: Run eslint linter
       if: ${{ always() }}
