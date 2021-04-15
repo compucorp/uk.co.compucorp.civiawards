@@ -13,7 +13,11 @@ class CRM_CiviAwards_Setup_CreateAwardsMenus {
    */
   public function apply() {
     $applicationMenu = new ApplicantManagementMenu();
-    $applicationMenu->createItems(CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME);
+    $applicationMenu->createItems([
+      'name' => CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME,
+      'label' => CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_LABEL,
+      'singular_label' => CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_SINGULAR_LABEL,
+    ]);
   }
 
 }
