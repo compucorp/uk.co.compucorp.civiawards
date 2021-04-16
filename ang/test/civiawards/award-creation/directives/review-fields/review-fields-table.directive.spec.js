@@ -1,25 +1,26 @@
 (function (_) {
   describe('civiawardReviewFieldsTable', () => {
-    var $rootScope, $controller, $scope, $q, crmApi, ReviewFieldsMockData,
+    var $rootScope, $controller, $scope, $q, civicaseCrmApi, ReviewFieldsMockData,
       AwardAdditionalDetailsMockData, dialogService;
 
     beforeEach(module('civiawards.templates', 'civiawards', 'civicase.data', 'civiawards.data', function ($provide) {
-      $provide.value('crmApi', jasmine.createSpy('crmApi'));
+      $provide.value('civicaseCrmApi', jasmine.createSpy('civicaseCrmApi'));
       $provide.value('dialogService', jasmine.createSpyObj('dialogService', ['open', 'close']));
     }));
 
-    beforeEach(inject((_$q_, _$controller_, _$rootScope_, _crmApi_, _ReviewFieldsMockData_, _AwardAdditionalDetailsMockData_, _dialogService_) => {
+    beforeEach(inject((_$q_, _$controller_, _$rootScope_, _civicaseCrmApi_,
+      _ReviewFieldsMockData_, _AwardAdditionalDetailsMockData_, _dialogService_) => {
       $q = _$q_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       dialogService = _dialogService_;
-      crmApi = _crmApi_;
+      civicaseCrmApi = _civicaseCrmApi_;
       ReviewFieldsMockData = _ReviewFieldsMockData_;
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_.get();
       $scope = $rootScope.$new();
 
       dialogService.dialogs = {};
-      crmApi.and.returnValue($q.resolve([
+      civicaseCrmApi.and.returnValue($q.resolve([
         { values: ReviewFieldsMockData }
       ]));
 
@@ -33,7 +34,7 @@
       });
 
       it('fetches all review fields', () => {
-        expect(crmApi).toHaveBeenCalledWith([['CustomField', 'get', {
+        expect(civicaseCrmApi).toHaveBeenCalledWith([['CustomField', 'get', {
           sequential: true,
           custom_group_id: 'Applicant_Review',
           options: { limit: 0 }
