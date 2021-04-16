@@ -203,7 +203,9 @@
      */
     function fetchAllReviewFields () {
       return crmApi([['CustomField', 'get', {
-        sequential: true, custom_group_id: reviewScoringFieldsGroupName
+        sequential: true,
+        custom_group_id: reviewScoringFieldsGroupName,
+        options: { limit: 0 }
       }]]).then(function (customFieldData) {
         return customFieldData[0].values;
       });

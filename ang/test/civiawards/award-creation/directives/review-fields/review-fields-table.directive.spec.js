@@ -34,7 +34,9 @@
 
       it('fetches all review fields', () => {
         expect(crmApi).toHaveBeenCalledWith([['CustomField', 'get', {
-          sequential: true, custom_group_id: 'Applicant_Review'
+          sequential: true,
+          custom_group_id: 'Applicant_Review',
+          options: { limit: 0 }
         }]]);
       });
 
