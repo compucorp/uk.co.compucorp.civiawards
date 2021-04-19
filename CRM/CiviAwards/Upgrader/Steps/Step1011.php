@@ -14,7 +14,7 @@ class CRM_CiviAwards_Upgrader_Steps_Step1011 {
    *   Return value in boolean.
    */
   public function apply() {
-    (new ApplicantManagementMenu())->updateCaseCategorySubmenus(
+    (new ApplicantManagementMenu())->resetCaseCategorySubmenusUrl(
       CRM_CiviAwards_Helper_CaseTypeCategory::AWARDS_CASE_TYPE_CATEGORY_NAME
     );
 
