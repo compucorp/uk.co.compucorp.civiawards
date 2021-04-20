@@ -275,20 +275,12 @@
       it('displays all relationship type on the UI', () => {
         expect($scope.relationshipTypes).toEqual([
           {
-            text: 'Application Manager is',
-            id: '17_a_b'
+            text: 'Homeless Services Coordinator is',
+            id: '11_a_b'
           },
           {
-            text: 'Application Manager',
-            id: '17_b_a'
-          },
-          {
-            text: 'Benefits Specialist is',
-            id: '14_a_b'
-          },
-          {
-            text: 'Benefits Specialist',
-            id: '14_b_a'
+            text: 'Homeless Services Coordinator',
+            id: '11_b_a'
           },
           {
             text: 'Health Services Coordinator is',
@@ -299,12 +291,20 @@
             id: '12_b_a'
           },
           {
-            text: 'Homeless Services Coordinator is',
-            id: '11_a_b'
+            text: 'Benefits Specialist is',
+            id: '14_a_b'
           },
           {
-            text: 'Homeless Services Coordinator',
-            id: '11_b_a'
+            text: 'Benefits Specialist',
+            id: '14_b_a'
+          },
+          {
+            text: 'Senior Services Coordinator is',
+            id: '16_a_b'
+          },
+          {
+            text: 'Senior Services Coordinator',
+            id: '16_b_a'
           }
         ]);
       });
