@@ -723,7 +723,7 @@
         is_error: 0,
         version: 3,
         count: 8,
-        values: _.cloneDeep(_.slice(RelationshipTypeData.values, 0, 4))
+        values: _.slice(RelationshipTypeData.getSequential(), 0, 4)
       };
     }
 
