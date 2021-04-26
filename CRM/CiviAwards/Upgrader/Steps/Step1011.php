@@ -15,7 +15,7 @@ class CRM_CiviAwards_Upgrader_Steps_Step1011 {
    */
   public function apply() {
     (new ApplicantManagementMenu())->resetCaseCategorySubmenusUrl(
-      CRM_CiviAwards_Helper_CaseTypeCategory::AWARDS_CASE_TYPE_CATEGORY_NAME
+      CRM_CiviAwards_Helper_CaseTypeCategory::getDataForMenu()
     );
 
     CRM_Core_BAO_Navigation::resetNavigation();

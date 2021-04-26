@@ -74,4 +74,18 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
     return AwardDetail::buildOptions('award_subtype');
   }
 
+  /**
+   * Get data for creating the menu.
+   *
+   * @return string[]
+   *   Category data.
+   */
+  public static function getDataForMenu() {
+    return [
+      'name' => self::AWARDS_CASE_TYPE_CATEGORY_NAME,
+      'label' => self::AWARDS_CASE_TYPE_CATEGORY_LABEL,
+      'singular_label' => self::AWARDS_CASE_TYPE_CATEGORY_SINGULAR_LABEL,
+    ];
+  }
+
 }
