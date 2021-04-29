@@ -256,11 +256,10 @@
      * Navigate to the Previous Page
      */
     function navigateToPreviousPage () {
-      var caseTypeCategoryName = CaseTypeCategory.findById($scope.caseTypeCategoryId).name;
-      var url = '/civicrm/workflow/a?case_type_category=' + caseTypeCategoryName + '#/list';
+      var url = '/civicrm/workflow/a?case_type_category=' + $scope.caseTypeCategoryId + '#/list';
 
       if ($scope.redirectTo === 'dashboard') {
-        url = '/civicrm/case/a/?case_type_category=' + caseTypeCategoryName + '#/case?case_type_category=' + caseTypeCategoryName;
+        url = '/civicrm/case/a/?case_type_category=' + $scope.caseTypeCategoryId + '#/case?case_type_category=' + $scope.caseTypeCategoryId;
       }
 
       $window.location.href = url;

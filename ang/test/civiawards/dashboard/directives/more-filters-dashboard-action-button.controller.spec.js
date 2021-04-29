@@ -36,7 +36,7 @@
 
       describe('when viewing the awards dashboard', () => {
         beforeEach(() => {
-          $location.search('case_type_category', 'awards');
+          $location.search('case_type_category', '3');
           initController();
           $rootScope.$digest();
 
@@ -50,7 +50,7 @@
 
       describe('when viewing any other dashboard', () => {
         beforeEach(() => {
-          $location.search('case_type_category', 'cases');
+          $location.search('case_type_category', '1');
           initController();
           $rootScope.$digest();
 

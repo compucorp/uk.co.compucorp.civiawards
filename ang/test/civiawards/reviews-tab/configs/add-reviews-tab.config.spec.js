@@ -16,7 +16,7 @@
 
     describe('when viewing award applications', () => {
       beforeEach(module(() => {
-        $window.location.search = '?case_type_category=awards';
+        $window.location.search = '?case_type_category=3';
       }, 'civiawards'));
 
       beforeEach(inject);

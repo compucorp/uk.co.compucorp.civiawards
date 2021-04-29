@@ -13,11 +13,8 @@
    */
   function EditAwardButtonController ($scope, $routeParams,
     canCreateOrEditAwards, CaseTypeCategory) {
-    var currentCaseTypeCategoryValue =
-      CaseTypeCategory.findByName($routeParams.case_type_category).value;
-
     $scope.canEditAwards = canCreateOrEditAwards;
     $scope.editAwardUrl = 'civicrm/award/a/#/awards/' +
-     currentCaseTypeCategoryValue + '/' + $scope.caseType.id + '/' + 'dashboard';
+      $routeParams.case_type_category + '/' + $scope.caseType.id + '/' + 'dashboard';
   }
 })(angular);
