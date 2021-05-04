@@ -7,8 +7,8 @@
       title: 'New Panel',
       case_type_id: '62',
       contact_settings: {
-        exclude_groups: ['1'],
-        include_groups: ['2'],
+        exclude_groups: ['1', '1001'],
+        include_groups: ['2', '1002'],
         relationship: [
           {
             is_a_to_b: '1',
@@ -23,9 +23,9 @@
         ]
       },
       visibility_settings: {
-        application_status: ['1'],
+        application_status: ['1', '1001'],
         anonymize_application: '1',
-        application_tags: ['1', '12', '15'],
+        application_tags: ['1', '12', '15', '1001'],
         is_application_status_restricted: '1',
         restricted_application_status: ['1', '2']
       },

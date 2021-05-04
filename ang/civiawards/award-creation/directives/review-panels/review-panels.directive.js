@@ -278,11 +278,38 @@
       var reviewPanelDataCopied = _.clone(reviewPanelData);
 
       _.each(reviewPanelDataCopied, function (reviewPanel) {
+        reviewPanel = removeObsoleteData(reviewPanel);
+
         reviewPanel.formattedContactSettings = getFormattedContactSettings(reviewPanel);
         reviewPanel.formattedVisibilitySettings = getFormattedVisibilitySettings(reviewPanel);
       });
 
       return reviewPanelDataCopied;
+    }
+
+    /**
+     * Remove obsolete data from the review panel.
+     *
+     * @param {Array} reviewPanel list of review panels fetched from API
+     * @returns {Array} list of review panels
+     */
+    function removeObsoleteData (reviewPanel) {
+      reviewPanel.visibility_settings.application_status = _.filter(reviewPanel.visibility_settings.application_status, function (statusId) {
+        return !!caseStatusesIndexed[statusId];
+      });
+      reviewPanel.visibility_settings.application_tags = _.filter(reviewPanel.visibility_settings.application_tags, function (tagId) {
+        return !!tagsIndexed[tagId];
+      });
+
+      reviewPanel.contact_settings.include_groups = _.filter(reviewPanel.contact_settings.include_groups, function (groupId) {
+        return !!groupsIndexed[groupId];
+      });
+
+      reviewPanel.contact_settings.exclude_groups = _.filter(reviewPanel.contact_settings.exclude_groups, function (groupId) {
+        return !!groupsIndexed[groupId];
+      });
+
+      return reviewPanel;
     }
 
     /**
