@@ -14,7 +14,7 @@
   });
 
   module.controller('CiviawardReviewPanelsController', function (
-    $q, $scope, ts, dialogService, crmApi, crmStatus, Select2Utils,
+    $q, $scope, ts, dialogService, civicaseCrmApi, crmStatus, Select2Utils,
     CaseStatus, isTruthy) {
     var relationshipTypesIndexed = {};
     var contactsIndexed = {};
@@ -53,7 +53,7 @@
      * @returns {Promise} api call promise
      */
     function getTags () {
-      return crmApi('Tag', 'get', {
+      return civicaseCrmApi('Tag', 'get', {
         sequential: 1,
         used_for: 'Cases',
         options: { limit: 0 }
@@ -147,7 +147,7 @@
         return $q.resolve([]);
       }
 
-      return crmApi('Contact', 'get', {
+      return civicaseCrmApi('Contact', 'get', {
         sequential: 1,
         return: ['display_name'],
         id: { IN: contactIdsToFetch },
@@ -221,7 +221,7 @@
       }).on('crmConfirm:yes', function () {
         $scope.submitInProgress = true;
 
-        var promise = crmApi('AwardReviewPanel', 'delete', {
+        var promise = civicaseCrmApi('AwardReviewPanel', 'delete', {
           id: reviewPanel.id
         }).then(refreshReviewPanelsList)
           .then(function () {
@@ -253,7 +253,7 @@
       }).on('crmConfirm:yes', function () {
         $scope.submitInProgress = true;
 
-        var promise = crmApi('AwardReviewPanel', 'create', {
+        var promise = civicaseCrmApi('AwardReviewPanel', 'create', {
           id: reviewPanel.id,
           is_active: isTruthy(reviewPanel.is_active) ? '0' : '1'
         }).then(refreshReviewPanelsList)
@@ -358,7 +358,7 @@
      * @returns {Promise} promise
      */
     function fetchGroups () {
-      return crmApi('Group', 'get', {
+      return civicaseCrmApi('Group', 'get', {
         sequential: 1,
         return: ['id', 'title'],
         options: { limit: 0 }
@@ -391,7 +391,7 @@
      * @returns {Promise} promise
      */
     function fetchExistingReviewPanels (awardId) {
-      return crmApi('AwardReviewPanel', 'get', {
+      return civicaseCrmApi('AwardReviewPanel', 'get', {
         sequential: 1,
         case_type_id: awardId,
         options: { limit: 0 }
@@ -425,7 +425,7 @@
      * @returns {Promise} promise
      */
     function fetchRelationshipsTypes () {
-      return crmApi('RelationshipType', 'get', {
+      return civicaseCrmApi('RelationshipType', 'get', {
         sequential: 1,
         is_active: 1,
         options: { sort: 'label_a_b', limit: 0 }
@@ -586,7 +586,7 @@
 
       $scope.submitInProgress = true;
 
-      var promise = crmApi('AwardReviewPanel', 'create', getParamsForSavingReviewPanel())
+      var promise = civicaseCrmApi('AwardReviewPanel', 'create', getParamsForSavingReviewPanel())
         .then(function () {
           dialogService.close('ReviewPanels');
           resetReviewPanelPopup();

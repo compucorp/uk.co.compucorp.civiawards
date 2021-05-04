@@ -1,25 +1,25 @@
 (function (_) {
   describe('civiaward', () => {
-    var $q, $controller, $rootScope, $scope, $window, $location, crmApi, crmStatus,
+    var $q, $controller, $rootScope, $scope, $window, $location, civicaseCrmApi, crmStatus,
       CaseStatus, AwardMockData, AwardAdditionalDetailsMockData, ReviewFieldsMockData;
 
     beforeEach(module('civicase-base', 'civiawards.templates',
       'crmUtil', 'civiawards', 'civicase.data', 'civiawards.data', ($provide) => {
-        $provide.value('crmApi', jasmine.createSpy('crmApi'));
+        $provide.value('civicaseCrmApi', jasmine.createSpy('civicaseCrmApi'));
         $provide.value('$window', { location: {} });
         $provide.value('$location', jasmine.createSpyObj('$location', ['path']));
       }));
 
-    beforeEach(inject((_$q_, _$controller_, _$window_, _$location_, _$rootScope_, _crmApi_,
-      _CaseStatus_, _AwardMockData_, _AwardAdditionalDetailsMockData_, _ReviewFieldsMockData_,
-      _crmStatus_) => {
+    beforeEach(inject((_$q_, _$controller_, _$window_, _$location_,
+      _$rootScope_, _civicaseCrmApi_, _CaseStatus_, _AwardMockData_,
+      _AwardAdditionalDetailsMockData_, _ReviewFieldsMockData_, _crmStatus_) => {
       $q = _$q_;
       $window = _$window_;
       $location = _$location_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       crmStatus = _crmStatus_;
-      crmApi = _crmApi_;
+      civicaseCrmApi = _civicaseCrmApi_;
       CaseStatus = _CaseStatus_;
       AwardMockData = _AwardMockData_;
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_.get();
@@ -29,7 +29,7 @@
       spyOn($scope, '$emit');
       spyOn(CRM, 'alert').and.callThrough();
 
-      crmApi.and.callFake(mockCrmApiService);
+      civicaseCrmApi.and.callFake(mockCrmApiService);
       $scope.$digest();
       $scope.basic_details_form = { awardName: { $pristine: true } };
     }));
@@ -93,7 +93,7 @@
 
       describe('when editing existing award', function () {
         beforeEach(() => {
-          crmApi.and.returnValue($q.resolve({
+          civicaseCrmApi.and.returnValue($q.resolve({
             caseType: AwardMockData[0],
             additionalDetails: AwardAdditionalDetailsMockData
           }));
@@ -127,7 +127,7 @@
           const award = _.chain(AwardMockData).first().cloneDeep().value();
           award.definition.statuses = ['Open', 'Closed'];
 
-          crmApi.and.returnValue($q.resolve({
+          civicaseCrmApi.and.returnValue($q.resolve({
             caseType: award
           }));
 
@@ -148,7 +148,7 @@
           const award = _.chain(AwardMockData).first().cloneDeep().value();
           delete award.definition.statuses;
 
-          crmApi.and.returnValue($q.resolve({
+          civicaseCrmApi.and.returnValue($q.resolve({
             caseType: award
           }));
 
@@ -261,7 +261,7 @@
           });
 
           it('saves the basic award details', () => {
-            expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', {
+            expect(civicaseCrmApi).toHaveBeenCalledWith('CaseType', 'create', {
               sequential: true,
               title: 'title',
               description: 'description',
@@ -278,7 +278,7 @@
           });
 
           it('saves default activity types for the award', () => {
-            expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', jasmine.objectContaining({
+            expect(civicaseCrmApi).toHaveBeenCalledWith('CaseType', 'create', jasmine.objectContaining({
               definition: jasmine.objectContaining({
                 activityTypes: [
                   { name: 'Applicant Review' },
@@ -292,7 +292,7 @@
           });
 
           it('saves the additional award details', () => {
-            expect(crmApi).toHaveBeenCalledWith('AwardDetail', 'create', {
+            expect(civicaseCrmApi).toHaveBeenCalledWith('AwardDetail', 'create', {
               sequential: true,
               case_type_id: _.first(AwardMockData).id,
               start_date: AwardAdditionalDetailsMockData.start_date,
@@ -363,7 +363,7 @@
         });
 
         it('saves the basic award details', () => {
-          expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('CaseType', 'create', {
             sequential: true,
             title: 'title',
             description: 'description',
@@ -382,7 +382,7 @@
         });
 
         it('creates the award with default activity types', () => {
-          expect(crmApi).toHaveBeenCalledWith('CaseType', 'create', jasmine.objectContaining({
+          expect(civicaseCrmApi).toHaveBeenCalledWith('CaseType', 'create', jasmine.objectContaining({
             definition: jasmine.objectContaining({
               activityTypes: [
                 { name: 'Applicant Review' },
@@ -505,7 +505,7 @@
         weight: 1
       }];
 
-      crmApi.and.callFake(mockCrmApiService);
+      civicaseCrmApi.and.callFake(mockCrmApiService);
     }
 
     /**

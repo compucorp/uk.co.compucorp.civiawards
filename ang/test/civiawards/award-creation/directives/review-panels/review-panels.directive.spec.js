@@ -1,23 +1,23 @@
 (function (_) {
   describe('civiawardReviewPanels', () => {
-    let $rootScope, $controller, $scope, crmApi, $q, crmStatus, ts, ContactsData,
-      dialogService, RelationshipTypeData, GroupData, ReviewPanelsMockData,
-      entityActionHandlers, TagsMockData, statusOptions;
+    let $rootScope, $controller, $scope, civicaseCrmApi, $q, crmStatus, ts,
+      ContactsData, dialogService, RelationshipTypeData, GroupData,
+      ReviewPanelsMockData, entityActionHandlers, TagsMockData, statusOptions;
 
     beforeEach(module('civiawards.templates', 'civiawards', 'crmUtil', 'civicase.data', 'civiawards.data', function ($provide) {
-      $provide.value('crmApi', getCrmApiMock());
+      $provide.value('civicaseCrmApi', getCrmApiMock());
 
       $provide.value('dialogService', jasmine.createSpyObj('dialogService', ['open', 'close']));
     }));
 
-    beforeEach(inject((_$q_, _$controller_, _$rootScope_, _crmApi_, _crmStatus_,
+    beforeEach(inject((_$q_, _$controller_, _$rootScope_, _civicaseCrmApi_, _crmStatus_,
       _ts_, _dialogService_, _RelationshipTypeData_, _GroupData_,
       _ReviewPanelsMockData_, _ContactsData_, _TagsMockData_) => {
       setApiActionHandlers();
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       dialogService = _dialogService_;
-      crmApi = _crmApi_;
+      civicaseCrmApi = _civicaseCrmApi_;
       crmStatus = _crmStatus_;
       $q = _$q_;
       ts = _ts_;
@@ -130,7 +130,7 @@
           });
 
           it('does not save the review panel', () => {
-            expect(crmApi).not.toHaveBeenCalledWith('AwardReviewPanel', 'create', jasmine.any(Object));
+            expect(civicaseCrmApi).not.toHaveBeenCalledWith('AwardReviewPanel', 'create', jasmine.any(Object));
           });
         });
 
@@ -142,7 +142,7 @@
           });
 
           it('does not save the review panel', () => {
-            expect(crmApi).not.toHaveBeenCalledWith('AwardReviewPanel', 'create', jasmine.any(Object));
+            expect(civicaseCrmApi).not.toHaveBeenCalledWith('AwardReviewPanel', 'create', jasmine.any(Object));
           });
         });
       });
@@ -173,7 +173,7 @@
         });
 
         it('saves a new review panel', () => {
-          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
             id: null,
             title: 'New Review Panel',
             is_active: '1',
@@ -265,7 +265,7 @@
       });
 
       it('fetches all relationship types', () => {
-        expect(crmApi).toHaveBeenCalledWith('RelationshipType', 'get', {
+        expect(civicaseCrmApi).toHaveBeenCalledWith('RelationshipType', 'get', {
           sequential: 1,
           is_active: 1,
           options: { sort: 'label_a_b', limit: 0 }
@@ -344,7 +344,7 @@
       });
 
       it('fetches all groups', () => {
-        expect(crmApi).toHaveBeenCalledWith('Group', 'get', {
+        expect(civicaseCrmApi).toHaveBeenCalledWith('Group', 'get', {
           sequential: 1,
           return: ['id', 'title'],
           options: { limit: 0 }
@@ -359,7 +359,7 @@
       });
 
       it('fetches all tags for cases', () => {
-        expect(crmApi).toHaveBeenCalledWith('Tag', 'get', {
+        expect(civicaseCrmApi).toHaveBeenCalledWith('Tag', 'get', {
           sequential: 1,
           used_for: 'Cases',
           options: { limit: 0 }
@@ -376,7 +376,7 @@
         });
 
         it('fetches all exisiting review panels for the award', () => {
-          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
             sequential: 1,
             case_type_id: '10',
             options: { limit: 0 }
@@ -426,7 +426,7 @@
         });
 
         it('shows the contacts name in the contact list', () => {
-          expect(crmApi).toHaveBeenCalledWith('Contact', 'get', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('Contact', 'get', {
             sequential: 1,
             return: ['display_name'],
             id: { IN: ['4', '2', '3', '1'] },
@@ -444,7 +444,7 @@
         });
 
         it('fetches all exisiting review panels for the award', () => {
-          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
             sequential: 1,
             case_type_id: '10',
             options: { limit: 0 }
@@ -476,7 +476,7 @@
         });
 
         it('does not fetch any contact information', () => {
-          expect(crmApi).not.toHaveBeenCalledWith('Contact', 'get', jasmine.any(Object));
+          expect(civicaseCrmApi).not.toHaveBeenCalledWith('Contact', 'get', jasmine.any(Object));
         });
       });
     });
@@ -563,13 +563,13 @@
 
         it('deletes the review panel', () => {
           expect(crmConfirmOnFn).toHaveBeenCalledWith('crmConfirm:yes', jasmine.any(Function));
-          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'delete', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardReviewPanel', 'delete', {
             id: '46'
           });
         });
 
         it('refreshes the review panel list', () => {
-          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
             sequential: 1,
             case_type_id: '10',
             options: { limit: 0 }
@@ -615,14 +615,14 @@
 
         it('enables the review panel', () => {
           expect(crmConfirmOnFn).toHaveBeenCalledWith('crmConfirm:yes', jasmine.any(Function));
-          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
             id: '46',
             is_active: '1'
           });
         });
 
         it('refreshes the review panel list', () => {
-          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
             sequential: 1,
             case_type_id: '10',
             options: { limit: 0 }
@@ -668,14 +668,14 @@
 
         it('disables the review panel', () => {
           expect(crmConfirmOnFn).toHaveBeenCalledWith('crmConfirm:yes', jasmine.any(Function));
-          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardReviewPanel', 'create', {
             id: '46',
             is_active: '0'
           });
         });
 
         it('refreshes the review panel list', () => {
-          expect(crmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardReviewPanel', 'get', {
             sequential: 1,
             case_type_id: '10',
             options: { limit: 0 }
@@ -789,7 +789,7 @@
      * "EntityName.ActionName".
      */
     function getCrmApiMock () {
-      return jasmine.createSpy('crmApi')
+      return jasmine.createSpy('civicaseCrmApi')
         .and.callFake((entityName, action, params) => {
           const entityAction = `${entityName}.${action}`;
           const entityActionHandler = entityActionHandlers[entityAction];

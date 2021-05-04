@@ -10,7 +10,7 @@
   });
 
   module.controller('CiviawardReviewFieldsTableController', function (
-    $rootScope, $scope, CaseStatus, crmApi, dialogService, ts,
+    $rootScope, $scope, civicaseCrmApi, dialogService, ts,
     reviewScoringFieldsGroupName, isTruthy) {
     $scope.reviewFields = [];
     $scope.resourcesBaseUrl = CRM.config.resourceBase;
@@ -202,8 +202,10 @@
      * @returns {Promise} promise containing all review fields
      */
     function fetchAllReviewFields () {
-      return crmApi([['CustomField', 'get', {
-        sequential: true, custom_group_id: reviewScoringFieldsGroupName
+      return civicaseCrmApi([['CustomField', 'get', {
+        sequential: true,
+        custom_group_id: reviewScoringFieldsGroupName,
+        options: { limit: 0 }
       }]]).then(function (customFieldData) {
         return customFieldData[0].values;
       });

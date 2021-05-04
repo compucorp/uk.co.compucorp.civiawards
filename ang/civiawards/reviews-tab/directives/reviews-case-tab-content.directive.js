@@ -20,7 +20,7 @@
    * @param {object} $q the $q service.
    * @param {object} $scope the scope object.
    * @param {object} $sce angular Strict Contextual Escaping service.
-   * @param {Function} crmApi the CiviCRM API service.
+   * @param {Function} civicaseCrmApi the CiviCRM API service.
    * @param {string} reviewsActivityTypeName the reviews activity type name.
    * @param {string} reviewScoringFieldsGroupName the review scoring fields group name.
    * @param {Function} ts the translation function.
@@ -28,9 +28,9 @@
    * @param {Function} civicaseCrmUrl civicrm url service
    * @param {Function} civicaseCrmLoadForm service to load civicrm forms
    */
-  function civiawardsReviewsCaseTabContentController ($q, $scope, $sce, crmApi,
-    reviewsActivityTypeName, reviewScoringFieldsGroupName, ts, crmStatus,
-    civicaseCrmUrl, civicaseCrmLoadForm) {
+  function civiawardsReviewsCaseTabContentController ($q, $scope, $sce,
+    civicaseCrmApi, reviewsActivityTypeName, reviewScoringFieldsGroupName, ts,
+    crmStatus, civicaseCrmUrl, civicaseCrmLoadForm) {
     var CRM_FORM_LOAD_EVENT = 'crmFormLoad';
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
     var REVIEW_FORM_URL = 'civicrm/awardreview';
@@ -57,7 +57,7 @@
      * @returns {Promise} resolves after the review has been deleted.
      */
     function deleteReviewActivity (reviewActivityId) {
-      return crmApi('Activity', 'delete', {
+      return civicaseCrmApi('Activity', 'delete', {
         id: reviewActivityId
       });
     }
@@ -68,7 +68,7 @@
      * @returns {Promise} resolves after fetching the reviews.
      */
     function getReviewActivities () {
-      return crmApi('Activity', 'get', {
+      return civicaseCrmApi('Activity', 'get', {
         activity_type_id: reviewsActivityTypeName,
         case_id: $scope.caseItem.id,
         options: { limit: 0 },
@@ -90,7 +90,7 @@
      * @returns {Promise} resolves after fetching the award's details.
      */
     function getAwardDetails () {
-      return crmApi('AwardDetail', 'getsingle', {
+      return civicaseCrmApi('AwardDetail', 'getsingle', {
         case_type_id: $scope.caseItem.case_type_id
       });
     }

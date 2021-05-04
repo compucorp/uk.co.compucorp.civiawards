@@ -16,8 +16,8 @@
   });
 
   module.controller('CiviAwardCreateEditAwardController', function (
-    $location, $q, $scope, $window, CaseTypeCategory, CaseStatus, crmApi, crmStatus,
-    Select2Utils, ts) {
+    $location, $q, $scope, $window, CaseTypeCategory, CaseStatus,
+    civicaseCrmApi, crmStatus, Select2Utils, ts) {
     var DEFAULT_ACTIVITY_TYPES = [
       { name: 'Applicant Review' },
       { name: 'Email' },
@@ -139,7 +139,7 @@
      * @returns {Promise} promise
      */
     function fetchAwardInformation () {
-      return crmApi({
+      return civicaseCrmApi({
         caseType: ['CaseType', 'getsingle', { sequential: true, id: $scope.awardId }],
         additionalDetails: ['AwardDetail', 'getsingle', { sequential: true, case_type_id: $scope.awardId }]
       });
@@ -302,7 +302,7 @@
         params.id = $scope.awardId;
       }
 
-      return crmApi('CaseType', 'create', params).then(function (caseTypeData) {
+      return civicaseCrmApi('CaseType', 'create', params).then(function (caseTypeData) {
         return caseTypeData.values[0];
       });
     }
@@ -365,7 +365,7 @@
         params.id = $scope.awardDetailsID;
       }
 
-      return crmApi('AwardDetail', 'create', params)
+      return civicaseCrmApi('AwardDetail', 'create', params)
         .then(function (awardData) {
           return {
             caseType: award,

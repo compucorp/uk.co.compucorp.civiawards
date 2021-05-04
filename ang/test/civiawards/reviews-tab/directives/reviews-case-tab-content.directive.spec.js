@@ -1,7 +1,7 @@
 ((_, $) => {
   describe('Review Case Tab Content', () => {
     let $controller, $q, $rootScope, $scope, AwardAdditionalDetailsMockData,
-      caseItem, crmApi, ReviewActivitiesMockData, ReviewFieldsMockData,
+      caseItem, civicaseCrmApi, ReviewActivitiesMockData, ReviewFieldsMockData,
       reviewsActivityTypeName, reviewScoringFieldsGroupName, crmStatus,
       civicaseCrmUrl, civicaseCrmLoadForm;
     const entityActionHandlers = {
@@ -11,9 +11,9 @@
     };
 
     beforeEach(module('civiawards', 'civiawards.data', ($provide) => {
-      crmApi = getCrmApiMock();
+      civicaseCrmApi = getCrmApiMock();
 
-      $provide.value('crmApi', crmApi);
+      $provide.value('civicaseCrmApi', civicaseCrmApi);
     }));
 
     beforeEach(inject((_$controller_, _$q_, _$rootScope_, _ApplicationsMockData_,
@@ -45,13 +45,13 @@
       });
 
       it('requests the award details for the application award type', () => {
-        expect(crmApi).toHaveBeenCalledWith('AwardDetail', 'getsingle', {
+        expect(civicaseCrmApi).toHaveBeenCalledWith('AwardDetail', 'getsingle', {
           case_type_id: $scope.caseItem.case_type_id
         });
       });
 
       it('requests all review activities for the application', () => {
-        expect(crmApi).toHaveBeenCalledWith('Activity', 'get', {
+        expect(civicaseCrmApi).toHaveBeenCalledWith('Activity', 'get', {
           activity_type_id: reviewsActivityTypeName,
           case_id: $scope.caseItem.id,
           options: { limit: 0 },
@@ -108,12 +108,12 @@
 
     describe('on case updated', () => {
       beforeEach(() => {
-        crmApi.calls.reset();
+        civicaseCrmApi.calls.reset();
         $scope.$emit('updateCaseData');
       });
 
       it('reloads the list of reviews', () => {
-        expect(crmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
+        expect(civicaseCrmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
       });
     });
 
@@ -156,7 +156,7 @@
           });
 
           it('reloads the reviews', () => {
-            expect(crmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
+            expect(civicaseCrmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
           });
         });
       });
@@ -200,7 +200,7 @@
           });
 
           it('reloads the reviews', () => {
-            expect(crmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
+            expect(civicaseCrmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
           });
         });
       });
@@ -220,7 +220,7 @@
           });
 
           it('deletes the selected review', () => {
-            expect(crmApi).toHaveBeenCalledWith('Activity', 'delete', {
+            expect(civicaseCrmApi).toHaveBeenCalledWith('Activity', 'delete', {
               id: selectedReview.id
             });
           });
@@ -312,7 +312,7 @@
      * "EntityName.ActionName".
      */
     function getCrmApiMock () {
-      return jasmine.createSpy('crmApi')
+      return jasmine.createSpy('civicaseCrmApi')
         .and.callFake((entityName, action, params) => {
           const entityAction = `${entityName}.${action}`;
           const entityActionHandler = entityActionHandlers[entityAction];

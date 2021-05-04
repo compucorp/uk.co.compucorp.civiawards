@@ -1,7 +1,7 @@
 (function (angular, $, _) {
   var module = angular.module('civiawards');
 
-  module.directive('civiawardContactsGroupDropdown', function (crmApi, isTruthy) {
+  module.directive('civiawardContactsGroupDropdown', function (civicaseCrmApi, isTruthy) {
     return {
       link: civiawardContactsGroupDropdownLink,
       restrict: 'A',
@@ -100,7 +100,7 @@
        * @returns {Promise} promise
        */
       function fetchGroupsData () {
-        return crmApi('Group', 'get', {
+        return civicaseCrmApi('Group', 'get', {
           options: { limit: 0 }
         }).then(function (groupsData) {
           return groupsData.values;
