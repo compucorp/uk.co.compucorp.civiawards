@@ -20,7 +20,7 @@ class CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_Payments
     $paymentsTabModule = new PaymentsTabModule();
     $caseTypeCategory = CaseCategoryFabricator::fabricate(['name' => 'category1']);
 
-    $_REQUEST['case_type_category'] = $caseTypeCategory['name'];
+    $_REQUEST['case_type_category'] = $caseTypeCategory['value'];
     $financeManagement->saveForCaseCategory($caseTypeCategory['value'], TRUE);
 
     $paymentsTabModule->run($modulesList);
@@ -37,7 +37,7 @@ class CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_Payments
     $paymentsTabModule = new PaymentsTabModule();
     $caseTypeCategory = CaseCategoryFabricator::fabricate(['name' => 'category1']);
 
-    $_REQUEST['case_type_category'] = $caseTypeCategory['name'];
+    $_REQUEST['case_type_category'] = $caseTypeCategory['value'];
     $financeManagement->saveForCaseCategory($caseTypeCategory['value'], FALSE);
 
     $paymentsTabModule->run($modulesList);

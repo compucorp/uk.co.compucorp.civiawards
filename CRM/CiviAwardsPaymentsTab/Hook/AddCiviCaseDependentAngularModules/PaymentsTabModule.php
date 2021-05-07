@@ -1,6 +1,7 @@
 <?php
 
 use CRM_CiviAwards_Service_FinanceManagementSetting as FinanceManagementSettingService;
+use CRM_Civicase_Helper_CaseUrl as CaseUrlHelper;
 
 /**
  * Add Payments Tab module.
@@ -31,23 +32,12 @@ class CRM_CiviAwardsPaymentsTab_Hook_AddCiviCaseDependentAngularModules_Payments
    *   True for awards that support finances.
    */
   private function shouldRun() {
-    $caseTypeCategoryName = CRM_Utils_Request::retrieve('case_type_category', 'String');
+    [$caseCategoryId, $caseCategoryName] = CaseUrlHelper::getCategoryParamsFromUrl();
+    $financeManagement = new FinanceManagementSettingService();
+    $financeManagementValue = $financeManagement->get($caseCategoryId);
+    $supportsFinanceTabModule = !empty($financeManagementValue);
 
-    try {
-      $caseTypeCategory = civicrm_api3('OptionValue', 'getsingle', [
-        'option_group_id' => 'case_type_categories',
-        'name' => $caseTypeCategoryName,
-      ]);
-
-      $financeManagement = new FinanceManagementSettingService();
-      $financeManagementValue = $financeManagement->get($caseTypeCategory['value']);
-      $supportsFinanceTabModule = !empty($financeManagementValue);
-
-      return $supportsFinanceTabModule;
-    }
-    catch (\Exception $exception) {
-      return FALSE;
-    }
+    return $supportsFinanceTabModule;
   }
 
 }
