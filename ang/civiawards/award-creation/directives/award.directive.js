@@ -16,8 +16,10 @@
   });
 
   module.controller('CiviAwardCreateEditAwardController', function (
-    $location, $q, $scope, $window, CaseTypeCategory, CaseStatus,
+    $location, $q, $scope, $window, CaseStatus,
     civicaseCrmApi, crmStatus, Select2Utils, ts) {
+    var existingCaseTypeDefintion = null;
+
     var DEFAULT_ACTIVITY_TYPES = [
       { name: 'Applicant Review' },
       { name: 'Email' },
@@ -25,7 +27,6 @@
       { name: 'Meeting' },
       { name: 'Phone Call' }
     ];
-
     $scope.applicationStatusOptions = [];
     $scope.pageTitle = 'New Award';
     $scope.isNameDisabled = true;
@@ -66,6 +67,7 @@
         $scope.activeTab = getDefaultTabName();
         fetchAwardInformation()
           .then(function (award) {
+            existingCaseTypeDefintion = award.caseType.definition;
             updateApplicationStatusOptions(award.caseType);
 
             $scope.$emit('civiawards::edit-award::details-fetched', award);
@@ -296,12 +298,20 @@
         }
       };
 
-      prepareAwardStagesWhenEditings(params);
-
       if ($scope.awardId) {
         params.id = $scope.awardId;
+        params.definition = _.merge(params.definition, existingCaseTypeDefintion, function (a, b) {
+          if (_.isArray(a)) {
+            var mergedArray = a.concat(b).reverse();
+
+            return _.uniq(mergedArray, function (val) {
+              return val.name;
+            }).reverse();
+          }
+        });
       }
 
+      prepareAwardStagesWhenEditings(params);
       return civicaseCrmApi('CaseType', 'create', params).then(function (caseTypeData) {
         return caseTypeData.values[0];
       });
