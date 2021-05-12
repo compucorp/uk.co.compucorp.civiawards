@@ -302,6 +302,9 @@
         params.id = $scope.awardId;
         params.definition = _.merge(params.definition, existingCaseTypeDefintion, function (a, b) {
           if (_.isArray(a)) {
+            // When CaseType `definition` has overridden `Application Manager` role
+            // Then those will be overridden by `{ name: 'Application Manager', manager: 1 }`
+            // Hence we reverse the array before using `_.uniq`, and then we reverse it back.
             var mergedArray = a.concat(b).reverse();
 
             return _.uniq(mergedArray, function (val) {
