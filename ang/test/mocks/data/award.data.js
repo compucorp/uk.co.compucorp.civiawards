@@ -13,6 +13,55 @@
         'Open',
         'Closed',
         'Urgent'
+      ],
+      restrictActivityAsgmtToCmsUser: '0',
+      activityTypes: [
+        {
+          name: 'Open Case',
+          max_instances: '1'
+        },
+        {
+          name: 'Medical evaluation'
+        },
+        {
+          name: 'Applicant Review',
+          max_instances: '2'
+        }
+      ],
+      activitySets: [
+        {
+          name: 'tl1',
+          label: 'Timeline 1',
+          timeline: '1',
+          activityTypes: [
+            {
+              name: 'Medical evaluation',
+              reference_activity: 'Open Case',
+              reference_offset: '1',
+              reference_select: 'newest'
+            }
+          ]
+        }
+      ],
+      timelineActivityTypes: [
+        {
+          name: 'Mental health evaluation',
+          reference_activity: 'Open Case',
+          reference_offset: '1',
+          reference_select: 'newest'
+        }
+      ],
+      caseRoles: [
+        {
+          name: 'Homeless Services Coordinator',
+          creator: '1',
+          manager: '1'
+        },
+        {
+          name: 'Application Manager',
+          creator: '0',
+          manager: '1'
+        }
       ]
     },
     case_type_category: '3',

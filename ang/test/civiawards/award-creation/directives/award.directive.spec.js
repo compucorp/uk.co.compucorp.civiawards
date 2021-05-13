@@ -362,7 +362,7 @@
           }, jasmine.any(Object));
         });
 
-        it('saves the basic award details', () => {
+        it('saves the basic award details without overriding the case type configuration', () => {
           expect(civicaseCrmApi).toHaveBeenCalledWith('CaseType', 'create', {
             sequential: true,
             title: 'title',
@@ -370,29 +370,32 @@
             is_active: true,
             case_type_category: '3',
             name: 'title',
-            definition: jasmine.objectContaining({
-              caseRoles: [{
-                name: 'Application Manager',
-                manager: 1
-              }],
-              statuses: ['Open']
-            }),
-            id: '10'
-          });
-        });
-
-        it('creates the award with default activity types', () => {
-          expect(civicaseCrmApi).toHaveBeenCalledWith('CaseType', 'create', jasmine.objectContaining({
-            definition: jasmine.objectContaining({
+            definition: {
               activityTypes: [
-                { name: 'Applicant Review' },
                 { name: 'Email' },
                 { name: 'Follow up' },
                 { name: 'Meeting' },
-                { name: 'Phone Call' }
-              ]
-            })
-          }));
+                { name: 'Phone Call' },
+                { name: 'Open Case', max_instances: '1' },
+                { name: 'Medical evaluation' },
+                { name: 'Applicant Review', max_instances: '2' }
+              ],
+              caseRoles: [{
+                name: 'Homeless Services Coordinator',
+                creator: '1',
+                manager: '1'
+              }, {
+                name: 'Application Manager',
+                creator: '0',
+                manager: '1'
+              }],
+              statuses: ['Open'],
+              restrictActivityAsgmtToCmsUser: _.first(AwardMockData).definition.restrictActivityAsgmtToCmsUser,
+              activitySets: _.first(AwardMockData).definition.activitySets,
+              timelineActivityTypes: _.first(AwardMockData).definition.timelineActivityTypes
+            },
+            id: '10'
+          });
         });
       });
     });
@@ -536,9 +539,7 @@
      * @returns {Promise} The mocked API response.
      */
     function mockCrmApiService (entity, action, params) {
-      const mockAwardType = _.extend({}, _.first(AwardMockData), {
-        definition: {}
-      });
+      const mockAwardType = _.extend({}, _.first(AwardMockData));
       const entityResponses = {
         AwardDetail: { values: [AwardAdditionalDetailsMockData] },
         CaseType: { values: [mockAwardType] }
