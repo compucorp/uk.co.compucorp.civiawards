@@ -13,6 +13,16 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
   const AWARDS_CASE_TYPE_CATEGORY_NAME = 'awards';
 
   /**
+   * Award category label.
+   */
+  const AWARDS_CASE_TYPE_CATEGORY_LABEL = 'Awards';
+
+  /**
+   * Award category singular label.
+   */
+  const AWARDS_CASE_TYPE_CATEGORY_SINGULAR_LABEL = 'Award';
+
+  /**
    * Applicant management instance name.
    */
   const APPLICATION_MANAGEMENT_NAME = 'applicant_management';
@@ -62,6 +72,20 @@ class CRM_CiviAwards_Helper_CaseTypeCategory {
    */
   public static function getSubTypes() {
     return AwardDetail::buildOptions('award_subtype');
+  }
+
+  /**
+   * Get data for creating the menu.
+   *
+   * @return string[]
+   *   Category data.
+   */
+  public static function getDataForMenu() {
+    return [
+      'name' => self::AWARDS_CASE_TYPE_CATEGORY_NAME,
+      'label' => self::AWARDS_CASE_TYPE_CATEGORY_LABEL,
+      'singular_label' => self::AWARDS_CASE_TYPE_CATEGORY_SINGULAR_LABEL,
+    ];
   }
 
 }

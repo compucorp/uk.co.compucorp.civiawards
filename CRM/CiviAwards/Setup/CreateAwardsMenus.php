@@ -13,7 +13,7 @@ class CRM_CiviAwards_Setup_CreateAwardsMenus {
    */
   public function apply() {
     $applicationMenu = new ApplicantManagementMenu();
-    $applicationMenu->createItems(CaseTypeCategoryHelper::AWARDS_CASE_TYPE_CATEGORY_NAME);
+    $applicationMenu->createItems(CaseTypeCategoryHelper::getDataForMenu());
   }
 
 }

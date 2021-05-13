@@ -10,8 +10,9 @@ class CRM_CiviAwards_Service_ApplicantManagementMenu extends CRM_Civicase_Servic
   /**
    * {@inheritDoc}
    */
-  public function getSubmenus($caseTypeCategoryName, array $permissions = NULL) {
-    $labelForMenu = ucfirst(strtolower($caseTypeCategoryName));
+  public function getSubmenus(array $caseTypeCategory, array $permissions = NULL) {
+    $singularLabelForMenu = ucfirst(strtolower($caseTypeCategory['singular_label']));
+    $caseTypeCategoryName = $caseTypeCategory['name'];
     $categoryId = civicrm_api3('OptionValue', 'getsingle', [
       'option_group_id' => 'case_type_categories',
       'name' => $caseTypeCategoryName,
@@ -38,9 +39,9 @@ class CRM_CiviAwards_Service_ApplicantManagementMenu extends CRM_Civicase_Servic
         'has_separator' => 1,
       ],
       [
-        'label' => ts("Manage " . $labelForMenu),
+        'label' => ts('Manage %1 Types', ['1' => $singularLabelForMenu]),
         'name' => "manage_{$caseTypeCategoryName}_workflows",
-        'url' => 'civicrm/workflow/a?case_type_category=' . $categoryId . '#/list',
+        'url' => 'civicrm/workflow/a?case_type_category=' . $categoryId . '&p=al#/list',
         'permission' => "{$permissions['ADMINISTER_CASE_CATEGORY']['name']}, administer CiviCRM",
         'permission_operator' => 'OR',
       ],
