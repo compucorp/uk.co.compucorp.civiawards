@@ -26,6 +26,7 @@ class CRM_CiviAwards_Helper_CustomGroupPostProcess extends CRM_Civicase_Helper_I
     $params = [
       'return' => ['case_type_id'],
       'case_type_id.case_type_category' => $caseCategoryValue,
+      'options' => ['limit' => 0],
     ];
 
     $subTypes = array_filter($subTypes);
