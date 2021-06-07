@@ -26,6 +26,7 @@ class CRM_CiviAwards_Helper_CustomGroupPostProcess extends CRM_Civicase_Helper_I
     $params = [
       'return' => ['case_type_id'],
       'case_type_id.case_type_category' => $caseCategoryValue,
+      'options' => ['limit' => 0],
     ];
 
     $subTypes = array_filter($subTypes);
@@ -78,6 +79,7 @@ class CRM_CiviAwards_Helper_CustomGroupPostProcess extends CRM_Civicase_Helper_I
       'extends' => 'Case',
       'extends_entity_column_id' => ['IN' => [$caseCategoryId]],
       'extends_entity_column_value' => ['LIKE' => '%' . CRM_Core_DAO::VALUE_SEPARATOR . $caseTypeId . CRM_Core_DAO::VALUE_SEPARATOR . '%'],
+      'options' => ['limit' => 0],
     ]);
 
     return $result['values'];
