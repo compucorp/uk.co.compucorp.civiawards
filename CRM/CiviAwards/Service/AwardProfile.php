@@ -124,6 +124,7 @@ class CRM_CiviAwards_Service_AwardProfile {
     }
     $result = civicrm_api3('UFField', 'get', [
       'uf_group_id' => $profileID,
+      'options' => ['limit' => 0],
     ]);
 
     if ($result['count'] == 0) {
