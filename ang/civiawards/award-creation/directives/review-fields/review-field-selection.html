@@ -26,11 +26,14 @@
     <tbody>
       <tr
         ng-repeat="reviewField in model.reviewFields | filter: model.searchText"
+        ng-attr-title="{{reviewField.is_active === '0' ? 'This field is disabled.' : ''}}"
+        ng-class="{ disabled: !model.isTruthy(reviewField.is_active) }"
         ng-click="model.toggleReviewField(reviewField)">
         <td>{{reviewField.label}}</td>
         <td align="center">
           <input
             ng-checked="!!model.findReviewFieldByID(reviewField.id)"
+            ng-disabled="!model.isTruthy(reviewField.is_active)"
             type="checkbox"/>
         </td>
         <td>{{reviewField.data_type}}</td>

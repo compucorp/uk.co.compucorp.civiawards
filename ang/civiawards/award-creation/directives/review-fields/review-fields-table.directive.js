@@ -18,6 +18,7 @@
     $scope.openReviewFieldSelectionPopup = openReviewFieldSelectionPopup;
     $scope.removeReviewFieldFromSelection = removeReviewFieldFromSelection;
     $scope.findReviewFieldByID = findReviewFieldByID;
+    $scope.isTruthy = isTruthy;
     $scope.toggleRequiredState = toggleRequiredState;
     $scope.moveUp = moveUp;
     $scope.moveDown = moveDown;
@@ -217,6 +218,10 @@
      * @param {object} reviewField review field object to be toggled
      */
     function toggleReviewField (reviewField) {
+      if (!isTruthy(reviewField.is_active)) {
+        return;
+      }
+
       var field = findReviewFieldByID(reviewField.id);
 
       if (field) {

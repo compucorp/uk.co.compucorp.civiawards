@@ -16,7 +16,7 @@
   });
 
   module.controller('CiviAwardCreateEditAwardController', function (
-    $location, $q, $scope, $window, CaseStatus,
+    $location, $q, $scope, $window, CaseStatus, isTruthy,
     civicaseCrmApi, crmStatus, Select2Utils, ts) {
     var existingCaseTypeDefintion = null;
 
@@ -326,13 +326,22 @@
      * @returns {object[]} list of selected review field ids
      */
     function prepareReviewFields () {
-      return _.map($scope.additionalDetails.selectedReviewFields, function (reviewField) {
-        return {
-          id: reviewField.id,
-          required: reviewField.required ? '1' : '0',
-          weight: reviewField.weight
-        };
-      });
+      return _.chain($scope.additionalDetails.selectedReviewFields)
+        .filter(function (reviewField) {
+          reviewField = _.find($scope.reviewFields, function (field) {
+            return field.id === reviewField.id;
+          });
+
+          return isTruthy(reviewField.is_active);
+        })
+        .map(function (reviewField) {
+          return {
+            id: reviewField.id,
+            required: reviewField.required ? '1' : '0',
+            weight: reviewField.weight
+          };
+        })
+        .value();
     }
 
     /**
