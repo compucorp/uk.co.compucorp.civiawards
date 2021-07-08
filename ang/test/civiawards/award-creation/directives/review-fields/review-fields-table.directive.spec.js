@@ -89,6 +89,50 @@
           expect($scope.additionalDetails.selectedReviewFields).toEqual([]);
         });
       });
+
+      describe('and the review field is disabled', () => {
+        beforeEach(() => {
+          ReviewFieldsMockData[0].is_active = '0';
+        });
+
+        afterEach(() => {
+          ReviewFieldsMockData[0].is_active = '1';
+        });
+
+        describe('and the review was not selected before', () => {
+          beforeEach(() => {
+            $scope.additionalDetails = { selectedReviewFields: [] };
+
+            $scope.toggleReviewField(ReviewFieldsMockData[0]);
+          });
+
+          it('does not addd the clicked review field as selected', () => {
+            expect($scope.additionalDetails.selectedReviewFields).toEqual([]);
+          });
+        });
+
+        describe('and the review was selected before', () => {
+          beforeEach(() => {
+            $scope.additionalDetails = {
+              selectedReviewFields: [{
+                id: ReviewFieldsMockData[0].id,
+                required: false,
+                weight: 1
+              }]
+            };
+
+            $scope.toggleReviewField(ReviewFieldsMockData[0]);
+          });
+
+          it('does not remove the clicked review field from selected', () => {
+            expect($scope.additionalDetails.selectedReviewFields[0]).toEqual({
+              id: ReviewFieldsMockData[0].id,
+              required: false,
+              weight: 1
+            });
+          });
+        });
+      });
     });
 
     describe('when the REMOVE button is clicked from the review field list', () => {

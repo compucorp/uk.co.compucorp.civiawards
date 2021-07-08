@@ -25,8 +25,10 @@
   <tbody>
     <tr
       ng-repeat="reviewField in additionalDetails.selectedReviewFields | orderBy: 'weight'"
-      ng-if="additionalDetails.selectedReviewFields.length > 0">
-      <td>{{getReviewFieldData(reviewField.id, 'label')}}</td>
+      ng-if="additionalDetails.selectedReviewFields.length > 0 && isTruthy(getReviewFieldData(reviewField.id, 'is_active'))">
+      <td>
+        {{getReviewFieldData(reviewField.id, 'label')}}
+      </td>
       <td>
         <a
           class="crm-weight-arrow" ng-if="$index > 0"
