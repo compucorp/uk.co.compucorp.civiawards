@@ -9,7 +9,7 @@ and processes.
 ## How do I get CiviAwards?
 
 ### Technical Requirements
-* [CiviCase](https://github.com/compucorp/uk.co.compucorp.civicase/releases): version >= v1.0.0-beta.5, preferably the latest version.
+* [CiviCase](https://github.com/compucorp/uk.co.compucorp.civicase/releases): version >= v1.0.0-beta.5, preferably the latest version. Exact CiviCRM and PHP versions can be found on the [CiviCase Repository](https://github.com/compucorp/uk.co.compucorp.civicase#technical-requirements).
 
 ### Installation
 If this is the first time you use an CiviCRM extension,  please see [Here](http://wiki.civicrm.org/confluence/display/CRMDOC/Extensions "CiviCRM Extensions Installation") for full instructions and information on how to set and configure extensions.
