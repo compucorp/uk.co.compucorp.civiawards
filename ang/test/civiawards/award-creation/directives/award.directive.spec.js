@@ -1,7 +1,8 @@
 (function (_) {
   describe('civiaward', () => {
-    var $q, $controller, $rootScope, $scope, $window, $location, civicaseCrmApi, crmStatus,
-      CaseStatus, AwardMockData, AwardAdditionalDetailsMockData, ReviewFieldsMockData;
+    var $q, $controller, $rootScope, $scope, $window, $location, civicaseCrmApi,
+      crmStatus, CaseStatus, AwardMockData, AwardAdditionalDetailsMockData,
+      ReviewFieldsMockData, CaseStatusesMockData;
 
     beforeEach(module('civicase-base', 'civiawards.templates',
       'crmUtil', 'civiawards', 'civicase.data', 'civiawards.data', ($provide) => {
@@ -12,7 +13,8 @@
 
     beforeEach(inject((_$q_, _$controller_, _$window_, _$location_,
       _$rootScope_, _civicaseCrmApi_, _CaseStatus_, _AwardMockData_,
-      _AwardAdditionalDetailsMockData_, _ReviewFieldsMockData_, _crmStatus_) => {
+      _AwardAdditionalDetailsMockData_, _ReviewFieldsMockData_, _crmStatus_,
+      _CaseStatuses_) => {
       $q = _$q_;
       $window = _$window_;
       $location = _$location_;
@@ -24,6 +26,7 @@
       AwardMockData = _AwardMockData_;
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_.get();
       ReviewFieldsMockData = _ReviewFieldsMockData_;
+      CaseStatusesMockData = _CaseStatuses_.values;
       $scope = $rootScope.$new();
 
       spyOn($scope, '$emit');
@@ -144,6 +147,8 @@
       });
 
       describe('when the award has no status names stored', () => {
+        var expectedApplicationStatues;
+
         beforeEach(() => {
           const award = _.chain(AwardMockData).first().cloneDeep().value();
           delete award.definition.statuses;
@@ -154,14 +159,18 @@
 
           createController({});
           $scope.$digest();
+
+          expectedApplicationStatues = _.map(CaseStatusesMockData, function (status) {
+            return {
+              id: status.value,
+              text: status.label,
+              name: status.name
+            };
+          });
         });
 
         it('stores all the statuses data as select2 options', () => {
-          expect($scope.applicationStatusOptions).toEqual([
-            { id: '1', text: 'Ongoing', name: 'Open' },
-            { id: '2', text: 'Resolved', name: 'Closed' },
-            { id: '3', text: 'Urgent', name: 'Urgent' }
-          ]);
+          expect($scope.applicationStatusOptions).toEqual(expectedApplicationStatues);
         });
       });
     });
