@@ -6,7 +6,7 @@ jobs:
   run-unit-tests:
 
     runs-on: ubuntu-latest
-    container: compucorp/civicrm-buildkit:1.1.0-php7.2-chrome
+    container: compucorp/civicrm-buildkit:1.1.1-php7.2-chrome
 
     env:
       CIVICRM_EXTENSIONS_DIR: site/web/sites/all/modules/civicrm/tools/extensions
@@ -40,6 +40,7 @@ jobs:
       - name: Download CiviAwards dependencies
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}
         run: |
+          git clone --depth 1 https://github.com/compucorp/uk.co.compucorp.usermenu.git
           git clone --depth 1 https://github.com/civicrm/org.civicrm.shoreditch.git
           git clone --depth 1 --no-single-branch https://github.com/compucorp/uk.co.compucorp.civicase.git
 
@@ -58,7 +59,7 @@ jobs:
       - name: Install CiviAwards and its dependencies
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}
         run: |
-          cv en shoreditch civicase
+          cv en usermenu shoreditch civicase
           cv en civiawards
 
       - name: Run JS unit tests
