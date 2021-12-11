@@ -7,7 +7,7 @@ use CRM_CiviAwards_Setup_AddApplicantManagementCaseTypeCustomGroupSupport as Add
 use CRM_CiviAwards_Setup_DeleteAwardsCaseCategoryOption as DeleteAwardsCaseCategoryOption;
 use CRM_CiviAwards_Setup_CreateAwardSubtypeOptionGroup as CreateAwardSubtypeOptionGroup;
 use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
-use CRM_CiviAwards_Setup_DeleteApplicantReviewCustomField as DeleteApplicantReviewCustomField;
+use CRM_CiviAwards_Setup_DeleteCustomGroups as DeleteCustomGroups;
 use CRM_CiviAwards_Setup_AddApplicationManagementWordReplacement as AddApplicationManagementWordReplacement;
 use CRM_CiviAwards_Setup_AddCurrencyOptionGroupToCustomFields as AddCurrencyOptionGroupToCustomFields;
 use CRM_CiviAwards_Setup_CreateAwardPaymentActivityTypes as CreateAwardPaymentActivityTypes;
@@ -19,7 +19,6 @@ use CRM_CiviAwards_Enable_ActivateAwardsMenus as ActivateAwardsMenus;
 use CRM_CiviAwards_Disable_DeactivateCustomGroupSupportForAwardsCategory as DeactivateCustomGroupSupportForAwardsCategory;
 use CRM_CiviAwards_Disable_DeactivateCustomGroupSupportForApplicantManagement as DeactivateCustomGroupSupportForApplicantManagement;
 use CRM_CiviAwards_Disable_DeactivateAwardsMenus as DeactivateAwardsMenus;
-
 use CRM_CiviAwards_Setup_CreateAwardsMenus as CreateAwardsMenus;
 use CRM_CiviAwards_Setup_UpdateAwardPaymentActivityStatusLabel as UpdateAwardPaymentActivityStatusLabel;
 use CRM_Civicase_Setup_AddSingularLabels as AddSingularLabels;
@@ -115,7 +114,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
     $steps = [
       new DeleteAwardsCaseCategoryOption(),
       new RemoveCustomGroupSupportForAwardsCategory(),
-      new DeleteApplicantReviewCustomField(),
+      new DeleteCustomGroups(),
       new RemoveCustomGroupSupportForApplicantManagement(),
     ];
 
