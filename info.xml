@@ -5,20 +5,18 @@
   <description>Create Awards/Grants, Manage Applications and processes</description>
   <license>AGPL-3.0</license>
   <maintainer>
-    <author>Compucorp</author>
-    <email>info@compucorp.co.uk</email>
+    <author>Compuco</author>
+    <email>hello@compuco.io</email>
   </maintainer>
   <urls>
-    <url desc="Main Extension Page">https://github.com/compucorp/uk.co.compucorp.civiawards</url>
     <url desc="Documentation">https://github.com/compucorp/uk.co.compucorp.civiawards/blob/master/readme.md</url>
     <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
-    <url desc="Support">http://FIXME</url>
   </urls>
-  <releaseDate>2021-09-13</releaseDate>
-  <version>1.2.0</version>
-  <develStage>beta</develStage>
+  <releaseDate>2021-12-15</releaseDate>
+  <version>1.3.0</version>
+  <develStage>stable</develStage>
   <compatibility>
-    <ver>5.35</ver>
+    <ver>5.39</ver>
   </compatibility>
   <civix>
     <namespace>CRM/CiviAwards</namespace>
