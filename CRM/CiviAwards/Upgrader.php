@@ -7,12 +7,18 @@ use CRM_CiviAwards_Setup_AddApplicantManagementCaseTypeCustomGroupSupport as Add
 use CRM_CiviAwards_Setup_DeleteAwardsCaseCategoryOption as DeleteAwardsCaseCategoryOption;
 use CRM_CiviAwards_Setup_CreateAwardSubtypeOptionGroup as CreateAwardSubtypeOptionGroup;
 use CRM_CiviAwards_Setup_CreateApplicantReviewActivityType as CreateApplicantReviewActivityType;
-use CRM_CiviAwards_Setup_DeleteApplicantReviewCustomField as DeleteApplicantReviewCustomField;
+use CRM_CiviAwards_Setup_DeleteCustomGroups as DeleteCustomGroups;
 use CRM_CiviAwards_Setup_AddApplicationManagementWordReplacement as AddApplicationManagementWordReplacement;
 use CRM_CiviAwards_Setup_AddCurrencyOptionGroupToCustomFields as AddCurrencyOptionGroupToCustomFields;
 use CRM_CiviAwards_Setup_CreateAwardPaymentActivityTypes as CreateAwardPaymentActivityTypes;
 use CRM_CiviAwards_Uninstall_RemoveCustomGroupSupportForAwardsCategory as RemoveCustomGroupSupportForAwardsCategory;
 use CRM_CiviAwards_Uninstall_RemoveCustomGroupSupportForApplicantManagement as RemoveCustomGroupSupportForApplicantManagement;
+use CRM_CiviAwards_Enable_ActivateCustomGroupSupportForAwardsCategory as ActivateCustomGroupSupportForAwardsCategory;
+use CRM_CiviAwards_Enable_ActivateCustomGroupSupportForApplicantManagement as ActivateCustomGroupSupportForApplicantManagement;
+use CRM_CiviAwards_Enable_ActivateAwardsMenus as ActivateAwardsMenus;
+use CRM_CiviAwards_Disable_DeactivateCustomGroupSupportForAwardsCategory as DeactivateCustomGroupSupportForAwardsCategory;
+use CRM_CiviAwards_Disable_DeactivateCustomGroupSupportForApplicantManagement as DeactivateCustomGroupSupportForApplicantManagement;
+use CRM_CiviAwards_Disable_DeactivateAwardsMenus as DeactivateAwardsMenus;
 use CRM_CiviAwards_Setup_CreateAwardsMenus as CreateAwardsMenus;
 use CRM_CiviAwards_Setup_UpdateAwardPaymentActivityStatusLabel as UpdateAwardPaymentActivityStatusLabel;
 use CRM_Civicase_Setup_AddSingularLabels as AddSingularLabels;
@@ -72,13 +78,43 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
   }
 
   /**
+   * Custom extension enable logic.
+   */
+  public function enable() {
+    $steps = [
+      new ActivateCustomGroupSupportForAwardsCategory(),
+      new ActivateCustomGroupSupportForApplicantManagement(),
+      new ActivateAwardsMenus(),
+    ];
+
+    foreach ($steps as $step) {
+      $step->apply();
+    }
+  }
+
+  /**
+   * Custom extension disable logic.
+   */
+  public function disable() {
+    $steps = [
+      new DeactivateCustomGroupSupportForAwardsCategory(),
+      new DeactivateCustomGroupSupportForApplicantManagement(),
+      new DeactivateAwardsMenus(),
+    ];
+
+    foreach ($steps as $step) {
+      $step->apply();
+    }
+  }
+
+  /**
    * Custom extension un-install logic.
    */
   public function uninstall() {
     $steps = [
       new DeleteAwardsCaseCategoryOption(),
       new RemoveCustomGroupSupportForAwardsCategory(),
-      new DeleteApplicantReviewCustomField(),
+      new DeleteCustomGroups(),
       new RemoveCustomGroupSupportForApplicantManagement(),
     ];
 
