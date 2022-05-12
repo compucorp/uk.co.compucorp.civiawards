@@ -11,8 +11,10 @@
         <th>ID</th>
         <th>Payee</th>
         <th>Type</th>
-        <th>Payment Amount</th>
         <th>Payment Currency</th>
+        <th>Payment Amount</th>
+        <th>Value in Functional Currency - Currency</th>
+        <th>Value in Functional Currency - Amount</th>
         <th>Due Date</th>
         <th>Payee Ref</th>
         <th>Status</th>
@@ -24,8 +26,10 @@
         <td>{{payment.id}}</td>
         <td>{{payment.target_contact_name}}</td>
         <td>{{payment.paymentTypeLabel}}</td>
-        <td>{{payment.custom_Payment_Amount_Value}}</td>
         <td>{{payment.custom_Payment_Currency}}</td>
+        <td>{{payment.custom_Payment_Amount_Value}}</td>
+        <td>{{payment.custom_Value_in_Functional_Currency_Type}}</td>
+        <td>{{payment.custom_Value_in_Functional_Currency_Amount}}</td>
         <td>{{payment.activity_date_time | civicaseCrmDate}}</td>
         <td>{{payment.custom_Payee_Ref|limitTo:10}}</td>
         <td>{{payment['status_id.label']}}</td>
