@@ -21,6 +21,13 @@
       source_contact_id: '2',
       source_contact_name: 'Compu Admin',
       source_contact_sort_name: 'Admin, Compu',
+      'api.OptionValue.getsingle': {
+        id: '282',
+        option_group_id: '26',
+        label: 'Completed',
+        value: '2',
+        name: 'Completed'
+      },
       'api.CustomValue.gettreevalues': {
         is_error: 0,
         version: 3,
@@ -103,6 +110,13 @@
       source_contact_id: '2',
       source_contact_name: 'Compu Admin',
       source_contact_sort_name: 'Admin, Compu',
+      'api.OptionValue.getsingle': {
+        id: '282',
+        option_group_id: '26',
+        label: 'Draft',
+        value: '10',
+        name: 'Draft'
+      },
       'api.CustomValue.gettreevalues': {
         is_error: 0,
         version: 3,
@@ -185,6 +199,13 @@
       source_contact_id: '2',
       source_contact_name: 'Compu Admin',
       source_contact_sort_name: 'Admin, Compu',
+      'api.OptionValue.getsingle': {
+        id: '282',
+        option_group_id: '26',
+        label: 'Completed',
+        value: '2',
+        name: 'Completed'
+      },
       'api.CustomValue.gettreevalues': {
         is_error: 0,
         version: 3,

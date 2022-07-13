@@ -73,6 +73,10 @@
         case_id: $scope.caseItem.id,
         options: { limit: 0 },
         sequential: 1,
+        'api.OptionValue.getsingle': {
+          option_group_id: 'activity_status',
+          value: '$value.status_id'
+        },
         'api.CustomValue.gettreevalues': {
           entity_id: '$value.id',
           entity_type: 'Activity',
@@ -106,12 +110,14 @@
       var sortOrder = _.sortBy(scoringFieldsSortOrder, 'weight');
 
       return _.map(angular.copy(activitiesData), function (activity) {
+        activity.status_label = activity['api.OptionValue.getsingle'].label;
         activity.reviewFields = sortOrder.map(function (scoringFieldSortOrder) {
           return _.find(activity['api.CustomValue.gettreevalues'].values[0].fields, function (field) {
             return field.id === scoringFieldSortOrder.id;
           });
         });
 
+        delete activity['api.OptionValue.getsingle'];
         delete activity['api.CustomValue.gettreevalues'];
 
         return activity;
