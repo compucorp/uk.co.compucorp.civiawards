@@ -98,6 +98,14 @@
       {/foreach}
       {* Form fields section Ends *}
 
+      {* Review Status Section Starts *}
+      <div class="form-group {$form_group_class}">
+        <label class="{$form_group_label_class}">{$form.status_id.label}</label>
+        <div class="{$form_group_field_class}">{$form.status_id.html}</div>
+        <div class="clear"></div>
+      </div>
+      {* Review Status Section Endss *}
+
       {* Form action section Starts *}
       {if !$errorMessage}
         {if $isReviewFromSsp}
