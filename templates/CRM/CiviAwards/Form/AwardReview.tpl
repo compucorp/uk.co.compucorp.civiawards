@@ -93,17 +93,27 @@
             <div class="ssp-form-control-description text-muted"> {$element.help_post} </div>
           {/if}
           <div class="{$form_group_field_class}">{$form[$element.name].html}</div>
+          <div class="{$form_group_field_class}">{$form[$element.name].html}</div>
           <div class="clear"></div>
         </div>
       {/foreach}
       {* Form fields section Ends *}
 
       {* Review Status Section Starts *}
-      <div class="form-group {$form_group_class}">
-        <label class="{$form_group_label_class}">{$form.status_id.label}</label>
-        <div class="{$form_group_field_class}">{$form.status_id.html}</div>
+      {* View Mode *}
+      {if $isViewAction}
+        <div class="form-group {$form_group_class}">
+        <label class="{$form_group_label_class}">{ts}Status{/ts}</label>
+        <div class="{$form_group_field_class}">{$activityStatus}</div>
         <div class="clear"></div>
-      </div>
+        </div>
+      {else} {*  End view mode *}
+        <div class="form-group {$form_group_class}">
+          <label class="{$form_group_label_class}">{$form.status_id.label}</label>
+          <div class="{$form_group_field_class}">{$form.status_id.html}</div>
+          <div class="clear"></div>
+        </div>
+      {/if}
       {* Review Status Section Endss *}
 
       {* Form action section Starts *}
