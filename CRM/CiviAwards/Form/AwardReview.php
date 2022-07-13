@@ -4,6 +4,7 @@ use CRM_CiviAwards_ExtensionUtil as E;
 use CRM_CiviAwards_BAO_AwardDetail as AwardDetail;
 use CRM_CiviAwards_Service_AwardPanelContact as AwardPanelContact;
 use CRM_CiviAwards_Service_AwardApplicationContactAccess as AwardApplicationContactAccess;
+use Civi\Api4\OptionValue as OptionValueAPI;
 
 /**
  * Form controller class.
@@ -102,6 +103,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       $profileFieldDefaults = [];
       CRM_Core_BAO_UFGroup::setComponentDefaults($this->fields, $this->activityId, 'Activity', $profileFieldDefaults, TRUE);
       $this->defaultValues = $profileFieldDefaults;
+      $this->defaultValues['status_id'] = $this->activity['status_id'];
     }
 
     $this->defaultValues['source_contact_id'] = $isAddAction
@@ -305,6 +307,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
     else {
       $this->addEntityRef('source_contact_id', ts('Reported By'));
+      $this->add('select', 'status_id', ts('Status'), $this->getReviewStatus());
     }
 
     $customFieldData = $this->getCustomFieldData(array_keys($this->fields));
@@ -407,6 +410,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
         'case_id',
         'source_contact_id',
         'source_contact_name',
+        'status_id',
       ],
     ]);
   }
@@ -629,6 +633,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       'source_contact_id' => $values['source_contact_id'],
       'target_id' => 'user_contact_id',
       'activity_type_id' => 'Applicant Review',
+      'status_id' => $values['status_id'],
       'case_id' => $this->caseId,
     ]);
 
@@ -681,6 +686,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     civicrm_api3('Activity', 'create', [
       'id' => $this->activityId,
       'source_contact_id' => $values['source_contact_id'],
+      'status_id' => $values['status_id'],
     ]);
   }
 
@@ -734,6 +740,29 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     ]);
 
     return empty($result['values']) ? TRUE : FALSE;
+  }
+
+  /**
+   * Gets Completed and Draft status from activity status.
+   *
+   * @return array
+   *   Completed and Draft activity type
+   */
+  private function getReviewStatus() {
+    $optionValues = OptionValueAPI::get()
+      ->addWhere('option_group_id:name', '=', 'activity_status')
+      ->addWhere('grouping', 'CONTAINS', 'Applicant Review')
+      ->execute();
+
+    $status = [];
+    foreach ($optionValues as $optionValue) {
+      if (!in_array($optionValue['label'], ['Completed', 'Draft'])) {
+        continue;
+      }
+      $status[$optionValue['value']] = $optionValue['label'];
+    }
+
+    return $status;
   }
 
 }

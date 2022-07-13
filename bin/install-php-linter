@@ -10,5 +10,5 @@ chmod +x phpcs.phar
 
 # Clone Drupal Coder repo
 if [ ! -d drupal/coder ]; then
-  git clone --depth 1 https://git.drupalcode.org/project/coder.git drupal/coder
+  git clone --depth 1 --branch 8.3.13 https://git.drupalcode.org/project/coder.git drupal/coder
 fi
