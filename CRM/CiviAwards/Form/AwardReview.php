@@ -302,6 +302,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     if ($isViewAction) {
       $this->assign('sourceContactId', $this->activity['source_contact_id']);
       $this->assign('sourceContactName', $this->activity['source_contact_name']);
+      $this->assign('activityStatus', $this->activity['status_id.label']);
       $editUrlParams = "action=update&id={$this->activityId}&reset=1";
       $this->assign('editUrlParams', $editUrlParams);
     }
@@ -411,6 +412,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
         'source_contact_id',
         'source_contact_name',
         'status_id',
+        'status_id.label',
       ],
     ]);
   }
