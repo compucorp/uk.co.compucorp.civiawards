@@ -93,7 +93,6 @@
             <div class="ssp-form-control-description text-muted"> {$element.help_post} </div>
           {/if}
           <div class="{$form_group_field_class}">{$form[$element.name].html}</div>
-          <div class="{$form_group_field_class}">{$form[$element.name].html}</div>
           <div class="clear"></div>
         </div>
       {/foreach}
