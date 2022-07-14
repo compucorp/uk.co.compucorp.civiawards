@@ -281,6 +281,8 @@
                 caseRoles: [{
                   name: 'Application Manager',
                   manager: 1
+                }, {
+                  name: 'Has application reviewed by'
                 }]
               })
             });
@@ -397,6 +399,10 @@
                 name: 'Application Manager',
                 creator: '0',
                 manager: '1'
+              }, {
+                name: 'Has application reviewed by',
+                creator: '0',
+                manager: '0'
               }],
               statuses: ['Open'],
               restrictActivityAsgmtToCmsUser: _.first(AwardMockData).definition.restrictActivityAsgmtToCmsUser,

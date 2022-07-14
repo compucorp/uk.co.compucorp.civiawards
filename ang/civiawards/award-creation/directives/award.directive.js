@@ -294,6 +294,8 @@
           caseRoles: [{
             name: 'Application Manager',
             manager: 1
+          }, {
+            name: 'Has application reviewed by'
           }]
         }
       };
