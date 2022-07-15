@@ -20,7 +20,8 @@
             relationship_type_id: '14',
             contact_id: ['3', '1']
           }
-        ]
+        ],
+        case_roles: ['Has application reviewed by']
       },
       visibility_settings: {
         application_status: ['1', '1001'],
@@ -37,7 +38,8 @@
       contact_settings: {
         exclude_groups: [],
         include_groups: [],
-        relationship: []
+        relationship: [],
+        case_roles: []
       },
       visibility_settings: {
         application_status: [],

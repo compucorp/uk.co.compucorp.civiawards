@@ -47,8 +47,26 @@
         </div>
 
         <div class="form-group">
+          <label class="col-sm-5 control-label">
+            Case Role
+            <a crm-ui-help="hs({id: 'case_role', title: ts('Case Role'), file: 'CRM/CiviAwards/Form/Award'})"></a>
+          </label>
+          <div class="col-sm-7">
+            <input class="form-control"
+              ng-model="model.currentReviewPanel.contactSettings.caseRoles"
+              placeholder="Case Role"
+              crm-ui-select="{
+                allowClear: true,
+                multiple: true,
+                data: model.caseRoles
+              }"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
           <label class="col-sm-12 control-label">
-            Additional Contacts to add to Panel
+            Contacts by Relationship to another Contact
           </label>
         </div>
 
@@ -85,6 +103,7 @@
         <a class="btn btn-primary text-center" ng-click="model.addMoreRelations()">
           <i class="fa fa-plus-circle"></i> Add More
         </a>
+
       </form>
     </div>
     <div class="tab-pane active" ng-show="model.activeTab === 'applications'">
