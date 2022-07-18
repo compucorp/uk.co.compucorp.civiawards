@@ -790,8 +790,8 @@
     }
 
     /**
-      * @returns {object} the mocked response for the Award.Get api action.
-    */
+     * @returns {object} the mocked response for the Award.Get api action.
+     */
     function caseRoleGetHandler () {
       return {
         is_error: 0,
@@ -799,14 +799,14 @@
         count: 1,
         values: {
           69: {
-            id: "69",
+            id: '69',
             definition: {
               caseRoles: [
                 {
-                    name: "Has application reviewed by",
+                  name: 'Has application reviewed by'
                 }
               ]
-            },
+            }
           }
         }
       };

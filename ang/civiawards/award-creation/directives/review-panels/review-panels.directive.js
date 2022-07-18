@@ -380,7 +380,7 @@
       }
 
       var formattedContactSettings = {
-        include: [], exclude: [], relation: []
+        caseRoles: [], include: [], exclude: [], relation: []
       };
 
       _.each(reviewPanel.contact_settings.include_groups, function (includeGroupID) {
@@ -404,6 +404,8 @@
 
         formattedContactSettings.relation.push(specificRelationDetails);
       });
+
+      formattedContactSettings.caseRoles = reviewPanel.contact_settings.case_roles;
 
       return formattedContactSettings;
     }
