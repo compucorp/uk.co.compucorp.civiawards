@@ -2,7 +2,7 @@
   <ul class="nav nav-tabs">
     <li ng-repeat="tab in model.tabs" ng-class="{active: model.activeTab === tab.name}">
       <a href ng-click="model.selectTab(tab.name)">
-        {{ tab.label }}
+        {{:: ts(tab.label) }}
       </a>
     </li>
   </ul>
@@ -14,7 +14,7 @@
         ng-class="{'civiawards__award__review-panel-form--submitted': model.submitButtonClickedOnce}">
         <div class="form-group">
           <label class="col-sm-5 control-label required-mark">
-            Title
+            {{:: ts('Title') }}
           </label>
           <div class="col-sm-7">
             <input
@@ -27,7 +27,7 @@
           <label
             for="civiaward-review-panel-popup-isenabled"
             class="col-xs-5 control-label">
-            Enabled?
+            {{:: ts('Enabled?') }}
           </label>
           <div class="col-xs-7">
             <input
@@ -39,7 +39,7 @@
 
         <div class="form-group">
           <label class="col-sm-5 control-label">
-            Group or Smart Group
+            {{:: ts('Group or Smart Group') }}
           </label>
           <div class="col-sm-7">
             <input civiaward-contacts-group-dropdown ng-model="model.currentReviewPanel.contactSettings.groups"/>
@@ -48,7 +48,7 @@
 
         <div class="form-group">
           <label class="col-sm-5 control-label">
-            Case Role
+            {{:: ts('Case Role') }}
             <a crm-ui-help="hs({id: 'case_role', title: ts('Case Role'), file: 'CRM/CiviAwards/Form/Award'})"></a>
           </label>
           <div class="col-sm-7">
@@ -66,7 +66,7 @@
 
         <div class="form-group">
           <label class="col-sm-12 control-label">
-            Contacts by Relationship to another Contact
+            {{:: ts('Contacts by Relationship to another Contact') }}
           </label>
         </div>
 
@@ -79,7 +79,7 @@
               ng-required="relationship.contacts.length > 0"
             />
           </div>
-          <div class="civiawards__award__review-panel__to-label">to</div>
+          <div class="civiawards__award__review-panel__to-label">{{:: ts('to') }}</div>
           <div class="col-xs-5">
             <input class="form-control"
               ng-model="relationship.contacts"
@@ -95,13 +95,13 @@
             <a
               class="btn btn-link"
               ng-click="model.removeRelation($index)">
-              Remove
+              {{:: ts('Remove') }}
             </a>
           </div>
         </div>
 
         <a class="btn btn-primary text-center" ng-click="model.addMoreRelations()">
-          <i class="fa fa-plus-circle"></i> Add More
+          <i class="fa fa-plus-circle"></i> {{:: ts('Add More') }}
         </a>
 
       </form>
@@ -111,7 +111,7 @@
         class="form-horizontal">
         <div class="form-group">
           <label class="col-sm-5 control-label">
-            Applicant Statuses
+            {{:: ts('Applicant Statuses') }}
           </label>
           <div class="col-sm-7">
             <input class="form-control"
@@ -138,14 +138,14 @@
         class="form-horizontal civiawards__award__review-panel-form-visibility"
             ng-class="{'civiawards__award__review-panel-form-visibility--submitted': model.submitButtonClickedOnce}">
         <div class="form-group">
-          <label class="col-sm-6 control-label">Anonymise Contacts for this Panel?</label>
+          <label class="col-sm-6 control-label">{{:: ts('Anonymise Contacts for this Panel?') }}</label>
           <div class="col-sm-3">
             <input type="checkbox"
               ng-model="model.currentReviewPanel.visibilitySettings.anonymizeApplication"/>
           </div>
         </div>
         <div class="form-group">
-          <label class="col-sm-6 control-label">Panel can change the status of an application?</label>
+          <label class="col-sm-6 control-label">{{:: ts('Panel can change the status of an application?') }}</label>
           <div class="col-sm-3">
             <input type="checkbox"
               ng-model="model.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted"/>
@@ -154,7 +154,7 @@
 
         <div class="form-group" ng-show="model.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted">
           <label class="col-sm-6 control-label required-mark">
-            Statuses
+            {{:: ts('Statuses') }}
           </label>
           <div class="col-sm-6">
             <input class="form-control"
