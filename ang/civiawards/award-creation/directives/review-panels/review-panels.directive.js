@@ -14,8 +14,8 @@
   });
 
   module.controller('CiviawardReviewPanelsController', function (
-    $q, $scope, ts, dialogService, civicaseCrmApi, crmStatus, Select2Utils,
-    CaseStatus, isTruthy) {
+    $q, $scope, $rootScope, ts, dialogService, civicaseCrmApi, crmStatus, Select2Utils,
+    CaseStatus, isTruthy, crmUiHelp) {
     var relationshipTypesIndexed = {};
     var contactsIndexed = {};
     var groupsIndexed = {};
@@ -63,6 +63,32 @@
     }
 
     /**
+     * Get the roles attached to the current Award
+     *
+     * @returns {Promise} api call promise
+     */
+    function getRoles () {
+      return civicaseCrmApi('Award', 'get', {
+        sequential: 1,
+        case_type_params: { id: $scope.awardId },
+        options: { limit: 1 }
+      }).then(function (data) {
+        const award = data.values[$scope.awardId];
+        if (!award) {
+          return [];
+        }
+
+        return _.map(award.definition.caseRoles, function (role) {
+          return {
+            text: role.name,
+            name: role.name,
+            id: role.name
+          };
+        });
+      });
+    }
+
+    /**
      * Selects a tab as active
      *
      * @param {string} tab tab name
@@ -91,7 +117,8 @@
         tags: getTags(),
         groups: fetchGroups(),
         relationships: fetchRelationshipsTypes(),
-        existingReviewPanels: fetchExistingReviewPanels($scope.awardId)
+        existingReviewPanels: fetchExistingReviewPanels($scope.awardId),
+        roles: getRoles()
       }).then(function (fetchedData) {
         if (fetchedData.existingReviewPanels && fetchedData.existingReviewPanels.length === 0) {
           return fetchedData;
@@ -104,6 +131,7 @@
           });
       }).then(function (fetchedData) {
         $scope.allTags = fetchedData.tags;
+        $scope.caseRoles = fetchedData.roles;
         tagsIndexed = _.indexBy(fetchedData.tags, 'id');
 
         $scope.relationshipTypes = prepareRelationshipsTypes(fetchedData.relationships);
@@ -195,7 +223,8 @@
             include: reviewPanel.contact_settings.include_groups,
             exclude: reviewPanel.contact_settings.exclude_groups
           },
-          relationships: getRelationshipsForEditingReviewPanel(reviewPanel)
+          relationships: getRelationshipsForEditingReviewPanel(reviewPanel),
+          caseRoles: reviewPanel.contact_settings.case_roles
         },
         visibilitySettings: {
           selectedApplicantStatus: reviewPanel.visibility_settings.application_status,
@@ -351,7 +380,7 @@
       }
 
       var formattedContactSettings = {
-        include: [], exclude: [], relation: []
+        caseRoles: [], include: [], exclude: [], relation: []
       };
 
       _.each(reviewPanel.contact_settings.include_groups, function (includeGroupID) {
@@ -375,6 +404,8 @@
 
         formattedContactSettings.relation.push(specificRelationDetails);
       });
+
+      formattedContactSettings.caseRoles = reviewPanel.contact_settings.case_roles;
 
       return formattedContactSettings;
     }
@@ -500,7 +531,8 @@
         resetReviewPanelPopup();
       }
 
-      dialogService.open(
+      $rootScope.hs = crmUiHelp({});
+      const dialogPromise = dialogService.open(
         'ReviewPanels',
         '~/civiawards/award-creation/directives/review-panels/review-panel-popup.html',
         $scope,
@@ -513,6 +545,12 @@
           statusOptions: $scope.statusOptions
         }
       );
+
+      dialogPromise
+        .catch(function () {})
+        .finally(function () {
+          $rootScope.hs = null;
+        });
     }
 
     /**
@@ -585,7 +623,8 @@
         contact_settings: {
           exclude_groups: $scope.currentReviewPanel.contactSettings.groups.exclude,
           include_groups: $scope.currentReviewPanel.contactSettings.groups.include,
-          relationship: prepareRelationshipsForSave()
+          relationship: prepareRelationshipsForSave(),
+          case_roles: Select2Utils.getSelect2Value($scope.currentReviewPanel.contactSettings.caseRoles)
         },
         visibility_settings: {
           application_status: Select2Utils.getSelect2Value($scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus),
@@ -659,7 +698,8 @@
           relationships: [{
             contacts: '',
             type: ''
-          }]
+          }],
+          caseRoles: []
         }
       };
     }

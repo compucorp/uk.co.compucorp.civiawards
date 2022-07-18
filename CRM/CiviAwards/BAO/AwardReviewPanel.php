@@ -128,6 +128,9 @@ class CRM_CiviAwards_BAO_AwardReviewPanel extends CRM_CiviAwards_DAO_AwardReview
           ],
         ],
       ],
+      'case_roles' => [
+        'is_array' => TRUE,
+      ],
     ];
 
     self::validateSettingFields($fieldConfig, $params['contact_settings'], 'Contact Settings');

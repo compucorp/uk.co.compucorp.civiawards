@@ -83,7 +83,8 @@
             relationships: [{
               contacts: '',
               type: ''
-            }]
+            }],
+            caseRoles: []
           }
         });
       });
@@ -99,6 +100,7 @@
 
         dialogService.open.and.callFake(function (__, ___, ____, options) {
           saveButtonClickHandler = options.buttons[0].click;
+          return Promise.resolve();
         });
 
         $scope.openCreateReviewPanelPopup();
@@ -163,6 +165,7 @@
             contacts: '30,31',
             type: '18_b_a'
           }];
+          $scope.currentReviewPanel.contactSettings.caseRoles = ['Has application reviewed by'];
           $scope.currentReviewPanel.visibilitySettings.selectedApplicantStatus = '1,2';
           $scope.currentReviewPanel.visibilitySettings.tags = ['1', '2', '12', '13'];
           $scope.currentReviewPanel.visibilitySettings.isApplicationStatusRestricted = true;
@@ -189,7 +192,8 @@
                 is_a_to_b: '0',
                 relationship_type_id: '18',
                 contact_id: ['30', '31']
-              }]
+              }],
+              case_roles: ['Has application reviewed by']
             },
             visibility_settings: {
               application_status: ['1', '2'],
@@ -232,6 +236,7 @@
 
             dialogService.open.and.callFake(function (__, ___, ____, options) {
               saveButtonClickHandler = options.buttons[0].click;
+              return Promise.resolve();
             });
 
             $scope.currentReviewPanel.id = '1';
@@ -402,7 +407,8 @@
                     relationship_type_id: '14',
                     contact_id: ['3', '1']
                   }
-                ]
+                ],
+                case_roles: ['Has application reviewed by']
               },
               visibility_settings: {
                 application_status: ['1'],
@@ -420,7 +426,8 @@
                 }, {
                   relationshipLabel: 'Benefits Specialist',
                   contacts: ['Kiara Jones', 'Default Organization']
-                }]
+                }],
+                caseRoles: ['Has application reviewed by']
               },
               formattedVisibilitySettings: {
                 applicationStatus: ['Ongoing'],
@@ -432,7 +439,8 @@
               formattedContactSettings: {
                 include: [],
                 exclude: [],
-                relation: []
+                relation: [],
+                caseRoles: []
               },
               formattedVisibilitySettings: {
                 applicationStatus: [],
@@ -482,7 +490,8 @@
               formattedContactSettings: {
                 include: [],
                 exclude: [],
-                relation: []
+                relation: [],
+                caseRoles: []
               },
               formattedVisibilitySettings: {
                 applicationStatus: [],
@@ -512,6 +521,10 @@
         createController();
         $scope.$digest();
 
+        dialogService.open.and.callFake(function (__, ___, ____, options) {
+          return Promise.resolve();
+        });
+
         $scope.handleEditReviewPanel($scope.existingReviewPanels[0]);
 
         expectedReviewPanel = {
@@ -529,7 +542,8 @@
             }, {
               contacts: ['3', '1'],
               type: '14_b_a'
-            }]
+            }],
+            caseRoles: ['Has application reviewed by']
           },
           visibilitySettings: {
             selectedApplicantStatus: ['1'],
@@ -724,7 +738,8 @@
         },
         'Contact.get': contactGetHandler,
         'Group.get': groupGetHandler,
-        'Tag.get': tagGetHandler
+        'Tag.get': tagGetHandler,
+        'Award.get': caseRoleGetHandler
       };
     }
     /**
@@ -771,6 +786,29 @@
         version: 3,
         count: TagsMockData.get().length,
         values: _.cloneDeep(TagsMockData.get())
+      };
+    }
+
+    /**
+     * @returns {object} the mocked response for the Award.Get api action.
+     */
+    function caseRoleGetHandler () {
+      return {
+        is_error: 0,
+        version: 3,
+        count: 1,
+        values: {
+          69: {
+            id: '69',
+            definition: {
+              caseRoles: [
+                {
+                  name: 'Has application reviewed by'
+                }
+              ]
+            }
+          }
+        }
       };
     }
 
