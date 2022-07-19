@@ -18,9 +18,9 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
    */
   public function testGetThrowsExceptionWhenNoAwardPanelsExistForAward() {
     $caseType = CaseTypeFabricator::fabricate();
-    $applicationContactAccess = new ApplicationContactAccess();
     $contactId = 1;
     $awardPanelContact = new AwardPanelContact();
+    $applicationContactAccess = new ApplicationContactAccess($awardPanelContact);
 
     $this->setExpectedException(
       'Exception',
@@ -34,9 +34,9 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
    */
   public function testGetThrowsExceptionWhenNoContactDoesBelongToAnyAwardPanels() {
     $caseType = CaseTypeFabricator::fabricate();
-    $applicationContactAccess = new ApplicationContactAccess();
     $contactId = 1;
     $awardPanelContact = new AwardPanelContact();
+    $applicationContactAccess = new ApplicationContactAccess($awardPanelContact);
 
     $params = [
       [
@@ -71,7 +71,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
    */
   public function testGetReturnsTheContactAccessForContact() {
     $caseType = CaseTypeFabricator::fabricate();
-    $applicationContactAccess = new ApplicationContactAccess();
     $contactId = 1;
 
     $params = [
@@ -107,6 +106,8 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
     }
 
     $awardPanelContact = $this->getAwardPanelContactObject($awardPanel, $contactId);
+    $applicationContactAccess = new ApplicationContactAccess($awardPanelContact);
+
     $expectedResult = [
       [
         'application_tags' => [1, 2],
@@ -122,7 +123,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
       ],
     ];
 
-    $this->assertEquals($expectedResult, $applicationContactAccess->get($contactId, $caseType['id'], $awardPanelContact));
+    $this->assertEquals($expectedResult, $applicationContactAccess->get($contactId, $caseType['id']));
   }
 
   /**
@@ -131,7 +132,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
   public function testGetReviewAccessForContactAndPanelSettingIsForAllCaseTags() {
     $caseType = CaseTypeFabricator::fabricate();
     $caseStatus = 1;
-    $applicationContactAccess = new ApplicationContactAccess();
     $caseData = CaseFabricator::fabricateWithTags(
       ['Tag 1', 'Tag 2'],
       ['status_id' => $caseStatus, 'case_type_id' => $caseType['id']]
@@ -174,6 +174,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
     }
 
     $awardPanelContact = $this->getAwardPanelContactObject($awardPanel, $contactId);
+    $applicationContactAccess = new ApplicationContactAccess($awardPanelContact);
 
     // Panel 1 and Panel 3 meets the case status and tags criteria.
     // So Contact will view combined status to move to for both panels
@@ -184,7 +185,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
       'anonymize_application' => FALSE,
     ];
 
-    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['case']['id'], $awardPanelContact));
+    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['case']['id']));
   }
 
   /**
@@ -193,7 +194,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
   public function testGetReviewAccessForContactAndAndPanelSettingIsForSpecificCaseTags() {
     $caseType = CaseTypeFabricator::fabricate();
     $caseStatus = 1;
-    $applicationContactAccess = new ApplicationContactAccess();
     $caseData = CaseFabricator::fabricateWithTags(
       ['Tag 1', 'Tag 2'],
       ['status_id' => $caseStatus, 'case_type_id' => $caseType['id']]
@@ -251,6 +251,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
     }
 
     $awardPanelContact = $this->getAwardPanelContactObject($awardPanel, $contactId);
+    $applicationContactAccess = new ApplicationContactAccess($awardPanelContact);
 
     // Panel 1, Panel 3, Panel 4 meets the case status and case tags criteria.
     // So Contact will view combined status to move to for the panels
@@ -261,7 +262,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
       'anonymize_application' => FALSE,
     ];
 
-    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['case']['id'], $awardPanelContact));
+    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['case']['id']));
   }
 
   /**
@@ -270,7 +271,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
   public function testGetReviewAccessForContactAndPanelSettingIsForAllTagsAndContactCanNotViewAnonymisedData() {
     $caseType = CaseTypeFabricator::fabricate();
     $caseStatus = 1;
-    $applicationContactAccess = new ApplicationContactAccess();
     $caseData = CaseFabricator::fabricateWithTags(
       ['Tag 1', 'Tag 2'],
       ['status_id' => $caseStatus, 'case_type_id' => $caseType['id']]
@@ -304,6 +304,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
     }
 
     $awardPanelContact = $this->getAwardPanelContactObject($awardPanel, $contactId);
+    $applicationContactAccess = new ApplicationContactAccess($awardPanelContact);
 
     // Panel 1 and Panel 2 meets the case status and tag criteria.
     // So Contact will view combined status to move to for both panels
@@ -314,7 +315,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
       'anonymize_application' => TRUE,
     ];
 
-    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['case']['id'], $awardPanelContact));
+    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['case']['id']));
   }
 
   /**
@@ -323,7 +324,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
   public function testGetReviewAccessForContactWhenContactBelongsToPanelWhereAllTagsAndStatusIsAllowed() {
     $caseType = CaseTypeFabricator::fabricate();
     $caseStatus = 1;
-    $applicationContactAccess = new ApplicationContactAccess();
     $caseData = CaseFabricator::fabricateWithTags(
       ['Tag 1', 'Tag 2'],
       ['status_id' => $caseStatus, 'case_type_id' => $caseType['id']]
@@ -367,6 +367,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
     }
 
     $awardPanelContact = $this->getAwardPanelContactObject($awardPanel, $contactId);
+    $applicationContactAccess = new ApplicationContactAccess($awardPanelContact);
 
     // Panel 1 and Panel 3 meets the case status criteria.
     // So Contact will view combined status to move to for both panels
@@ -377,7 +378,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
       'anonymize_application' => FALSE,
     ];
 
-    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['case']['id'], $awardPanelContact));
+    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['case']['id']));
   }
 
   /**
@@ -386,7 +387,6 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
   public function testContactIsAbleToMoveToRelevantStatusWhenCaseHasNoTagsAndPanelTagsIsEmpty() {
     $caseType = CaseTypeFabricator::fabricate();
     $caseStatus = 1;
-    $applicationContactAccess = new ApplicationContactAccess();
     $caseData = CaseFabricator::fabricate(
       ['status_id' => $caseStatus, 'case_type_id' => $caseType['id']]
     );
@@ -420,6 +420,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
     }
 
     $awardPanelContact = $this->getAwardPanelContactObject($awardPanel, $contactId);
+    $applicationContactAccess = new ApplicationContactAccess($awardPanelContact);
 
     // If a case has no tags it is accessible by panel user
     // when panel also does not contain any tags.
@@ -428,7 +429,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
       'anonymize_application' => FALSE,
     ];
 
-    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['id'], $awardPanelContact));
+    $this->assertEquals($expectedResult, $applicationContactAccess->getReviewAccess($contactId, $caseData['id']));
   }
 
   /**

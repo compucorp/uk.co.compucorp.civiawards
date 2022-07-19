@@ -211,10 +211,10 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $loggedInContact = CRM_Core_Session::getLoggedInContactID();
     $awardId = $this->getCaseTypeId();
     $awardPanelContact = new AwardPanelContact();
-    $contactAccessService = new AwardApplicationContactAccess();
+    $contactAccessService = new AwardApplicationContactAccess($awardPanelContact);
 
     try {
-      $contactAccess = $contactAccessService->get($loggedInContact, $awardId, $awardPanelContact);
+      $contactAccess = $contactAccessService->get($loggedInContact, $awardId);
 
       return !empty($contactAccess) ? TRUE : FALSE;
     }
@@ -479,9 +479,9 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       // Alter display name of contact to "Anonymous [case-id]" if award
       // ssp review panel has anonymize_application set to true.
       $userID = CRM_Core_Session::getLoggedInContactID();
-      $contactAccessService = new CRM_CiviAwards_Service_AwardApplicationContactAccess();
-      $awardPanelContact = new CRM_CiviAwards_Service_AwardPanelContact();
-      $contactAccess = $contactAccessService->getReviewAccess($userID, $this->caseId, $awardPanelContact);
+      $awardPanelContact = new AwardPanelContact();
+      $contactAccessService = new CRM_CiviAwards_Service_AwardApplicationContactAccess($awardPanelContact);
+      $contactAccess = $contactAccessService->getReviewAccess($userID, $this->caseId);
       if (!empty($contactAccess) && $contactAccess['anonymize_application']) {
         return 'Anonymous ' . $this->caseId;
       }
