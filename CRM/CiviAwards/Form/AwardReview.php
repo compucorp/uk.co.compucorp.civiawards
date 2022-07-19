@@ -93,7 +93,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $hasDefaultValues = !empty($this->defaultValues);
 
     if ($hasDefaultValues) {
-      return;
+      return NULL;
     }
 
     $this->defaultValues = [];
@@ -117,16 +117,6 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * {@inheritDoc}
    */
   public function preProcess() {
-    if (!in_array($this->_action, [
-      CRM_Core_Action::ADD, CRM_Core_Action::VIEW, CRM_Core_Action::UPDATE,
-    ])) {
-      throw new Exception('Action not supported!');
-    }
-
-    if ($this->isReviewFromSsp() && $this->_action == CRM_Core_Action::UPDATE) {
-      throw new Exception('Action not supported!');
-    }
-
     if ($this->_action & CRM_Core_Action::ADD) {
       $this->caseId = CRM_Utils_Request::retrieve('case_id', 'Positive', $this);
     }
@@ -175,6 +165,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
     $isViewAction = $this->_action & CRM_Core_Action::VIEW;
     $isAddAction = $this->_action & CRM_Core_Action::ADD;
+    $isUpdateAction = $this->_action & CRM_Core_Action::UPDATE;
     $hasSubmittedReview = $this->userAlreadySubmittedReview();
     $canNotViewReview = $isViewAction && $this->isReviewFromSsp() && !$this->isReviewOwner();
 
@@ -183,7 +174,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       return "You cannot $action a review for a deleted application.";
     }
 
-    if ($this->isReviewFromSsp() && $hasSubmittedReview && $isAddAction) {
+    if ($this->isReviewFromSsp() && $hasSubmittedReview && ($isAddAction || $isUpdateAction)) {
       return 'You have already submitted a review for this Award and you cannot add another review';
     }
 
@@ -251,21 +242,93 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
     try {
       civicrm_api3('Profile', 'submit', $profileFields);
-      $status = $this->_action == CRM_Core_Action::ADD ? 'Submitted' : 'Updated';
-      CRM_Core_Session::setStatus(ts('Your review has been ' . strtolower($status) . ' successfully.'), ts('Review ' . $status), 'success');
+      $this->redirectUser($values, $activityId);
     }
     catch (Exception $e) {
       CRM_Core_Session::setStatus(ts('An error occurred'), 'Error', 'error');
     }
 
+  }
+
+  /**
+   * Redirects user based on submitting button and forms.
+   *
+   * @param array $values
+   *   Form submission values.
+   * @param int $activityId
+   *   Activity ID.
+   */
+  private function redirectUser(array $values, int $activityId) {
+    if ($this->isReviewFromSsp() && !$values['_qf_AwardReview_submit']) {
+      $url = $this->getRedirectUrlForNonSubmitReview($values, $activityId);
+    }
+    else {
+      $url = $this->getRedirectUrlForSubmitReview($activityId);
+      $status = $this->getSessionStatusText();
+      CRM_Core_Session::setStatus(ts('Your review has been ' . strtolower($status) . ' successfully.'), ts('Review ' . $status), 'success');
+    }
+
+    $session = CRM_Core_Session::singleton();
+    $session->pushUserContext($url);
+  }
+
+  /**
+   * Returns a text either Submitted or Updated based on form and action.
+   *
+   * @return string
+   *   Status text ether Submitted or Updated.
+   */
+  private function getSessionStatusText() {
+    $submittedStatus = 'Submitted';
+    if ($this->isReviewFromSsp()) {
+      return $submittedStatus;
+    }
+
+    return $this->_action == CRM_Core_Action::ADD ? $submittedStatus : 'Updated';
+  }
+
+  /**
+   * Returns a redirect URL for non submitted review buttons.
+   *
+   * @param array $values
+   *   Form submission values.
+   * @param int $activityId
+   *   Activity ID.
+   *
+   * @return string
+   *   Redirect URL.
+   */
+  private function getRedirectUrlForNonSubmitReview(array $values, int $activityId) {
+    // Save & Continue button.
+    if ($values['_qf_AwardReview_next']) {
+      return CRM_Utils_System::url(self::SSP_REVIEW_URL, [
+        'action' => 'update',
+        'id' => $activityId,
+        'reset' => 1,
+      ]);
+    }
+
+    // Save Draft button.
+    return CRM_Utils_System::url('ssp/awards/review-applications');
+  }
+
+  /**
+   * Returns a URL when user submitted the review.
+   *
+   * @param int $activityId
+   *   Activity ID.
+   *
+   * @return string
+   *   Redirect URL for view action.
+   */
+  private function getRedirectUrlForSubmitReview(int $activityId) {
     $awardPath = $this->isReviewFromSsp() ? self::SSP_REVIEW_URL : self::CIVICRM_REVIEW_URL;
-    $url = CRM_Utils_System::url($awardPath, [
+
+    return CRM_Utils_System::url($awardPath, [
       'action' => 'view',
       'id' => $activityId,
       'reset' => 1,
     ]);
-    $session = CRM_Core_Session::singleton();
-    $session->pushUserContext($url);
   }
 
   /**
@@ -298,6 +361,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $this->assign('caseTags', $this->caseTags);
     $this->assign('isViewAction', $isViewAction);
     $this->assign('isReviewFromSsp', $this->isReviewFromSsp());
+    $this->assign('hasSubmittedReview', $this->userAlreadySubmittedReview());
 
     if ($isViewAction) {
       $this->assign('sourceContactId', $this->activity['source_contact_id']);
@@ -308,7 +372,9 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
     else {
       $this->addEntityRef('source_contact_id', ts('Reported By'));
-      $this->add('select', 'status_id', ts('Status'), $this->getReviewStatus());
+      if (!$this->isReviewFromSsp()) {
+        $this->add('select', 'status_id', ts('Status'), $this->getReviewStatus());
+      }
     }
 
     $customFieldData = $this->getCustomFieldData(array_keys($this->fields));
@@ -353,9 +419,43 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
     else {
       $pageTitle = $this->_action == CRM_Core_Action::ADD ? 'Add Review' : 'Update Review - ' . $this->getPageTitle();
+      $this->addReviewButtons();
+    }
+
+    CRM_Utils_System::setTitle(E::ts($pageTitle));
+  }
+
+  /**
+   * Adds buttons to the form based on form types i.e SSP, CiviAward.
+   */
+  private function addReviewButtons() {
+    if ($this->isReviewFromSsp()) {
       $this->addButtons([
         [
           'type' => 'done',
+          'name' => E::ts('Save Draft'),
+          'class' => 'btn btn-primary default validate pull-left',
+          'icon' => '',
+        ],
+        [
+          'type' => 'submit',
+          'name' => E::ts('Submit Review'),
+          'isDefault' => TRUE,
+          'class' => 'btn btn-primary default validate pull-right',
+          'icon' => '',
+        ],
+        [
+          'type' => 'next',
+          'name' => E::ts('Save & Continue'),
+          'class' => 'btn btn-primary default validate pull-right',
+          'icon' => '',
+        ],
+      ]);
+    }
+    else {
+      $this->addButtons([
+        [
+          'type' => 'submit',
           'name' => E::ts('Save'),
           'isDefault' => TRUE,
         ],
@@ -365,8 +465,6 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
         ],
       ]);
     }
-
-    CRM_Utils_System::setTitle(E::ts($pageTitle));
   }
 
   /**
@@ -445,7 +543,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     ]);
 
     if (empty($result['case_type_id'])) {
-      return;
+      return NULL;
     }
 
     return $result['case_type_id'];
@@ -631,11 +729,12 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    */
   public function createActivity() {
     $values = $this->exportValues();
+
     $result = civicrm_api3('Activity', 'create', [
       'source_contact_id' => $values['source_contact_id'],
       'target_id' => 'user_contact_id',
       'activity_type_id' => 'Applicant Review',
-      'status_id' => $values['status_id'],
+      'status_id' => $this->getSubmittedReviewStatus($values),
       'case_id' => $this->caseId,
     ]);
 
@@ -688,8 +787,28 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     civicrm_api3('Activity', 'create', [
       'id' => $this->activityId,
       'source_contact_id' => $values['source_contact_id'],
-      'status_id' => $values['status_id'],
+      'status_id' => $this->getSubmittedReviewStatus($values),
     ]);
+  }
+
+  /**
+   * Gets submitted activity status based on button and form.
+   *
+   * @param array $values
+   *   Form submission values.
+   *
+   * @return string
+   *   Review status
+   */
+  private function getSubmittedReviewStatus(array $values) {
+    // Save draft && Save & Continue buttons.
+    if ($values['_qf_AwardReview_next'] || $values['_qf_AwardReview_done']) {
+      return 'Draft';
+    }
+
+    // Status ID submitted only by CiviCRM form.
+    // return 'Completed' if the form submitted by SSP.
+    return $values['status_id'] ?? 'Completed';
   }
 
   /**
@@ -723,6 +842,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       'activity_type_id' => 'Applicant Review',
       'case_id' => $this->caseId,
       'source_contact_id' => "user_contact_id",
+      'status_id' => 'Completed',
     ]);
 
     return $result['count'] > 0;
