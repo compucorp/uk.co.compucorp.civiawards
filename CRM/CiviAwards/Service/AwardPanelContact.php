@@ -213,4 +213,79 @@ class CRM_CiviAwards_Service_AwardPanelContact {
     return $result['values'];
   }
 
+  /**
+   * Returns the contacts that has a role.
+   *
+   * This will also return the ID of the case where the role is assigned
+   * to the contact.
+   *
+   * @param string $role
+   *   The role to return contacts for.
+   * @param int $awardId
+   *   The Award ID.
+   * @param int $contactId
+   *   The contact ID.
+   *
+   * @return array
+   *   A list of case_id and contact_id.
+   */
+  private function getRolesContacts($role, $awardId, $contactId): array {
+    $result = civicrm_api3('RelationshipType', 'get', [
+      'sequential' => 1,
+      'name_b_a' => $role,
+      'api.Relationship.get' => [
+        'relationship_type_id' => "\$value.id",
+        'options' =>
+        ['limit' => 0, 'is_active' => 1],
+      ],
+      'options' => ['limit' => 0],
+      'is_active' => 1,
+    ]);
+
+    if ($result['is_error'] || $result['count'] < 1) {
+      return [];
+    }
+
+    $caseRoles = [];
+
+    foreach ($result['values'] as $relationshipType) {
+      foreach ($relationshipType['api.Relationship.get']['values'] as $relationship) {
+        if ($this->caseRoleRelationshipIsValid($relationship)) {
+          $contactRole = [
+            'case_id' => $relationship['case_id'],
+            'contact_id' => $relationship['contact_id_b'],
+          ];
+          array_push($caseRoles, $contactRole);
+        }
+      }
+    }
+
+    return $caseRoles;
+  }
+
+  /**
+   * Returns true if a case_role relationship is still valid.
+   *
+   * I.e.
+   * The status "is_active": "1"
+   * AND The start date is null or =< todays date
+   * AND The end date is null or > todays date.
+   *
+   * @param array $caseRoleRelationship
+   *   The case relationship array.
+   *
+   * @return bool
+   *   true if relationship is valid, otherwise false.
+   */
+  private function caseRoleRelationshipIsValid(array $caseRoleRelationship): bool {
+    $isActive = $caseRoleRelationship['is_active'] === "1";
+    $todaysDate = (new Date())->getTime();
+    $relationshipStartDate = (new Date($caseRoleRelationship['start_date'] ?? NULL))->getTime();
+    $relationshipEndDate = (new Date($caseRoleRelationship['end_date'] ?? NULL))->getTime();
+    $relationshipHasStarted = $relationshipStartDate <= $todaysDate;
+    $relationshipHasEnded = $relationshipEndDate >= $todaysDate;
+
+    return $isActive && $relationshipHasStarted && !$relationshipHasEnded;
+  }
+
 }
