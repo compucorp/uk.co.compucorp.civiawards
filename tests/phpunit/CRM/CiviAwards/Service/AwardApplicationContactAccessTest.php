@@ -110,14 +110,17 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
 
     $expectedResult = [
       [
+        'case_ids' => [],
         'application_tags' => [1, 2],
         'application_status' => [5, 6],
       ],
       [
+        'case_ids' => [],
         'application_tags' => [6, 8],
         'application_status' => [9, 3],
       ],
       [
+        'case_ids' => [],
         'application_tags' => [],
         'application_status' => [],
       ],
