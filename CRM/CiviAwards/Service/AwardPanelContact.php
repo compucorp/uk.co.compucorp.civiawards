@@ -20,12 +20,14 @@ class CRM_CiviAwards_Service_AwardPanelContact {
    *   The panel contacts data.
    */
   public function get($awardPanelId, array $filterContacts = []) {
-    $awardContactSettings = $this->getAwardContactSettings($awardPanelId);
+    $awardReviewPanel = $this->getAwardReviewPanel($awardPanelId);
+    $awardContactSettings = $this->getAwardContactSettings($awardReviewPanel);
 
     if (empty($awardContactSettings)) {
       return [];
     }
 
+    $roleContacts = [];
     $includeGroups = isset($awardContactSettings['include_groups']) ? $awardContactSettings['include_groups'] : [];
     $excludeGroups = isset($awardContactSettings['exclude_groups']) ? $awardContactSettings['exclude_groups'] : [];
     $includeGroupContacts = [];
@@ -50,7 +52,12 @@ class CRM_CiviAwards_Service_AwardPanelContact {
       }
     }
 
+    if (!empty($awardContactSettings['case_roles'])) {
+      $roleContacts = $this->getRolesContacts($awardContactSettings['case_roles'], $awardReviewPanel->case_type_id, $filterContacts);
+    }
+
     $panelContacts = $this->mergeAllRelatedContacts($includeGroupContacts, $relationshipContacts);
+    $panelContacts = array_replace($roleContacts, $panelContacts);
 
     return array_diff_key($panelContacts, $excludeGroupContacts);
   }
@@ -163,21 +170,34 @@ class CRM_CiviAwards_Service_AwardPanelContact {
   }
 
   /**
-   * Returns Award contact settings.
+   * Returns Award Review Panel Object.
    *
    * @param int $awardPanelId
+   *   Award ID.
+   *
+   * @return \CRM_CiviAwards_BAO_AwardReviewPanel
+   *   Award Review Panel.
+   */
+  private function getAwardReviewPanel($awardPanelId) {
+    $awardReviewPanelObject = new AwardReviewPanel();
+    $awardReviewPanelObject->id = $awardPanelId;
+    $awardReviewPanelObject->find(TRUE);
+
+    return $awardReviewPanelObject;
+  }
+
+  /**
+   * Returns Award contact settings.
+   *
+   * @param \CRM_CiviAwards_BAO_AwardReviewPanel $awardReviewPanel
    *   Award ID.
    *
    * @return array
    *   Award contact settings.
    */
-  private function getAwardContactSettings($awardPanelId) {
-    $awardReviewPanelObject = new AwardReviewPanel();
-    $awardReviewPanelObject->id = $awardPanelId;
-    $awardReviewPanelObject->find(TRUE);
-
-    if (!empty($awardReviewPanelObject->contact_settings)) {
-      return unserialize($awardReviewPanelObject->contact_settings);
+  private function getAwardContactSettings(AwardReviewPanel $awardReviewPanel) {
+    if (!empty($awardReviewPanel->contact_settings)) {
+      return unserialize((string) $awardReviewPanel->contact_settings);
     }
 
     return NULL;
@@ -219,73 +239,66 @@ class CRM_CiviAwards_Service_AwardPanelContact {
    * This will also return the ID of the case where the role is assigned
    * to the contact.
    *
-   * @param string $role
-   *   The role to return contacts for.
+   * @param array $roles
+   *   The award roles to return assigned contacts for.
    * @param int $awardId
    *   The Award ID.
-   * @param int $contactId
-   *   The contact ID.
+   * @param array $contactId
+   *   The list of contact IDs.
    *
    * @return array
    *   A list of case_id and contact_id.
    */
-  private function getRolesContacts($role, $awardId, $contactId): array {
-    $result = civicrm_api3('RelationshipType', 'get', [
-      'sequential' => 1,
-      'name_b_a' => $role,
-      'api.Relationship.get' => [
-        'relationship_type_id' => "\$value.id",
-        'options' =>
-        ['limit' => 0, 'is_active' => 1],
-      ],
-      'options' => ['limit' => 0],
-      'is_active' => 1,
-    ]);
-
-    if ($result['is_error'] || $result['count'] < 1) {
+  private function getRolesContacts(array $roles, $awardId, array $contactId): array {
+    if (empty($contactId)) {
       return [];
     }
 
     $caseRoles = [];
+    $caseTable = CRM_Case_BAO_Case::getTableName();
+    $contactTable = CRM_Contact_BAO_Contact::getTableName();
+    $contactEmailTable = CRM_Core_BAO_Email::getTableName();
+    $relationshipTable = CRM_Contact_BAO_Relationship::getTableName();
+    $relationshipTypeTable = CRM_Contact_BAO_RelationshipType::getTableName();
 
-    foreach ($result['values'] as $relationshipType) {
-      foreach ($relationshipType['api.Relationship.get']['values'] as $relationship) {
-        if ($this->caseRoleRelationshipIsValid($relationship)) {
-          $contactRole = [
-            'case_id' => $relationship['case_id'],
-            'contact_id' => $relationship['contact_id_b'],
-          ];
-          array_push($caseRoles, $contactRole);
-        }
-      }
+    $query = "
+      SELECT r.case_id, r.contact_id_b as contact_id,
+      c.display_name, ce.email
+      FROM {$relationshipTypeTable} rt
+      INNER JOIN {$relationshipTable} r
+        ON (r.relationship_type_id = rt.id)
+      INNER JOIN {$caseTable} cs
+        ON (cs.id = r.case_id AND cs.case_type_id = %1)
+      INNER JOIN {$contactTable} c
+        ON (c.id = r.contact_id_b)
+      LEFT JOIN {$contactEmailTable} ce
+        ON (c.id = ce.contact_id AND ce.is_primary = 1)
+      WHERE r.is_active = 1 AND rt.is_active = 1
+      AND (r.end_date IS NULL OR r.end_date >= %4)
+      AND (r.start_date IS NULL OR r.start_date <= %4)
+      AND rt.name_b_a IN (%2) AND r.contact_id_b IN (%3)
+    ";
+
+    $params = [
+      1 => [$awardId, 'Integer'],
+      4 => [date('Y-m-d'), 'String'],
+      2 => [implode(',', $roles), 'String'],
+      3 => [implode(',', $contactId), 'CommaSeparatedIntegers'],
+    ];
+    $result = CRM_Core_DAO::executeQuery($query, $params);
+
+    while ($result->fetch()) {
+      $caseRoles[$result->contact_id] = [
+        'id' => $result->contact_id,
+        'email' => $result->email,
+        'display_name' => $result->display_name,
+        'case_ids' => array_merge(
+          ($caseRoles[$result->contact_id]['case_ids'] ?? []), [$result->case_id]
+        ),
+      ];
     }
 
     return $caseRoles;
-  }
-
-  /**
-   * Returns true if a case_role relationship is still valid.
-   *
-   * I.e.
-   * The status "is_active": "1"
-   * AND The start date is null or =< todays date
-   * AND The end date is null or > todays date.
-   *
-   * @param array $caseRoleRelationship
-   *   The case relationship array.
-   *
-   * @return bool
-   *   true if relationship is valid, otherwise false.
-   */
-  private function caseRoleRelationshipIsValid(array $caseRoleRelationship): bool {
-    $isActive = $caseRoleRelationship['is_active'] === "1";
-    $todaysDate = (new Date())->getTime();
-    $relationshipStartDate = (new Date($caseRoleRelationship['start_date'] ?? NULL))->getTime();
-    $relationshipEndDate = (new Date($caseRoleRelationship['end_date'] ?? NULL))->getTime();
-    $relationshipHasStarted = $relationshipStartDate <= $todaysDate;
-    $relationshipHasEnded = $relationshipEndDate >= $todaysDate;
-
-    return $isActive && $relationshipHasStarted && !$relationshipHasEnded;
   }
 
 }
