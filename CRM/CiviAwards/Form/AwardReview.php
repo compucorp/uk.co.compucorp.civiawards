@@ -259,17 +259,16 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    *   Activity ID.
    */
   private function redirectUser(array $values, int $activityId) {
+    $status = $this->getSessionStatusText($values);
     if ($this->isReviewFromSsp() && !$values['_qf_AwardReview_submit']) {
       $url = $this->getRedirectUrlForNonSubmitReview($values, $activityId);
-    }
-    else {
-      $url = $this->getRedirectUrlForSubmitReview($activityId);
-      $status = $this->getSessionStatusText();
-      CRM_Core_Session::setStatus(ts('Your review has been ' . strtolower($status) . ' successfully.'), ts('Review ' . $status), 'success');
+      CRM_Utils_System::setUFMessage(ts($status));
+      CRM_Utils_System::redirect($url);
     }
 
-    $session = CRM_Core_Session::singleton();
-    $session->pushUserContext($url);
+    $url = $this->getRedirectUrlForSubmitReview($activityId);
+    CRM_Core_Session::setStatus(ts('Your review has been ' . strtolower($status) . ' successfully.'), ts('Review ' . $status), 'success');
+    CRM_Utils_System::redirect($url);
   }
 
   /**
@@ -278,13 +277,22 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * @return string
    *   Status text ether Submitted or Updated.
    */
-  private function getSessionStatusText() {
+  private function getSessionStatusText(array $values) {
     $submittedStatus = 'Submitted';
-    if ($this->isReviewFromSsp()) {
+
+    if (!$this->isReviewFromSsp()) {
+      return $this->_action == CRM_Core_Action::ADD ? $submittedStatus : 'Updated';
+    }
+
+    if ($this->isReviewFromSsp() && $values['_qf_AwardReview_submit']) {
       return $submittedStatus;
     }
 
-    return $this->_action == CRM_Core_Action::ADD ? $submittedStatus : 'Updated';
+    if ($values['_qf_AwardReview_next']) {
+      return 'Details saved successfully';
+    }
+
+    return 'Draft saved successfully';
   }
 
   /**
