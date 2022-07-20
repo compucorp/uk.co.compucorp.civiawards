@@ -268,7 +268,13 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
     $url = $this->getRedirectUrlForSubmitReview($activityId);
     CRM_Core_Session::setStatus(ts('Your review has been ' . strtolower($status) . ' successfully.'), ts('Review ' . $status), 'success');
-    CRM_Utils_System::redirect($url);
+
+    if ($this->isReviewFromSsp()) {
+      CRM_Utils_System::redirect($url);
+    }
+
+    $session = CRM_Core_Session::singleton();
+    $session->pushUserContext($url);
   }
 
   /**
