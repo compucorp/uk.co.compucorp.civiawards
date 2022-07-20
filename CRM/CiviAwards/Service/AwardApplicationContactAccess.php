@@ -65,8 +65,11 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
 
     $visibilitySettings = [];
     foreach ($awardPanels as $awardPanelId) {
-      if (!empty($this->awardPanelContact->get($awardPanelId, [$contactId]))) {
-        $visibilitySettings[] = $this->getAwardVisibilitySettings($awardPanelId);
+      $awardPanelContacts = $this->awardPanelContact->get($awardPanelId, [$contactId]);
+      if (!empty($awardPanelContacts)) {
+        $awardVisibility = $this->getAwardVisibilitySettings($awardPanelId);
+        $awardVisibility['case_ids'] = $awardPanelContacts[$contactId]['case_ids'] ?? [];
+        $visibilitySettings[] = $awardVisibility;
       }
     }
 
@@ -113,6 +116,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
     $response = [];
     foreach ($visibilitySettings as $visibilitySetting) {
       $response[] = [
+        'case_ids' => $visibilitySetting['case_ids'] ?? [],
         'application_tags' => isset($visibilitySetting['application_tags']) ? $visibilitySetting['application_tags'] : [],
         'application_status' => isset($visibilitySetting['application_status']) ? $visibilitySetting['application_status'] : [],
         'status_to_move_to' => !empty($visibilitySetting['is_application_status_restricted']) ? $visibilitySetting['restricted_application_status'] : [],
