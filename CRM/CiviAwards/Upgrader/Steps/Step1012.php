@@ -40,6 +40,7 @@ class CRM_CiviAwards_Upgrader_Steps_Step1012 {
     civicrm_api3('OptionValue', 'create', [
       'id' => $value['id'],
       'grouping' => implode(", ", $grouping),
+      'is_reserved' => TRUE,
     ]);
   }
 
