@@ -41,9 +41,9 @@ function _civicrm_api3_award_review_panel_getcontactaccess_spec(array &$spec) {
  *   API result descriptor.
  */
 function civicrm_api3_award_review_panel_getcontactaccess(array $params) {
-  $contactAccessService = new CRM_CiviAwards_Service_AwardApplicationContactAccess();
   $awardPanelContact = new CRM_CiviAwards_Service_AwardPanelContact();
-  $contactAccess = $contactAccessService->get($params['contact_id'], $params['award_id'], $awardPanelContact);
+  $contactAccessService = new CRM_CiviAwards_Service_AwardApplicationContactAccess($awardPanelContact);
+  $contactAccess = $contactAccessService->get($params['contact_id'], $params['award_id']);
 
   return civicrm_api3_create_success($contactAccess);
 }
@@ -84,8 +84,8 @@ function _civicrm_api3_award_review_panel_getreviewaccess_spec(array &$spec) {
  *   API result descriptor.
  */
 function civicrm_api3_award_review_panel_getreviewaccess(array $params) {
-  $contactAccessService = new CRM_CiviAwards_Service_AwardApplicationContactAccess();
   $awardPanelContact = new CRM_CiviAwards_Service_AwardPanelContact();
+  $contactAccessService = new CRM_CiviAwards_Service_AwardApplicationContactAccess($awardPanelContact);
   $contactAccess = $contactAccessService->getReviewAccess($params['contact_id'], $params['application_id'], $awardPanelContact);
 
   return civicrm_api3_create_success($contactAccess);

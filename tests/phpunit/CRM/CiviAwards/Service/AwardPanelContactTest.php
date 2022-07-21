@@ -1,13 +1,15 @@
 <?php
 
+use CRM_CiviAwards_Test_Fabricator_Case as CaseFabricator;
 use CRM_CiviAwards_Test_Fabricator_Contact as ContactFabricator;
-use CRM_CiviAwards_Test_Fabricator_AwardReviewPanel as AwardReviewPanelFabricator;
 use CRM_CiviAwards_Service_AwardPanelContact as AwardPanelContact;
-use CRM_CiviAwards_Test_Fabricator_RelationshipType as RelationshipTypeFabricator;
+use CRM_CiviAwards_Test_Fabricator_CaseType as CaseTypeFabricator;
 use CRM_CiviAwards_Test_Fabricator_Relationship as RelationshipFabricator;
+use CRM_CiviAwards_Test_Fabricator_AwardReviewPanel as AwardReviewPanelFabricator;
+use CRM_CiviAwards_Test_Fabricator_RelationshipType as RelationshipTypeFabricator;
 
 /**
- * CRM_CiviAwards_Service_AwardPanelContactTest.
+ * Class to test AwardPanelContact service.
  *
  * @group headless
  */
@@ -518,6 +520,246 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
   }
 
   /**
+   * Test Get returns contacts assigned To Role.
+   */
+  public function testGetReturnsContactsAssignedToRole() {
+    [$role, $caseType, $awardPanel] = $this->setupAwardPanel();
+
+    $client = ContactFabricator::fabricate();
+    $reviewer = ContactFabricator::fabricate();
+
+    $case = CaseFabricator::fabricate([
+      'status_id' => 1,
+      'case_type_id' => $caseType,
+      'contact_id' => $client['id'],
+    ]);
+    $this->assignRoleToCase($client['id'], $reviewer['id'], $case['id'], $role);
+
+    $awardPanelContact = new AwardPanelContact();
+    $contacts = $awardPanelContact->get($awardPanel, [$reviewer['id']]);
+
+    $expectedResult = [
+      $reviewer['id'] => [
+        'id' => $reviewer['id'],
+        'display_name' => $reviewer['display_name'],
+        'email' => NULL,
+        'case_ids' => [$case['id']],
+      ],
+    ];
+
+    $this->assertEquals($expectedResult, $contacts);
+  }
+
+  /**
+   * Test Get will not returns role contacts if relationship has not started.
+   */
+  public function testGetWillNotReturnContactsAssignedToRoleWhenRelationshipHasNotStarted() {
+    // Create a new role: reviewer.
+    [$role, $caseType, $awardPanel] = $this->setupAwardPanel();
+
+    $client = ContactFabricator::fabricate();
+    $reviewer = ContactFabricator::fabricate();
+
+    $case = CaseFabricator::fabricate([
+      'status_id' => 1,
+      'case_type_id' => $caseType,
+      'contact_id' => $client['id'],
+    ]);
+    $this->assignRoleToCase(
+      $client['id'],
+      $reviewer['id'],
+      $case['id'],
+      $role,
+      ['start_date' => date("Y-m-d", strtotime("tomorrow"))]
+    );
+
+    $awardPanelContact = new AwardPanelContact();
+    $contacts = $awardPanelContact->get($awardPanel, [$reviewer['id']]);
+
+    $expectedResult = [];
+
+    $this->assertEquals($expectedResult, $contacts);
+  }
+
+  /**
+   * Test Get will not returns role contacts if relationship has ended.
+   */
+  public function testGetWillNotReturnContactsAssignedToRoleWhenRelationshipHasEnded() {
+    // Create a new role: reviewer.
+    [$role, $caseType, $awardPanel] = $this->setupAwardPanel();
+
+    $client = ContactFabricator::fabricate();
+    $reviewer = ContactFabricator::fabricate();
+
+    $case = CaseFabricator::fabricate([
+      'status_id' => 1,
+      'case_type_id' => $caseType,
+      'contact_id' => $client['id'],
+    ]);
+    $this->assignRoleToCase(
+      $client['id'],
+      $reviewer['id'],
+      $case['id'],
+      $role,
+      ['end_date' => date("Y-m-d", strtotime("yesterday"))]
+    );
+
+    $awardPanelContact = new AwardPanelContact();
+    $contacts = $awardPanelContact->get($awardPanel, [$reviewer['id']]);
+
+    $expectedResult = [];
+
+    $this->assertEquals($expectedResult, $contacts);
+  }
+
+  /**
+   * Test Get returns only allowed cases when permission is granted by role.
+   */
+  public function testGetReturnsOnlyAllowedCaseIdsWhenPermissionIsGrnatedByRole() {
+    [$role, $caseType, $awardPanel] = $this->setupAwardPanel();
+
+    $clientA = ContactFabricator::fabricate();
+    $clientB = ContactFabricator::fabricate();
+    $clientC = ContactFabricator::fabricate();
+    $reviewer = ContactFabricator::fabricate();
+
+    $caseA = CaseFabricator::fabricate([
+      'status_id' => 1,
+      'case_type_id' => $caseType,
+      'contact_id' => $clientA['id'],
+    ]);
+    $caseB = CaseFabricator::fabricate([
+      'status_id' => 1,
+      'case_type_id' => $caseType,
+      'contact_id' => $clientB['id'],
+    ]);
+    $caseC = CaseFabricator::fabricate([
+      'status_id' => 1,
+      'case_type_id' => $caseType,
+      'contact_id' => $clientC['id'],
+    ]);
+    $this->assignRoleToCase($clientA['id'], $reviewer['id'], $caseA['id'], $role);
+    $this->assignRoleToCase($clientB['id'], $reviewer['id'], $caseB['id'], $role);
+
+    $awardPanelContact = new AwardPanelContact();
+    $contacts = $awardPanelContact->get($awardPanel, [$reviewer['id']]);
+
+    $expectedResult = [$caseA['id'], $caseB['id']];
+
+    $this->assertEquals($expectedResult, ...array_column($contacts, 'case_ids'));
+  }
+
+  /**
+   * Test Get when permission is granted by relationship and role.
+   *
+   * I.e. permission granted by relationship superceeds case_role since
+   * relationship is not limited to specific case(s).
+   */
+  public function testGetAllowsAllCasesWhenPermissionIsGrantedByRelationshipAndRole() {
+    $relationshipTypeAParams = [
+      'name_a_b' => 'Manager is',
+      'name_b_a' => 'Manager',
+    ];
+    $relationshipTypeA = RelationshipTypeFabricator::fabricate($relationshipTypeAParams);
+
+    $roleParams = [
+      'name_a_b' => 'Reviewer is',
+      'name_b_a' => 'Reviewer',
+    ];
+    $role = RelationshipTypeFabricator::fabricate($roleParams);
+
+    $caseType = CaseTypeFabricator::fabricate();
+    $contactA = ContactFabricator::fabricate();
+    $contactB = ContactFabricator::fabricate();
+
+    // Contact B is Manager to Contact A.
+    $params = [
+      'contact_id_b' => $contactB['id'],
+      'contact_id_a' => $contactA['id'],
+      'relationship_type_id' => $relationshipTypeA['id'],
+    ];
+    RelationshipFabricator::fabricate($params);
+
+    $params = [
+      'case_type_id' => $caseType['id'],
+      'contact_settings' => [
+        'case_roles' => [$role['name_b_a']],
+        'relationship' => [
+          [
+            'contact_id' => [$contactB['id']],
+            'is_a_to_b' => 1,
+            'relationship_type_id' => $relationshipTypeA['id'],
+          ],
+        ],
+      ],
+    ];
+
+    $case = CaseFabricator::fabricate([
+      'status_id' => 1,
+      'case_type_id' => $caseType['id'],
+      'contact_id' => $contactB['id'],
+    ]);
+    $this->assignRoleToCase($contactB['id'], $contactA['id'], $case['id'], $role['id']);
+
+    $awardPanel = AwardReviewPanelFabricator::fabricate($params);
+    $awardPanelContact = new AwardPanelContact();
+    $contacts = $awardPanelContact->get($awardPanel->id, [$contactA['id']]);
+
+    $expectedContactIds = [$contactA['id']];
+
+    $this->assertEquals($expectedContactIds, array_column($contacts, 'id'));
+    // case_ids is empty, i.e. all case can be reviewed by the contact.
+    $this->assertCount(0, array_column($contacts, 'case_ids'));
+  }
+
+  /**
+   * Test Get allows all cases when permission is granted by group and role.
+   *
+   * I.e. permission granted by grouup superceeds case_role since
+   * group is not limited to specific case(s).
+   */
+  public function testGetAllowsAllCasesWhenPermissionIsGrantedByGroupAndRole() {
+    $roleParams = [
+      'name_a_b' => 'Reviewer is',
+      'name_b_a' => 'Reviewer',
+    ];
+    $role = RelationshipTypeFabricator::fabricate($roleParams);
+
+    $caseType = CaseTypeFabricator::fabricate();
+    $contactA = ContactFabricator::fabricate();
+    $contactB = ContactFabricator::fabricate();
+
+    $groupA = $this->createGroup('Group A');
+    $this->addContactToGroup($groupA, $contactA['id']);
+
+    $case = CaseFabricator::fabricate([
+      'status_id' => 1,
+      'case_type_id' => $caseType['id'],
+      'contact_id' => $contactB['id'],
+    ]);
+    $this->assignRoleToCase($contactB['id'], $contactA['id'], $case['id'], $role['id']);
+
+    $params = [
+      'case_type_id' => $caseType['id'],
+      'contact_settings' => [
+        'case_roles' => [$role['name_b_a']],
+        'include_groups' => [$groupA],
+      ],
+    ];
+
+    $awardPanel = AwardReviewPanelFabricator::fabricate($params);
+
+    $awardPanelContact = new AwardPanelContact();
+    $contacts = $awardPanelContact->get($awardPanel->id, [$contactA['id']]);
+
+    $expectedContactIds = [$contactA['id']];
+
+    $this->assertEquals($expectedContactIds, array_column($contacts, 'id'));
+    // case_ids is empty, i.e. all case can be reviewed by the contact.
+    $this->assertCount(0, array_column($contacts, 'case_ids'));
+  }
+
+  /**
    * Add contact to group.
    *
    * @param int $groupId
@@ -566,6 +808,55 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
       $contact = array_intersect_key($contact, $expectedKeys);
     }
 
+  }
+
+  /**
+   * Assigns a role to case.
+   *
+   * @param int $contactIdA
+   *   The contact A ID.
+   * @param int $contactIdB
+   *   The contact B ID.
+   * @param int $caseId
+   *   The case ID.
+   * @param int $relationshipTypeId
+   *   The relationship type ID.
+   * @param array $extraParams
+   *   Extra relationship data.
+   */
+  private function assignRoleToCase($contactIdA, $contactIdB, $caseId, $relationshipTypeId, array $extraParams = []) {
+    $params = [
+      'is_active' => 1,
+      'contact_id_a' => $contactIdA,
+      'contact_id_b' => $contactIdB,
+      'relationship_type_id' => $relationshipTypeId,
+    ];
+    $relationship = RelationshipFabricator::fabricate($params);
+    civicrm_api3('Relationship', 'create', array_merge([
+      'id' => $relationship['id'],
+      'case_id' => $caseId,
+    ], $extraParams));
+  }
+
+  /**
+   * Sets up award panel data, with role and case type.
+   */
+  public function setupAwardPanel() {
+    // Create a new role: reviewer.
+    $roleParams = ['name_a_b' => 'Reviewer is', 'name_b_a' => 'Reviewer'];
+    $role = RelationshipTypeFabricator::fabricate($roleParams);
+
+    $caseType = CaseTypeFabricator::fabricate();
+    // Create a new review panel: that grants access to the reviewer role.
+    $params = [
+      'case_type_id' => $caseType['id'],
+      'contact_settings' => [
+        'case_roles' => [$role['name_b_a']],
+      ],
+    ];
+    $awardPanel = AwardReviewPanelFabricator::fabricate($params);
+
+    return [$role['id'], $caseType['id'], $awardPanel->id];
   }
 
 }
