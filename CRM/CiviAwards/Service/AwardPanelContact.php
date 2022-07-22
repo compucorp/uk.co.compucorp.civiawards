@@ -258,6 +258,7 @@ class CRM_CiviAwards_Service_AwardPanelContact {
     $caseTable = CRM_Case_BAO_Case::getTableName();
     $contactTable = CRM_Contact_BAO_Contact::getTableName();
     $contactEmailTable = CRM_Core_BAO_Email::getTableName();
+    $caseRolesCondition = '(\'' . implode("','", $roles) . '\')';
     $relationshipTable = CRM_Contact_BAO_Relationship::getTableName();
     $relationshipTypeTable = CRM_Contact_BAO_RelationshipType::getTableName();
 
@@ -276,13 +277,12 @@ class CRM_CiviAwards_Service_AwardPanelContact {
       WHERE r.is_active = 1 AND rt.is_active = 1
       AND (r.end_date IS NULL OR r.end_date >= %4)
       AND (r.start_date IS NULL OR r.start_date <= %4)
-      AND rt.name_b_a IN (%2) AND r.contact_id_b IN (%3)
+      AND rt.name_b_a IN {$caseRolesCondition} AND r.contact_id_b IN (%3)
     ";
 
     $params = [
       1 => [$awardId, 'Integer'],
       4 => [date('Y-m-d'), 'String'],
-      2 => [implode(',', $roles), 'String'],
       3 => [implode(',', $contactId), 'CommaSeparatedIntegers'],
     ];
     $result = CRM_Core_DAO::executeQuery($query, $params);

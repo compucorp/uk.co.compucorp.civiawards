@@ -551,6 +551,57 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
   }
 
   /**
+   * Test Get returns contacts for award panel with multiple roles.
+   */
+  public function testGetReturnsContactsAssignedToRoleWhenPanelHasMultipleRoleConfiguration() {
+    // Create a new role: reviewer.
+    $roleAParams = ['name_a_b' => 'Reviewer is', 'name_b_a' => 'Reviewer'];
+    $role = RelationshipTypeFabricator::fabricate($roleAParams);
+
+    // Create a second role: manager.
+    $roleBParams = ['name_a_b' => 'Manager is', 'name_b_a' => 'Manager'];
+    $roleB = RelationshipTypeFabricator::fabricate($roleBParams);
+
+    $caseType = CaseTypeFabricator::fabricate();
+    // Create a new review panel: that grants access to reviewer and manager.
+    $params = [
+      'case_type_id' => $caseType['id'],
+      'contact_settings' => [
+        'case_roles' => [$role['name_b_a'], $roleB['name_b_a']],
+      ],
+    ];
+    $awardPanel = AwardReviewPanelFabricator::fabricate($params);
+
+    $role = $role['id'];
+    $caseType = $caseType['id'];
+    $awardPanel = $awardPanel->id;
+
+    $client = ContactFabricator::fabricate();
+    $reviewer = ContactFabricator::fabricate();
+
+    $case = CaseFabricator::fabricate([
+      'status_id' => 1,
+      'case_type_id' => $caseType,
+      'contact_id' => $client['id'],
+    ]);
+    $this->assignRoleToCase($client['id'], $reviewer['id'], $case['id'], $role);
+
+    $awardPanelContact = new AwardPanelContact();
+    $contacts = $awardPanelContact->get($awardPanel, [$reviewer['id']]);
+
+    $expectedResult = [
+      $reviewer['id'] => [
+        'id' => $reviewer['id'],
+        'display_name' => $reviewer['display_name'],
+        'email' => NULL,
+        'case_ids' => [$case['id']],
+      ],
+    ];
+
+    $this->assertEquals($expectedResult, $contacts);
+  }
+
+  /**
    * Test Get will not returns role contacts if relationship has not started.
    */
   public function testGetWillNotReturnContactsAssignedToRoleWhenRelationshipHasNotStarted() {
