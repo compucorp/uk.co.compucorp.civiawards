@@ -292,9 +292,9 @@ class CRM_CiviAwards_Service_AwardPanelContact {
         'id' => $result->contact_id,
         'email' => $result->email,
         'display_name' => $result->display_name,
-        'case_ids' => array_merge(
+        'case_ids' => array_unique(array_merge(
           ($caseRoles[$result->contact_id]['case_ids'] ?? []), [$result->case_id]
-        ),
+        )),
       ];
     }
 
