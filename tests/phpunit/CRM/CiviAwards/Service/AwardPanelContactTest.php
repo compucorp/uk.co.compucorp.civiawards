@@ -811,6 +811,141 @@ class CRM_CiviAwards_Service_AwardPanelContactTest extends BaseHeadlessTest {
   }
 
   /**
+   * Test Get will return contact for active role relationships.
+   *
+   * @dataProvider relationshipActiveCasesData
+   */
+  public function testGetWillReturnContactIfRoleRelationshipIsActive($startDate, $endDate, $isActive, $shouldDisplay) {
+    // Create a new role: reviewer.
+    [$role, $caseType, $awardPanel] = $this->setupAwardPanel();
+
+    $client = ContactFabricator::fabricate();
+    $reviewer = ContactFabricator::fabricate();
+
+    $case = CaseFabricator::fabricate([
+      'status_id' => 1,
+      'case_type_id' => $caseType,
+      'contact_id' => $client['id'],
+    ]);
+    $this->assignRoleToCase(
+      $client['id'],
+      $reviewer['id'],
+      $case['id'],
+      $role,
+      [
+        'start_date' => $startDate,
+        'end_date' => $endDate,
+        'is_active' => $isActive,
+      ]
+    );
+
+    $awardPanelContact = new AwardPanelContact();
+    $contacts = $awardPanelContact->get($awardPanel, [$reviewer['id']]);
+
+    $this->assertEquals($shouldDisplay, count($contacts) > 0);
+  }
+
+  /**
+   * Test Get Returns Contacts Based on Active Relationship.
+   *
+   * @dataProvider relationshipActiveCasesData
+   */
+  public function testGetReturnsContactOnlyIfRelationshipIsActive($startDate, $endDate, $isActive, $shouldDisplay) {
+    $relationshipTypeAParams = [
+      'name_a_b' => 'Manager is',
+      'name_b_a' => 'Manager',
+    ];
+
+    $relationshipTypeA = RelationshipTypeFabricator::fabricate($relationshipTypeAParams);
+    $contactA = ContactFabricator::fabricate();
+    $contactB = ContactFabricator::fabricate();
+
+    // Contact B is Manager to Contact A.
+    $params = [
+      'end_date' => $endDate,
+      'is_active' => $isActive,
+      'start_date' => $startDate,
+      'contact_id_b' => $contactB['id'],
+      'contact_id_a' => $contactA['id'],
+      'relationship_type_id' => $relationshipTypeA['id'],
+    ];
+    RelationshipFabricator::fabricate($params);
+
+    $params = [
+      'contact_settings' => [
+        'relationship' => [
+          [
+            'contact_id' => [$contactB['id']],
+            'is_a_to_b' => 1,
+            'relationship_type_id' => $relationshipTypeA['id'],
+          ],
+        ],
+      ],
+    ];
+
+    $awardPanel = AwardReviewPanelFabricator::fabricate($params);
+    $awardPanelContact = new AwardPanelContact();
+    $contacts = $awardPanelContact->get($awardPanel->id);
+
+    $this->assertEquals($shouldDisplay, count($contacts) > 0);
+  }
+
+  /**
+   * Provides test data to test relationship for active cases.
+   *
+   * A relationship is considered active if
+   * The start date and the end date are null, but the is_active = yes
+   * OR
+   * The start date is in the past (<= today) or is null and
+   * the end date is in the future (> today) or is null
+   * no matter of the is_active field.
+   */
+  public function relationshipActiveCasesData() {
+    return [
+        [NULL, NULL, TRUE, TRUE],
+        [NULL, NULL, FALSE, FALSE],
+        [NULL, date('Y-m-d'), TRUE, FALSE],
+        [NULL, date('Y-m-d'), FALSE, FALSE],
+        [NULL, date("Y-m-d", strtotime("yesterday")), TRUE, FALSE],
+        [NULL, date("Y-m-d", strtotime("yesterday")), FALSE, FALSE],
+        [NULL, date("Y-m-d", strtotime("tomorrow")), TRUE, TRUE],
+        [NULL, date("Y-m-d", strtotime("tomorrow")), FALSE, TRUE],
+        [date("Y-m-d"), NULL, TRUE, TRUE],
+        [date("Y-m-d"), NULL, FALSE, TRUE],
+        [date("Y-m-d", strtotime("yesterday")), NULL, TRUE, TRUE],
+        [date("Y-m-d", strtotime("yesterday")), NULL, FALSE, TRUE],
+        [date("Y-m-d", strtotime("tomorrow")), NULL, TRUE, FALSE],
+        [date("Y-m-d", strtotime("tomorrow")), NULL, FALSE, FALSE],
+        [date("Y-m-d"), date("Y-m-d"), TRUE, FALSE],
+        [date("Y-m-d"), date("Y-m-d"), FALSE, FALSE],
+        [
+          date("Y-m-d", strtotime("yesterday")),
+          date("Y-m-d", strtotime("yesterday")),
+          TRUE,
+          FALSE,
+        ],
+        [
+          date("Y-m-d", strtotime("yesterday")),
+          date("Y-m-d", strtotime("yesterday")),
+          FALSE,
+          FALSE,
+        ],
+        [
+          date("Y-m-d", strtotime("tomorrow")),
+          date("Y-m-d", strtotime("tomorrow")),
+          TRUE,
+          FALSE,
+        ],
+        [
+          date("Y-m-d", strtotime("tomorrow")),
+          date("Y-m-d", strtotime("tomorrow")),
+          FALSE,
+          FALSE,
+        ],
+    ];
+  }
+
+  /**
    * Add contact to group.
    *
    * @param int $groupId
