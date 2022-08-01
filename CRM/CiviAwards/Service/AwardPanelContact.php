@@ -140,12 +140,16 @@ class CRM_CiviAwards_Service_AwardPanelContact {
         ON rt.id = r.relationship_type_id
       LEFT JOIN {$contactEmailTable} ce
         ON (c.id = ce.contact_id AND ce.is_primary = 1)
-      WHERE r.is_active = 1 AND rt.is_active = 1
+      WHERE rt.is_active = 1 AND 
+      (
+        (r.start_date IS NULL AND r.end_date IS NULL AND r.is_active = 1) OR
+        (r.start_date <= %3 AND r.end_date IS NULL) OR 
+        (r.start_date IS NULL AND r.end_date > %3) OR 
+        (r.start_date <= %3 AND r.end_date > %3)
+      )
       AND rt.id = %2
       {$contactCondition}
       {$filterContactCondition}
-      AND (r.start_date IS NULL OR r.start_date <= %3)
-      AND (r.end_date IS NULL OR r.end_date >= %3)
       ORDER by c.id ASC
     ";
 
@@ -274,9 +278,13 @@ class CRM_CiviAwards_Service_AwardPanelContact {
         ON (c.id = r.contact_id_b)
       LEFT JOIN {$contactEmailTable} ce
         ON (c.id = ce.contact_id AND ce.is_primary = 1)
-      WHERE r.is_active = 1 AND rt.is_active = 1
-      AND (r.end_date IS NULL OR r.end_date >= %4)
-      AND (r.start_date IS NULL OR r.start_date <= %4)
+      WHERE rt.is_active = 1 AND 
+      (
+        (r.start_date IS NULL AND r.end_date IS NULL AND r.is_active = 1) OR
+        (r.start_date <= %4 AND r.end_date IS NULL) OR 
+        (r.start_date IS NULL AND r.end_date > %4) OR 
+        (r.start_date <= %4 AND r.end_date > %4)
+      )
       AND rt.name_b_a IN {$caseRolesCondition} AND r.contact_id_b IN (%3)
     ";
 
