@@ -20,12 +20,14 @@ class CRM_CiviAwards_Service_AwardPanelContact {
    *   The panel contacts data.
    */
   public function get($awardPanelId, array $filterContacts = []) {
-    $awardContactSettings = $this->getAwardContactSettings($awardPanelId);
+    $awardReviewPanel = $this->getAwardReviewPanel($awardPanelId);
+    $awardContactSettings = $this->getAwardContactSettings($awardReviewPanel);
 
     if (empty($awardContactSettings)) {
       return [];
     }
 
+    $roleContacts = [];
     $includeGroups = isset($awardContactSettings['include_groups']) ? $awardContactSettings['include_groups'] : [];
     $excludeGroups = isset($awardContactSettings['exclude_groups']) ? $awardContactSettings['exclude_groups'] : [];
     $includeGroupContacts = [];
@@ -50,7 +52,12 @@ class CRM_CiviAwards_Service_AwardPanelContact {
       }
     }
 
+    if (!empty($awardContactSettings['case_roles'])) {
+      $roleContacts = $this->getRolesContacts($awardContactSettings['case_roles'], $awardReviewPanel->case_type_id, $filterContacts);
+    }
+
     $panelContacts = $this->mergeAllRelatedContacts($includeGroupContacts, $relationshipContacts);
+    $panelContacts = array_replace($roleContacts, $panelContacts);
 
     return array_diff_key($panelContacts, $excludeGroupContacts);
   }
@@ -133,12 +140,16 @@ class CRM_CiviAwards_Service_AwardPanelContact {
         ON rt.id = r.relationship_type_id
       LEFT JOIN {$contactEmailTable} ce
         ON (c.id = ce.contact_id AND ce.is_primary = 1)
-      WHERE r.is_active = 1 AND rt.is_active = 1
+      WHERE rt.is_active = 1 AND 
+      (
+        (r.start_date IS NULL AND r.end_date IS NULL AND r.is_active = 1) OR
+        (r.start_date <= %3 AND r.end_date IS NULL) OR 
+        (r.start_date IS NULL AND r.end_date > %3) OR 
+        (r.start_date <= %3 AND r.end_date > %3)
+      )
       AND rt.id = %2
       {$contactCondition}
       {$filterContactCondition}
-      AND (r.start_date IS NULL OR r.start_date <= %3)
-      AND (r.end_date IS NULL OR r.end_date >= %3)
       ORDER by c.id ASC
     ";
 
@@ -163,21 +174,34 @@ class CRM_CiviAwards_Service_AwardPanelContact {
   }
 
   /**
-   * Returns Award contact settings.
+   * Returns Award Review Panel Object.
    *
    * @param int $awardPanelId
+   *   Award ID.
+   *
+   * @return \CRM_CiviAwards_BAO_AwardReviewPanel
+   *   Award Review Panel.
+   */
+  private function getAwardReviewPanel($awardPanelId) {
+    $awardReviewPanelObject = new AwardReviewPanel();
+    $awardReviewPanelObject->id = $awardPanelId;
+    $awardReviewPanelObject->find(TRUE);
+
+    return $awardReviewPanelObject;
+  }
+
+  /**
+   * Returns Award contact settings.
+   *
+   * @param \CRM_CiviAwards_BAO_AwardReviewPanel $awardReviewPanel
    *   Award ID.
    *
    * @return array
    *   Award contact settings.
    */
-  private function getAwardContactSettings($awardPanelId) {
-    $awardReviewPanelObject = new AwardReviewPanel();
-    $awardReviewPanelObject->id = $awardPanelId;
-    $awardReviewPanelObject->find(TRUE);
-
-    if (!empty($awardReviewPanelObject->contact_settings)) {
-      return unserialize($awardReviewPanelObject->contact_settings);
+  private function getAwardContactSettings(AwardReviewPanel $awardReviewPanel) {
+    if (!empty($awardReviewPanel->contact_settings)) {
+      return unserialize((string) $awardReviewPanel->contact_settings);
     }
 
     return NULL;
@@ -211,6 +235,78 @@ class CRM_CiviAwards_Service_AwardPanelContact {
     $result = civicrm_api3('Contact', 'get', $params);
 
     return $result['values'];
+  }
+
+  /**
+   * Returns the contacts that has a role.
+   *
+   * This will also return the ID of the case where the role is assigned
+   * to the contact.
+   *
+   * @param array $roles
+   *   The award roles to return assigned contacts for.
+   * @param int $awardId
+   *   The Award ID.
+   * @param array $contactId
+   *   The list of contact IDs.
+   *
+   * @return array
+   *   A list of case_id and contact_id.
+   */
+  private function getRolesContacts(array $roles, $awardId, array $contactId): array {
+    if (empty($contactId)) {
+      return [];
+    }
+
+    $caseRoles = [];
+    $caseTable = CRM_Case_BAO_Case::getTableName();
+    $contactTable = CRM_Contact_BAO_Contact::getTableName();
+    $contactEmailTable = CRM_Core_BAO_Email::getTableName();
+    $caseRolesCondition = '(\'' . implode("','", $roles) . '\')';
+    $relationshipTable = CRM_Contact_BAO_Relationship::getTableName();
+    $relationshipTypeTable = CRM_Contact_BAO_RelationshipType::getTableName();
+
+    $query = "
+      SELECT r.case_id, r.contact_id_b as contact_id,
+      c.display_name, ce.email
+      FROM {$relationshipTypeTable} rt
+      INNER JOIN {$relationshipTable} r
+        ON (r.relationship_type_id = rt.id)
+      INNER JOIN {$caseTable} cs
+        ON (cs.id = r.case_id AND cs.case_type_id = %1)
+      INNER JOIN {$contactTable} c
+        ON (c.id = r.contact_id_b)
+      LEFT JOIN {$contactEmailTable} ce
+        ON (c.id = ce.contact_id AND ce.is_primary = 1)
+      WHERE rt.is_active = 1 AND 
+      (
+        (r.start_date IS NULL AND r.end_date IS NULL AND r.is_active = 1) OR
+        (r.start_date <= %4 AND r.end_date IS NULL) OR 
+        (r.start_date IS NULL AND r.end_date > %4) OR 
+        (r.start_date <= %4 AND r.end_date > %4)
+      )
+      AND rt.name_b_a IN {$caseRolesCondition} AND r.contact_id_b IN (%3)
+    ";
+
+    $params = [
+      1 => [$awardId, 'Integer'],
+      4 => [date('Y-m-d'), 'String'],
+      3 => [implode(',', $contactId), 'CommaSeparatedIntegers'],
+    ];
+    $result = CRM_Core_DAO::executeQuery($query, $params);
+
+    while ($result->fetch()) {
+      $caseRoles[$result->contact_id] = [
+        'id' => $result->contact_id,
+        'email' => $result->email,
+        'display_name' => $result->display_name,
+        'case_ids' => array_unique(array_merge(
+          ($caseRoles[$result->contact_id]['case_ids'] ?? []), [$result->case_id]
+        )),
+      ];
+    }
+
+    return $caseRoles;
   }
 
 }

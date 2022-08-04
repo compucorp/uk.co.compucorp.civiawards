@@ -9,20 +9,35 @@ use CRM_CiviAwards_Service_AwardPanelContact as AwardReviewPanelContact;
 class CRM_CiviAwards_Service_AwardApplicationContactAccess {
 
   /**
+   * Award Panel contact service.
+   *
+   * @var CRM_CiviAwards_Service_AwardPanelContact
+   */
+  private $awardPanelContact;
+
+  /**
+   * Constructor function.
+   *
+   * @param CRM_CiviAwards_Service_AwardPanelContact $awardPanelContact
+   *   Award Panel contact service.
+   */
+  public function __construct(AwardReviewPanelContact $awardPanelContact) {
+    $this->awardPanelContact = $awardPanelContact;
+  }
+
+  /**
    * Returns the contact access to the Award Applications.
    *
    * @param int $contactId
    *   Contact Id.
    * @param int $awardId
    *   Award Id.
-   * @param CRM_CiviAwards_Service_AwardPanelContact $awardPanelContact
-   *   Award Panel contact service.
    *
    * @return array|void
    *   The contact access to the Award applications.
    */
-  public function get($contactId, $awardId, AwardReviewPanelContact $awardPanelContact) {
-    $visibilitySettings = $this->processVisibilitySettings($this->getContactVisibilitySettings($contactId, $awardId, $awardPanelContact));
+  public function get($contactId, $awardId) {
+    $visibilitySettings = $this->processVisibilitySettings($this->getContactVisibilitySettings($contactId, $awardId));
     foreach ($visibilitySettings as &$visibilitySetting) {
       unset($visibilitySetting['status_to_move_to'], $visibilitySetting['anonymize_application']);
     }
@@ -37,13 +52,11 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
    *   Contact Id.
    * @param int $awardId
    *   Award Id.
-   * @param CRM_CiviAwards_Service_AwardPanelContact $awardPanelContact
-   *   Award Panel contact service.
    *
    * @return array
    *   Visibility settings.
    */
-  private function getContactVisibilitySettings($contactId, $awardId, AwardReviewPanelContact $awardPanelContact) {
+  private function getContactVisibilitySettings($contactId, $awardId) {
     $awardPanels = $this->getAwardPanels($awardId);
 
     if (empty($awardPanels)) {
@@ -52,8 +65,11 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
 
     $visibilitySettings = [];
     foreach ($awardPanels as $awardPanelId) {
-      if (!empty($awardPanelContact->get($awardPanelId, [$contactId]))) {
-        $visibilitySettings[] = $this->getAwardVisibilitySettings($awardPanelId);
+      $awardPanelContacts = $this->awardPanelContact->get($awardPanelId, [$contactId]);
+      if (!empty($awardPanelContacts)) {
+        $awardVisibility = $this->getAwardVisibilitySettings($awardPanelId);
+        $awardVisibility['case_ids'] = $awardPanelContacts[$contactId]['case_ids'] ?? [];
+        $visibilitySettings[] = $awardVisibility;
       }
     }
 
@@ -100,6 +116,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
     $response = [];
     foreach ($visibilitySettings as $visibilitySetting) {
       $response[] = [
+        'case_ids' => $visibilitySetting['case_ids'] ?? [],
         'application_tags' => isset($visibilitySetting['application_tags']) ? $visibilitySetting['application_tags'] : [],
         'application_status' => isset($visibilitySetting['application_status']) ? $visibilitySetting['application_status'] : [],
         'status_to_move_to' => !empty($visibilitySetting['is_application_status_restricted']) ? $visibilitySetting['restricted_application_status'] : [],
@@ -120,16 +137,14 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
    *   Contact Id.
    * @param int $applicationId
    *   Award Id.
-   * @param CRM_CiviAwards_Service_AwardPanelContact $awardPanelContact
-   *   Award Panel contact service.
    *
    * @return array
    *   Review access array.
    */
-  public function getReviewAccess($contactId, $applicationId, AwardReviewPanelContact $awardPanelContact) {
+  public function getReviewAccess($contactId, $applicationId) {
     $applicationDetails = $this->getApplicationDetails($applicationId);
     $awardId = $applicationDetails['case_type_id'];
-    $visibilitySettings = $this->processVisibilitySettings($this->getContactVisibilitySettings($contactId, $awardId, $awardPanelContact));
+    $visibilitySettings = $this->processVisibilitySettings($this->getContactVisibilitySettings($contactId, $awardId));
 
     $caseTags = !empty($applicationDetails['tag_id']) ? array_keys($applicationDetails['tag_id']) : [];
     $caseStatus = [$applicationDetails['status_id']];
@@ -193,7 +208,7 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccess {
     $awardReviewPanelObject->find(TRUE);
 
     if (!empty($awardReviewPanelObject->visibility_settings)) {
-      return unserialize($awardReviewPanelObject->visibility_settings);
+      return unserialize((string) $awardReviewPanelObject->visibility_settings);
     }
 
     return NULL;

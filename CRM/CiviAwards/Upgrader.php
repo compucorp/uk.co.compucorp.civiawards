@@ -22,6 +22,7 @@ use CRM_CiviAwards_Disable_DeactivateAwardsMenus as DeactivateAwardsMenus;
 use CRM_CiviAwards_Setup_CreateAwardsMenus as CreateAwardsMenus;
 use CRM_CiviAwards_Setup_UpdateAwardPaymentActivityStatusLabel as UpdateAwardPaymentActivityStatusLabel;
 use CRM_Civicase_Setup_AddSingularLabels as AddSingularLabels;
+use CRM_CiviAwards_Setup_CreateApplicationReviewerRelationship as CreateApplicationReviewerRelationship;
 
 /**
  * Collection of upgrade steps.
@@ -51,6 +52,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
       new CreateAwardPaymentActivityTypes(),
       new UpdateAwardPaymentActivityStatusLabel(),
       new AddSingularLabels(),
+      new CreateApplicationReviewerRelationship(),
     ];
 
     foreach ($steps as $step) {

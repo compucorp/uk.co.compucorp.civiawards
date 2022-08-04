@@ -98,13 +98,32 @@
       {/foreach}
       {* Form fields section Ends *}
 
+      {* Review Status Section Starts *}
+      {* View Mode *}
+      {if !$isReviewFromSsp}
+          {if $isViewAction}
+            <div class="form-group {$form_group_class}">
+              <label class="{$form_group_label_class}">{ts}Status{/ts}</label>
+              <div class="{$form_group_field_class}">{$activityStatus}</div>
+              <div class="clear"></div>
+            </div>
+          {else} {*  End view mode *}
+            <div class="form-group {$form_group_class}">
+              <label class="{$form_group_label_class}">{$form.status_id.label}</label>
+              <div class="{$form_group_field_class}">{$form.status_id.html}</div>
+              <div class="clear"></div>
+            </div>
+          {/if}
+      {/if}
+      {* Review Status Section Endss *}
+
       {* Form action section Starts *}
       {if !$errorMessage}
         {if $isReviewFromSsp}
           {if !$isViewAction}
             <div class="clearfix">
-              <button type="submit" class="btn btn-primary default validate pull-right"> Submit Review </button>
-              <a class="btn btn-default pull-left" href="/ssp/awards/review-applications"> Cancel </a>
+              <a class="btn btn-default pull-left" href="/ssp/awards/review-applications">{ts} Cancel {/ts}</a>
+              {include file="CRM/common/formButtons.tpl"}
             </div>
           {else}
             <button disabled="true" class="btn btn-primary default validate pull-right">

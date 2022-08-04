@@ -56,6 +56,10 @@
           case_id: $scope.caseItem.id,
           options: { limit: 0 },
           sequential: 1,
+          'api.OptionValue.getsingle': {
+            option_group_id: 'activity_status',
+            value: '$value.status_id'
+          },
           'api.CustomValue.gettreevalues': {
             entity_id: '$value.id',
             entity_type: 'Activity',
@@ -81,6 +85,8 @@
               delete activity.reviewFields;
             });
             reviewMockData = _.each(angular.copy(ReviewActivitiesMockData), function (activity) {
+              activity.status_label = activity['api.OptionValue.getsingle'].label;
+              delete activity['api.OptionValue.getsingle'];
               delete activity['api.CustomValue.gettreevalues'];
             });
           });

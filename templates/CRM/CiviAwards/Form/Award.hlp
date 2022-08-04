@@ -1,0 +1,8 @@
+{htxt id="case_role"}
+<p>
+  <ul>
+    <li>{ts}You may also specify specific contacts who hold a specific case role to be part of the review panel. As such you can easily add a single reviewer to a single applicant.{/ts}</li>
+    <li>{ts}The system automatically generates a case role “Has application reviewed by” and so you can simply use this role and then assign a contact to hold this role on the application “people involved” screen.{/ts}</li>
+  </ul>
+</p>
+{/htxt}

@@ -27,11 +27,12 @@
     <table class="table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Date Submitted</th>
+          <th>{{:: ts('Name')}}</th>
+          <th>{{:: ts('Date Submitted')}}</th>
           <th ng-repeat="reviewField in reviewActivities[0].reviewFields">
-            {{reviewField.label}}
+            {{:: ts(reviewField.label)}}
           </th>
+          <th>{{:: ts('Status')}}</th>
           <th width="20">&nbsp;</th>
         </tr>
       </thead>
@@ -47,6 +48,7 @@
               ng-bind-html="trustAsHtml(reviewField.value.display)">
             </span>
           </td>
+          <td>{{reviewActivity.status_label}}</td>
           <td>
             <div
               class="btn-group btn-group-md"
