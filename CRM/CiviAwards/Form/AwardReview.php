@@ -167,7 +167,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $isAddAction = $this->_action & CRM_Core_Action::ADD;
     $isUpdateAction = $this->_action & CRM_Core_Action::UPDATE;
     $hasSubmittedReview = $this->userAlreadySubmittedReview();
-    $canNotViewReview = $isViewAction && $this->isReviewFromSsp() && !$this->isReviewOwner();
+    $canNotViewReview = ($isViewAction || $isUpdateAction) && $this->isReviewFromSsp() && !$this->isReviewOwner();
 
     if ($this->isReviewFromSsp() && $this->isCaseApplicationDeleted()) {
       $action = $isViewAction ? 'view' : 'submit';
