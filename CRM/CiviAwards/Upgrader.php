@@ -265,7 +265,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
    * @param CRM_Queue_TaskContext $context
    *   Queue task context.
    */
-  public function syncLogTables(CRM_Queue_TaskContext $context) {
+  public static function syncLogTables(CRM_Queue_TaskContext $context) {
     $logging = new CRM_Logging_Schema();
     $logging->fixSchemaDifferences();
 
