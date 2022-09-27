@@ -42,19 +42,7 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/compucorp/uk.co.compucorp.usermenu.git
           git clone --depth 1 https://github.com/civicrm/org.civicrm.shoreditch.git
-          git clone --depth 1 --no-single-branch https://github.com/compucorp/uk.co.compucorp.civicase.git
-
-      - name: Switch Civicase Branch
-        working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}/uk.co.compucorp.civicase
-        run: |
-          if [[ $(git ls-remote --heads origin ${GITHUB_HEAD_REF}) ]]
-          then
-              git checkout ${GITHUB_HEAD_REF}
-          elif [[ $(git ls-remote --heads origin ${GITHUB_BASE_REF}) ]]
-          then
-              git checkout ${GITHUB_BASE_REF}
-          fi
-        shell: bash
+          git clone --depth 1 -b MAE-823-align-with-civi-5.51.3 https://github.com/compucorp/uk.co.compucorp.civicase.git
 
       - name: Install CiviAwards and its dependencies
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}
