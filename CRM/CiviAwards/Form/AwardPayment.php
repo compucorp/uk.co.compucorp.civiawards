@@ -47,7 +47,7 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
    *
    * @var array
    */
-  private $activity;
+  private $activity = [];
 
   /**
    * {@inheritDoc}
@@ -85,7 +85,7 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
     }
 
     $this->setActivityStatuses();
-    $this->isActivityStatusExported = $this->activity['status_id'] == $this->getValueForActivityStatus('exported_complete');
+    $this->isActivityStatusExported = array_key_exists('status_id', $this->activity) && $this->activity['status_id'] == $this->getValueForActivityStatus('exported_complete');
     if ($this->isActivityStatusExported && $this->_action == CRM_Core_Action::UPDATE) {
       throw new Exception('Action not supported!');
     }
@@ -554,7 +554,7 @@ class CRM_CiviAwards_Form_AwardPayment extends CRM_Core_Form {
    *   Make editable or not.
    */
   private function activityStatusIsLocked() {
-    $activityStatus = $this->activity['status_id'];
+    $activityStatus = $this->activity['status_id'] ?? NULL;
     $notEditableStatuses = [
       $this->getValueForActivityStatus('paid_complete'),
       $this->getValueForActivityStatus('failed_incomplete'),
