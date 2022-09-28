@@ -6,13 +6,13 @@
 class CRM_CiviAwards_Test_Fabricator_CaseCategory {
 
   /**
-   * Fabricates a Case Category.
+   * Fabricate a case category.
    *
    * @param array $params
    *   Parameters.
    *
-   * @return mixed
-   *   API result.
+   * @return array
+   *   Results.
    */
   public static function fabricate(array $params = []) {
     $params = self::mergeDefaultParams($params);
@@ -22,17 +22,21 @@ class CRM_CiviAwards_Test_Fabricator_CaseCategory {
   }
 
   /**
-   * Merges default parameters.
+   * Merge to default parameters.
    *
    * @param array $params
    *   Parameters.
    *
    * @return array
-   *   API result.
+   *   Resulting merged parameters.
    */
   private static function mergeDefaultParams(array $params) {
+    $name = 'n' . rand(1000, 9999);
     $defaultParams = [
       'option_group_id' => 'case_type_categories',
+      'label' => $name,
+      'name' => $name,
+      'is_active' => 1,
     ];
 
     return array_merge($defaultParams, $params);

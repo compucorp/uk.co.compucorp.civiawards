@@ -64,7 +64,7 @@ class CRM_CiviAwards_Form_AwardPaymentTest extends BaseHeadlessTest {
     $activityId = $this->createActivity('approved_complete');
     $formValues = [
       'status_id' => $this->getValueForActivityStatus('paid_complete'),
-      'target_contact_id' => 2,
+      'target_contact_id' => $this->activityContact,
       'details' => 'This is test details',
       'activity_date_time' => date('Y-m-d H:i:s'),
     ];

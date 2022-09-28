@@ -447,12 +447,20 @@ class CRM_CiviAwards_Service_AwardApplicationContactAccessTest extends BaseHeadl
    *   Award Panel Contact.
    */
   private function getAwardPanelContactObject($awardPanel, $contactId) {
-    $awardPanelContact = $this->prophesize(AwardPanelContact::class);
+    $awardPanelContact = $this->getMockBuilder(AwardPanelContact::class)
+      ->setMethods(['get'])
+      ->getMock();
+
+    $returnValueMap = [];
     foreach ($awardPanel as $awardPanel) {
-      $awardPanelContact->get($awardPanel->id, [$contactId])->willReturn(TRUE);
+      $returnValueMap[] = [
+        (string) $awardPanel->id, [$contactId], TRUE,
+      ];
     }
 
-    return $awardPanelContact->reveal();
+    $awardPanelContact->method('get')->will($this->returnValueMap($returnValueMap));
+
+    return $awardPanelContact;
   }
 
 }
