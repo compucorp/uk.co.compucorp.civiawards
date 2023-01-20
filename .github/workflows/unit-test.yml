@@ -55,6 +55,11 @@ jobs:
       - name: Switch Civicase Branch
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}/uk.co.compucorp.civicase
         run: |
+          # When working on a workstream or a feature branch
+          # on both this extension and Civicase, 
+          # This ensures the tests will run on that Civicase
+          # branch in case the two branches name match,
+          # Otherwise it will run on Civicase Master branch.
           if [[ $(git ls-remote --heads origin ${GITHUB_HEAD_REF}) ]]
           then
               git checkout ${GITHUB_HEAD_REF}
