@@ -16,8 +16,8 @@ class CRM_CiviAwards_Service_AwardCaseFilterPreProcess {
     $awardDetailParamName = 'case_type_id.award_detail_params';
 
     $caseTypeParams = [];
-    $managedByParam = !empty($requestParams[managedByParamName]) ?
-      $requestParams[managedByParamName] :
+    $managedByParam = !empty($requestParams['managedByParamName']) ?
+      $requestParams['managedByParamName'] :
       NULL;
     $awardDetailParams = !empty($requestParams[$awardDetailParamName]) ?
       $requestParams[$awardDetailParamName] :
