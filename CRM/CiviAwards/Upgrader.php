@@ -184,7 +184,7 @@ class CRM_CiviAwards_Upgrader extends CRM_CiviAwards_Upgrader_Base {
    *   The queue requires that true is returned on successful upgrade, but we
    *   use exceptions to indicate an error instead.
    */
-  public function runStepUpgrade(CRM_Queue_TaskContext $context, $step) {
+  public static function runStepUpgrade(CRM_Queue_TaskContext $context, $step) {
     $step->apply();
 
     return TRUE;
