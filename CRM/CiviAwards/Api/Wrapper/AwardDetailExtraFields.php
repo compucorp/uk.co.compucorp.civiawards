@@ -124,6 +124,7 @@ class CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields implements API_Wrapper {
     $options = _civicrm_api3_get_options_from_params($apiRequest['params']);
     $returnParams = array_keys($options['return']);
     $pseudoFieldReturn = [];
+    $apiRequest['params']['pseudo_fields'] = [];
     $pseudoFields = [
       'award_manager' => ['dependency' => 'case_type_id'],
       'review_fields' => ['dependency' => 'profile_id'],
