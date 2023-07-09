@@ -54,6 +54,10 @@ class CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields implements API_Wrapper {
    *   API Result details.
    */
   private function addAwardManagerDetails(array $apiRequest, array &$result) {
+    if (empty($apiRequest['params']['pseudo_fields'])) {
+      return;
+    }
+
     if (!in_array('award_manager', $apiRequest['params']['pseudo_fields'])) {
       return;
     }
@@ -73,6 +77,10 @@ class CRM_CiviAwards_Api_Wrapper_AwardDetailExtraFields implements API_Wrapper {
    *   API result.
    */
   private function addProfileFields(array $apiRequest, array &$result) {
+    if (empty($apiRequest['params']['pseudo_fields'])) {
+      return;
+    }
+
     if (!in_array('review_fields', $apiRequest['params']['pseudo_fields'])) {
       return;
     }
