@@ -348,6 +348,7 @@
       describe('when editing an award', () => {
         beforeEach(() => {
           createController({ ifNewAward: false });
+          $scope.reviewFields = ReviewFieldsMockData;
           $scope.awardStages = CaseStatus.getAll();
           $scope.basicDetails.selectedAwardStages = { 1: true };
 
@@ -413,6 +414,30 @@
           });
         });
       });
+
+      describe('when editing an award with a disabled review field', () => {
+        beforeEach(() => {
+          createController({ ifNewAward: false });
+          $scope.reviewFields = ReviewFieldsMockData;
+          $scope.awardStages = CaseStatus.getAll();
+          $scope.basicDetails.selectedAwardStages = { 1: true };
+
+          setAwardDetails();
+          ReviewFieldsMockData[0].is_active = '0';
+          $scope.saveAwardInBG();
+          $scope.$digest();
+        });
+
+        afterEach(() => {
+          ReviewFieldsMockData[0].is_active = '1';
+        });
+
+        it('removes the disabled field while saving the additional award details', () => {
+          expect(civicaseCrmApi).toHaveBeenCalledWith('AwardDetail', 'create', jasmine.objectContaining({
+            review_fields: []
+          }));
+        });
+      });
     });
 
     describe('when saving a new award', () => {
@@ -420,6 +445,7 @@
         beforeEach(() => {
           createController({ ifNewAward: true, redirectTo: 'dashboard' });
           setAwardDetails();
+          $scope.reviewFields = ReviewFieldsMockData;
 
           $scope.saveNewAward();
           $scope.$digest();
@@ -438,6 +464,7 @@
         beforeEach(() => {
           createController({ ifNewAward: true, redirectTo: 'workflow' });
           setAwardDetails();
+          $scope.reviewFields = ReviewFieldsMockData;
 
           $scope.saveNewAward();
           $scope.$digest();
@@ -458,6 +485,7 @@
         beforeEach(() => {
           createController({ ifNewAward: true, redirectTo: 'dashboard' });
           setAwardDetails();
+          $scope.reviewFields = ReviewFieldsMockData;
 
           $scope.saveAndNavigateToPreviousPage();
           $scope.$digest();
@@ -483,6 +511,7 @@
         beforeEach(() => {
           createController({ ifNewAward: true, redirectTo: 'workflow' });
           setAwardDetails();
+          $scope.reviewFields = ReviewFieldsMockData;
 
           $scope.saveAndNavigateToPreviousPage();
           $scope.$digest();
