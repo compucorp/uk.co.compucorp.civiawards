@@ -10,8 +10,7 @@
   });
 
   module.controller('CiviawardReviewFieldsTableController', function (
-    $rootScope, $scope, civicaseCrmApi, dialogService, ts,
-    reviewScoringFieldsGroupName, isTruthy) {
+    $rootScope, $scope, civicaseCrmApi, dialogService, ts, isTruthy, crmApi4) {
     $scope.reviewFields = [];
     $scope.resourcesBaseUrl = CRM.config.resourceBase;
     $scope.toggleReviewField = toggleReviewField;
@@ -26,10 +25,7 @@
     $scope.getReviewFieldData = getReviewFieldData;
 
     (function init () {
-      fetchAllReviewFields()
-        .then(function (reviewFields) {
-          $scope.reviewFields = reviewFields;
-        });
+      assignAllReviewFields();
 
       $rootScope.$on('civiawards::edit-award::details-fetched', setDetails);
     }());
@@ -197,17 +193,30 @@
     }
 
     /**
-     * Fetch All Review Fields
+     * Fetch And assign all Review Fields
      *
-     * @returns {Promise} promise containing all review fields
      */
-    function fetchAllReviewFields () {
-      return civicaseCrmApi([['CustomField', 'get', {
-        sequential: true,
-        custom_group_id: reviewScoringFieldsGroupName,
-        options: { limit: 0 }
-      }]]).then(function (customFieldData) {
-        return customFieldData[0].values;
+    function assignAllReviewFields () {
+      crmApi4('CustomGroup', 'get', {
+        select: ['name'],
+        join: [['OptionValue AS option_value', 'INNER', ['extends_entity_column_value', '=', 'option_value.value']]],
+        where: [['extends', '=', 'Activity'], ['option_value.option_group_id:name', '=', 'activity_type'], ['option_value.name', '=', 'Applicant Review']]
+      }).then(function (customGroups) {
+        if (customGroups.length === 0) {
+          return [];
+        }
+
+        var applicantReviewCustomGroups = customGroups.map(function (customGroup) {
+          return customGroup.name;
+        });
+
+        return civicaseCrmApi([['CustomField', 'get', {
+          sequential: true,
+          custom_group_id: { IN: applicantReviewCustomGroups },
+          options: { limit: 0 }
+        }]]);
+      }).then(function (customFields) {
+        $scope.reviewFields = customFields[0].values;
       });
     }
 

@@ -29,6 +29,7 @@ return [
     0 => 'css/civiawards.min.css',
   ],
   'requires' => [
+    'api4',
     'crmUi',
     'crmUtil',
     'ngRoute',
