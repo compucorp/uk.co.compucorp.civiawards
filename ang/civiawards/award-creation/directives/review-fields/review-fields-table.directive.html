@@ -8,6 +8,7 @@
   <thead>
   <tr>
     <th>Review Field Name</th>
+    <th>Field Set</th>
     <th>Order</th>
     <th width="20">Required</th>
     <th>Data Type</th>
@@ -27,6 +28,7 @@
       ng-repeat="reviewField in additionalDetails.selectedReviewFields | orderBy: 'weight'"
       ng-if="additionalDetails.selectedReviewFields.length > 0">
       <td>{{getReviewFieldData(reviewField.id, 'label')}}</td>
+      <td>{{getReviewFieldData(reviewField.id, 'api.CustomGroup.getvalue')}}</td>
       <td>
         <a
           class="crm-weight-arrow" ng-if="$index > 0"

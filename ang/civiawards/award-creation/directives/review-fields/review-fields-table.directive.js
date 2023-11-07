@@ -213,7 +213,8 @@
         return civicaseCrmApi([['CustomField', 'get', {
           sequential: true,
           custom_group_id: { IN: applicantReviewCustomGroups },
-          options: { limit: 0 }
+          options: { limit: 0 },
+          'api.CustomGroup.getvalue': { id: '$value.custom_group_id', return: 'title' }
         }]]);
       }).then(function (customFields) {
         $scope.reviewFields = customFields[0].values;

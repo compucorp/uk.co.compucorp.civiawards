@@ -18,6 +18,7 @@
     <thead>
     <tr>
       <th>Review Field Name</th>
+      <th>Field Set</th>
       <th>Enabled</th>
       <th>Data Type</th>
       <th>Field Type</th>
@@ -28,6 +29,7 @@
         ng-repeat="reviewField in model.reviewFields | filter: model.searchText"
         ng-click="model.toggleReviewField(reviewField)">
         <td>{{reviewField.label}}</td>
+        <td>{{reviewField['api.CustomGroup.getvalue']}}</td>
         <td align="center">
           <input
             ng-checked="!!model.findReviewFieldByID(reviewField.id)"
