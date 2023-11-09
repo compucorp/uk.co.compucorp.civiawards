@@ -120,8 +120,15 @@
 
       return _.map(angular.copy(activitiesData), function (activity) {
         var applicantReviewFields = {};
-        activity['api.CustomValue.gettreevalues'].values.map(function (field) {
-          applicantReviewFields = Object.assign(applicantReviewFields, field.fields);
+        activity['api.CustomValue.gettreevalues'].values.map(function (fieldSet) {
+          Object.keys(fieldSet.fields).forEach(function (key) {
+            var field = fieldSet.fields[key];
+            var newKey = key + field.id;
+            fieldSet.fields[newKey] = Object.assign({ id: field.id }, field);
+            delete fieldSet.fields[key];
+          });
+
+          applicantReviewFields = Object.assign(applicantReviewFields, fieldSet.fields);
         });
 
         activity.status_label = activity['api.OptionValue.getsingle'].label;
