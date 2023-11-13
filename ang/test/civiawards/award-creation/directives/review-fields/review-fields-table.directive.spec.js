@@ -1,19 +1,21 @@
 (function (_) {
   describe('civiawardReviewFieldsTable', () => {
     var $rootScope, $controller, $scope, $q, civicaseCrmApi, ReviewFieldsMockData,
-      AwardAdditionalDetailsMockData, dialogService;
+      AwardAdditionalDetailsMockData, dialogService, crmApi4;
 
     beforeEach(module('civiawards.templates', 'civiawards', 'civicase.data', 'civiawards.data', function ($provide) {
       $provide.value('civicaseCrmApi', jasmine.createSpy('civicaseCrmApi'));
+      $provide.value('crmApi4', jasmine.createSpy('crmApi4'));
       $provide.value('dialogService', jasmine.createSpyObj('dialogService', ['open', 'close']));
     }));
 
     beforeEach(inject((_$q_, _$controller_, _$rootScope_, _civicaseCrmApi_,
-      _ReviewFieldsMockData_, _AwardAdditionalDetailsMockData_, _dialogService_) => {
+      _ReviewFieldsMockData_, _AwardAdditionalDetailsMockData_, _dialogService_, _crmApi4_) => {
       $q = _$q_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       dialogService = _dialogService_;
+      crmApi4 = _crmApi4_;
       civicaseCrmApi = _civicaseCrmApi_;
       ReviewFieldsMockData = _ReviewFieldsMockData_;
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_.get();
@@ -21,6 +23,9 @@
 
       dialogService.dialogs = {};
       civicaseCrmApi.and.returnValue($q.resolve([
+        { values: ReviewFieldsMockData }
+      ]));
+      crmApi4.and.returnValue($q.resolve([
         { values: ReviewFieldsMockData }
       ]));
 
@@ -34,11 +39,11 @@
       });
 
       it('fetches all review fields', () => {
-        expect(civicaseCrmApi).toHaveBeenCalledWith([['CustomField', 'get', {
-          sequential: true,
-          custom_group_id: 'Applicant_Review',
-          options: { limit: 0 }
-        }]]);
+        expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', {
+          select: ['name'],
+          join: [['OptionValue AS option_value', 'INNER', ['extends_entity_column_value', '=', 'option_value.value']]],
+          where: [['extends', '=', 'Activity'], ['option_value.option_group_id:name', '=', 'activity_type'], ['option_value.name', '=', 'Applicant Review']]
+        });
       });
 
       it('displays all review fields', () => {

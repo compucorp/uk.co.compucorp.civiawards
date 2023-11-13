@@ -22,15 +22,15 @@
    * @param {object} $sce angular Strict Contextual Escaping service.
    * @param {Function} civicaseCrmApi the CiviCRM API service.
    * @param {string} reviewsActivityTypeName the reviews activity type name.
-   * @param {string} reviewScoringFieldsGroupName the review scoring fields group name.
    * @param {Function} ts the translation function.
    * @param {Function} crmStatus crm status service
    * @param {Function} civicaseCrmUrl civicrm url service
    * @param {Function} civicaseCrmLoadForm service to load civicrm forms
+   * @param {Function} crmApi4 access to CiviCRM API v4
    */
   function civiawardsReviewsCaseTabContentController ($q, $scope, $sce,
-    civicaseCrmApi, reviewsActivityTypeName, reviewScoringFieldsGroupName, ts,
-    crmStatus, civicaseCrmUrl, civicaseCrmLoadForm) {
+    civicaseCrmApi, reviewsActivityTypeName, ts,
+    crmStatus, civicaseCrmUrl, civicaseCrmLoadForm, crmApi4) {
     var CRM_FORM_LOAD_EVENT = 'crmFormLoad';
     var CRM_FORM_SUCCESS_EVENT = 'crmFormSuccess.crmPopup crmPopupFormSuccess.crmPopup';
     var REVIEW_FORM_URL = 'civicrm/awardreview';
@@ -68,24 +68,33 @@
      * @returns {Promise} resolves after fetching the reviews.
      */
     function getReviewActivities () {
-      return civicaseCrmApi('Activity', 'get', {
-        activity_type_id: reviewsActivityTypeName,
-        case_id: $scope.caseItem.id,
-        options: { limit: 0 },
-        sequential: 1,
-        'api.OptionValue.getsingle': {
-          option_group_id: 'activity_status',
-          value: '$value.status_id'
-        },
-        'api.CustomValue.gettreevalues': {
-          entity_id: '$value.id',
-          entity_type: 'Activity',
-          'custom_group.name': reviewScoringFieldsGroupName
-        }
-      })
-        .then(function (response) {
-          return response.values;
+      return crmApi4('CustomGroup', 'get', {
+        select: ['name'],
+        join: [['OptionValue AS option_value', 'INNER', ['extends_entity_column_value', '=', 'option_value.value']]],
+        where: [['extends', '=', 'Activity'], ['option_value.option_group_id:name', '=', 'activity_type'], ['option_value.name', '=', 'Applicant Review']]
+      }).then(function (customGroups) {
+        var applicantReviewCustomGroups = customGroups.map(function (customGroup) {
+          return customGroup.name;
         });
+
+        return civicaseCrmApi('Activity', 'get', {
+          activity_type_id: reviewsActivityTypeName,
+          case_id: $scope.caseItem.id,
+          options: { limit: 0 },
+          sequential: 1,
+          'api.OptionValue.getsingle': {
+            option_group_id: 'activity_status',
+            value: '$value.status_id'
+          },
+          'api.CustomValue.gettreevalues': {
+            entity_id: '$value.id',
+            entity_type: 'Activity',
+            'custom_group.name': { IN: applicantReviewCustomGroups }
+          }
+        });
+      }).then(function (response) {
+        return response.values;
+      });
     }
 
     /**
@@ -110,9 +119,21 @@
       var sortOrder = _.sortBy(scoringFieldsSortOrder, 'weight');
 
       return _.map(angular.copy(activitiesData), function (activity) {
+        var applicantReviewFields = {};
+        activity['api.CustomValue.gettreevalues'].values.map(function (fieldSet) {
+          Object.keys(fieldSet.fields).forEach(function (key) {
+            var field = fieldSet.fields[key];
+            var newKey = key + field.id;
+            fieldSet.fields[newKey] = Object.assign({ id: field.id }, field);
+            delete fieldSet.fields[key];
+          });
+
+          applicantReviewFields = Object.assign(applicantReviewFields, fieldSet.fields);
+        });
+
         activity.status_label = activity['api.OptionValue.getsingle'].label;
         activity.reviewFields = sortOrder.map(function (scoringFieldSortOrder) {
-          return _.find(activity['api.CustomValue.gettreevalues'].values[0].fields, function (field) {
+          return _.find(applicantReviewFields, function (field) {
             return field.id === scoringFieldSortOrder.id;
           });
         });

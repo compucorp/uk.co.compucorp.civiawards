@@ -2,6 +2,5 @@
   var module = angular.module('civiawards');
 
   module
-    .constant('reviewsActivityTypeName', 'Applicant Review')
-    .constant('reviewScoringFieldsGroupName', 'Applicant_Review');
+    .constant('reviewsActivityTypeName', 'Applicant Review');
 })(angular);

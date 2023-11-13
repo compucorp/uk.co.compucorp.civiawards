@@ -46,5 +46,6 @@ return [
   'settings' => $options,
   'requires' => [
     'civicase-base',
+    'api4',
   ],
 ];

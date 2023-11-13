@@ -2,8 +2,7 @@
   describe('Review Case Tab Content', () => {
     let $controller, $q, $rootScope, $scope, AwardAdditionalDetailsMockData,
       caseItem, civicaseCrmApi, ReviewActivitiesMockData, ReviewFieldsMockData,
-      reviewsActivityTypeName, reviewScoringFieldsGroupName, crmStatus,
-      civicaseCrmUrl, civicaseCrmLoadForm;
+      crmStatus, civicaseCrmUrl, civicaseCrmLoadForm, crmApi4;
     const entityActionHandlers = {
       'Activity.get': activityGetHandler,
       'AwardDetail.getsingle': awardDetailGetSingleHandler,
@@ -12,14 +11,15 @@
 
     beforeEach(module('civiawards', 'civiawards.data', ($provide) => {
       civicaseCrmApi = getCrmApiMock();
-
       $provide.value('civicaseCrmApi', civicaseCrmApi);
+
+      $provide.value('crmApi4', jasmine.createSpy('crmApi4'));
     }));
 
     beforeEach(inject((_$controller_, _$q_, _$rootScope_, _ApplicationsMockData_,
       _AwardAdditionalDetailsMockData_, _ReviewActivitiesMockData_, _ReviewFieldsMockData_,
-      _reviewsActivityTypeName_, _reviewScoringFieldsGroupName_, _crmStatus_,
-      _civicaseCrmUrl_, _civicaseCrmLoadForm_) => {
+      _crmStatus_,
+      _civicaseCrmUrl_, _civicaseCrmLoadForm_, _crmApi4_) => {
       $controller = _$controller_;
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -27,14 +27,16 @@
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_;
       ReviewActivitiesMockData = _ReviewActivitiesMockData_;
       ReviewFieldsMockData = _ReviewFieldsMockData_;
-      reviewsActivityTypeName = _reviewsActivityTypeName_;
-      reviewScoringFieldsGroupName = _reviewScoringFieldsGroupName_;
       civicaseCrmUrl = _civicaseCrmUrl_;
+      crmApi4 = _crmApi4_;
       civicaseCrmLoadForm = _civicaseCrmLoadForm_;
 
       caseItem = _.first(_ApplicationsMockData_);
       $scope = $rootScope.$new();
       $scope.caseItem = caseItem;
+      crmApi4.and.returnValue($q.resolve([
+        { values: [{ name: 'Applicant_Review' }] }
+      ]));
 
       initController({ $scope });
     }));
@@ -50,21 +52,11 @@
         });
       });
 
-      it('requests all review activities for the application', () => {
-        expect(civicaseCrmApi).toHaveBeenCalledWith('Activity', 'get', {
-          activity_type_id: reviewsActivityTypeName,
-          case_id: $scope.caseItem.id,
-          options: { limit: 0 },
-          sequential: 1,
-          'api.OptionValue.getsingle': {
-            option_group_id: 'activity_status',
-            value: '$value.status_id'
-          },
-          'api.CustomValue.gettreevalues': {
-            entity_id: '$value.id',
-            entity_type: 'Activity',
-            'custom_group.name': reviewScoringFieldsGroupName
-          }
+      it('fetches all review fields', () => {
+        expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', {
+          select: ['name'],
+          join: [['OptionValue AS option_value', 'INNER', ['extends_entity_column_value', '=', 'option_value.value']]],
+          where: [['extends', '=', 'Activity'], ['option_value.option_group_id:name', '=', 'activity_type'], ['option_value.name', '=', 'Applicant Review']]
         });
       });
 
@@ -119,7 +111,7 @@
       });
 
       it('reloads the list of reviews', () => {
-        expect(civicaseCrmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
+        expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', jasmine.any(Object));
       });
     });
 
@@ -162,7 +154,7 @@
           });
 
           it('reloads the reviews', () => {
-            expect(civicaseCrmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
+            expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', jasmine.any(Object));
           });
         });
       });
@@ -206,7 +198,7 @@
           });
 
           it('reloads the reviews', () => {
-            expect(civicaseCrmApi).toHaveBeenCalledWith('Activity', 'get', jasmine.any(Object));
+            expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', jasmine.any(Object));
           });
         });
       });
