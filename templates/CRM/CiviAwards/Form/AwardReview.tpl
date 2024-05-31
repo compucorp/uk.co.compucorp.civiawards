@@ -165,7 +165,7 @@
       $.fn.preventDoubleSubmission = function () {
         CRM.$(this).on('submit', function (e) {
           if ( $(this)[0].checkValidity() ) {
-            CRM.$.blockUI();
+            $('form').block();
           }
         });
 
