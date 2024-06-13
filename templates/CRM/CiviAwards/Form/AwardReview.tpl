@@ -45,7 +45,7 @@
               <span class="ssp-applicant-card__award ssp-text-large">{$caseTypeName}</span>
               <span>
                 {foreach from=$caseTags item=caseTag}
-                  <span class="label label-primary" style="background-color: {$caseTag.background_color}">{$caseTag.name}</span>
+                  <span class="badge label label-primary" style="background-color: {$caseTag.background_color}">{$caseTag.name}</span>
                 {/foreach}
             </div>
           {else}
