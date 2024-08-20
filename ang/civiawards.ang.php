@@ -39,4 +39,8 @@ return [
   'partials' => [
     0 => 'ang/civiawards',
   ],
+  'permissions' => [
+    'create/edit awards',
+    'administer CiviCase',
+  ],
 ];
