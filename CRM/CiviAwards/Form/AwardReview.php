@@ -234,8 +234,30 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       $activityContact = $this->getActivityTargetContact();
 
       $this->updateActivity();
+      if (!empty($_FILES)) {
+        $existingFile = civicrm_api3('Attachment', 'get', [
+          'entity_table' => 'civicrm_activity',
+          'entity_id' => $activityId,
+        ]);
+        if ($existingFile['id']) {
+          civicrm_api3('Attachment', 'delete', ['id' => $existingFile['id']]);
+        }
+      }
     }
 
+    $files = array_values($_FILES ?? []);
+    if ($files[0]['type'] && $files[0]['name'] && $files[0]['tmp_name']) {
+      civicrm_api3('Attachment', 'create', [
+        'entity_table'      => 'civicrm_activity',
+        'entity_id'         => $activityId,
+        'mime_type'         => $files[0]['type'],
+        'name'              => $files[0]['name'],
+        'options'           => [
+          'move-file' => $files[0]['tmp_name'],
+        ],
+        'check_permissions' => FALSE,
+      ]);
+    }
     $profileFields['activity_id'] = $activityId;
     $profileFields['contact_id'] = $activityContact;
     $profileFields['profile_id'] = $this->profileId;
@@ -383,6 +405,19 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       $this->assign('activityStatus', $this->activity['status_id.label']);
       $editUrlParams = "action=update&id={$this->activityId}&reset=1";
       $this->assign('editUrlParams', $editUrlParams);
+      if ($this->activityId) {
+        $existingFile = civicrm_api3('Attachment', 'get', [
+          'sequential' => 1,
+          'entity_table' => 'civicrm_activity',
+          'entity_id' => $this->activityId,
+        ]);
+        $this->assign('existingFileName', $existingFile['values'][0]['name'] ?? '');
+        $this->assign('existingFileUrl', $existingFile['values'][0]['url'] ?? '');
+      }
+      else {
+        $this->assign('existingFileName', '');
+        $this->assign('existingFileUrl', '');
+      }
     }
     else {
       $this->addEntityRef('source_contact_id', ts('Reported By'));

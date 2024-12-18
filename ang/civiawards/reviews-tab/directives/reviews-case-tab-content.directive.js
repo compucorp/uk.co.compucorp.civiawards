@@ -90,6 +90,10 @@
             entity_id: '$value.id',
             entity_type: 'Activity',
             'custom_group.name': { IN: applicantReviewCustomGroups }
+          },
+          'api.attachment.getsingle': {
+            entity_id: '$value.id',
+            entity_table: 'civicrm_activity'
           }
         });
       }).then(function (response) {
@@ -123,6 +127,10 @@
         activity['api.CustomValue.gettreevalues'].values.map(function (fieldSet) {
           Object.keys(fieldSet.fields).forEach(function (key) {
             var field = fieldSet.fields[key];
+            if (field.html_type === 'File' && activity['api.attachment.getsingle'].id) {
+              field.value.display =
+                '<a href="' + activity['api.attachment.getsingle'].url + '" target="_blank">' + activity['api.attachment.getsingle'].name + '</a>';
+            }
             var newKey = key + field.id;
             fieldSet.fields[newKey] = Object.assign({ id: field.id }, field);
             delete fieldSet.fields[key];
@@ -140,6 +148,7 @@
 
         delete activity['api.OptionValue.getsingle'];
         delete activity['api.CustomValue.gettreevalues'];
+        delete activity['api.attachment.getsingle'];
 
         return activity;
       });

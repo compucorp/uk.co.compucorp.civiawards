@@ -92,7 +92,13 @@
           {if $isReviewFromSsp}
             <div class="ssp-form-control-description text-muted"> {$element.help_post} </div>
           {/if}
-          <div class="{$form_group_field_class}">{$form[$element.name].html}</div>
+          <div class="{$form_group_field_class}">
+            {if $form[$element.name].type === 'file' && $existingFileName && $existingFileUrl}
+              <a href="{$existingFileUrl}" target="_blank">{$existingFileName}</a>
+            {else}
+              {$form[$element.name].html}
+            {/if}
+          </div>
           <div class="clear"></div>
         </div>
       {/foreach}
