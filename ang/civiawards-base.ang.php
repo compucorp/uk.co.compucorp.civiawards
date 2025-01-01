@@ -9,13 +9,7 @@
  */
 
 use CRM_Civicase_Helper_GlobRecursive as GlobRecursive;
-use CRM_Civicase_Helper_OptionValues as OptionValuesHelper;
 
-$options = [
-  'awardSubtypes' => 'civiawards_award_subtype',
-];
-
-OptionValuesHelper::setToJsVariables($options);
 expose_permissions();
 
 /**
@@ -43,7 +37,7 @@ function get_awards_base_js_files() {
 
 return [
   'js' => get_awards_base_js_files(),
-  'settings' => $options,
+  'settingsFactory' => ['CRM_CiviAwards_Settings', 'getBaseSettings'],
   'requires' => [
     'civicase-base',
     'api4',
