@@ -5,12 +5,12 @@ use Civi\Api4\Generic\AbstractAction;
 use CRM_CiviAwards_Hook_AlterAPIPermissions_Award as AwardPermission;
 
 /**
- * Award filter while fetching cases.
+ * Allow option value access to users with review permission.
  */
-class CRM_CiviAwards_Event_Listener_AlterPermission {
+class CRM_CiviAwards_Event_Listener_AlterOptionValuePermission {
 
   /**
-   * Fetches cases by the given award filters.
+   * Allow option value access to users with review permission.
    *
    * @param \Civi\API\Event\AuthorizeEvent $event
    *   API Prepare Event Object.

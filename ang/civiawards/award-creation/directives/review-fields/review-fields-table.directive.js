@@ -10,7 +10,7 @@
   });
 
   module.controller('CiviawardReviewFieldsTableController', function (
-    $rootScope, $scope, civicaseCrmApi, dialogService, ts, isTruthy, crmApi4) {
+    $rootScope, $scope, dialogService, ts, isTruthy, crmApi4) {
     $scope.reviewFields = [];
     $scope.resourcesBaseUrl = CRM.config.resourceBase;
     $scope.toggleReviewField = toggleReviewField;
@@ -61,7 +61,8 @@
      */
     function getReviewFieldData (reviewFieldID, fieldName) {
       var reviewField = _.find($scope.reviewFields, function (field) {
-        return field.id === reviewFieldID;
+        // eslint-disable-next-line eqeqeq
+        return field.id == reviewFieldID;
       });
 
       return reviewField ? reviewField[fieldName] : null;
@@ -210,14 +211,19 @@
           return customGroup.name;
         });
 
-        return civicaseCrmApi([['CustomField', 'get', {
-          sequential: true,
-          custom_group_id: { IN: applicantReviewCustomGroups },
-          options: { limit: 0 },
-          'api.CustomGroup.getvalue': { id: '$value.custom_group_id', return: 'title' }
-        }]]);
+        return crmApi4('CustomField', 'get', {
+          where: [['custom_group_id:name', 'IN', applicantReviewCustomGroups]],
+          limit: 0,
+          chain: { custom_group: ['CustomGroup', 'get', { where: [['id', '=', '$custom_group_id']], select: ['title'] }] }
+        });
       }).then(function (customFields) {
-        $scope.reviewFields = customFields[0].values;
+        customFields.forEach(function (customField) {
+          if (customField.custom_group && customField.custom_group[0]) {
+            customField.custom_group_title = customField.custom_group[0].title;
+          }
+          customField.id = parseInt(customField.id);
+        });
+        $scope.reviewFields = customFields;
       });
     }
 
@@ -254,6 +260,7 @@
       _.each(details.additionalDetails.review_fields, function (field) {
         field.required = isTruthy(field.required);
         field.weight = parseInt(field.weight);
+        field.id = parseInt(field.id);
       });
       $scope.additionalDetails.selectedReviewFields = details.additionalDetails.review_fields;
     }

@@ -3,7 +3,7 @@
 
   module.constant('ReviewFieldsMockData', [
     {
-      id: '19',
+      id: 19,
       custom_group_id: '8',
       name: 'Goals_Scored',
       label: 'Goals Scored',
@@ -18,7 +18,7 @@
       column_name: 'goals_scored_19',
       in_selector: '0'
     }, {
-      id: '20',
+      id: 20,
       custom_group_id: '8',
       name: 'Number_of_Dribbles_per_game',
       label: 'Number of Dribbles per game',
@@ -33,7 +33,7 @@
       column_name: 'number_of_dribbles_per_game_20',
       in_selector: '0'
     }, {
-      id: '45',
+      id: 45,
       custom_group_id: '9',
       name: 'Age',
       label: 'Age',
