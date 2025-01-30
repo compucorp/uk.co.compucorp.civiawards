@@ -155,3 +155,22 @@
   </div>
 </div>
 
+{literal}
+  <script type="text/javascript">
+    CRM.$(function ($) {
+      $(document).ready(function () {
+        $('form').preventDoubleSubmission();
+      });
+
+      $.fn.preventDoubleSubmission = function () {
+        CRM.$(this).on('submit', function (e) {
+          if ( $(this)[0].checkValidity() ) {
+            $('form').block();
+          }
+        });
+
+        return this;
+      };
+    });
+  </script>
+{/literal}

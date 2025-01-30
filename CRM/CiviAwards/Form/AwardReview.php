@@ -117,36 +117,53 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    * {@inheritDoc}
    */
   public function preProcess() {
-    if ($this->_action & CRM_Core_Action::ADD) {
-      $this->caseId = CRM_Utils_Request::retrieve('case_id', 'Positive', $this);
-    }
-    else {
-      $this->activityId = CRM_Utils_Request::retrieve('id', 'Positive', $this);
-      $this->activity = $this->getActivity();
-      $this->caseId = CRM_Utils_Array::first($this->activity['case_id']);
-    }
+    try {
+      if ($this->_action & CRM_Core_Action::ADD) {
+        $this->caseId = CRM_Utils_Request::retrieve('case_id', 'Positive', $this);
+      }
+      else {
+        $this->activityId = CRM_Utils_Request::retrieve('id', 'Positive', $this);
+        $this->activity = $this->getActivity();
+        $this->caseId = CRM_Utils_Array::first($this->activity['case_id']);
+      }
 
-    $this->profileId = $this->getProfileIdFromCaseType();
-    $this->caseContactDisplayName = $this->getCaseContactDisplayName();
-    $this->caseTypeName = $this->getCaseTypeName();
-    $this->caseTags = $this->loadCaseTags();
+      $this->profileId = $this->getProfileIdFromCaseType();
+      $this->caseContactDisplayName = $this->getCaseContactDisplayName();
+      $this->caseTypeName = $this->getCaseTypeName();
+      $this->caseTags = $this->loadCaseTags();
+    }
+    catch (\Throwable $th) {
+      $errorMessage = ts('An error occurred, ensure review URL is correct');
+      if ($this->isReviewFromSsp()) {
+        drupal_set_message($errorMessage, 'error');
+      }
+      else {
+        CRM_Core_Session::setStatus($errorMessage, 'Error', 'error');
+      }
+      CRM_Utils_System::redirect(CRM_Core_Session::singleton()->readUserContext());
+    }
   }
 
   /**
    * {@inheritDoc}
    */
   public function buildQuickForm() {
-    $this->fields = CRM_Core_BAO_UFGroup::getFields(
-      $this->profileId, FALSE, CRM_Core_Action::ADD, NULL,
-      NULL, FALSE, NULL, FALSE, 'AwardReview', CRM_Core_Permission::CREATE, 'weight'
-    );
+    try {
+      $this->fields = CRM_Core_BAO_UFGroup::getFields(
+        $this->profileId, FALSE, CRM_Core_Action::ADD, NULL,
+        NULL, FALSE, NULL, FALSE, 'AwardReview', CRM_Core_Permission::CREATE, 'weight'
+      );
 
-    $error = $this->getErrorMessage();
-    if ($error) {
-      $this->displayErrorMessage($error);
+      $error = $this->getErrorMessage();
+      if ($error) {
+        $this->displayErrorMessage($error);
+      }
+      else {
+        $this->displayReviewForm();
+      }
     }
-    else {
-      $this->displayReviewForm();
+    catch (\Throwable $th) {
+      $this->displayErrorMessage(ts('An error occurred, ensure review URL is correct'));
     }
   }
 
