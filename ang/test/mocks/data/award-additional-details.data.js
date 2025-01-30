@@ -11,15 +11,15 @@
       award_manager: ['2', '1'],
       is_template: true,
       review_fields: [{
-        id: '19',
+        id: 19,
         weight: 1,
         required: '1'
       }, {
-        id: '20',
+        id: 20,
         weight: 2,
         required: '0'
       }, {
-        id: '45',
+        id: 45,
         weight: 3,
         required: '0'
       }]

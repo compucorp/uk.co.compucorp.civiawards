@@ -1,33 +1,26 @@
 (function (_) {
   describe('civiawardReviewFieldsTable', () => {
-    var $rootScope, $controller, $scope, $q, civicaseCrmApi, ReviewFieldsMockData,
+    var $rootScope, $controller, $scope, $q, ReviewFieldsMockData,
       AwardAdditionalDetailsMockData, dialogService, crmApi4;
 
     beforeEach(module('civiawards.templates', 'civiawards', 'civicase.data', 'civiawards.data', function ($provide) {
-      $provide.value('civicaseCrmApi', jasmine.createSpy('civicaseCrmApi'));
       $provide.value('crmApi4', jasmine.createSpy('crmApi4'));
       $provide.value('dialogService', jasmine.createSpyObj('dialogService', ['open', 'close']));
     }));
 
-    beforeEach(inject((_$q_, _$controller_, _$rootScope_, _civicaseCrmApi_,
+    beforeEach(inject((_$q_, _$controller_, _$rootScope_,
       _ReviewFieldsMockData_, _AwardAdditionalDetailsMockData_, _dialogService_, _crmApi4_) => {
       $q = _$q_;
       $controller = _$controller_;
       $rootScope = _$rootScope_;
       dialogService = _dialogService_;
       crmApi4 = _crmApi4_;
-      civicaseCrmApi = _civicaseCrmApi_;
       ReviewFieldsMockData = _ReviewFieldsMockData_;
       AwardAdditionalDetailsMockData = _AwardAdditionalDetailsMockData_.get();
       $scope = $rootScope.$new();
 
       dialogService.dialogs = {};
-      civicaseCrmApi.and.returnValue($q.resolve([
-        { values: ReviewFieldsMockData }
-      ]));
-      crmApi4.and.returnValue($q.resolve([
-        { values: ReviewFieldsMockData }
-      ]));
+      crmApi4.and.returnValue($q.resolve(ReviewFieldsMockData));
 
       $scope.$digest();
     }));
@@ -129,15 +122,15 @@
 
       it('displays the already saved review fields', () => {
         expect($scope.additionalDetails.selectedReviewFields).toEqual([{
-          id: '19',
+          id: 19,
           required: true,
           weight: 1
         }, {
-          id: '20',
+          id: 20,
           required: false,
           weight: 2
         }, {
-          id: '45',
+          id: 45,
           required: false,
           weight: 3
         }]);
