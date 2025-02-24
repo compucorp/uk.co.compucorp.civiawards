@@ -104,31 +104,31 @@ function civiawards_civicrm_apiWrappers(&$wrappers, $apiRequest) {
 function civiawards_civicrm_permission(&$permissions) {
   // Add permission defined by this extension.
   $permissions['access awards panel portal'] = [
-    ts('CiviAwards: Access awards panel portal'),
-    ts('Allows a user to access the awards panel portal'),
+    'label' => ts('CiviAwards: Access awards panel portal'),
+    'description' => ts('Allows a user to access the awards panel portal'),
   ];
 
   $permissions['access applicant portal'] = [
-    ts('CiviAwards: Access applicant portal'),
-    ts('Allows a user to access the awards applicant portal'),
+    'label' => ts('CiviAwards: Access applicant portal'),
+    'description' => ts('Allows a user to access the awards applicant portal'),
   ];
 
   $permissions['create/edit awards'] = [
-    ts('CiviAwards: Create/Edit awards'),
-    ts('Allows a user to create or edit awards'),
+    'label' => ts('CiviAwards: Create/Edit awards'),
+    'description' => ts('Allows a user to create or edit awards'),
   ];
 
   $permissions[CRM_CiviAwards_Hook_AlterAPIPermissions_Award::REVIEW_FIELD_SET_PERM] = [
-    ts('CiviAwards: Access review fields '),
-    ts(
+    'label' => ts('CiviAwards: Access review fields '),
+    'description' => ts(
       "This allows the user to view any review field sets on the reserved review activity type.
        Note that this can also be done through ACLs or allocating the user 'Access all custom data' permission"
     ),
   ];
 
   $permissions[CRM_CiviAwards_Hook_AlterAPIPermissions_Award::PAYMENT_FIELD_SET_PERM] = [
-    ts('CiviAwards: Access Payment custom fields '),
-    ts(
+    'label' => ts('CiviAwards: Access Payment custom fields '),
+    'description' => ts(
       "This allows the user to view any payment field sets on the related payment activity types.
        Note that this can also be done through ACLs or allocating the user 'Access all custom data' permission"
     ),
