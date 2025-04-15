@@ -178,7 +178,7 @@
                   managers: _.map(
                     awardDetails.award_manager,
                     function (managerID) {
-                      return ContactsCache.getCachedContact(managerID).display_name;
+                      return ContactsCache.getCachedContact(managerID)?.display_name ?? '';
                     }
                   )
                 }
