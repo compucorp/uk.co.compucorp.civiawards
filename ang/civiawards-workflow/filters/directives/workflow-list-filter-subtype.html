@@ -1,5 +1,5 @@
 <div ng-controller="CiviAwardWorkflowFilterController">
-  <label>{{ts('Award Subtypes')}}</label>
+  <label>{{:: ts('%1 Subtypes', { 1: currentCaseCategory.label.charAt(0).toUpperCase() + currentCaseCategory.label.slice(1) }) }}</label>
   <input
     class="form-control"
     crm-ui-select="{
