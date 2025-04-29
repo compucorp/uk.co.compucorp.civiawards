@@ -13,12 +13,14 @@
    * @param {Function} isApplicationManagementScreen is application management screen function
    * @param {object} CaseTypeCategory case type category service
    * @param {object} civicaseCrmUrl civicrm url service
+   * @param {string} currentCaseCategory The current case type category name
    */
   function AddAwardDashboardActionButtonController ($scope, $routeParams,
     $window, canCreateOrEditAwards, isApplicationManagementScreen,
-    CaseTypeCategory, civicaseCrmUrl) {
+    CaseTypeCategory, civicaseCrmUrl, currentCaseCategory) {
     $scope.isVisible = isVisible;
     $scope.redirectToAwardsCreationScreen = redirectToAwardsCreationScreen;
+    $scope.currentCaseCategory = CaseTypeCategory.findById(currentCaseCategory);
 
     /**
      * Displays the Add Award button when on the awards dashboard and the user can create awards.

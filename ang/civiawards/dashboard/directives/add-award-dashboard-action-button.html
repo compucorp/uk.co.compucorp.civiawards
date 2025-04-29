@@ -4,5 +4,5 @@
   ng-click="redirectToAwardsCreationScreen()"
   class="btn btn-primary civicase__dashboard__action-btn civicase__dashboard__action-btn--light">
   <i class="material-icons">add_circle</i>
-  {{ts('Create new award')}}
+  {{:: ts('Create new %1', { 1: currentCaseCategory.label }) }}
 </a>
