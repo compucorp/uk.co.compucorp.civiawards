@@ -26,18 +26,6 @@ function civiawards_civicrm_config(&$config) {
     ['CRM_CiviAwards_Event_Listener_AlterOptionValuePermission', 'authorize'],
     10
   );
-
-  Civi::dispatcher()->addListener(
-    'civi.api.authorize',
-    ['CRM_CiviAwards_Event_Listener_AlterCustomGroupPermission', 'authorize'],
-    10
-  );
-
-  Civi::dispatcher()->addListener(
-    'civi.api.respond',
-    ['CRM_CiviAwards_Event_Listener_AlterCustomGroupPermission', 'respond'],
-    10
-  );
 }
 
 /**

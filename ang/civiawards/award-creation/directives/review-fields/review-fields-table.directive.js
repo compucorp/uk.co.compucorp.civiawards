@@ -198,24 +198,7 @@
      *
      */
     function assignAllReviewFields () {
-      crmApi4('CustomGroup', 'get', {
-        select: ['name'],
-        join: [['OptionValue AS option_value', 'INNER', ['extends_entity_column_value', '=', 'option_value.value']]],
-        where: [['extends', '=', 'Activity'], ['option_value.option_group_id:name', '=', 'activity_type'], ['option_value.name', '=', 'Applicant Review']]
-      }).then(function (customGroups) {
-        if (customGroups.length === 0) {
-          return [];
-        }
-
-        var applicantReviewCustomGroups = customGroups.map(function (customGroup) {
-          return customGroup.name;
-        });
-
-        return crmApi4('CustomField', 'get', {
-          where: [['custom_group_id:name', 'IN', applicantReviewCustomGroups]],
-          limit: 0,
-          chain: { custom_group: ['CustomGroup', 'get', { where: [['id', '=', '$custom_group_id']], select: ['title'] }] }
-        });
+      crmApi4('ApplicantReviewField', 'get', {
       }).then(function (customFields) {
         customFields.forEach(function (customField) {
           if (customField.custom_group && customField.custom_group[0]) {
