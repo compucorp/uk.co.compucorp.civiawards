@@ -65,7 +65,7 @@ class GetAction extends BasicGetAction {
       ->setLimit(0)
       ->addChain('custom_group', CustomGroup::get($this->checkPermissions)
         ->addWhere('id', '=', '$custom_group_id')
-        ->addSelect('title')
+        ->addSelect('title', 'name')
     );
 
     foreach ($params["select"] ?? [] as $select) {

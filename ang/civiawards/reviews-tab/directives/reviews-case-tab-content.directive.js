@@ -68,13 +68,13 @@
      * @returns {Promise} resolves after fetching the reviews.
      */
     function getReviewActivities () {
-      return crmApi4('CustomGroup', 'get', {
-        select: ['name'],
-        join: [['OptionValue AS option_value', 'INNER', ['extends_entity_column_value', '=', 'option_value.value']]],
-        where: [['extends', '=', 'Activity'], ['option_value.option_group_id:name', '=', 'activity_type'], ['option_value.name', '=', 'Applicant Review']]
-      }).then(function (customGroups) {
-        var applicantReviewCustomGroups = customGroups.map(function (customGroup) {
-          return customGroup.name;
+      return crmApi4('ApplicantReviewField', 'get', {
+      }).then(function (customFields) {
+        const applicantReviewCustomGroups = [];
+        customFields.forEach(function (customField) {
+          if (customField.custom_group && customField.custom_group[0]) {
+            applicantReviewCustomGroups.push(customField.custom_group[0].name);
+          }
         });
 
         return civicaseCrmApi('Activity', 'get', {

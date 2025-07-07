@@ -107,7 +107,7 @@
       });
 
       it('reloads the list of reviews', () => {
-        expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', jasmine.any(Object));
+        expect(crmApi4).toHaveBeenCalledWith('ApplicantReviewField', 'get', jasmine.any(Object));
       });
     });
 
@@ -150,7 +150,7 @@
           });
 
           it('reloads the reviews', () => {
-            expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', jasmine.any(Object));
+            expect(crmApi4).toHaveBeenCalledWith('ApplicantReviewField', 'get', jasmine.any(Object));
           });
         });
       });
@@ -194,7 +194,7 @@
           });
 
           it('reloads the reviews', () => {
-            expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', jasmine.any(Object));
+            expect(crmApi4).toHaveBeenCalledWith('ApplicantReviewField', 'get', jasmine.any(Object));
           });
         });
       });
