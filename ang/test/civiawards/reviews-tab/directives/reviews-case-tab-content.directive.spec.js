@@ -53,11 +53,7 @@
       });
 
       it('fetches all review fields', () => {
-        expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', {
-          select: ['name'],
-          join: [['OptionValue AS option_value', 'INNER', ['extends_entity_column_value', '=', 'option_value.value']]],
-          where: [['extends', '=', 'Activity'], ['option_value.option_group_id:name', '=', 'activity_type'], ['option_value.name', '=', 'Applicant Review']]
-        });
+        expect(crmApi4).toHaveBeenCalledWith('ApplicantReviewField', 'get', {});
       });
 
       describe('after loading', () => {
@@ -111,7 +107,7 @@
       });
 
       it('reloads the list of reviews', () => {
-        expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', jasmine.any(Object));
+        expect(crmApi4).toHaveBeenCalledWith('ApplicantReviewField', 'get', jasmine.any(Object));
       });
     });
 
@@ -154,7 +150,7 @@
           });
 
           it('reloads the reviews', () => {
-            expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', jasmine.any(Object));
+            expect(crmApi4).toHaveBeenCalledWith('ApplicantReviewField', 'get', jasmine.any(Object));
           });
         });
       });
@@ -198,7 +194,7 @@
           });
 
           it('reloads the reviews', () => {
-            expect(crmApi4).toHaveBeenCalledWith('CustomGroup', 'get', jasmine.any(Object));
+            expect(crmApi4).toHaveBeenCalledWith('ApplicantReviewField', 'get', jasmine.any(Object));
           });
         });
       });
