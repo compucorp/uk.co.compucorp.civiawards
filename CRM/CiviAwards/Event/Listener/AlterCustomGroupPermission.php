@@ -65,12 +65,16 @@ class CRM_CiviAwards_Event_Listener_AlterCustomGroupPermission {
       return FALSE;
     }
 
+    if (!in_array($apiRequest['entity'], ['CustomGroup', 'CustomField']) || $apiRequest['action'] !== 'get') {
+      return FALSE;
+    }
+
     if (!CRM_Core_Permission::check(AwardPermission::REVIEW_FIELD_SET_PERM) ||
       (CRM_Core_Permission::check('access all custom data') && CRM_Core_Permission::check('administer CiviCRM'))) {
       return FALSE;
     }
 
-    return in_array($apiRequest['entity'], ['CustomGroup', 'CustomField']) && $apiRequest['action'] === 'get';
+    return TRUE;
   }
 
   /**
