@@ -99,6 +99,68 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessorTest ext
   }
 
   /**
+   * Custom group with no subtypes is correctly assigned to a new case type.
+   */
+  public function testProcessCaseTypeCustomGroupsOnCreateAssignsCustomGroupWithNoSubtypes() {
+    $caseTypeId = 5;
+    $entityColumnValues = [1, 2, 3];
+    $customGroup = $this->createCustomGroup($entityColumnValues);
+    $awardDetail = $this->createAwardDetail($caseTypeId);
+    $customGroupId = $customGroup[0]['id'];
+
+    // Case type has subtypes, but the custom group has NO subtypes — meaning
+    // it should apply to any case type in the category.
+    $applicantManagementHelper = $this->getApplicantManagementHelperMockWithCustomSubTypes(
+      $customGroup,
+      [],
+      [1, 2],
+      [$customGroupId => []]
+    );
+    $applicantManagementProcessor = new ApplicantManagementCaseTypePostProcessor($applicantManagementHelper);
+    $applicantManagementProcessor->processCaseTypeCustomGroupsOnCreate($awardDetail);
+    $expectedCustomGroup = civicrm_api3('CustomGroup', 'getsingle', ['id' => $customGroupId]);
+
+    $this->assertEquals([1, 2, 3, $caseTypeId], $expectedCustomGroup['extends_entity_column_value']);
+  }
+
+  /**
+   * Custom group with no subtypes is NOT removed when the case type is updated.
+   */
+  public function testProcessCaseTypeCustomGroupsOnUpdateDoesNotRemoveCustomGroupWithNoSubtypes() {
+    $caseTypeId = 5;
+    $entityColumnValues = [1, 2, 5];
+    $customGroup = $this->createCustomGroup($entityColumnValues);
+    $awardDetail = $this->createAwardDetail($caseTypeId);
+    $customGroupId = $customGroup[0]['id'];
+
+    // Simulate an award subtype change so the update logic actually walks
+    // over matched custom groups.
+    $awardDetail->award_subtype = 2;
+    $awardDetail->oldAwardDetail = new AwardDetail();
+    $awardDetail->oldAwardDetail->award_subtype = 1;
+
+    // We pass an empty list for getCaseTypeCustomGroups because the case
+    // type is already assigned to this custom group (via the seeded
+    // extends_entity_column_value = [1, 2, 5]); the create re-run should
+    // therefore not try to add it again. The matched-group list still
+    // contains it, so the removal branch under test is exercised.
+    $applicantManagementHelper = $this->getApplicantManagementHelperMockWithCustomSubTypes(
+      [],
+      [],
+      [2],
+      [$customGroupId => []],
+      $customGroup
+    );
+    $applicantManagementProcessor = new ApplicantManagementCaseTypePostProcessor($applicantManagementHelper);
+    $applicantManagementProcessor->processCaseTypeCustomGroupsOnUpdate($awardDetail);
+    $expectedCustomGroup = civicrm_api3('CustomGroup', 'getsingle', ['id' => $customGroupId]);
+
+    // The case type (5) is still in the custom group's entity column values
+    // because the custom group has no subtypes (treated as "Any").
+    $this->assertEquals([1, 2, 5], $expectedCustomGroup['extends_entity_column_value']);
+  }
+
+  /**
    * Data set for TestProcessCaseTypeCustomGroupsOnUpdate.
    *
    * @return array
@@ -180,6 +242,54 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessorTest ext
     $applicantManagementHelper->method('getCustomGroupSubTypesList')->willReturn([
       $customGroupReturn[0]['id'] => $subTypes,
     ]);
+
+    return $applicantManagementHelper;
+  }
+
+  /**
+   * Returns a mock for ApplicantManagementHelper.
+   *
+   * @param mixed $customGroupReturn
+   *   What to return for getCaseTypeCustomGroups. Also used for the
+   *   category-match list unless $customGroupMatchReturn is given.
+   * @param mixed $customGroupMismatchReturn
+   *   What to return for getCaseTypeCustomGroupsWithCategoryMismatch.
+   * @param array $caseTypeSubTypes
+   *   Subtype list returned for the case type itself.
+   * @param array $customGroupSubTypesList
+   *   Subtype list keyed by custom group id returned for the custom group.
+   * @param mixed $customGroupMatchReturn
+   *   Optional override for getCaseTypeCustomGroupsWithCategoryMatch.
+   *
+   * @return \PHPUnit_Framework_MockObject_MockObject
+   *   ApplicantManagementHelper mock object.
+   */
+  private function getApplicantManagementHelperMockWithCustomSubTypes(
+    $customGroupReturn,
+    $customGroupMismatchReturn,
+    array $caseTypeSubTypes,
+    array $customGroupSubTypesList,
+    $customGroupMatchReturn = NULL
+  ) {
+    $applicantManagementHelper = $this->getMockBuilder(ApplicantManagementPostProcessHelper::class)
+      ->setMethods(
+        [
+          'getCaseTypeCustomGroups',
+          'getCaseTypeCustomGroupsWithCategoryMismatch',
+          'getCaseTypeCustomGroupsWithCategoryMatch',
+          'getCaseCategoryForCaseType',
+          'getSubTypesForCaseType',
+          'getCustomGroupSubTypesList',
+        ]
+      )
+      ->getMock();
+    $applicantManagementHelper->method('getCaseTypeCustomGroups')->willReturn($customGroupReturn);
+    $applicantManagementHelper->method('getCaseTypeCustomGroupsWithCategoryMatch')
+      ->willReturn($customGroupMatchReturn !== NULL ? $customGroupMatchReturn : $customGroupReturn);
+    $applicantManagementHelper->method('getCaseCategoryForCaseType')->willReturn(1);
+    $applicantManagementHelper->method('getCaseTypeCustomGroupsWithCategoryMismatch')->willReturn($customGroupMismatchReturn);
+    $applicantManagementHelper->method('getSubTypesForCaseType')->willReturn($caseTypeSubTypes);
+    $applicantManagementHelper->method('getCustomGroupSubTypesList')->willReturn($customGroupSubTypesList);
 
     return $applicantManagementHelper;
   }
