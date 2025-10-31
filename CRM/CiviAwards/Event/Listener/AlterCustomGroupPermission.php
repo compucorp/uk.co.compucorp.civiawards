@@ -36,9 +36,13 @@ class CRM_CiviAwards_Event_Listener_AlterCustomGroupPermission {
       return;
     }
 
+    $apiRequest = $event->getApiRequest();
+    if ($apiRequest->getCheckPermissions() === FALSE) {
+      return;
+    }
+
     $reviewCustomGroupIds = self::getReviewCustomGroupIds();
     $result = $event->getResponse();
-    $apiRequest = $event->getApiRequest();
 
     foreach ($result as $customGroup) {
       $fieldName = $apiRequest['entity'] === 'CustomGroup' ? 'id' : 'custom_group_id';
