@@ -63,7 +63,6 @@ function civiawards_civicrm_enable() {
  */
 function civiawards_civicrm_buildForm($formName, &$form) {
   $hooks = [
-    new CRM_CiviAwards_Hook_BuildForm_SetCustomGroupSubTypeValues(),
     new CRM_CiviAwards_Hook_BuildForm_AddFinanceManagementField(),
   ];
 

@@ -61,7 +61,7 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessor {
     foreach ($customGroups as $cusGroup) {
       $extendColValue = !empty($cusGroup['extends_entity_column_value']) ? $cusGroup['extends_entity_column_value'] : [];
       $customGroupSubTypeList = !empty($this->customGroupSubTypes[$cusGroup['id']]) ? $this->customGroupSubTypes[$cusGroup['id']] : [];
-      if (array_intersect($customGroupSubTypeList, $caseTypeSubType)) {
+      if (array_intersect($customGroupSubTypeList, $caseTypeSubType) || empty($customGroupSubTypeList)) {
         $entityColumnValues = array_merge($extendColValue, [$caseTypeId]);
         $this->updateCustomGroup($cusGroup['id'], $entityColumnValues);
       }
@@ -102,7 +102,7 @@ class CRM_CiviAwards_Service_ApplicantManagementAwardDetailPostProcessor {
       foreach ($matchedCustomGroups as $cusGroup) {
         $customGroupSubTypeList = !empty($this->customGroupSubTypes[$cusGroup['id']]) ? $this->customGroupSubTypes[$cusGroup['id']] : [];
         $extendColValue = !empty($cusGroup['extends_entity_column_value']) ? $cusGroup['extends_entity_column_value'] : [];
-        if (!array_intersect($customGroupSubTypeList, $caseTypeSubType)) {
+        if (!array_intersect($customGroupSubTypeList, $caseTypeSubType) && !empty($customGroupSubTypeList)) {
           $entityColumnValues = array_diff($extendColValue, [$caseTypeId]);
           $entityColumnValues = $entityColumnValues ? $entityColumnValues : NULL;
           $this->updateCustomGroup($cusGroup['id'], $entityColumnValues);

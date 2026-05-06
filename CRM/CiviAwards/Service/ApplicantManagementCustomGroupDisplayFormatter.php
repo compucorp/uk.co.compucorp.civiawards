@@ -58,6 +58,7 @@ class CRM_CiviAwards_Service_ApplicantManagementCustomGroupDisplayFormatter exte
   public function processDisplay(array &$row) {
     $row['extends_display'] = $this->cgExtendValues[$this->caseTypeCategories[$row['extends_entity_column_id']]];
     if (empty($this->customGroupSubTypes[$row['id']])) {
+      $row['extends_entity_column_value'] = ts('Any');
       return;
     }
 

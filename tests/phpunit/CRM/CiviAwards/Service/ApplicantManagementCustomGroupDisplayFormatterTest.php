@@ -28,6 +28,27 @@ class CRM_CiviAwards_Service_ApplicantManagementCustomGroupDisplayFormatterTest 
   }
 
   /**
+   * Display formatter shows "Any" when there are no subtypes.
+   */
+  public function testProcessDisplayShowsAnyWhenNoSubtypes() {
+    $caseCategories = [3 => 'Awards'];
+    $expectedDisplay = CaseCategoryForCustomGroupSupport::AWARDS_CATEGORY_CG_LABEL;
+    $cgExtends = ['Awards' => $expectedDisplay];
+    // An empty subtype list for the custom group id (3) represents "Any".
+    $subTypes = [3 => []];
+    $awardManagementHelper = $this->getApplicantManagementHelperMock($caseCategories, $cgExtends, $subTypes);
+    $row = [
+      'id' => 3,
+      'extends_entity_column_id' => 3,
+      'extends_entity_column_value' => '',
+    ];
+    $displayFormatter = new ApplicantManagementCustomGroupDisplayFormatter($awardManagementHelper);
+    $displayFormatter->processDisplay($row);
+    $this->assertEquals($expectedDisplay, $row['extends_display']);
+    $this->assertEquals('Any', $row['extends_entity_column_value']);
+  }
+
+  /**
    * Returns a mock object for ApplicantManagementHelper.
    *
    * @param mixed $caseCategoryReturn
