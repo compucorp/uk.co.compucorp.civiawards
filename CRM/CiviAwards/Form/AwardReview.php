@@ -14,6 +14,13 @@ use Civi\Api4\OptionValue as OptionValueAPI;
 class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
 
   /**
+   * Guard the form against being submitted twice.
+   *
+   * @var bool
+   */
+  public $submitOnce = TRUE;
+
+  /**
    * URL for accessing review form from SSP.
    */
   const SSP_REVIEW_URL = 'civicrm/ssp/awardreview';
