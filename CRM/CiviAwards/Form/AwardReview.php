@@ -246,7 +246,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     foreach ($this->profileFields as $profileField) {
       $value = $values[$profileField];
       $value = is_array($value) ? array_filter($value) : $value;
-      $profileFields[$profileField] = $value;
+      $profileFields[$profileField] = $this->unformatNumberFieldValue($profileField, $value);
     }
 
     if ($this->_action & CRM_Core_Action::ADD) {
@@ -294,6 +294,37 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       CRM_Core_Session::setStatus(ts('An error occurred'), 'Error', 'error');
     }
 
+  }
+
+  /**
+   * Converts a Number field value from locale format to machine format.
+   *
+   * CiviCRM pre-fills Number (Float) text fields in the site's number
+   * format (e.g. "5,000"), and the form validation lets reviewers type
+   * them that way too, but the API only accepts machine-format numbers
+   * (e.g. "5000"), so the review fails to save unless the value is
+   * converted back first. Money fields are not converted here because
+   * CiviCRM already does that when saving them.
+   *
+   * @param string $fieldName
+   *   Profile field name, e.g. custom_12.
+   * @param mixed $value
+   *   Submitted value.
+   *
+   * @return mixed
+   *   The value in machine format for Number text fields, otherwise the
+   *   value as submitted.
+   */
+  private function unformatNumberFieldValue(string $fieldName, $value) {
+    $field = $this->fields[$fieldName] ?? [];
+    $isNumberTextField = ($field['data_type'] ?? NULL) === 'Float'
+      && ($field['html_type'] ?? NULL) === 'Text';
+
+    if (!$isNumberTextField || !is_string($value) || $value === '') {
+      return $value;
+    }
+
+    return CRM_Utils_Rule::cleanMoney($value);
   }
 
   /**
