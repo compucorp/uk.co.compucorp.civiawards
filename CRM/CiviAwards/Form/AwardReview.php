@@ -270,14 +270,15 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     }
 
     $files = array_values($_FILES ?? []);
-    if ($files[0]['type'] && $files[0]['name'] && $files[0]['tmp_name']) {
+    $file = $files[0] ?? [];
+    if (!empty($file['type']) && !empty($file['name']) && !empty($file['tmp_name'])) {
       civicrm_api3('Attachment', 'create', [
         'entity_table'      => 'civicrm_activity',
         'entity_id'         => $activityId,
-        'mime_type'         => $files[0]['type'],
-        'name'              => $files[0]['name'],
+        'mime_type'         => $file['type'],
+        'name'              => $file['name'],
         'options'           => [
-          'move-file' => $files[0]['tmp_name'],
+          'move-file' => $file['tmp_name'],
         ],
         'check_permissions' => FALSE,
       ]);
@@ -337,7 +338,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    */
   private function redirectUser(array $values, int $activityId) {
     $status = $this->getSessionStatusText($values);
-    if ($this->isReviewFromSsp() && !$values['_qf_AwardReview_submit']) {
+    if ($this->isReviewFromSsp() && empty($values['_qf_AwardReview_submit'])) {
       $url = $this->getRedirectUrlForNonSubmitReview($values, $activityId);
       CRM_Utils_System::setUFMessage(ts($status));
       CRM_Utils_System::redirect($url);
@@ -367,11 +368,11 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
       return $this->_action == CRM_Core_Action::ADD ? $submittedStatus : 'Updated';
     }
 
-    if ($this->isReviewFromSsp() && $values['_qf_AwardReview_submit']) {
+    if ($this->isReviewFromSsp() && !empty($values['_qf_AwardReview_submit'])) {
       return $submittedStatus;
     }
 
-    if ($values['_qf_AwardReview_next']) {
+    if (!empty($values['_qf_AwardReview_next'])) {
       return 'Details saved successfully';
     }
 
@@ -391,7 +392,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    */
   private function getRedirectUrlForNonSubmitReview(array $values, int $activityId) {
     // Save & Continue button.
-    if ($values['_qf_AwardReview_next']) {
+    if (!empty($values['_qf_AwardReview_next'])) {
       return CRM_Utils_System::url(self::SSP_REVIEW_URL, [
         'action' => 'update',
         'id' => $activityId,
@@ -875,8 +876,8 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
     $customFieldData = [];
     foreach ($results['values'] as $customField) {
       $customFieldData['custom_' . $customField['id']]['label'] = $customField['label'];
-      $customFieldData['custom_' . $customField['id']]['help_pre'] = $customField['help_pre'];
-      $customFieldData['custom_' . $customField['id']]['help_post'] = $customField['help_post'];
+      $customFieldData['custom_' . $customField['id']]['help_pre'] = $customField['help_pre'] ?? '';
+      $customFieldData['custom_' . $customField['id']]['help_post'] = $customField['help_post'] ?? '';
     }
 
     return $customFieldData;
@@ -906,7 +907,7 @@ class CRM_CiviAwards_Form_AwardReview extends CRM_Core_Form {
    */
   private function getSubmittedReviewStatus(array $values) {
     // Save draft && Save & Continue buttons.
-    if ($values['_qf_AwardReview_next'] || $values['_qf_AwardReview_done']) {
+    if (!empty($values['_qf_AwardReview_next']) || !empty($values['_qf_AwardReview_done'])) {
       return 'Draft';
     }
 
