@@ -14,10 +14,22 @@ abstract class BaseHeadlessTest extends TestCase implements HeadlessInterface, T
    * {@inheritDoc}
    */
   public function setUpHeadless() {
+    return $this->getHeadlessEnvironmentBuilder()->apply();
+  }
+
+  /**
+   * Returns the headless environment that every test needs, not applied.
+   *
+   * Test classes that need more in the test database, such as custom
+   * fields, add their steps to it in their own setUpHeadless().
+   *
+   * @return \Civi\Test\CiviEnvBuilder
+   *   Headless environment builder.
+   */
+  protected function getHeadlessEnvironmentBuilder() {
     return Test::headless()
       ->install('uk.co.compucorp.civicase')
-      ->installMe(__DIR__)
-      ->apply();
+      ->installMe(__DIR__);
   }
 
   /**

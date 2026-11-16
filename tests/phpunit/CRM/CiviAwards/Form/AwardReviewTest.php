@@ -1,5 +1,6 @@
 <?php
 
+use CRM_CiviAwards_Helper_ApplicantReview as ApplicantReview;
 use CRM_CiviAwards_Helper_CaseTypeCategory as CaseTypeCategory;
 use CRM_CiviAwards_Test_Fabricator_Case as CaseFabricator;
 use CRM_CiviAwards_Test_Fabricator_CaseType as CaseTypeFabricator;
@@ -8,11 +9,28 @@ use CRM_CiviAwards_Test_Fabricator_Contact as ContactFabricator;
 /**
  * Test class for the Award Review form.
  *
+ * Creating custom fields changes the database schema, which commits the
+ * transaction each test runs in, so review fields created in setUp() would
+ * be left behind for later tests. They are created by this class's
+ * headless environment instead. Because that environment differs from the
+ * other test classes', the test database is rebuilt with the review fields
+ * before this class runs, and without them for the classes after it.
+ *
  * @group headless
  */
 class CRM_CiviAwards_Form_AwardReviewTest extends BaseHeadlessTest {
 
   use CRM_CiviAwards_Helper_SessionTrait;
+
+  /**
+   * Name of the Number review field.
+   */
+  const NUMBER_FIELD_NAME = 'award_review_test_number';
+
+  /**
+   * Name of the Text review field.
+   */
+  const TEXT_FIELD_NAME = 'award_review_test_text';
 
   /**
    * Reviewer contact ID.
@@ -43,12 +61,49 @@ class CRM_CiviAwards_Form_AwardReviewTest extends BaseHeadlessTest {
   private $textFieldId;
 
   /**
-   * Sets up an award application with a Number and a Text review field.
+   * {@inheritDoc}
+   */
+  public function setUpHeadless() {
+    return $this->getHeadlessEnvironmentBuilder()
+      ->callback([__CLASS__, 'createReviewFields'], __CLASS__ . '::createReviewFields')
+      ->apply();
+  }
+
+  /**
+   * Creates a Number and a Text review field on Applicant Review activities.
+   */
+  public static function createReviewFields() {
+    $customGroup = civicrm_api3('CustomGroup', 'create', [
+      'title' => 'Award review test fields',
+      'extends' => 'Activity',
+      'extends_entity_column_value' => [ApplicantReview::getActivityTypeId()],
+    ]);
+
+    civicrm_api3('CustomField', 'create', [
+      'custom_group_id' => $customGroup['id'],
+      'name' => self::NUMBER_FIELD_NAME,
+      'label' => 'Amount requested',
+      'data_type' => 'Float',
+      'html_type' => 'Text',
+    ]);
+
+    civicrm_api3('CustomField', 'create', [
+      'custom_group_id' => $customGroup['id'],
+      'name' => self::TEXT_FIELD_NAME,
+      'label' => 'Comments',
+      'data_type' => 'String',
+      'html_type' => 'Text',
+    ]);
+  }
+
+  /**
+   * Sets up an award application using the Number and Text review fields.
    */
   public function setUp() {
     $this->reviewerId = ContactFabricator::fabricate()['id'];
     $this->registerCurrentLoggedInContactInSession($this->reviewerId);
-    $this->createReviewFields();
+    $this->numberFieldId = $this->getCustomFieldId(self::NUMBER_FIELD_NAME);
+    $this->textFieldId = $this->getCustomFieldId(self::TEXT_FIELD_NAME);
     $this->createAwardApplication();
   }
 
@@ -185,30 +240,19 @@ class CRM_CiviAwards_Form_AwardReviewTest extends BaseHeadlessTest {
   }
 
   /**
-   * Creates a Number and a Text review field.
+   * Returns the ID of a review field created by createReviewFields().
+   *
+   * @param string $name
+   *   Custom field name.
+   *
+   * @return int
+   *   Custom field ID.
    */
-  private function createReviewFields() {
-    $customGroup = civicrm_api3('CustomGroup', 'create', [
-      'title' => 'Review ' . uniqid(),
-      'extends' => 'Activity',
-      'extends_entity_column_value' => [
-        CRM_Core_PseudoConstant::getKey('CRM_Activity_BAO_Activity', 'activity_type_id', 'Applicant Review'),
-      ],
+  private function getCustomFieldId($name) {
+    return (int) civicrm_api3('CustomField', 'getvalue', [
+      'name' => $name,
+      'return' => 'id',
     ]);
-
-    $this->numberFieldId = civicrm_api3('CustomField', 'create', [
-      'custom_group_id' => $customGroup['id'],
-      'label' => 'Amount requested',
-      'data_type' => 'Float',
-      'html_type' => 'Text',
-    ])['id'];
-
-    $this->textFieldId = civicrm_api3('CustomField', 'create', [
-      'custom_group_id' => $customGroup['id'],
-      'label' => 'Comments',
-      'data_type' => 'String',
-      'html_type' => 'Text',
-    ])['id'];
   }
 
   /**
