@@ -9,18 +9,24 @@ use CRM_CiviAwards_Test_Fabricator_Contact as ContactFabricator;
 /**
  * Test class for the Award Review form.
  *
- * Creating custom fields changes the database schema, which commits the
- * transaction each test runs in, so review fields created in setUp() would
- * be left behind for later tests. They are created by this class's
- * headless environment instead. Because that environment differs from the
- * other test classes', the test database is rebuilt with the review fields
- * before this class runs, and without them for the classes after it.
+ * Each test runs in a transaction that is rolled back afterwards, but
+ * creating custom fields changes the database schema, which commits that
+ * transaction. Review fields created in setUp() would therefore be left
+ * behind, together with everything the test saved after them. They are
+ * created in setUpHeadless() instead, which runs before the transaction
+ * starts, and deleted in tearDownAfterClass(), so the other test classes
+ * never see them.
  *
  * @group headless
  */
 class CRM_CiviAwards_Form_AwardReviewTest extends BaseHeadlessTest {
 
   use CRM_CiviAwards_Helper_SessionTrait;
+
+  /**
+   * Name of the custom group holding the review fields.
+   */
+  const REVIEW_FIELDS_GROUP_NAME = 'award_review_test_fields';
 
   /**
    * Name of the Number review field.
@@ -62,18 +68,40 @@ class CRM_CiviAwards_Form_AwardReviewTest extends BaseHeadlessTest {
 
   /**
    * {@inheritDoc}
+   *
+   * Runs before each test, ahead of the test's transaction, so creating the
+   * review fields here does not commit it.
    */
   public function setUpHeadless() {
-    return $this->getHeadlessEnvironmentBuilder()
-      ->callback([__CLASS__, 'createReviewFields'], __CLASS__ . '::createReviewFields')
-      ->apply();
+    $environment = parent::setUpHeadless();
+    self::createReviewFields();
+
+    return $environment;
+  }
+
+  /**
+   * Deletes the review fields, so later test classes do not see them.
+   */
+  public static function tearDownAfterClass() {
+    $customGroupId = self::getReviewFieldsGroupId();
+
+    if ($customGroupId) {
+      civicrm_api3('CustomGroup', 'delete', ['id' => $customGroupId]);
+    }
   }
 
   /**
    * Creates a Number and a Text review field on Applicant Review activities.
+   *
+   * Does nothing when an earlier test in this class has created them.
    */
-  public static function createReviewFields() {
+  private static function createReviewFields() {
+    if (self::getReviewFieldsGroupId()) {
+      return;
+    }
+
     $customGroup = civicrm_api3('CustomGroup', 'create', [
+      'name' => self::REVIEW_FIELDS_GROUP_NAME,
       'title' => 'Award review test fields',
       'extends' => 'Activity',
       'extends_entity_column_value' => [ApplicantReview::getActivityTypeId()],
@@ -237,6 +265,21 @@ class CRM_CiviAwards_Form_AwardReviewTest extends BaseHeadlessTest {
   private function setNumberFormat($thousandSeparator, $decimalPoint) {
     Civi::settings()->set('monetaryThousandSeparator', $thousandSeparator);
     Civi::settings()->set('monetaryDecimalPoint', $decimalPoint);
+  }
+
+  /**
+   * Returns the ID of the custom group holding the review fields.
+   *
+   * @return int|null
+   *   Custom group ID, or NULL when the review fields do not exist.
+   */
+  private static function getReviewFieldsGroupId() {
+    $result = civicrm_api3('CustomGroup', 'get', [
+      'name' => self::REVIEW_FIELDS_GROUP_NAME,
+      'return' => 'id',
+    ]);
+
+    return $result['count'] ? (int) $result['id'] : NULL;
   }
 
   /**
